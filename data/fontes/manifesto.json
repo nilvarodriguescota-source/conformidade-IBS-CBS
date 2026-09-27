@@ -1,0 +1,107 @@
+{
+  "descricao": "Snapshots das fontes usadas para conferir a base normativa. Cada arquivo listado tem SHA-256 conferido por scripts/verificar_fontes.mjs.",
+  "criadoEm": "2026-09-23",
+  "fontes": [
+    {
+      "id": "PLANILHA",
+      "nome": "Planilha de conformidade por XML V4.1",
+      "papel": "Origem da base normativa atual (data/base-normativa.json)",
+      "versao": "V4.1, .xlsm gravado em 2026-09-08 14:28 (versão P3 da pré-verificação)",
+      "origem": {
+        "arquivo": "C:\\Users\\Nilva\\Downloads\\Planilha--de--conformidade--por--xml-----V4.1--(2) (1).zip",
+        "sha256Zip": "cb10a2c2902e1f6bccd73d12a66fbb73e689ce297b2097c68d96755e4181eec4",
+        "tamanhoZip": 737744,
+        "entrada": "Planilha--de--conformidade--por--xml-----V4.1--(2) (1).xlsm",
+        "sha256Xlsm": "ccddd8b2df94a6b2c51b3e3e153edcc77960f8e5d18f8f04e772e2046ccaab5d",
+        "tamanhoXlsm": 800603,
+        "copiasIdenticas": [
+          "C:\\Users\\Nilva\\Downloads\\Planilha--de--conformidade--por--xml-----V4.1--(2) (1) (1).zip",
+          "C:\\Users\\Nilva\\OneDrive\\Desktop\\SABORES ESTRATEGICOS\\planilhas\\Planilha--de--conformidade--por--xml-----V4.1--(2) (1) (2).zip"
+        ]
+      },
+      "dataConsulta": "2026-09-23",
+      "extraido": "Valores das abas Base de dados, Legenda e Manual e Base_CBS, sem saneamento",
+      "naoExtraido": "Demais abas (Saídas, XML, Resultado, Validacao_Beneficios, Conformidade, DASHBOARD, Recomendações): contêm dados de cliente ou são derivadas. O .xlsm não é copiado.",
+      "gerador": "scripts/snapshot_planilha.mjs",
+      "snapshots": [
+        {
+          "arquivo": "planilha-p3/base-de-dados.json",
+          "sha256": "db6eeeff402fea51f67ce726522971b9fee695b55444375d73851c834c9fac49",
+          "aba": "Base de dados",
+          "linhasComDados": 1478,
+          "shaValores": "7911d739fd0fc8935fc399c27395b005a962ca5e0d1fe71d760448764f7f78ab"
+        },
+        {
+          "arquivo": "planilha-p3/legenda-e-manual.json",
+          "sha256": "813040fcb4ebb3b3f59cd6e153f6673e815d224fec729eb6b98940bdee302b2a",
+          "aba": "Legenda e Manual",
+          "linhasComDados": 12,
+          "shaValores": "3aba116efdd2da29d570bb94f673352a741ff6ff967b23832df66dbf7a38da76"
+        },
+        {
+          "arquivo": "planilha-p3/base-cbs.json",
+          "sha256": "dc7ec5a503c072728152c99690a8e2c8d26e6c516f833b8726e46e8adae748a8",
+          "aba": "Base_CBS",
+          "linhasComDados": 1478,
+          "shaValores": "081fafbb3c7a0de27b7bd688556be95ce8730e8ea5a97b4da1c32b3bd0253388"
+        }
+      ]
+    },
+    {
+      "id": "F1",
+      "nome": "Lei Complementar nº 214/2025",
+      "papel": "Fundamento legal: arts. 133, 142 e 544; Anexos VI e XI",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm",
+      "versao": "Texto do Planalto na data da consulta, com as marcações de alteração da LC 227/2026",
+      "dataConsulta": "2026-09-23T21:01:53-03:00",
+      "observacao": "HTML original em windows-1252, gravado sem conversão. A data é a de gravação do arquivo; os cabeçalhos HTTP desta captura não foram guardados.",
+      "snapshots": [
+        {
+          "arquivo": "lc214/lcp214.htm",
+          "sha256": "5702cb10bfbf21d59cc52db2db2a6e3e719243dbedca97f6f82c652bc289e9e4",
+          "tamanho": 5402213,
+          "tipo": "primario"
+        }
+      ],
+      "conferencia": {
+        "marcadores": ["name=\"art133\"", "name=\"art142\"", "name=\"art544\"", "name=\"anexo6\"", "name=\"anexo11\"", "Lcp227.htm#art174"]
+      }
+    },
+    {
+      "id": "F2",
+      "nome": "Portal da Conformidade Fácil (SVRS) - Classificação Tributária",
+      "papel": "Tabela oficial de CST e cClassTrib, com anexo, percentuais de redução e NCMs por código",
+      "url": "https://dfe-portal.svrs.rs.gov.br/Cff/ClassificacaoTributaria",
+      "versao": "Classificações 200033 e 200043 publicadas em 2026-06-22, vigência desde 2025-05-05",
+      "dataConsulta": "2026-09-24T00:04:14Z",
+      "observacao": "Data do cabeçalho HTTP Date da resposta (HTTP 200), guardado em svrs.headers. Em horário de Brasília, 2026-09-23 21:04:14.",
+      "gerador": "scripts/snapshot_svrs.mjs",
+      "snapshots": [
+        {
+          "arquivo": "svrs/svrs.html",
+          "sha256": "7d007854b9e43917b6af1119d3dc3782c3567ab42bb9d802bf1b23ce60071a50",
+          "tamanho": 4101192,
+          "tipo": "primario"
+        },
+        {
+          "arquivo": "svrs/svrs.headers",
+          "sha256": "5fb6b4a5de01384f891d6ae4d9b3616ff38500d988b33f78e3bcc9b719562823",
+          "tamanho": 309,
+          "tipo": "primario"
+        },
+        {
+          "arquivo": "svrs/svrs-200-200033-200043.json",
+          "sha256": "a83384cee407fdef3f3dd3d988318477cff47d680b227db45cb51036787679fa",
+          "tipo": "derivado",
+          "derivadoDe": "svrs/svrs.html"
+        }
+      ],
+      "conferencia": {
+        "classificacoes": {
+          "200033": { "Cst": "200", "NroAnexo": 6, "PercRedIbs": 60, "PercRedCbs": 60, "DthPublicacao": "2026-06-22T00:00:00", "DthIniVig": "2025-05-05T00:00:00", "IndNfce": true, "TexUrlLegislacao": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art133", "ncmsDistintos": 63 },
+          "200043": { "Cst": "200", "NroAnexo": 11, "PercRedIbs": 60, "PercRedCbs": 60, "DthPublicacao": "2026-06-22T00:00:00", "DthIniVig": "2025-05-05T00:00:00", "IndNfce": false, "TexUrlLegislacao": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm#art142", "ncmsDistintos": 86 }
+        }
+      }
+    }
+  ]
+}

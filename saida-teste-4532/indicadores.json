@@ -1,0 +1,60 @@
+{
+ "itens": 11727,
+ "faturamento": 231959.65,
+ "porEstado": {
+  "CORRETO": {
+   "itens": 1863,
+   "base": 20501.760000000017
+  },
+  "INCORRETO_ECONOMIA": {
+   "itens": 0,
+   "base": 0
+  },
+  "INCORRETO_RISCO": {
+   "itens": 1611,
+   "base": 65422.43000000014
+  },
+  "REQUER_VALIDACAO": {
+   "itens": 8240,
+   "base": 145641.209999998
+  },
+  "NAO_OBRIGATORIO": {
+   "itens": 13,
+   "base": 394.25
+  },
+  "INDETERMINADO": {
+   "itens": 0,
+   "base": 0
+  }
+ },
+ "itensAvaliados": 11714,
+ "codigosAvaliados": 477,
+ "codigosCorretos": 133,
+ "codigosIncorretos": 35,
+ "codigosPendentes": 309,
+ "valorIBSInformadoTotal": 112.39,
+ "valorCBSInformadoTotal": 1048.96,
+ "valorInformadoTotal": 1161.35,
+ "valorPagoTotal": 1661.43,
+ "valorCorretoTotal": 205.02,
+ "percentualConformidade": 0.27882599580712786,
+ "economiaPotencial": 0,
+ "exposicao": 0,
+ "pendentesDeValidacao": 309,
+ "aliquotasUsadas": [
+  {
+   "tributo": "CBS",
+   "aliquota": 0.009,
+   "fonte": "LC 214/2025, período de teste de 2026: CBS de 0,9%, compensável com PIS/Cofins; recolhimento dispensado nos termos do art. 348, § 1º, se cumpridas as obrigações acessórias",
+   "tipo": "vigente"
+  },
+  {
+   "tributo": "IBS",
+   "aliquota": 0.001,
+   "fonte": "LC 214/2025, período de teste de 2026: IBS de 0,1%",
+   "tipo": "vigente"
+  }
+ ],
+ "alertas": [],
+ "versaoBase": "2026-09-20"
+}

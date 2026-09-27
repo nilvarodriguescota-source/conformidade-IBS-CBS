@@ -1,0 +1,3819 @@
+[
+ {
+  "ncm": "21011200",
+  "cProd": "30100003",
+  "produto": "CAFE PASSADO MEDIO",
+  "itens": 528,
+  "base": 7039.61,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "36690003",
+  "produto": "BUFFET CAFE DA MANHA SEG A SEX",
+  "itens": 258,
+  "base": 7002.33,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "233",
+  "produto": "CAFE PASSADO C/ LEITE M",
+  "itens": 455,
+  "base": 6737.66,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "33460003",
+  "produto": "CAFE EXPRESSO C/ LEITE M",
+  "itens": 374,
+  "base": 6570.91,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30280003",
+  "produto": "CAPPUCCINO ITALIANO MEDIO",
+  "itens": 204,
+  "base": 5003.69,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11350001",
+  "produto": "FATIA TORTA",
+  "itens": 172,
+  "base": 4432.73,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30080003",
+  "produto": "CAFE EXPRESSO MEDIO",
+  "itens": 270,
+  "base": 4038.11,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "79",
+  "produto": "CAPPUCCINO TRADICIONAL M",
+  "itens": 167,
+  "base": 3620.58,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "20091900",
+  "cProd": "498",
+  "produto": "SUCO NATURAL LARANJA",
+  "itens": 205,
+  "base": 3264.16,
+  "regras": [
+   "20091900-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "698",
+  "produto": "BRUSQUETA ESPECIAL KG",
+  "itens": 153,
+  "base": 3244.38,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30070003",
+  "produto": "CAFE EXPRESSO PEQUENO",
+  "itens": 206,
+  "base": 3019.44,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30830003",
+  "produto": "OMELETE JURERE",
+  "itens": 45,
+  "base": 2634.27,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "30020003",
+  "produto": "CROQUE MONSIEUR",
+  "itens": 73,
+  "base": 2388.04,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "152",
+  "produto": "PAO DE QUEIJO GRANDE",
+  "itens": 166,
+  "base": 2363.16,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "32870003",
+  "produto": "MINI MACARON POTE",
+  "itens": 74,
+  "base": 2348.2,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30260003",
+  "produto": "CAPPUCCINO GOURMET",
+  "itens": 104,
+  "base": 2339.77,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20800003",
+  "produto": "CHEESECAKE",
+  "itens": 83,
+  "base": 2252.45,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "240",
+  "produto": "TORTELETES",
+  "itens": 84,
+  "base": 1772.02,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "12760003",
+  "produto": "COXINHA FRA/REQ",
+  "itens": 84,
+  "base": 1725.09,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "76",
+  "produto": "PAO FRANCES  KG",
+  "itens": 270,
+  "base": 1724.87,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "246",
+  "produto": "PASTEL DE BELEM",
+  "itens": 96,
+  "base": 1719.78,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "107",
+  "produto": "CROISSANT FOLHADO",
+  "itens": 75,
+  "base": 1592.27,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "10180003",
+  "produto": "PASTEL DE CARNE",
+  "itens": 82,
+  "base": 1584.14,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31430003",
+  "produto": "HAMBURGUER JURERE BACON",
+  "itens": 27,
+  "base": 1548.61,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31080003",
+  "produto": "MISTO QUENTE FRANCÊS",
+  "itens": 71,
+  "base": 1541.29,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "28450003",
+  "produto": "COOKIES RECHEADO",
+  "itens": 99,
+  "base": 1522.25,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "151",
+  "produto": "PAO DE QUEIJO PEQUENO",
+  "itens": 246,
+  "base": 1483.94,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31460003",
+  "produto": "CIABATTA DE FILÉ MIGNON",
+  "itens": 22,
+  "base": 1394.76,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "21390003",
+  "produto": "TORTA BRIGADEIRO",
+  "itens": 45,
+  "base": 1202.54,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20098919",
+  "cProd": "17860003",
+  "produto": "SUCO COM DUAS FRUTAS",
+  "itens": 56,
+  "base": 1167.18,
+  "regras": [
+   "20098919-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "26120003",
+  "produto": "ENTREMET PERSONAGEM",
+  "itens": 34,
+  "base": 1166.04,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "32220003",
+  "produto": "SALTENHA FRANGO",
+  "itens": 56,
+  "base": 1091.33,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "501",
+  "produto": "SUCO DETOX",
+  "itens": 54,
+  "base": 1074.06,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31440003",
+  "produto": "CIABATTA DE COSTELA",
+  "itens": 18,
+  "base": 992.85,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20210003",
+  "produto": "TORTA MORANGO E NATA",
+  "itens": 39,
+  "base": 984.39,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "26360003",
+  "produto": "CATARINA",
+  "itens": 39,
+  "base": 940.96,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "16620003",
+  "produto": "COOKIES TRADICIONAL",
+  "itens": 69,
+  "base": 931.69,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "11790001",
+  "produto": "SALTENHA CARNE",
+  "itens": 44,
+  "base": 929.15,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30090003",
+  "produto": "CAFE PASSADO PEQUENO",
+  "itens": 78,
+  "base": 928.84,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31170003",
+  "produto": "QUEIJO QUENTE FRANCÊS",
+  "itens": 47,
+  "base": 928.03,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31410003",
+  "produto": "HAMBURGUER JURERE BURGUER",
+  "itens": 18,
+  "base": 857.69,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17620003",
+  "produto": "BOLO DE CENOURA RECHEADO",
+  "itens": 55,
+  "base": 840.6,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "292",
+  "produto": "EMPADAO FRANGO FATIA",
+  "itens": 30,
+  "base": 814.7,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "34350003",
+  "produto": "CROQUE MADAME",
+  "itens": 21,
+  "base": 805.46,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "89",
+  "produto": "BROWNIE",
+  "itens": 53,
+  "base": 774.67,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "483",
+  "produto": "MISTO QUENTE CROISSANT",
+  "itens": 26,
+  "base": 736.2,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "423",
+  "produto": "SANDUICHE BAGUETE DE FRANGO",
+  "itens": 21,
+  "base": 731.74,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11800001",
+  "produto": "TORTA DOIS AMORES",
+  "itens": 29,
+  "base": 710.79,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "11760001",
+  "produto": "MINI PASTEL CARNE",
+  "itens": 54,
+  "base": 710.27,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "30030003",
+  "produto": "PÃO COM OVO FRANCES",
+  "itens": 44,
+  "base": 699.59,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31280003",
+  "produto": "AMERICANO PÃO FRANCÊS",
+  "itens": 29,
+  "base": 656.17,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "33450003",
+  "produto": "CAFE EXPRESSO C/ LEITE P",
+  "itens": 54,
+  "base": 643.38,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "207",
+  "produto": "OVOS MEXIDOS",
+  "itens": 25,
+  "base": 609.29,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "19940003",
+  "produto": "STRUDEL MAÇÃ",
+  "itens": 41,
+  "base": 602.43,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "34250003",
+  "produto": "SUCO NATURAL MELANCIA",
+  "itens": 30,
+  "base": 588.42,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "21400003",
+  "produto": "TORTA RED VELVET",
+  "itens": 23,
+  "base": 563.73,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31330003",
+  "produto": "FRANCES NA CHAPA",
+  "itens": 37,
+  "base": 551.41,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "32320003",
+  "produto": "BOLO REDONDO MESA",
+  "itens": 19,
+  "base": 548.86,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31230003",
+  "produto": "BAURU PÃO FRANCÊS",
+  "itens": 24,
+  "base": 543.54,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "24650003",
+  "produto": "TORTA BOMBOM PISTACHE",
+  "itens": 19,
+  "base": 539.25,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30450003",
+  "produto": "ICED CAPPUCCINO",
+  "itens": 26,
+  "base": 528.28,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "33730003",
+  "produto": "JALOUISE MAÇA",
+  "itens": 35,
+  "base": 512.07,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31450003",
+  "produto": "CIABATTA DE FRANGO",
+  "itens": 12,
+  "base": 510.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11320003",
+  "produto": "PALITO DE PARMESAO KG",
+  "itens": 109,
+  "base": 509.02,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17590003",
+  "produto": "BRIGADEIRO",
+  "itens": 43,
+  "base": 492.88,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "88",
+  "produto": "BOLO CENOURA VULCÃO",
+  "itens": 34,
+  "base": 490.35,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20091900",
+  "cProd": "499",
+  "produto": "SUCO NATURAL DE MORANGO",
+  "itens": 25,
+  "base": 481.43,
+  "regras": [
+   "20091900-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "615",
+  "produto": "TORTAS KG",
+  "itens": 3,
+  "base": 474.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "9330003",
+  "produto": "MEDIALUNA",
+  "itens": 58,
+  "base": 473.4,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31490003",
+  "produto": "SANDUICHE BAGUETE DE PEITO DE PERU",
+  "itens": 13,
+  "base": 465.66,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "259",
+  "produto": "CROISSANT RECHEADO G",
+  "itens": 22,
+  "base": 460.52,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "19990003",
+  "produto": "BOLO RED VELVET",
+  "itens": 24,
+  "base": 446.64,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20091900",
+  "cProd": "17",
+  "produto": "SUCO MACROVITA LARANJA - 300ML",
+  "itens": 41,
+  "base": 444.11,
+  "regras": [
+   "20091900-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17630003",
+  "produto": "BOLO DE CHOCOLATE RECHEADO",
+  "itens": 32,
+  "base": 431.98,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30840003",
+  "produto": "OMELETE DE FRANGO",
+  "itens": 12,
+  "base": 429.09,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31190003",
+  "produto": "QUEIJO QUENTE CROISSANT",
+  "itens": 16,
+  "base": 424.75,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "34060003",
+  "produto": "TORTA ZERO GLUTEN",
+  "itens": 13,
+  "base": 420.28,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "32420003",
+  "produto": "SALTENHA FILÉ",
+  "itens": 22,
+  "base": 419.05,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17650003",
+  "produto": "CANNOLI CREME",
+  "itens": 42,
+  "base": 410.79,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17370003",
+  "produto": "CANNOLI DOCE DE LEITE",
+  "itens": 43,
+  "base": 409.92,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20550003",
+  "produto": "CANNOLI PISTACHE",
+  "itens": 37,
+  "base": 408.66,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "741",
+  "produto": "FOLHADO DOCE MAÇA",
+  "itens": 27,
+  "base": 392.28,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30370003",
+  "produto": "CAFE JURERE",
+  "itens": 15,
+  "base": 373.95,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "20091900",
+  "cProd": "500",
+  "produto": "SUCO NATURAL DE ABACAXI",
+  "itens": 20,
+  "base": 373.08,
+  "regras": [
+   "20091900-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31400003",
+  "produto": "HAMBURGUER JURERE SALAD",
+  "itens": 8,
+  "base": 364.24,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "32410003",
+  "produto": "SALTENHA LINGUICA BLUMENAL",
+  "itens": 19,
+  "base": 363.8,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "234",
+  "produto": "CAFE PASSADO C/LEITE P",
+  "itens": 32,
+  "base": 354.56,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "141",
+  "produto": "PÃO DOCE KG",
+  "itens": 60,
+  "base": 351.01,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "818",
+  "produto": "FOLHADO DOCE BANANA",
+  "itens": 25,
+  "base": 350.25,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "9150003",
+  "produto": "EMPADA DE FRANGO",
+  "itens": 20,
+  "base": 349.38,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30120003",
+  "produto": "CAFÉ PISTACHE",
+  "itens": 15,
+  "base": 344.7,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20500003",
+  "produto": "BOLO BANDEJA",
+  "itens": 19,
+  "base": 330.93,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "9870001",
+  "produto": "FRANCES NA CHAPA REQUEIJÃO",
+  "itens": 19,
+  "base": 330.76,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31380003",
+  "produto": "SANDUICHE PAULISTA NO PÃO FRANCÊS",
+  "itens": 12,
+  "base": 318.64,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20089900",
+  "cProd": "502",
+  "produto": "SUCO POLPA MARACUJA 350ML",
+  "itens": 19,
+  "base": 316.89,
+  "regras": [
+   "20089900-200034-VII-11"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 11), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31480003",
+  "produto": "SANDUICHE BAGUETE DE SALAME ITALIANO",
+  "itens": 10,
+  "base": 314.84,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "123",
+  "produto": "KIBE",
+  "itens": 20,
+  "base": 312.41,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31470003",
+  "produto": "SANDUICHE BAGUETE DE PRESUNTO",
+  "itens": 11,
+  "base": 307.02,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "21420003",
+  "produto": "QUEIJADINHA",
+  "itens": 22,
+  "base": 303.66,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "110",
+  "produto": "ADC OVO",
+  "itens": 53,
+  "base": 303.14,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "149",
+  "produto": "ORELHA DE GATO",
+  "itens": 58,
+  "base": 295.94,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "11730001",
+  "produto": "MINI SALGADOS SORTIDOS",
+  "itens": 21,
+  "base": 293.06,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11590001",
+  "produto": "QUICHE FATIA",
+  "itens": 14,
+  "base": 282.86,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "19930003",
+  "produto": "STRUDEL BANANA",
+  "itens": 19,
+  "base": 280.2,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31110003",
+  "produto": "MISTO QUENTE CIABATTA",
+  "itens": 10,
+  "base": 279.19,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "24680003",
+  "produto": "FOLHADO DOCE ABACAXI",
+  "itens": 21,
+  "base": 275.73,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "28870003",
+  "produto": "CHOUX CREAM",
+  "itens": 15,
+  "base": 275.7,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "30390003",
+  "produto": "CAFÉ FERRERO",
+  "itens": 11,
+  "base": 274.23,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17670003",
+  "produto": "MISTO QUENTE FORMA",
+  "itens": 14,
+  "base": 269.78,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "32340003",
+  "produto": "NEW YORK ROLL",
+  "itens": 14,
+  "base": 269.63,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30820003",
+  "produto": "OMELETE PRESUNTO E QUEIJO",
+  "itens": 9,
+  "base": 267.84,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "30760003",
+  "produto": "TAPIOCA FRANGO",
+  "itens": 7,
+  "base": 261.53,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "01051190",
+  "cProd": "491",
+  "produto": "ADC BATATA FRITA",
+  "itens": 23,
+  "base": 258.41,
+  "regras": [
+   "01051190-200038-IX-13"
+  ],
+  "motivo": "Enquadramento possível em 200038 (Anexo IX, item 13), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "26110003",
+  "produto": "ENTREMET JURERE",
+  "itens": 7,
+  "base": 252.16,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17060003",
+  "produto": "TORTA 5 LEITES",
+  "itens": 10,
+  "base": 245.1,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11360001",
+  "produto": "TORTA DUETO",
+  "itens": 10,
+  "base": 245.1,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "124",
+  "produto": "SALSICHA",
+  "itens": 16,
+  "base": 241.11,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "04012010",
+  "cProd": "30420003",
+  "produto": "ADC LEITE ZERO LACTOSE",
+  "itens": 66,
+  "base": 239.44,
+  "regras": [
+   "04012010-200003-I-2"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 2), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "13610003",
+  "produto": "COXINHA DE COSTELA",
+  "itens": 13,
+  "base": 237.35,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "19890003",
+  "produto": "FOLHADO DE FRUTAS VERMELHAS",
+  "itens": 18,
+  "base": 236.34,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20096100",
+  "cProd": "8420001",
+  "produto": "SUCO PRATS DE UVA 300ML",
+  "itens": 17,
+  "base": 231.46,
+  "regras": [
+   "20096100-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "25410003",
+  "produto": "BOLO DE BANANA INTEGRAL",
+  "itens": 16,
+  "base": 223.08,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "33740003",
+  "produto": "JALOUISE GOIABA",
+  "itens": 16,
+  "base": 222.42,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11660001",
+  "produto": "TORTA DE RAFAELLO",
+  "itens": 9,
+  "base": 220.59,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10120003",
+  "produto": "PÃO ITALIANO DE FERMENTAÇÃO NATURAL- PROVOLONE",
+  "itens": 9,
+  "base": 220.18,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30300003",
+  "produto": "CHÁ DE CAMOMILA",
+  "itens": 16,
+  "base": 218.66,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "24670003",
+  "produto": "TORTA BOMBOM DE MORANGO",
+  "itens": 8,
+  "base": 218.06,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "28830003",
+  "produto": "VITAMINA",
+  "itens": 10,
+  "base": 210.84,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17610003",
+  "produto": "BRIGADEIRO PISTACHE",
+  "itens": 19,
+  "base": 210.19,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31320003",
+  "produto": "PÃO FRANCÊS COM BOLINHO",
+  "itens": 10,
+  "base": 210.1,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "30040003",
+  "produto": "PAO COM OVO OUTROS PAES",
+  "itens": 10,
+  "base": 201.3,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30770003",
+  "produto": "CREPIOCA FRANGO",
+  "itens": 6,
+  "base": 199.56,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10140003",
+  "produto": "TORTA AMOR AOS PEDAÇOS",
+  "itens": 8,
+  "base": 196.08,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31500003",
+  "produto": "PETIT GATEAU SORVETE CALDA E MORANGO",
+  "itens": 5,
+  "base": 188.93,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "77",
+  "produto": "MACHIATTO M",
+  "itens": 14,
+  "base": 186.54,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "20041000",
+  "cProd": "31650003",
+  "produto": "BATATA FRITA 400GR",
+  "itens": 5,
+  "base": 183.71,
+  "regras": [
+   "20041000-200034-VII-16"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 16), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "470",
+  "produto": "ADC CHANTILLY",
+  "itens": 30,
+  "base": 178.26,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31090003",
+  "produto": "MISTO QUENTE INTEGRAL",
+  "itens": 8,
+  "base": 173.41,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "28150003",
+  "produto": "BOLO BOLEIRA",
+  "itens": 10,
+  "base": 173.27,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "831",
+  "produto": "MONSTER ENERGETICO 473ml",
+  "itens": 9,
+  "base": 160.92,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19012010",
+  "cProd": "9340003",
+  "produto": "CATAVENTO DE MORANGO C/ CREME",
+  "itens": 11,
+  "base": 157.56,
+  "regras": [
+   "19012010-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17810003",
+  "produto": "SONHO DE CREME",
+  "itens": 13,
+  "base": 156.49,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31120003",
+  "produto": "MISTO QUENTE BAGUETE",
+  "itens": 5,
+  "base": 152.33,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "241",
+  "produto": "QUINDIM",
+  "itens": 11,
+  "base": 146.81,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "301",
+  "produto": "ICED LATTE",
+  "itens": 8,
+  "base": 145.66,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "20098990",
+  "cProd": "428",
+  "produto": "AGUA DE COCO DUCOCO 330ML",
+  "itens": 12,
+  "base": 143.04,
+  "regras": [
+   "20098990-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31300003",
+  "produto": "AMERICANO CIABATTA",
+  "itens": 5,
+  "base": 140.1,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "30730003",
+  "produto": "CREPIOCA QUEIJO E  PRESUNTO",
+  "itens": 3,
+  "base": 140.08,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31310003",
+  "produto": "AMERICANO BAGUETE",
+  "itens": 4,
+  "base": 139.47,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "9860003",
+  "produto": "BOLO PISCININHA",
+  "itens": 4,
+  "base": 136.58,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31250003",
+  "produto": "BAURU CROISSANT",
+  "itens": 5,
+  "base": 131.3,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "19750003",
+  "produto": "BOLO AIPIM COM COCO",
+  "itens": 10,
+  "base": 131.3,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30880003",
+  "produto": "SALADA DE FRANGO",
+  "itens": 3,
+  "base": 128.7,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31350003",
+  "produto": "CROISSANT NA CHAPA",
+  "itens": 6,
+  "base": 128.47,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "23330003",
+  "produto": "PÃO ITALIANO DE FERMENTAÇÃO NATURAL- ITALIANO",
+  "itens": 5,
+  "base": 123.7,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "30740003",
+  "produto": "TAPIOCA PEITO DE PERU",
+  "itens": 4,
+  "base": 122.56,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20810003",
+  "produto": "TORTA MARACUJA ALTA",
+  "itens": 3,
+  "base": 122.56,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "91",
+  "produto": "PALMIER 50 KG",
+  "itens": 38,
+  "base": 116.8,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20440003",
+  "produto": "CINNAMON PISTACHE",
+  "itens": 4,
+  "base": 115.59,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "34580003",
+  "produto": "CROISSANT BRIOCHE",
+  "itens": 6,
+  "base": 115.57,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "309",
+  "produto": "CHA HORTELA",
+  "itens": 9,
+  "base": 115.09,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "33470003",
+  "produto": "AMERICANO CROISSANT",
+  "itens": 2,
+  "base": 112.06,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "139",
+  "produto": "PAO CIABATTA KG",
+  "itens": 17,
+  "base": 109.49,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "209",
+  "produto": "FOLHADO DE PRESUNTO E QUEIJO",
+  "itens": 4,
+  "base": 109.45,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "75",
+  "produto": "MACHIATTO P",
+  "itens": 8,
+  "base": 105.37,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "87",
+  "produto": "BROA DE MILHO KG",
+  "itens": 15,
+  "base": 105.19,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "33720003",
+  "produto": "QUEIJO QUENTE PÃO DE FORMA",
+  "itens": 5,
+  "base": 105.06,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30290003",
+  "produto": "CHÁ VERDE",
+  "itens": 8,
+  "base": 103.58,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30850003",
+  "produto": "OMELETE PEITO DE PERU",
+  "itens": 3,
+  "base": 102.45,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17690003",
+  "produto": "MUFFIN DE BAUNILHA",
+  "itens": 6,
+  "base": 98.06,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "24660003",
+  "produto": "TORTA BOMBOM UVA",
+  "itens": 4,
+  "base": 98.04,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10170001",
+  "produto": "PÃO ITALIANO DE FERMENTAÇÃO NATURAL- ALECRIM E AZEITE",
+  "itens": 4,
+  "base": 96.48,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31600003",
+  "produto": "MEDIALUNA GRANDE",
+  "itens": 6,
+  "base": 94.57,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31200003",
+  "produto": "QUEIJO QUENTE CIABATTA",
+  "itens": 3,
+  "base": 94.56,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11770001",
+  "produto": "CHIPA KG",
+  "itens": 24,
+  "base": 92.78,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30320003",
+  "produto": "CHÁ PRETO",
+  "itens": 8,
+  "base": 92.08,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "299",
+  "produto": "MATCHA ICED LATTE",
+  "itens": 3,
+  "base": 91.93,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "748",
+  "produto": "SPRITE ZERO 350ML",
+  "itens": 8,
+  "base": 89.45,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "23800003",
+  "produto": "BAGUETE KG",
+  "itens": 15,
+  "base": 88.41,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31750003",
+  "produto": "PORÇÃO DE FRANGO 400GR",
+  "itens": 2,
+  "base": 85.8,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31510003",
+  "produto": "BROWNIE JURERE",
+  "itens": 3,
+  "base": 84.06,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20091900",
+  "cProd": "8430001",
+  "produto": "SUCO PRATS DE LARANJA 900 ML",
+  "itens": 4,
+  "base": 79.28,
+  "regras": [
+   "20091900-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "33700003",
+  "produto": "YOPRO DIVERSOS",
+  "itens": 5,
+  "base": 77.42,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31790003",
+  "produto": "PORÇÃO MISTAS CONTRA FILE CALABRESA E FRANGO 600GR",
+  "itens": 1,
+  "base": 77.04,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "24",
+  "produto": "GATORADE DIVERSOS",
+  "itens": 6,
+  "base": 76.68,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "29540003",
+  "produto": "BROWNIE+COBERTURA",
+  "itens": 4,
+  "base": 75.86,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11310003",
+  "produto": "TORTA ALEMA",
+  "itens": 3,
+  "base": 73.53,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11650001",
+  "produto": "TORTA DE MARACUJA",
+  "itens": 3,
+  "base": 73.53,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20590003",
+  "produto": "TORTA DE LIMÃO",
+  "itens": 3,
+  "base": 73.44,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "11720001",
+  "produto": "MINI COXINHA FRANGO",
+  "itens": 3,
+  "base": 72.26,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "531",
+  "produto": "CROISSANT NA CHAPA REQUEIJÃO",
+  "itens": 3,
+  "base": 65.67,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "20099000",
+  "cProd": "10100001",
+  "produto": "SUCO PRATS GOIABA E MAÇÃ 300 ML",
+  "itens": 4,
+  "base": 64.4,
+  "regras": [
+   "20099000-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11340001",
+  "produto": "MINI CHEESECAKE TRADICIONAL",
+  "itens": 3,
+  "base": 63.03,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "137",
+  "produto": "DOGUINHO",
+  "itens": 3,
+  "base": 61.45,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "25420003",
+  "produto": "EMPANADO INTEGRAL  FRANGO REQUEIJAO",
+  "itens": 4,
+  "base": 61.36,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "31390003",
+  "produto": "ADC BACON EM TIRAS",
+  "itens": 12,
+  "base": 61.32,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "17680003",
+  "produto": "MUFFIN DE CHOCOLATE",
+  "itens": 5,
+  "base": 61.3,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30750003",
+  "produto": "CREPIOCA PEITO DE PERU",
+  "itens": 2,
+  "base": 61.28,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "9230003",
+  "produto": "MIL FOLHAS CREME",
+  "itens": 3,
+  "base": 55.88,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "21440003",
+  "produto": "FATIA UNGRA",
+  "itens": 8,
+  "base": 54.63,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "28540003",
+  "produto": "ENERGETICO TUM",
+  "itens": 2,
+  "base": 54.17,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31260003",
+  "produto": "BAURU CIABATTA",
+  "itens": 2,
+  "base": 52.52,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "699",
+  "produto": "PÃO ITALIANO DE FERMENTAÇÃO NATURAL- MULTIGRAOS",
+  "itens": 2,
+  "base": 49.48,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10580003",
+  "produto": "PÃO ITALIANO DE FERMENTAÇÃO NATURAL- INTEGRAL",
+  "itens": 2,
+  "base": 48.9,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10190003",
+  "produto": "PAO FRANCES INTEGRAL KG",
+  "itens": 12,
+  "base": 48.76,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31210003",
+  "produto": "QUEIJO QUENTE BAGUETE",
+  "itens": 2,
+  "base": 47.28,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "144",
+  "produto": "CINNAMON ROLL TRADICIONAL",
+  "itens": 3,
+  "base": 47.25,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "245",
+  "produto": "IOGURTE DIVERSOS",
+  "itens": 7,
+  "base": 45.99,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30870003",
+  "produto": "SALADA DE CARNE",
+  "itens": 1,
+  "base": 45.53,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "33610003",
+  "produto": "PAVLOVA",
+  "itens": 2,
+  "base": 45.52,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "10220003",
+  "produto": "TODDYNHO SABOR CHOCOLATE 200ML",
+  "itens": 9,
+  "base": 44.73,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "01051200",
+  "cProd": "659",
+  "produto": "ADC PEITO DE PERU",
+  "itens": 8,
+  "base": 43.57,
+  "regras": [
+   "01051200-200038-IX-13"
+  ],
+  "motivo": "Enquadramento possível em 200038 (Anexo IX, item 13), sujeito à conferência da descrição legal. O documento já usa 200038: falta confirmar que o produto atende à descrição legal e às vedações do Anexo IX."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11400001",
+  "produto": "MINI CHEESECAKE PISTACHE",
+  "itens": 2,
+  "base": 42.02,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "19710003",
+  "produto": "NESCAFÉ BEBIDA DIVERSOS 270ML",
+  "itens": 2,
+  "base": 41.73,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "20290003",
+  "produto": "TRENTO DUO",
+  "itens": 7,
+  "base": 41.72,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "35180003",
+  "produto": "BAURU FORMA",
+  "itens": 2,
+  "base": 40.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "23960003",
+  "produto": "PRINGLES 35",
+  "itens": 4,
+  "base": 39.76,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "10090001",
+  "produto": "DANONE MORANGO - 170G",
+  "itens": 5,
+  "base": 39.75,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "557",
+  "produto": "SUCO DELVALLE UVA 290ML",
+  "itens": 4,
+  "base": 39.6,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "20093100",
+  "cProd": "12170003",
+  "produto": "SUCO PRATS LIMONADA 300ML",
+  "itens": 3,
+  "base": 38.64,
+  "regras": [
+   "20093100-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "35310003",
+  "produto": "MISTO FRIO NO FRANCÊS",
+  "itens": 2,
+  "base": 38.54,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04061090",
+  "cProd": "22290003",
+  "produto": "CREAM CHEESE PHILADELPHIA 150GR",
+  "itens": 2,
+  "base": 35.76,
+  "regras": [
+   "04061090-200003-I-21"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 21), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "35010003",
+  "produto": "DEL VALLE 1LT",
+  "itens": 3,
+  "base": 34.53,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "28600003",
+  "produto": "TUM ENERGY DRINK",
+  "itens": 2,
+  "base": 33.68,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "211",
+  "produto": "PRESUNTO PERDIGAO - 200G",
+  "itens": 3,
+  "base": 33.18,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "257",
+  "produto": "MATTE LEAO LIMAO - 300ML",
+  "itens": 5,
+  "base": 32.85,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "28640003",
+  "produto": "SALAME ITALIANO PAMPLONA",
+  "itens": 2,
+  "base": 31.8,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "11540003",
+  "produto": "MATTE LEAO NATURAL PET 450ml (6) CP",
+  "itens": 3,
+  "base": 31.8,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "134",
+  "produto": "EMPANADO CALABRESA",
+  "itens": 2,
+  "base": 30.68,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "824",
+  "produto": "PAULISTA OUTROS PÃES",
+  "itens": 1,
+  "base": 30.64,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "20520003",
+  "produto": "QUEIJO MUSSARELA SADIA 150G",
+  "itens": 2,
+  "base": 29.8,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "04061010",
+  "cProd": "11880001",
+  "produto": "QUEIJO MUSSARELA  CRIOULO 150G",
+  "itens": 2,
+  "base": 29.8,
+  "regras": [
+   "04061010-200003-I-21"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 21), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "220",
+  "produto": "PIZZA FATIA",
+  "itens": 2,
+  "base": 29.78,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31270003",
+  "produto": "BAURU BAGUETE",
+  "itens": 1,
+  "base": 26.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "13280003",
+  "produto": "PAO DE QUEIJO RECHEADO",
+  "itens": 2,
+  "base": 26.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "105",
+  "produto": "COXINHA DE MORANGO",
+  "itens": 1,
+  "base": 26.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "26350003",
+  "produto": "ALFAJOR GRANDE VITRINE",
+  "itens": 2,
+  "base": 26.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "803",
+  "produto": "PÃO ITALIANO DE FERMENTAÇÃO NATURAL- CÚRCUMA E LINGUICA",
+  "itens": 1,
+  "base": 24.74,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04012010",
+  "cProd": "181",
+  "produto": "LEITE INTEGRAL - 1 L",
+  "itens": 3,
+  "base": 24.6,
+  "regras": [
+   "04012010-200003-I-2"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 2), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20380003",
+  "produto": "TORTA FLORESTA NEGRA",
+  "itens": 1,
+  "base": 24.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "24410003",
+  "produto": "TORTA BABA DE MOÇA",
+  "itens": 1,
+  "base": 24.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "11670001",
+  "produto": "TORTA LAKA",
+  "itens": 1,
+  "base": 24.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10550003",
+  "produto": "TORTA MORANGOFFEE",
+  "itens": 1,
+  "base": 24.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "10560003",
+  "produto": "TORTA BANOFFEE",
+  "itens": 1,
+  "base": 24.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "22240003",
+  "produto": "CHA BOLDO",
+  "itens": 2,
+  "base": 23.02,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "538",
+  "produto": "CIABATTA NA CHAPA REQUEIJÃO",
+  "itens": 1,
+  "base": 21.89,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "536",
+  "produto": "BAGUETE NA CHAPA REQUEIJÃO",
+  "itens": 1,
+  "base": 21.61,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "273",
+  "produto": "TRIDENT HORTELA 8g",
+  "itens": 7,
+  "base": 20.65,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21011200",
+  "cProd": "392",
+  "produto": "XICARA DE LEITE MEDIO",
+  "itens": 3,
+  "base": 20.16,
+  "regras": [
+   "21011200-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31240003",
+  "produto": "BAURU  NO PÃO INTEGRAL",
+  "itens": 1,
+  "base": 20.13,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "34240003",
+  "produto": "POWERADE FRUTAS TROPICAIS",
+  "itens": 2,
+  "base": 19.8,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "657",
+  "produto": "SUCO DELVALLE LARANJA 450ML",
+  "itens": 2,
+  "base": 19.8,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "799",
+  "produto": "SUCO DELVALLE PESSEGO LATA 290ML",
+  "itens": 2,
+  "base": 19.8,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "340",
+  "produto": "MATTE LEAO CHA VERDE LIMAO 450 ML",
+  "itens": 2,
+  "base": 19.7,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "90",
+  "produto": "CAROLINAS",
+  "itens": 2,
+  "base": 18.5,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31360003",
+  "produto": "CIABATTA NA CHAPA",
+  "itens": 1,
+  "base": 18.38,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04051000",
+  "cProd": "11170001",
+  "produto": "AVIACAO MANTEIGA TABLETE 200G COM SAL",
+  "itens": 1,
+  "base": 17.88,
+  "regras": [
+   "04051000-200003-I-5"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 5), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "20098990",
+  "cProd": "661",
+  "produto": "AGUA DE COCO SOCOCO 330ML",
+  "itens": 2,
+  "base": 17.7,
+  "regras": [
+   "20098990-200034-VII-10"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 10), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "31180003",
+  "produto": "QUEIJO QUENTE INTEGRAL",
+  "itens": 1,
+  "base": 17.51,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19022000",
+  "cProd": "32240003",
+  "produto": "SALTENHA PRE/QUEIJO",
+  "itens": 1,
+  "base": 17.25,
+  "regras": [
+   "19022000-200034-VII-9"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 9), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "12250001",
+  "produto": "REQUEIJAO CRIOULO 180G",
+  "itens": 1,
+  "base": 15.9,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "12740001",
+  "produto": "PROTEIN MORANGO PIRACANJUBA 250ML",
+  "itens": 1,
+  "base": 14.9,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "12750001",
+  "produto": "PROTEIN CHOCOLATE PIRACANJUBA 250ML",
+  "itens": 1,
+  "base": 14.9,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "04061010",
+  "cProd": "22330003",
+  "produto": "QUEIJO MUSSARELA GALBANI 150G",
+  "itens": 1,
+  "base": 14.9,
+  "regras": [
+   "04061010-200003-I-21"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 21), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "14130003",
+  "produto": "REQUEIJAO 200G CATUPIRY",
+  "itens": 1,
+  "base": 14.9,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "04061010",
+  "cProd": "16460003",
+  "produto": "QUEIJO MUSSARELA - SADIA - 200G",
+  "itens": 1,
+  "base": 14.9,
+  "regras": [
+   "04061010-200003-I-21"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 21), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "14660003",
+  "produto": "DANONE 220G",
+  "itens": 1,
+  "base": 14.9,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "10969",
+  "produto": "RED BULL SUGAR FREE BR LATA 355ML FOUR PACK",
+  "itens": 1,
+  "base": 14.87,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "04051000",
+  "cProd": "51",
+  "produto": "MANTEIGA EXTRA GALBANI",
+  "itens": 1,
+  "base": 14.77,
+  "regras": [
+   "04051000-200003-I-5"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 5), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059010",
+  "cProd": "204",
+  "produto": "PAO TRADICIONAL VISCONTI - 400 G",
+  "itens": 2,
+  "base": 14.76,
+  "regras": [
+   "19059010-200034-VII-12"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 12), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "27410003",
+  "produto": "NESCAFE LATTE 270ML",
+  "itens": 1,
+  "base": 13.91,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "647",
+  "produto": "MATE LEAO ICE TEA PESSEGO ZERO 450ML",
+  "itens": 2,
+  "base": 13.14,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "213",
+  "produto": "ICE TEA LIMAO ZERO - 450 ML",
+  "itens": 2,
+  "base": 13.14,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069030",
+  "cProd": "35780003",
+  "produto": "BOLD PISTACHE 60G",
+  "itens": 1,
+  "base": 12.47,
+  "regras": [
+   "21069030-200043-XI-2.10"
+  ],
+  "motivo": "Enquadramento possível em 200043 (Anexo XI, item 2.10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04051000",
+  "cProd": "219",
+  "produto": "MANTEIGA FRIOLACK - 200 G",
+  "itens": 1,
+  "base": 12.32,
+  "regras": [
+   "04051000-200003-I-5"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 5), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "529",
+  "produto": "FRANCES INTEGRAL NA CHAPA REQUEIJAO",
+  "itens": 1,
+  "base": 12.26,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "39",
+  "produto": "SUCO KAPO MORANGO - 200ML",
+  "itens": 2,
+  "base": 11.8,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "30310003",
+  "produto": "CHÁ MAÇA COM CANELA",
+  "itens": 1,
+  "base": 11.51,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "04061010",
+  "cProd": "316",
+  "produto": "REQUEIJAO TRADICIONAL NESTLE 200G",
+  "itens": 1,
+  "base": 11.49,
+  "regras": [
+   "04061010-200003-I-21"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 21), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "04032000",
+  "cProd": "35520003",
+  "produto": "IOGURTE YOPRO POTE 160G MORANGO",
+  "itens": 1,
+  "base": 11.06,
+  "regras": [
+   "04032000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "36480003",
+  "produto": "MONSTER ENERGETICO 269ML",
+  "itens": 1,
+  "base": 10.93,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "12240001",
+  "produto": "QUEIJO MUSSARELA RIOLAT 150G",
+  "itens": 1,
+  "base": 10.93,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "907",
+  "produto": "BALY MELANCIA 473ML",
+  "itens": 1,
+  "base": 10.26,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059010",
+  "cProd": "202",
+  "produto": "PAO BAUDUCCO  - GRÃOS CLASSICOS  - 390 G",
+  "itens": 1,
+  "base": 10.08,
+  "regras": [
+   "19059010-200034-VII-12"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 12), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "07020000",
+  "cProd": "495",
+  "produto": "ADC TOMATE",
+  "itens": 3,
+  "base": 9.93,
+  "regras": [
+   "07020000-200014-XV-2"
+  ],
+  "motivo": "Enquadramento possível em 200014 (Anexo XV, item 2), sujeito à conferência da descrição legal. O documento já usa 200014: falta confirmar que o produto atende à descrição legal e às vedações do Anexo XV."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "800",
+  "produto": "SUCO DELVALLE GOIABA LATA 290ML",
+  "itens": 1,
+  "base": 9.9,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "22029900",
+  "cProd": "15870003",
+  "produto": "SUCO DELVALLE SABOR MANGA",
+  "itens": 1,
+  "base": 9.9,
+  "regras": [
+   "22029900-200033-VI-47",
+   "22029900-200033-VI-48",
+   "22029900-200034-VII-2"
+  ],
+  "motivo": "NCM com 3 enquadramentos possíveis: 200033 (Anexo VI, item 47), 200033 (Anexo VI, item 48), 200034 (Anexo VII, item 2). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "34870003",
+  "produto": "NATURAL ONE - SUCO DE LARANJA 300ML",
+  "itens": 1,
+  "base": 9.58,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21011110",
+  "cProd": "12730003",
+  "produto": "CAFÉ SOLUVEL TRADICIONAL MELITTA 40G",
+  "itens": 1,
+  "base": 8.94,
+  "regras": [
+   "21011110-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21011110",
+  "cProd": "20350003",
+  "produto": "NESCAFÉ TRADIÇÃO FORTE 40G",
+  "itens": 1,
+  "base": 8.94,
+  "regras": [
+   "21011110-200003-I-8"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 8), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "19059010",
+  "cProd": "203",
+  "produto": "PAO INTEGRAL VISCONTI - 400 G",
+  "itens": 1,
+  "base": 8.85,
+  "regras": [
+   "19059010-200034-VII-12"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 12), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "20480003",
+  "produto": "CUPCAKE",
+  "itens": 1,
+  "base": 8.76,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "36290003",
+  "produto": "PIPOCA DOCE GUSMAN 100G",
+  "itens": 1,
+  "base": 8.74,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "260",
+  "produto": "CHURROS MINI KG",
+  "itens": 3,
+  "base": 8.05,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "757",
+  "produto": "DANONE VITAMINA DE FRUTAS 170G",
+  "itens": 1,
+  "base": 7.95,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "95",
+  "produto": "ADC MEL",
+  "itens": 2,
+  "base": 7.94,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04051000",
+  "cProd": "10310001",
+  "produto": "ADC MANTEIGA",
+  "itens": 2,
+  "base": 7.94,
+  "regras": [
+   "04051000-200003-I-5"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 5), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "23500003",
+  "produto": "GUARAVITON 500ML",
+  "itens": 1,
+  "base": 7.67,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069030",
+  "cProd": "36090003",
+  "produto": "MAIS MU BEBIDA COCO COM CARAMELO 250ML",
+  "itens": 1,
+  "base": 7.38,
+  "regras": [
+   "21069030-200043-XI-2.10"
+  ],
+  "motivo": "Enquadramento possível em 200043 (Anexo XI, item 2.10), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "150",
+  "produto": "MINI CROISSANT RECHEADO",
+  "itens": 2,
+  "base": 7.1,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "36330003",
+  "produto": "BIS BRANCO FINO 63G",
+  "itens": 1,
+  "base": 5.96,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "585",
+  "produto": "TRIDENT MELANCIA 8G",
+  "itens": 2,
+  "base": 5.9,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "13690003",
+  "produto": "PÃO BRIOCHE",
+  "itens": 1,
+  "base": 5.75,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "19059090",
+  "cProd": "811",
+  "produto": "SAMANTA KG",
+  "itens": 3,
+  "base": 5.11,
+  "regras": [
+   "19059090-200003-I-16"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 16), sujeito à conferência da descrição legal."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "57",
+  "produto": "LEITE FERMENTADO CHAMYTO - 170G",
+  "itens": 1,
+  "base": 4.1,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "04039000",
+  "cProd": "8720003",
+  "produto": "DANONINHO MORANGO - 100G",
+  "itens": 1,
+  "base": 3.97,
+  "regras": [
+   "04039000-200034-VII-2"
+  ],
+  "motivo": "Enquadramento possível em 200034 (Anexo VII, item 2), sujeito à conferência da descrição legal. O documento já usa 200034: falta confirmar que o produto atende à descrição legal e às vedações do Anexo VII."
+ },
+ {
+  "ncm": "02013000",
+  "cProd": "492",
+  "produto": "ADC PAÇOCA",
+  "itens": 1,
+  "base": 2.98,
+  "regras": [
+   "02013000-200003-I-19"
+  ],
+  "motivo": "Enquadramento possível em 200003 (Anexo I, item 19), sujeito à conferência da descrição legal. O documento já usa 200003: falta confirmar que o produto atende à descrição legal e às vedações do Anexo I."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "283",
+  "produto": "TRIDENT CANELA 8g",
+  "itens": 1,
+  "base": 2.95,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ },
+ {
+  "ncm": "21069090",
+  "cProd": "17760003",
+  "produto": "ADC CEBOLA",
+  "itens": 1,
+  "base": 1.99,
+  "regras": [
+   "21069090-200033-VI-39",
+   "21069090-200033-VI-40",
+   "21069090-200033-VI-41",
+   "21069090-200033-VI-42",
+   "21069090-200033-VI-43",
+   "21069090-200033-VI-44",
+   "21069090-200033-VI-45",
+   "21069090-200033-VI-46",
+   "21069090-200003-I-4"
+  ],
+  "motivo": "NCM com 9 enquadramentos possíveis: 200033 (Anexo VI, item 39), 200033 (Anexo VI, item 40), 200033 (Anexo VI, item 41), 200033 (Anexo VI, item 42), 200033 (Anexo VI, item 43), 200033 (Anexo VI, item 44), 200033 (Anexo VI, item 45), 200033 (Anexo VI, item 46), 200003 (Anexo I, item 4). A composição do produto decide qual vale."
+ }
+]

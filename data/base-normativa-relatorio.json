@@ -1,0 +1,1555 @@
+{
+ "linhasLidas": 1477,
+ "regrasGeradas": 1369,
+ "ncmsDistintos": 1193,
+ "ncmsComMaisDeUmaRegra": 46,
+ "ncmsComCodigosConflitantes": 46,
+ "conflitos": {
+  "02101100": [
+   "200003",
+   "200038"
+  ],
+  "02101200": [
+   "200003",
+   "200038"
+  ],
+  "02101900": [
+   "200003",
+   "200038"
+  ],
+  "07011000": [
+   "200014",
+   "200038"
+  ],
+  "10062010": [
+   "200003",
+   "200038"
+  ],
+  "10062020": [
+   "200003",
+   "200038"
+  ],
+  "11010010": [
+   "200003",
+   "200034",
+   "200038"
+  ],
+  "11022000": [
+   "200003",
+   "200034",
+   "200038"
+  ],
+  "11029000": [
+   "200003",
+   "200034"
+  ],
+  "11031300": [
+   "200003",
+   "200038"
+  ],
+  "11041200": [
+   "200003",
+   "200034"
+  ],
+  "11041900": [
+   "200003",
+   "200034"
+  ],
+  "11042200": [
+   "200003",
+   "200034"
+  ],
+  "11042300": [
+   "200003",
+   "200034"
+  ],
+  "11062000": [
+   "200003",
+   "200034"
+  ],
+  "15131900": [
+   "200033",
+   "200034"
+  ],
+  "15132120": [
+   "200003",
+   "200034"
+  ],
+  "15132911": [
+   "200033",
+   "200034"
+  ],
+  "21069090": [
+   "200003",
+   "200033"
+  ],
+  "22029900": [
+   "200033",
+   "200034"
+  ],
+  "25010020": [
+   "200003",
+   "200038"
+  ],
+  "25010090": [
+   "200003",
+   "200033",
+   "200038"
+  ],
+  "29152100": [
+   "200033",
+   "200038"
+  ],
+  "29224110": [
+   "200033",
+   "200038"
+  ],
+  "29224190": [
+   "200033",
+   "200038"
+  ],
+  "29224210": [
+   "200033",
+   "200038"
+  ],
+  "29224910": [
+   "200033",
+   "200038"
+  ],
+  "29224990": [
+   "200033",
+   "200038"
+  ],
+  "29304010": [
+   "200033",
+   "200038"
+  ],
+  "29304090": [
+   "200033",
+   "200038"
+  ],
+  "30021221": [
+   "200030",
+   "200038"
+  ],
+  "30021222": [
+   "200030",
+   "200038"
+  ],
+  "30021223": [
+   "200030",
+   "200038"
+  ],
+  "30021229": [
+   "200030",
+   "200038"
+  ],
+  "30021236": [
+   "200033",
+   "200038"
+  ],
+  "31042010": [
+   "200033",
+   "200038"
+  ],
+  "31042090": [
+   "200033",
+   "200038"
+  ],
+  "38210000": [
+   "200030",
+   "200038"
+  ],
+  "38249989": [
+   "200030",
+   "200038"
+  ],
+  "90182010": [
+   "200004",
+   "200030"
+  ],
+  "90189010": [
+   "200004",
+   "200030"
+  ],
+  "90189099": [
+   "200004",
+   "200030"
+  ],
+  "90211010": [
+   "200004",
+   "200030"
+  ],
+  "90211020": [
+   "200004",
+   "200030"
+  ],
+  "90219019": [
+   "200007",
+   "200030"
+  ],
+  "90251990": [
+   "200004",
+   "200031"
+  ]
+ },
+ "problemas": [
+  {
+   "linha": 7,
+   "tipo": "colunas_deslocadas",
+   "detalhe": "NCM 01051500: código recuperado de Coluna1"
+  },
+  {
+   "linha": 1300,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31010000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1301,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31021010: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1302,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31021090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1303,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31022100: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1304,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31022910: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1305,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31022990: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1306,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31023000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1307,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31024000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1308,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31025011: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1309,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31025019: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1310,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31025090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1311,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31026000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1312,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31028000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1313,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31029000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1314,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31031100: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1315,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31031900: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1316,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31039011: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1317,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31039019: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1318,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31039090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1319,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31042010: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1320,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31042090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1321,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31043010: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1322,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31043090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1323,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31049010: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1324,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31049090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1325,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31051000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1326,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31052000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1327,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31053000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1328,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31054000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1329,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31055100: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1330,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31055900: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1331,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31056000: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1332,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31059011: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1333,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31059019: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1334,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 31059090: fundamento 'Capítulo 31'"
+  },
+  {
+   "linha": 1335,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25030010: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1336,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25030090: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1337,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25081000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1338,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25084000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1339,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25171000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1340,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25172000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1341,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25174100: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1342,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25174900: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1343,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25181000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1344,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25182000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1345,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25191000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1346,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25199090: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1347,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25201000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1348,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25202010: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1349,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25202090: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1350,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25210000: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1351,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25301010: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1352,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25301090: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1353,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 25309090: fundamento 'Capítulo 25'"
+  },
+  {
+   "linha": 1354,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 05060000: fundamento '05.06'"
+  },
+  {
+   "linha": 1355,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23021000: fundamento '23.02'"
+  },
+  {
+   "linha": 1356,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23022000: fundamento '23.02'"
+  },
+  {
+   "linha": 1357,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23023010: fundamento '23.02'"
+  },
+  {
+   "linha": 1358,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23023090: fundamento '23.02'"
+  },
+  {
+   "linha": 1359,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23024000: fundamento '23.02'"
+  },
+  {
+   "linha": 1360,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23025000: fundamento '23.02'"
+  },
+  {
+   "linha": 1361,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23031000: fundamento '23.03'"
+  },
+  {
+   "linha": 1362,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23032000: fundamento '23.03'"
+  },
+  {
+   "linha": 1363,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23033000: fundamento '23.03'"
+  },
+  {
+   "linha": 1364,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23061000: fundamento '23.06'"
+  },
+  {
+   "linha": 1365,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23062000: fundamento '23.06'"
+  },
+  {
+   "linha": 1366,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23063000: fundamento '23.06'"
+  },
+  {
+   "linha": 1367,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23064100: fundamento '23.06'"
+  },
+  {
+   "linha": 1368,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23064900: fundamento '23.06'"
+  },
+  {
+   "linha": 1369,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23065000: fundamento '23.06'"
+  },
+  {
+   "linha": 1370,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23066000: fundamento '23.06'"
+  },
+  {
+   "linha": 1371,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23069010: fundamento '23.06'"
+  },
+  {
+   "linha": 1372,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 23069090: fundamento '23.06'"
+  },
+  {
+   "linha": 1373,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33011100: fundamento '33.01'"
+  },
+  {
+   "linha": 1374,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33011210: fundamento '33.01'"
+  },
+  {
+   "linha": 1375,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33011290: fundamento '33.01'"
+  },
+  {
+   "linha": 1376,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33011300: fundamento '33.01'"
+  },
+  {
+   "linha": 1377,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33011900: fundamento '33.01'"
+  },
+  {
+   "linha": 1378,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33012400: fundamento '33.01'"
+  },
+  {
+   "linha": 1379,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33012510: fundamento '33.01'"
+  },
+  {
+   "linha": 1380,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33012590: fundamento '33.01'"
+  },
+  {
+   "linha": 1381,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33012910: fundamento '33.01'"
+  },
+  {
+   "linha": 1382,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 33012990: fundamento '33.01'"
+  },
+  {
+   "linha": 1383,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 44013100: fundamento '44.01'"
+  },
+  {
+   "linha": 1384,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 44013900: fundamento '44.01'"
+  },
+  {
+   "linha": 1385,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 44014100: fundamento '44.01'"
+  },
+  {
+   "linha": 1386,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 44014900: fundamento '44.01'"
+  },
+  {
+   "linha": 1387,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 07011000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1388,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 07129010: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1389,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10011100: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1390,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10019100: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1391,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10051000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1392,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10061010: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1393,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10071000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1394,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10082100: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1395,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10082910: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1396,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12011000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1397,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12023000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1398,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12040010: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1399,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12051010: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1400,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12060010: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1401,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12072100: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1402,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12075010: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1403,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12091000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1404,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12092100: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1405,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12092200: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1406,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12092300: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1407,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12092400: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1408,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12092500: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1409,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12092900: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1410,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12093000: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1411,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12099100: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1412,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12099900: fundamento 'Capítulos 7, 10 e 12'"
+  },
+  {
+   "linha": 1413,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06011000: fundamento '06.01'"
+  },
+  {
+   "linha": 1414,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06012000: fundamento '06.01'"
+  },
+  {
+   "linha": 1415,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06021000: fundamento '06.02'"
+  },
+  {
+   "linha": 1416,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06022000: fundamento '06.02'"
+  },
+  {
+   "linha": 1417,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06023000: fundamento '06.02'"
+  },
+  {
+   "linha": 1418,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06024000: fundamento '06.02'"
+  },
+  {
+   "linha": 1419,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06029010: fundamento '06.02'"
+  },
+  {
+   "linha": 1420,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06029021: fundamento '06.02'"
+  },
+  {
+   "linha": 1421,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 06029029: fundamento '06.02'"
+  },
+  {
+   "linha": 1423,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01022110: fundamento '01.02'"
+  },
+  {
+   "linha": 1424,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01022190: fundamento '01.02'"
+  },
+  {
+   "linha": 1425,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01022900: fundamento '01.02'"
+  },
+  {
+   "linha": 1426,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01031010: fundamento '01.03'"
+  },
+  {
+   "linha": 1427,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01031090: fundamento '01.03'"
+  },
+  {
+   "linha": 1428,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01039100: fundamento '01.03'"
+  },
+  {
+   "linha": 1429,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01039200: fundamento '01.03'"
+  },
+  {
+   "linha": 1430,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01041011: fundamento '01.04'"
+  },
+  {
+   "linha": 1431,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01041019: fundamento '01.04'"
+  },
+  {
+   "linha": 1432,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01042010: fundamento '01.04'"
+  },
+  {
+   "linha": 1433,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 01042090: fundamento '01.04'"
+  },
+  {
+   "linha": 1434,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10011010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1435,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10011090: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1436,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10011900: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1437,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10019100: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1438,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10019900: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1439,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10021000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1440,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10029000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1441,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10031000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1442,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10039000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1443,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10041000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1444,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10049000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1445,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10051000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1446,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10059010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1447,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10059090: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1448,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10061010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1449,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10061092: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1450,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10062010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1451,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10062020: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1452,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10071000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1453,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 10079000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1454,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 11010010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1455,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 11022000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1456,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 11031300: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1457,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12011000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1458,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12019000: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1459,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12040010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1460,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12060010: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1461,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 12060090: fundamento 'Capítulos 10, 11 e 12'"
+  },
+  {
+   "linha": 1462,
+   "tipo": "ncm",
+   "detalhe": "NCM com 7 dígitos ajustado para 02101100"
+  },
+  {
+   "linha": 1462,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 02101100: fundamento '02.10'"
+  },
+  {
+   "linha": 1463,
+   "tipo": "ncm",
+   "detalhe": "NCM com 7 dígitos ajustado para 02101200"
+  },
+  {
+   "linha": 1463,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 02101200: fundamento '02.10'"
+  },
+  {
+   "linha": 1464,
+   "tipo": "ncm",
+   "detalhe": "NCM com 7 dígitos ajustado para 02101900"
+  },
+  {
+   "linha": 1464,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 02101900: fundamento '02.10'"
+  },
+  {
+   "linha": 1465,
+   "tipo": "ncm",
+   "detalhe": "NCM com 7 dígitos ajustado para 03091000"
+  },
+  {
+   "linha": 1465,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 03091000: fundamento '03.09'"
+  },
+  {
+   "linha": 1466,
+   "tipo": "ncm",
+   "detalhe": "NCM com 7 dígitos ajustado para 03099000"
+  },
+  {
+   "linha": 1466,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 03099000: fundamento '03.09'"
+  },
+  {
+   "linha": 1467,
+   "tipo": "ncm",
+   "detalhe": "NCM com 7 dígitos ajustado para 07129010"
+  },
+  {
+   "linha": 1467,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 07129010: fundamento '0712.90.10'"
+  },
+  {
+   "linha": 1468,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 15011000: fundamento 'Capítulo 15'"
+  },
+  {
+   "linha": 1469,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 15012000: fundamento 'Capítulo 15'"
+  },
+  {
+   "linha": 1470,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90251110: fundamento '90.25'"
+  },
+  {
+   "linha": 1471,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90251190: fundamento '90.25'"
+  },
+  {
+   "linha": 1472,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90251910: fundamento '90.25'"
+  },
+  {
+   "linha": 1473,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90251990: fundamento '90.25'"
+  },
+  {
+   "linha": 1474,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90258010: fundamento '90.25'"
+  },
+  {
+   "linha": 1475,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90258020: fundamento '90.25'"
+  },
+  {
+   "linha": 1476,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90258090: fundamento '90.25'"
+  },
+  {
+   "linha": 1477,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90259010: fundamento '90.25'"
+  },
+  {
+   "linha": 1478,
+   "tipo": "fundamento_invalido",
+   "detalhe": "NCM 90259090: fundamento '90.25'"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "02074300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "02075300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03021100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03021300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03021400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03021900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023600 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03023900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03025100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03025200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03025300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03029110 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03029190 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03029200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03029900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03031100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03031200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03031300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03031400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03031900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034600 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03034900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03036300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03036400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03036500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03039110 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03039190 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03039200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03039910 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03039920 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03039990 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044600 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044700 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044800 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044910 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044920 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03044990 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045600 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045700 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03045900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03047100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03047200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03047300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03047400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03047500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03047900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048200 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048510 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048520 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048600 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048700 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048810 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048890 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048910 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048920 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048930 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03048990 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049100 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049211 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049212 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049219 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049221 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049222 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049229 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049300 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049400 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049500 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049600 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049700 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03049900 / 200003"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03061110 / 200034"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03061190 / 200034"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03061500 / 200034"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03063100 / 200034"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03063400 / 200034"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "03063910 / 200034"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095100 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095200 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095300 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095400 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095500 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095600 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07095900 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "07108000 / 200014"
+  },
+  {
+   "tipo": "duplicata_exata",
+   "detalhe": "90221991 / 200004"
+  }
+ ]
+}

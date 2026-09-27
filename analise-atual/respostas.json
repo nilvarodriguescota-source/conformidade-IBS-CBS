@@ -1,0 +1,402 @@
+[
+  {
+    "ncm": "21011200",
+    "cProd": "30100003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "33460003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "233",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21069090",
+    "cProd": "36690003",
+    "regraId": "21069090-200033-VI-39",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "30280003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "30080003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "11350001",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "20091900",
+    "cProd": "498",
+    "regraId": "20091900-200034-VII-10",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "698",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "30070003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "79",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "20800003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "152",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "26120003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "76",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-26"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "30020003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "30260003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "31080003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "107",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "NAO",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "32870003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "246",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21069090",
+    "cProd": "501",
+    "regraId": "21069090-200033-VI-39",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "20210003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21069090",
+    "cProd": "30830003",
+    "regraId": "21069090-200033-VI-39",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21069090",
+    "cProd": "31430003",
+    "regraId": "21069090-200033-VI-39",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "240",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19022000",
+    "cProd": "12760003",
+    "regraId": "19022000-200034-VII-9",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19022000",
+    "cProd": "11760001",
+    "regraId": "19022000-200034-VII-9",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19022000",
+    "cProd": "10180003",
+    "regraId": "19022000-200034-VII-9",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "151",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "34350003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "31440003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19022000",
+    "cProd": "11790001",
+    "regraId": "19022000-200034-VII-9",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "28450003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "31170003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "21390003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "31460003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19022000",
+    "cProd": "32220003",
+    "regraId": "19022000-200034-VII-9",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "16620003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "483",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19022000",
+    "cProd": "292",
+    "regraId": "19022000-200034-VII-9",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "423",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "88",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "31480003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "34060003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "33450003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21011200",
+    "cProd": "30090003",
+    "regraId": "21011200-200003-I-8",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "19940003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "21069090",
+    "cProd": "30820003",
+    "regraId": "21069090-200033-VI-39",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  },
+  {
+    "ncm": "19059090",
+    "cProd": "19990003",
+    "regraId": "19059090-200003-I-16",
+    "resposta": "SIM",
+    "autor": "Sistema",
+    "data": "2026-09-27"
+  }
+]

@@ -1,0 +1,102 @@
+import express from "express";
+import fs from "fs";
+import path from "path";
+
+const app = express();
+const PORTA = 3000;
+
+app.use(express.json());
+
+const arquivoFila = path.join(
+  process.cwd(),
+  "saida-teste",
+  "fila-validacao.json"
+);
+
+app.get("/", (_req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Conformidade IBS/CBS</title>
+      </head>
+      <body>
+        <h1>Conformidade IBS/CBS</h1>
+        <p>Servidor funcionando corretamente.</p>
+        <p><a href="/api/fila-validacao">Ver fila de valida√ß√£o</a></p>
+      </body>
+    </html>
+  `);
+});
+
+app.post("/api/validar", (req, res) => {
+  try {
+    const { ncm, cProd, regraId, resposta, autor, justificativa } = req.body;
+
+    if (!ncm || !cProd || !regraId || !["SIM", "NAO"].includes(resposta)) {
+      return res.status(400).json({
+        erro: "Dados de validaÁ„o inv·lidos."
+      });
+    }
+
+    const arquivoEmpresa = path.join(process.cwd(), "empresa.json");
+    const empresa = JSON.parse(fs.readFileSync(arquivoEmpresa, "utf-8"));
+
+    if (!Array.isArray(empresa.validacoes)) {
+      empresa.validacoes = [];
+    }
+
+    empresa.validacoes = empresa.validacoes.filter(
+      (v: any) => !(v.ncm === ncm && v.cProd === cProd && v.regraId === regraId)
+    );
+
+    empresa.validacoes.push({
+      ncm,
+      cProd,
+      regraId,
+      resposta,
+      autor: autor || "Sistema",
+      data: new Date().toISOString().slice(0, 10),
+      ...(justificativa ? { justificativa } : {})
+    });
+
+    fs.writeFileSync(
+      arquivoEmpresa,
+      JSON.stringify(empresa, null, 2),
+      "utf-8"
+    );
+
+    res.json({
+      sucesso: true,
+      mensagem: "ValidaÁ„o gravada com sucesso."
+    });
+  } catch (erro) {
+    console.error("Erro ao gravar validaÁ„o:", erro);
+
+    res.status(500).json({
+      erro: "N„o foi possÌvel gravar a validaÁ„o."
+    });
+  }
+});
+
+app.get("/api/fila-validacao", (_req, res) => {
+  try {
+    const conteudo = fs.readFileSync(arquivoFila, "utf-8");
+    const dados = JSON.parse(conteudo);
+
+    res.json(dados);
+  } catch (erro) {
+    console.error("Erro ao ler fila-validacao.json:", erro);
+
+    res.status(500).json({
+      erro: "N√£o foi poss√≠vel ler a fila de valida√ß√£o."
+    });
+  }
+});
+
+app.listen(PORTA, () => {
+  console.log(`Servidor iniciado em http://localhost:${PORTA}`);
+});
+
+
+

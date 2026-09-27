@@ -1,0 +1,35 @@
+{
+  "fonte": "PLANILHA",
+  "aba": "Legenda e Manual",
+  "origem": {
+    "zip": "Planilha--de--conformidade--por--xml-----V4.1--(2) (1).zip",
+    "shaZip": "cb10a2c2902e1f6bccd73d12a66fbb73e689ce297b2097c68d96755e4181eec4",
+    "xlsm": "Planilha--de--conformidade--por--xml-----V4.1--(2) (1).xlsm",
+    "shaXlsm": "ccddd8b2df94a6b2c51b3e3e153edcc77960f8e5d18f8f04e772e2046ccaab5d",
+    "tamanhoXlsm": 800603,
+    "modificadoNoZip": "2026-09-08 14:28"
+  },
+  "metodoHash": "sha256(JSON.stringify(linhas)); linhas = [[nº da linha, { coluna: valor }]], só linhas com conteúdo",
+  "observacao": "Valores como gravados na planilha, sem saneamento. Células com fórmula trazem o último valor calculado salvo no arquivo.",
+  "nome": "Legenda e Manual",
+  "estado": "visible",
+  "arquivoXml": "xl/worksheets/sheet1.xml",
+  "dimensao": "A1:M14",
+  "celulasComFormula": 0,
+  "linhasComDados": 12,
+  "shaValores": "3aba116efdd2da29d570bb94f673352a741ff6ff967b23832df66dbf7a38da76",
+  "linhas": [
+    [1,{"A":"LEGENDA E PREMISSAS","F":"MANUAL"}],
+    [2,{"A":"Tema","B":"Regra","C":"Exemplo/Aplicação","D":"Fonte","F":"1° Passo","G":"Salvar os arquivos XMLs de venda em uma pasta"}],
+    [3,{"A":"NCM para cruzamento","B":"A coluna A contém NCM completo de 8 dígitos, armazenado como texto e sem pontos.","C":"1006.20.10 passou a constar como 10062010.","D":"Base de trabalho","F":"2° Passo","G":"Na aba \" XML\" clicar no botão \"IMPORTAR XML\" e escoher a pasta que contenham os arquivos"}],
+    [4,{"A":"CST IBS/CBS","B":"Os benefícios de redução de 60% e de alíquota zero desta base utilizam CST 200.","C":"O percentual efetivo é detalhado pelo cClassTrib.","D":"Tabela oficial cClassTrib - Portal Nacional da NF-e","F":"3° Passo","G":"Na aba \"Resultado\" terá os produtos vendidos e se a classificação está \"Correta\", \"Incorreta\" ou \"Não informado\". Os produtos Incorretos aparecerão na aba de validação de benefícios para conferência da possibilidade de utilização do benefício fiscal"}],
+    [5,{"A":"cClassTrib","B":"O código foi atribuído conforme o artigo e o anexo que fundamentam o benefício.","C":"Art. 125 / Anexo I = 200003; Art. 138 / Anexo IX = 200038.","D":"IT 2025.002 v.1.60 / Portal Nacional da NF-e","F":"4° Passo","G":"Na aba de validação, analisar se a descrição do produto vendido se encaixa na descrição do benefício legal.  Caso esteja de acordo, preencha com \"SIM\" e caso não esteja de acordo preencha com \"NÃO\""}],
+    [6,{"A":"Alíquota zero","B":"Alíquota zero permanece dentro do CST 200, com redução de 100% identificada no cClassTrib.","C":"Cesta básica: CST 200 + cClassTrib 200003.","D":"Tabela oficial cClassTrib","F":"5° Passo","G":"Analisar o DASHBOARD com o resultado apurado."}],
+    [7,{"A":"Descrição legal","B":"O benefício pode depender de descrição mais restrita que o NCM.","C":"A coincidência do NCM não substitui a validação da descrição legal.","D":"LC 214/2025 compilada","F":"6° Passo","G":"Na última aba da planilha conferir as instruções para atualização no sistema."}],
+    [8,{"A":"Condições da operação","B":"Alguns códigos dependem do adquirente ou da finalidade da operação.","C":"Anexo XI: aplicação condicionada ao fornecimento à administração pública.","D":"LC 214/2025 compilada"}],
+    [9,{"A":"Serviços/NBS","B":"Registros exclusivamente vinculados a NBS e serviços permanecem fora da base.","C":"Escopo limitado a bens e mercadorias.","D":"Premissa do projeto"}],
+    [10,{"A":"Atualização","B":"A base deve ser revisada quando houver alteração da LC, TIPI ou tabela cClassTrib.","C":"Mudanças normativas podem alterar códigos e sequências válidas.","D":"Portal Nacional da NF-e / Receita Federal"}],
+    [11,{"A":"Fonte oficial cClassTrib","B":"https://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=/NJarYc9nus="}],
+    [12,{"A":"Fonte legal","B":"https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm"}]
+  ]
+}
