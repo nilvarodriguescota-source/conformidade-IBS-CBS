@@ -15,7 +15,7 @@ import type {
   RespostaValidacao,
   Veredito,
 } from "./tipos.js";
-import { ALIQUOTAS, aliquotaVigente, preenchimentoObrigatorio } from "./parametros.js";
+import { ALIQUOTAS, aliquotaVigente, indicioNcm, observacoesEspecificas, preenchimentoObrigatorio } from "./parametros.js";
 
 export const TRIBUTACAO_INTEGRAL = { cst: "000", cClassTrib: "000001" };
 /** Regime específico de bares e restaurantes: art. 275 da LC 214/2025. */
@@ -84,7 +84,13 @@ export function classificarItem(
   const faltantes: string[] = [];
   // Fase 2: regras bloqueadas deste item (preenchido na seleção das candidatas); só aparece no veredito quando há
   let idsBloqueados: string[] = [];
-  const veredito = (estado: EstadoVeredito, motivo: string, extra: Partial<Veredito> = {}): Veredito => ({
+  // Tratamentos específicos (Imposto Seletivo) e indício de NCM divergente: só informação, no motivo
+  const notas = [
+    ...observacoesEspecificas(item.ncm, doc.dataEmissao ?? agora).map((o) => `${o.texto} Fonte: ${o.fonte}.${o.emVigor ? "" : " Ainda não vigente na data do documento."}`),
+    ...[indicioNcm(item.ncm, item.xProd)].filter((x): x is string => !!x),
+  ];
+  const comNotas = (v: Veredito): Veredito => (notas.length ? { ...v, motivo: `${v.motivo} ${notas.join(" ")}` } : v);
+  const veredito = (estado: EstadoVeredito, motivo: string, extra: Partial<Veredito> = {}): Veredito => comNotas({
     documento: doc.chave ?? doc.arquivo,
     nItem: item.nItem,
     cProd: item.cProd,
@@ -103,6 +109,7 @@ export function classificarItem(
     valorPago: null,
     valorCorreto: null,
     economiaPotencial: null,
+    economiaSujeitaValidacao: null,
     exposicao: null,
     aliquotaUsada: [],
     dadosFaltantes: faltantes,
@@ -248,17 +255,37 @@ export function classificarItem(
     mesmoCodigo(item.cst, esperado.cst) && mesmoCodigo(item.cClassTrib, esperado.cClassTrib);
 
   if (!informouAlgo) {
-    return veredito("INCORRETO_RISCO", "Grupo IBS/CBS exigido e não informado no documento.", {
+    const ausente = "Grupo IBS/CBS exigido e não informado no documento.";
+    if (estadoBase === "REQUER_VALIDACAO") {
+      // O esperado depende da validação: não se presume a regra geral. Exposição = o mínimo devido em
+      // qualquer enquadramento possível (a maior redução entre as candidatas).
+      const maior = Math.max(...aplicaveis.map((r) => r.reducaoAliquota));
+      return veredito("INCORRETO_RISCO", `${ausente} Enquadramento esperado: depende da validação. ${motivo}`, {
+        esperado: null,
+        regrasCandidatas: ids,
+        baseCalculo: base,
+        exposicao: usadas.length === 2 ? base * aliquotaTotal * (1 - maior) : null,
+        aliquotaUsada: usadas,
+      });
+    }
+    const esperadoTexto = escolhida
+      ? `${esperado.cst}/${esperado.cClassTrib} (${escolhida.rotulo}, ${escolhida.fundamentoLegal}).`
+      : `${esperado.cst}/${esperado.cClassTrib} (regra geral, sem benefício aplicável).`;
+    return veredito("INCORRETO_RISCO", `${ausente} Enquadramento esperado: ${esperadoTexto} ${motivo}`, {
       esperado,
       regraAplicada: escolhida?.id ?? null,
       regrasCandidatas: ids,
       baseCalculo: base,
+      exposicao: usadas.length === 2 ? base * aliquotaTotal * (1 - reducao) : null,
       aliquotaUsada: usadas,
     });
   }
 
   if (estadoBase === "REQUER_VALIDACAO") {
-    const economia = usadas.length === 2 ? base * aliquotaTotal * (aplicaveis[0]?.reducaoAliquota ?? 0) : null;
+    // Estimativa, não economia realizada: só quando o documento usa a tributação integral, com a menor redução
+    // entre as candidatas (se a validação confirmar alguma delas).
+    const menor = Math.min(...aplicaveis.map((r) => r.reducaoAliquota));
+    const usaIntegral = mesmoCodigo(item.cClassTrib, TRIBUTACAO_INTEGRAL.cClassTrib);
     const jaUsado = aplicaveis.find((r) => mesmoCodigo(item.cClassTrib, r.cClassTrib));
     const complemento = jaUsado
       ? ` O documento já usa ${jaUsado.cClassTrib}: falta confirmar que o produto atende à descrição legal e às vedações do Anexo ${jaUsado.anexo}.`
@@ -271,6 +298,7 @@ export function classificarItem(
       valorPago,
       valorCorreto: null,
       economiaPotencial: null,
+      economiaSujeitaValidacao: usaIntegral && valorPago !== null ? valorPago * menor : null,
       aliquotaUsada: usadas,
     });
   }

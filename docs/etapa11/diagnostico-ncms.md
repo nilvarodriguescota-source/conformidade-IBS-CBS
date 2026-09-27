@@ -91,3 +91,47 @@ leitura. A tela mostra os dois números sem explicar a diferença.
 Não mudam: parser, regras da base, bloqueios, alertas, explicador, perguntas SIM/NÃO, relatórios COM e SEM
 VALIDAÇÃO (a lógica fica igual; SEM VALIDAÇÃO passa a listar também os produtos em risco que dependem de validação,
 porque agora eles entram na fila), navegação, layout e cards existentes. Cópias antes da alteração em `backups/etapa11/`.
+
+## 4. Resultado (DEPOIS), com os mesmos XMLs e as mesmas 50 respostas
+
+| Indicador | ANTES | DEPOIS | Por quê |
+| --- | --- | --- | --- |
+| XMLs processados / documentos | 2.783 / 2.771 | 2.783 / 2.771 | Igual; agora a aba Análise explica: 2.777 notas + 6 eventos de cancelamento; 6 notas canceladas descartadas |
+| Itens / base de cálculo | 7.204 / R$ 144.396,78 | igual | — |
+| CORRETO / ECONOMIA / RISCO / VALIDAR / NÃO OBRIG. | 2.939 / 1.621 / 738 / 1.517 / 389 | igual | Nenhuma pendência virou incorreto, nenhum risco sumiu |
+| Valor calculado como pago / valor correto | R$ 998,51 / R$ 458,50 | igual | — |
+| Economia potencial (confirmada) | R$ 307,19 | R$ 307,19 | — |
+| Economia sujeita à validação | não existia | **R$ 167,13** | Itens pendentes que usam tributação integral × menor redução entre as candidatas; mostrada à parte |
+| Exposição (mínimo certo) | R$ 0,00 | R$ 0,80 | Riscos passam a ter o IBS/CBS devido sem destaque; quando depende da validação, só o mínimo (a maior redução possível); nos buffets 2106.90.90 o mínimo é zero porque a candidata de fórmula infantil é de alíquota zero |
+| Produtos com pergunta SIM/NÃO | 230 | **247** | +17 produtos que só apareciam como risco |
+
+Produtos cujo enquadramento esperado mudou (todos: de "000/000001 (regra geral)" para "REQUER VALIDAÇÃO"):
+
+| Produto | NCM | Regra anterior | Regra nova | Fundamento | Impacto |
+| --- | --- | --- | --- | --- | --- |
+| BUFFET ALMOÇO DE SEG A SEX; BUFFET ALMOÇO; BUFFET CAFE DA MANHA; BUFFET DE SOPAS E CALDOS LIVRE; SOPAS E CALDOS PARA LEVAR; PAIN AU CHOCOLAT; BOLO FUBA C/ GOIABADA; BOLO DE LIMÃO C/ MIRTILO; CINNAMON COM GANACHE; Coca cola expresso 220ml | 2106.90.90 | 000/000001 | Depende da validação: 200003 (Anexo I, item 4) ou 200033 (Anexo VI, itens 39 a 46); sem SIM, regra geral | LC 214/2025, arts. 125, 133 e 134; Anexos I e VI | Entram em Pendências; exposição mínima R$ 0,00 |
+| COOKIE DE NUTELLA; DELÍCIA DE PARIS; JALOUISE BANANA | 1905.90.90 | 000/000001 | Depende da validação (candidatas da base) | Anexos I/VII | Idem |
+| EMPANADA DE FRANGO | 1902.20.00 | 000/000001 | Depende da validação (Anexo VII, item 9) | Art. 135 | Exposição mínima R$ 0,07 |
+| SUCO DE LARANJA VITASUPRA | 2009.71.00 | 000/000001 | Depende da validação (Anexo VII, item 10: suco sem açúcar/conservantes) | Art. 135 | R$ 0,16 |
+| BIG ICE CAPPUCCINO 500ML | 2101.12.00 | 000/000001 | Depende da validação (Anexo I, item 8) | Art. 125 | R$ 0,00 |
+| BOLD WHEY MOUSSE DE MORANGO | 2106.90.30 | 000/000001 | Depende da validação | Anexo VI | R$ 0,06 |
+
+Observação legal acrescentada ao motivo (37 produtos): refrigerantes 2202.10.00 e bebidas alcoólicas — Imposto
+Seletivo a partir de 2027, só no primeiro fornecimento; IBS/CBS pela regra geral (confirmado como correto).
+Indício de NCM: "CERVEJA EISENBAHN 355ML" (2202.10.00 → descrição de cerveja, posição 22.03).
+
+Mapa completo depois: `mapa-ncms-depois.csv`.
+
+## 5. O que continua com a usuária
+
+- Rever as 5 respostas SIM do 2106.90.90 para "Fórmula para dieta isenta de fenilalanina" (tela Resultados →
+  "Auditoria e fontes" → "Resposta registrada" → NÃO). Testado numa cópia: o item volta a "precisa validar".
+- Responder as 247 pendências (os buffets e sopas devem ter NÃO para fórmulas infantis/nutricionais).
+- Conferir o NCM da cerveja Eisenbahn e do "ADC PÃES CARDÁPIO".
+- Regime de lanchonete (arts. 273 a 275): continua desligado até a revisão da natureza dos produtos (Etapa 10).
+
+## 6. Estrutura preservada (conferido no navegador e nos testes)
+
+Perguntas SIM/NÃO, Auditoria e fontes, Detalhes, Resultados, Pendências, Dashboard, navegação, Relatório Final
+(COM VALIDAÇÃO e SEM VALIDAÇÃO com a mesma lógica; nova opção INCORRETO — RISCO), exportações CSV/Excel/PDF, motor,
+parser, base normativa e configurações. 135 testes (10 novos em `test/etapa11.test.ts`), versão web sem erros.

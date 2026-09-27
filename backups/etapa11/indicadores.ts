@@ -18,8 +18,6 @@ export interface Indicadores {
   valorPagoTotal: number;
   valorCorretoTotal: number;
   economiaPotencial: number;
-  /** Estimativa dos itens pendentes de validação (não somada à economia potencial confirmada). */
-  economiaSujeitaValidacao: number;
   exposicao: number;
   pendentesDeValidacao: number;
   aliquotasUsadas: { tributo: string; aliquota: number; tipo: string; fonte: string }[];
@@ -43,7 +41,6 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
 
   let faturamento = 0;
   let economia = 0;
-  let economiaSujeita = 0;
   let exposicao = 0;
   let valorIBSInformadoTotal = 0;
   let valorCBSInformadoTotal = 0;
@@ -67,7 +64,6 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
     porEstado[v.estado].base += v.baseCalculo;
     faturamento += v.baseCalculo;
     economia += v.economiaPotencial ?? 0;
-    economiaSujeita += v.economiaSujeitaValidacao ?? 0;
     exposicao += v.exposicao ?? 0;
     if (v.valorIBSInformado != null) { valorIBSInformadoTotal += v.valorIBSInformado; temIBSInformado = true; }
     if (v.valorCBSInformado != null) { valorCBSInformadoTotal += v.valorCBSInformado; temCBSInformado = true; }
@@ -158,7 +154,6 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
     percentualConformidade:
       codigosAvaliados === 0 ? null : codigosCorretos / codigosAvaliados,
     economiaPotencial: Number(economia.toFixed(2)),
-    economiaSujeitaValidacao: Number(economiaSujeita.toFixed(2)),
     exposicao: Number(exposicao.toFixed(2)),
     pendentesDeValidacao: codigosPendentes,
     aliquotasUsadas: [...aliquotas.values()],
@@ -180,9 +175,7 @@ export interface PendenciaValidacao {
 export function filaDeValidacao(vereditos: Veredito[]): PendenciaValidacao[] {
   const mapa = new Map<string, PendenciaValidacao>();
   for (const v of vereditos) {
-    // Risco (grupo ausente) cujo enquadramento depende da validação também recebe a pergunta SIM/NÃO
-    const riscoPendente = v.estado === "INCORRETO_RISCO" && v.esperado === null && v.regrasCandidatas.length > 0;
-    if ((v.estado !== "REQUER_VALIDACAO" && !riscoPendente) || !v.ncm) continue;
+    if (v.estado !== "REQUER_VALIDACAO" || !v.ncm) continue;
     const chave = v.cProd;
     const atual = mapa.get(chave);
     if (atual) {

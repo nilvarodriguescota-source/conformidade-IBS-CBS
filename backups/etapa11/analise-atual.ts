@@ -21,7 +21,7 @@ import { processarXMLs } from "./processador.js";
 import { gerarLoteExplicativo } from "./lote-explicativo.js";
 import type { RespostaValidacao } from "./tipos.js";
 
-export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "alertas.json"];
+export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "explicacoes.json", "alertas.json"];
 
 export interface PastasAnalise { raiz: string; aguardando: string; xmls: string; respostas: string; empresaAnalise: string; empresaConfig: string }
 

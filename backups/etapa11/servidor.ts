@@ -124,7 +124,6 @@ app.get("/api/analise", (_req, res) => {
       porEstado,
     } : null,
     indicadores: processada ? lerJson(path.join(pastaSaida, "indicadores.json"), {}) : null,
-    composicao: processada ? lerJson(path.join(pastaSaida, "composicao.json"), null) : null,
   });
 });
 
@@ -373,12 +372,10 @@ app.get("/api/regras", (_req, res) => {
   const base = lerJson(arquivoBase, { regras: [] }) as BaseNormativa;
   const mapa: Record<string, {
     rotulo: string | null; anexo: string | null; item: string | null; cClassTrib: string | null; cst: string | null; fundamentoLegal: string | null;
-    reducao: number | null; vigenciaInicio: string | null; fonte: string | null; descricaoLegal: string | null;
   }> = {};
   for (const r of base.regras) {
     mapa[`${r.id}|${r.ncm}`] ??= {
       rotulo: r.rotulo ?? null, anexo: r.anexo ?? null, item: r.item ?? null, cClassTrib: r.cClassTrib ?? null, cst: r.cst ?? null, fundamentoLegal: r.fundamentoLegal ?? null,
-      reducao: r.reducaoAliquota ?? null, vigenciaInicio: r.vigenciaInicio ?? null, fonte: r.fonte ?? null, descricaoLegal: r.descricaoLegal ?? null,
     };
   }
   res.json(mapa);

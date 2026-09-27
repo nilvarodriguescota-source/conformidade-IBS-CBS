@@ -88,3 +88,63 @@ export function preenchimentoObrigatorio(
   if (!regra) return null;
   return { obrigatorio: data.slice(0, 10) >= regra.inicio, fonte: regra.fonte };
 }
+
+/**
+ * Tratamentos específicos que não mudam o CST/cClassTrib do IBS/CBS, mas precisam aparecer na análise
+ * (fonte e vigência de cada um). Só informação: o motor não altera o estado por causa deles.
+ */
+export interface ObservacaoEspecifica {
+  id: string;
+  prefixosNcm: string[];
+  inicio: string;
+  texto: string;
+  fonte: string;
+}
+
+export const OBSERVACOES_ESPECIFICAS: ObservacaoEspecifica[] = [
+  {
+    id: "IS-BEBIDAS-ACUCARADAS",
+    prefixosNcm: ["22021000"],
+    inicio: "2027-01-01",
+    texto: "Bebida açucarada do Anexo XVII (2202.10.00): sujeita ao Imposto Seletivo, tributo distinto do IBS/CBS, a partir de 1º/1/2027, cobrado uma única vez no primeiro fornecimento (fabricante ou importador); a revenda não recolhe o imposto e o IBS/CBS segue a regra geral.",
+    fonte: "LC 214/2025, arts. 409, § 1º, V, 410 e 412, I, e Anexo XVII; EC 132/2023 (início em 2027); alíquotas a fixar em lei ordinária",
+  },
+  {
+    id: "IS-BEBIDAS-ALCOOLICAS",
+    prefixosNcm: ["2203", "2204", "2205", "2206", "2208"],
+    inicio: "2027-01-01",
+    texto: "Bebida alcoólica do Anexo XVII: sujeita ao Imposto Seletivo, tributo distinto do IBS/CBS, a partir de 1º/1/2027, cobrado uma única vez no primeiro fornecimento; a revenda não recolhe o imposto e o IBS/CBS segue a regra geral. Fica fora do regime de bares e restaurantes.",
+    fonte: "LC 214/2025, arts. 273, § 2º, III, 409, § 1º, IV, 410 e 412, I, e Anexo XVII; EC 132/2023 (início em 2027); alíquotas a fixar em lei ordinária",
+  },
+];
+
+/** Observações específicas do NCM, com a indicação de já estarem ou não em vigor na data do documento. */
+export function observacoesEspecificas(ncm: string | null, data: string): (ObservacaoEspecifica & { emVigor: boolean })[] {
+  if (!ncm) return [];
+  return OBSERVACOES_ESPECIFICAS
+    .filter((o) => o.prefixosNcm.some((p) => ncm.startsWith(p)))
+    .map((o) => ({ ...o, emVigor: data.slice(0, 10) >= o.inicio }));
+}
+
+/**
+ * Indícios de NCM incompatível com a descrição (bebidas), pela TIPI. Não trocam o NCM nem o estado:
+ * só pedem conferência do cadastro.
+ */
+export const INDICIOS_NCM: { termo: RegExp; posicoes: string[]; descricao: string }[] = [
+  { termo: /\b(CERVEJA|CHOPP?)\b/, posicoes: ["2203"], descricao: "cerveja de malte (posição 22.03)" },
+  { termo: /\bVINHO\b/, posicoes: ["2204", "2205"], descricao: "vinho (posições 22.04 e 22.05)" },
+  { termo: /\b(VODKA|WHISKY|CACHACA|RUM|GIN|TEQUILA|CAIPIRINHA|CAIPIROSKA|CAIPIRA)\b/, posicoes: ["2208"], descricao: "aguardente/destilado (posição 22.08)" },
+  { termo: /\b(REFRIGERANTE|COCA[ -]?COLA|GUARANA|SPRITE|FANTA|PEPSI)\b/, posicoes: ["2202", "2106"], descricao: "refrigerante (posição 22.02)" },
+  { termo: /\bAGUA MINERAL\b/, posicoes: ["2201"], descricao: "água mineral (posição 22.01)" },
+];
+export const FONTE_TIPI = "TIPI (Decreto nº 11.158/2022), Capítulo 22";
+
+/** Indício de NCM divergente, ou null. Bebida com NCM fora do Capítulo 22 ou de posição diferente da descrição. */
+export function indicioNcm(ncm: string | null, descricao: string): string | null {
+  if (!ncm) return null;
+  const d = descricao.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+  if (/\bZERO\b.*\bALCOOL\b|\bSEM ALCOOL\b/.test(d)) return null;
+  const achado = INDICIOS_NCM.find((i) => i.termo.test(d));
+  if (!achado || achado.posicoes.some((p) => ncm.startsWith(p))) return null;
+  return `A descrição indica ${achado.descricao}, mas o NCM informado é ${ncm}; conferir a classificação do produto (${FONTE_TIPI}).`;
+}

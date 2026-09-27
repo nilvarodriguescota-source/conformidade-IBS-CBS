@@ -29,6 +29,33 @@ function listarXmls(pasta: string): string[] {
   return achados;
 }
 
+/** De onde vem a diferença entre XMLs lidos e documentos analisados. */
+export interface ComposicaoXmls {
+  arquivos: number;
+  documentosLidos: number;
+  documentosAnalisados: number;
+  eventos: { arquivo: string; tipo: string; chaves: string[] }[];
+  naoReconhecidos: { arquivo: string; motivo: string }[];
+  descartados: { documento: string; motivo: string }[];
+  descartadosPorMotivo: Record<string, number>;
+}
+
+export function composicaoDosXmls(arquivos: string[], leituras: ResultadoLeitura[], selecao: ReturnType<typeof selecionarVendas>): ComposicaoXmls {
+  const nome = (a: string) => a.split(/[\\/]/).pop() ?? a;
+  const eventos = leituras.flatMap((l, i) => (l.documentos.length === 0 && l.cancelamentos.size > 0
+    ? [{ arquivo: nome(arquivos[i]!), tipo: "evento de cancelamento (tpEvento 110111)", chaves: [...l.cancelamentos] }] : []));
+  const naoReconhecidos = leituras.flatMap((l) => l.ignorados.map((x) => ({ arquivo: nome(x.arquivo), motivo: x.motivo })));
+  const descartados = selecao.descartados.filter((d) => !naoReconhecidos.some((n) => n.arquivo === nome(d.documento)));
+  const descartadosPorMotivo: Record<string, number> = {};
+  for (const d of descartados) descartadosPorMotivo[d.motivo] = (descartadosPorMotivo[d.motivo] ?? 0) + 1;
+  return {
+    arquivos: arquivos.length,
+    documentosLidos: leituras.reduce((n, l) => n + l.documentos.length, 0),
+    documentosAnalisados: selecao.documentos.length,
+    eventos, naoReconhecidos, descartados, descartadosPorMotivo,
+  };
+}
+
 export interface ResultadoProcessamento {
   xmls: number;
   documentos: number;
@@ -100,6 +127,12 @@ export function processarXMLs(
   writeFileSync(
     join(saida, "descartados.json"),
     JSON.stringify(selecao.descartados, null, 1),
+    "utf8",
+  );
+
+  writeFileSync(
+    join(saida, "composicao.json"),
+    JSON.stringify(composicaoDosXmls(arquivos, leituras, selecao), null, 1),
     "utf8",
   );
 

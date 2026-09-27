@@ -122,8 +122,6 @@ export interface Veredito {
   valorPago: number | null;
   valorCorreto: number | null;
   economiaPotencial: number | null;
-  /** Estimativa para item pendente de validação que usa tributação integral (menor redução entre as candidatas). Não é economia confirmada. */
-  economiaSujeitaValidacao?: number | null;
   exposicao: number | null;
   aliquotaUsada: { tributo: string; aliquota: number; fonte: string; tipo: string }[];
   dadosFaltantes: string[];

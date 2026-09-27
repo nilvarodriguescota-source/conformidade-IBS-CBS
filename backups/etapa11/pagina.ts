@@ -373,7 +373,6 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 <div class="barra">
 <button class="secondary" id="btnRelatorioComValidacao" onclick="selecionarModoRelatorio('com')">COM VALIDAÇÃO</button>
 <button class="secondary" id="btnRelatorioSemValidacao" onclick="selecionarModoRelatorio('sem')">SEM VALIDAÇÃO</button>
-<button class="secondary" id="btnRelatorioRisco" onclick="selecionarModoRelatorio('risco')">INCORRETO — RISCO</button>
 <span id="contagemRelatorioFinal" class="small"></span>
 </div>
 
@@ -387,7 +386,7 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 
 <div style="overflow-x:auto;">
 <table>
-<thead id="cabecalhoRelatorioFinal">
+<thead>
 <tr>
 <th>Código produto</th>
 <th>Descrição</th>
@@ -418,36 +417,6 @@ let regrasUI={};
 let modoRelatorioFinal='com';
 let linhasRelatorioFinal=[];
 const COLUNAS_RELATORIO_FINAL=['Código produto','Descrição','NCM','cClassTrib a utilizar','CST a utilizar','Alíquota de registro IBS/CBS','Instrução'];
-const COLUNAS_RELATORIO_RISCO=['cProd','Descrição','NCM informado','NCM adequado / possível enquadramento','CST atual','CST esperado','cClassTrib atual','cClassTrib esperado','Redução IBS','Redução CBS','Alíquota aplicável','Alíquota atualmente considerada','Diferença (R$)','Motivo do INCORRETO — risco','Fundamento legal','Fonte','Instrução'];
-const colunasRelatorio=()=>modoRelatorioFinal==='risco'?COLUNAS_RELATORIO_RISCO:COLUNAS_RELATORIO_FINAL;
-/** Alíquota IBS + CBS vigente no item (as mesmas usadas pelo motor), com a redução. */
-function aliquotaComReducao(v,red){
- const t=(v.aliquotaUsada||[]).reduce((s,a)=>s+a.aliquota,0);
- if(!(v.aliquotaUsada||[]).length||red==null) return '-';
- return (t*(1-red)*100).toLocaleString('pt-BR',{maximumFractionDigits:3})+'% ('+(v.aliquotaUsada||[]).map(a=>a.tributo+' '+(a.aliquota*100).toLocaleString('pt-BR',{maximumFractionDigits:3})+'%').join(' + ')+(red?' com redução de '+textoPct(red):'')+')';
-}
-/** Uma linha por produto em INCORRETO — risco, só com dados do veredito e da base. */
-function linhaRelatorioRisco(v,itens){
- const inf=v.informado||{}, esp=v.esperado;
- const ausente=inf.cst==null&&inf.cClassTrib==null;
- const regraEsp=v.regraAplicada&&regrasUI[v.regraAplicada+'|'+v.ncm];
- const cands=(v.regrasCandidatas||[]).map(id=>regrasUI[id+'|'+v.ncm]).filter(Boolean);
- const red=esp?(regraEsp?regraEsp.reducao:(v.regraAplicada&&/art\. 275/.test(v.regraAplicada)?0.4:0)):null;
- const reducoes=esp?textoPct(red):(cands.length?'depende da validação: '+[...new Set(cands.map(g=>textoPct(g.reducao)))].join(' ou ')+' (ou 0% sem benefício)':'-');
- const dif=itens.reduce((s,x)=>s+(x.exposicao||0),0);
- const enquadramento=v.motivo.includes('A descrição indica')
-  ?'REQUER VALIDAÇÃO do NCM: '+v.motivo.slice(v.motivo.indexOf('A descrição indica')).split('(TIPI')[0].trim()
-  :esp?'NCM '+v.ncm+' mantido; enquadramento '+esp.cst+'/'+esp.cClassTrib:'REQUER VALIDAÇÃO: '+(cands.length?cands.map(g=>g.cst+'/'+g.cClassTrib+' (Anexo '+g.anexo+', item '+g.item+')').join(' · '):'sem regra candidata');
- const fundamento=[ausente?'Ato Conjunto RFB/CGIBS nº 4/2026 (grupo obrigatório desde 03/08/2026)':'',
-  regraEsp?(regraEsp.fundamentoLegal||'')+' — '+(regraEsp.rotulo||''):esp?'LC 214/2025 — regra geral (nenhuma regra de benefício aplicável ao NCM)':cands.map(g=>g.fundamentoLegal+' ('+g.rotulo+')').join(' · ')].filter(Boolean).join('; ');
- const fonte=[...new Set([regraEsp&&regraEsp.fonte,...(esp?[]:cands.map(g=>g.fonte)),'LC 214/2025 (Planalto)','Portal da Conformidade Fácil (SVRS)'].filter(Boolean))].join('; ');
- const instrucao=ausente
-  ?(esp?'Informar o grupo IBS/CBS no cadastro do produto com CST '+esp.cst+' e cClassTrib '+esp.cClassTrib+'.':'Responder SIM/NÃO em Pendências; depois informar o grupo IBS/CBS no cadastro com o enquadramento confirmado (sem benefício: CST 000 e cClassTrib 000001).')
-  :(esp?'Alterar o cadastro do produto para o CST '+esp.cst+' e cClassTrib '+esp.cClassTrib+'.':'Validar o enquadramento em Pendências antes de alterar o cadastro.');
- return [v.cProd,v.produto,v.ncm||'',enquadramento,inf.cst??'ausente',esp?esp.cst:'REQUER VALIDAÇÃO',inf.cClassTrib??'ausente',esp?esp.cClassTrib:'REQUER VALIDAÇÃO',
-  reducoes,reducoes,esp?aliquotaComReducao(v,red):'depende da validação',ausente?'não informada no XML (grupo IBS/CBS ausente)':(inf.cClassTrib==='000001'?aliquotaComReducao(v,0):((cands.find(g=>g.cClassTrib===inf.cClassTrib)||{}).reducao!=null?aliquotaComReducao(v,cands.find(g=>g.cClassTrib===inf.cClassTrib).reducao):'cClassTrib '+inf.cClassTrib+' (redução sem regra na base para o NCM)')),
-  dif?formatarNumero(dif)+(esp?'':' (mínimo)'):'-',v.motivo,fundamento,fonte,instrucao];
-}
 const ROTULO_ESTADO={CORRETO:'CORRETO',INCORRETO_ECONOMIA:'INCORRETO — economia',INCORRETO_RISCO:'INCORRETO — risco',REQUER_VALIDACAO:'PRECISA VALIDAR',NAO_OBRIGATORIO:'NÃO OBRIGATÓRIO',INDETERMINADO:'INDETERMINADO'};
 
 function abrirTela(id,botao){
@@ -498,13 +467,11 @@ function instrucaoRelatorioFinal(cst,cClassTrib,reducao,validado){
 }
 
 function selecionarModoRelatorio(modo){
- modoRelatorioFinal=modo==='sem'||modo==='risco'?modo:'com';
+ modoRelatorioFinal=modo==='sem'?'sem':'com';
  const btnCom=document.getElementById('btnRelatorioComValidacao');
  const btnSem=document.getElementById('btnRelatorioSemValidacao');
- const btnRisco=document.getElementById('btnRelatorioRisco');
  if(btnCom) btnCom.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal==='com');
  if(btnSem) btnSem.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal==='sem');
- if(btnRisco) btnRisco.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal==='risco');
  carregarRelatorioFinal();
 }
 
@@ -516,35 +483,19 @@ async function carregarRelatorioFinal(){
  if(!corpo) return;
 
  const modo=modoRelatorioFinal;
- const ncol=colunasRelatorio().length;
  linhasRelatorioFinal=[];
- const cab=document.getElementById('cabecalhoRelatorioFinal');
- if(cab) cab.innerHTML='<tr>'+colunasRelatorio().map(c=>'<th>'+escaparRelatorio(c)+'</th>').join('')+'</tr>';
- corpo.innerHTML='<tr><td colspan="'+ncol+'">Carregando relatório...</td></tr>';
+ corpo.innerHTML='<tr><td colspan="7">Carregando relatório...</td></tr>';
 
  const renderizar=(linhas,vazio)=>{
    if(modo!==modoRelatorioFinal) return;
    linhasRelatorioFinal=linhas;
    corpo.innerHTML=linhas.length
      ? linhas.map(l=>'<tr>'+l.map(c=>'<td>'+escaparRelatorio(c)+'</td>').join('')+'</tr>').join('')
-     : '<tr><td colspan="'+ncol+'">'+vazio+'</td></tr>';
+     : '<tr><td colspan="7">'+vazio+'</td></tr>';
    contador.textContent=linhas.length+' produto(s)';
  };
 
  try{
-   if(modo==='risco'){
-     if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
-     const resultadosApi=await (await fetch('/api/resultados')).json();
-     const porProduto=new Map();
-     resultadosApi.filter(v=>v.estado==='INCORRETO_RISCO').forEach(v=>{
-       const k=v.cProd||v.ncm+'|'+v.produto;
-       if(!porProduto.has(k)) porProduto.set(k,[]);
-       porProduto.get(k).push(v);
-     });
-     explicacao.textContent='INCORRETO — risco: produtos com imposto a menor ou grupo IBS/CBS ausente. Quando o enquadramento depende da natureza ou composição do produto, o esperado fica como REQUER VALIDAÇÃO e a pergunta SIM/NÃO continua em Pendências. A diferença é o IBS/CBS devido que não foi destacado (mínimo, quando depende da validação).';
-     renderizar([...porProduto.values()].map(itens=>linhaRelatorioRisco(itens[0],itens)),'Nenhum produto em INCORRETO — risco.');
-     return;
-   }
    if(modo==='com'){
      const resultadosApi=await (await fetch('/api/resultados')).json();
      const mapa=new Map();
@@ -611,7 +562,7 @@ async function carregarRelatorioFinal(){
  }catch(e){
    console.error(e);
    if(modo!==modoRelatorioFinal) return;
-   corpo.innerHTML='<tr><td colspan="'+ncol+'">Não foi possível carregar o Relatório Final.</td></tr>';
+   corpo.innerHTML='<tr><td colspan="7">Não foi possível carregar o Relatório Final.</td></tr>';
    contador.textContent='';
  }
 }
@@ -621,11 +572,10 @@ function exportarRelatorioFinal(formato){
    alert('Não há dados no relatório selecionado para exportar.');
    return;
  }
- const com=modoRelatorioFinal==='com', risco=modoRelatorioFinal==='risco';
- const titulo='Relatório Final — '+(risco?'INCORRETO — RISCO':com?'COM VALIDAÇÃO':'SEM VALIDAÇÃO');
- const nome=risco?'relatorio-final-incorreto-risco':'relatorio-final-'+(com?'com':'sem')+'-validacao';
- const colunas=colunasRelatorio();
- const tabela=[colunas].concat(linhasRelatorioFinal);
+ const com=modoRelatorioFinal==='com';
+ const titulo='Relatório Final — '+(com?'COM VALIDAÇÃO':'SEM VALIDAÇÃO');
+ const nome='relatorio-final-'+(com?'com':'sem')+'-validacao';
+ const tabela=[COLUNAS_RELATORIO_FINAL].concat(linhasRelatorioFinal);
 
  if(formato==='csv'){
    baixar(nome+'.csv',csv(tabela));
@@ -634,7 +584,7 @@ function exportarRelatorioFinal(formato){
 
  if(formato==='excel'){
    if(typeof gerarXlsx!=='function'){ alert('Não foi possível carregar o gerador de Excel. Recarregue a página.'); return; }
-   baixarArquivo(nome+'.xlsx',gerarXlsx(tabela,{aba:risco?'Incorreto - risco':com?'Com validação':'Sem validação',larguras:risco?[12,35,12,40,10,14,12,16,18,18,24,28,14,60,50,40,60]:[16,45,12,16,12,22,70]}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+   baixarArquivo(nome+'.xlsx',gerarXlsx(tabela,{aba:com?'Com validação':'Sem validação',larguras:[16,45,12,16,12,22,70]}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
    return;
  }
 
@@ -648,13 +598,12 @@ function exportarRelatorioFinal(formato){
    doc.setFontSize(9);
    doc.text('Gerado em '+new Date().toLocaleString('pt-BR')+' - '+linhasRelatorioFinal.length+' produto(s)',40,58);
    const opcoesTabela={
-     head:[colunas],
+     head:[COLUNAS_RELATORIO_FINAL],
      body:linhasRelatorioFinal.map(l=>l.map(latin1)),
      startY:70,
      styles:{fontSize:7,cellPadding:3,overflow:'linebreak'},
      headStyles:{fillColor:[109,40,217]},
-     columnStyles:risco?{}:{1:{cellWidth:150},6:{cellWidth:220}},
-     ...(risco?{styles:{fontSize:5,cellPadding:2,overflow:'linebreak'}}:{})
+     columnStyles:{1:{cellWidth:150},6:{cellWidth:220}}
    };
    window.jspdf.autoTable?window.jspdf.autoTable(doc,opcoesTabela):doc.autoTable(opcoesTabela);
    doc.save(nome+'.pdf');
@@ -697,7 +646,7 @@ function renderResumo(d){
   ['PRECISAM VALIDAR',r.precisamValidar,'REQUER_VALIDACAO']];
  if(r.naoObrigatorio) cards.push(['Não obrigatórios',r.naoObrigatorio]);
  if(r.indeterminado) cards.push(['Indeterminados',r.indeterminado]);
- return '<div class="grid">'+htmlCards(cards)+'</div>'+explicacaoComposicao(d.composicao,r)+
+ return '<div class="grid">'+htmlCards(cards)+'</div>'+
   '<h3>Demais indicadores</h3><div class="grid">'+htmlCards(cardsIndicadores(d.indicadores||{}).slice(3))+'</div>';
 }
 
@@ -827,10 +776,7 @@ if(situacao){
         '<div style="font-size:28px;font-weight:700">'+
         formatarNumero(economia)+
         '</div>'+
-        '<p>economia potencial identificada na análise (confirmada: itens validados ou com regra aplicável).</p>'+
-        (Number(i.economiaSujeitaValidacao||0)>0
-          ? '<p class="small" title="Estimativa dos itens pendentes que usam tributação integral, com a menor redução entre as regras candidatas. Não está somada ao valor acima.">+ '+formatarNumero(i.economiaSujeitaValidacao)+' sujeita à validação (respostas SIM/NÃO pendentes).</p>'
-          : '');
+        '<p>economia potencial identificada na análise.</p>';
     }
 
     const corretos=Number(i.codigosCorretos||0);
@@ -1375,7 +1321,7 @@ function cardsIndicadores(i){
     ['Códigos pendentes',i.codigosPendentes??0],
     ['Valor calculado como pago',formatarNumero(i.valorPagoTotal??0)],
     ['Valor correto',formatarNumero(i.valorCorretoTotal??0)],
-    ['Economia potencial',formatarNumero(i.economiaPotencial??0)+(Number(i.economiaSujeitaValidacao||0)>0?'<div class="small">+ '+formatarNumero(i.economiaSujeitaValidacao)+' sujeita à validação</div>':'')],
+    ['Economia potencial',formatarNumero(i.economiaPotencial??0)],
     ['Conformidade',formatarPercentual(i.percentualConformidade??0)]];
 }
 
@@ -1761,7 +1707,6 @@ function linhaEnquadramento(v){
  }
  if(r&&r.situacao==='prevista'&&r.opcoes.length>1) return '<span class="r-lbl">'+r.opcoes.length+' regras candidatas</span><span class="small">(escolha na tela Pendências)</span>';
  const esp=v.esperado;
- if(!esp&&(v.regrasCandidatas||[]).length) return '<span class="r-lbl">Esperado</span><span class="small">REQUER VALIDAÇÃO — '+v.regrasCandidatas.length+' regra(s) candidata(s) (escolha na tela Pendências)</span>';
  return esp?'<span class="r-lbl">Esperado</span>'+chip('CST',esp.cst,classeComparada(inf.cst,esp.cst,v))+chip('cClassTrib',esp.cClassTrib,classeComparada(inf.cClassTrib,esp.cClassTrib,v)):'<span class="small">sem enquadramento esperado</span>';
 }
 function linhaReducao(v){
@@ -1804,76 +1749,8 @@ function avisosCompactos(v){
  return av.length?'<div class="r-linha">'+av.join('')+'</div>':'';
 }
 /** Conteúdo da auditoria do item, montado só quando o usuário abre "Auditoria e fontes". */
-const FONTES_LEGAIS={
- lc214:'LC 214/2025 (texto do Planalto, com as alterações da LC 227/2026): https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm',
- svrs:'Portal da Conformidade Fácil (SVRS) — Classificação Tributária: https://dfe-portal.svrs.rs.gov.br/Cff/ClassificacaoTributaria',
- obrigatoriedade:'Ato Conjunto RFB/CGIBS nº 4/2026: grupo IBS/CBS obrigatório na NF-e/NFC-e do regime normal desde 03/08/2026',
- dispensa:'LC 214/2025, art. 348, § 1º: em 2026 o recolhimento só é dispensado se cumpridas as obrigações acessórias'
-};
-function textoPct(x){ return x==null?'-':Math.round(x*100)+'%'; }
-function textoRegraCandidata(id,ncm){
- const g=regrasUI[id+'|'+ncm]||{};
- return (g.cst||'?')+'/'+(g.cClassTrib||'?')+' — '+(g.rotulo||id)+' (Anexo '+(g.anexo||'?')+', item '+(g.item||'?')+'; redução '+textoPct(g.reducao)+'; '+(g.fundamentoLegal||'fundamento não informado')+(g.vigenciaInicio?'; vigência desde '+g.vigenciaInicio:'')+')';
-}
-/** Produto → XML → problema → enquadramento esperado → fundamento → impacto, só com o que o veredito e a base trazem. */
-function blocoDiagnosticoRisco(v){
- if(v.estado!=='INCORRETO_RISCO') return '';
- const inf=v.informado||{};
- const ausente=inf.cst==null&&inf.cClassTrib==null;
- const problema=ausente
-  ?'Grupo IBS/CBS ausente no item: o documento não informa CST nem cClassTrib, obrigatórios na data de emissão.'
-  :/^Código .* no lugar do regime/.test(v.motivo)
-   ?'O documento usa outro benefício no lugar do regime específico de bares e restaurantes.'
-   :'O documento usa o cClassTrib '+(inf.cClassTrib||'?')+', sem regra que o ampare para o NCM '+(v.ncm||'?')+'.';
- const cands=(v.regrasCandidatas||[]);
- const esperado=v.esperado
-  ?esc(v.esperado.cst+'/'+v.esperado.cClassTrib)+(v.regraAplicada&&regrasUI[v.regraAplicada+'|'+v.ncm]?' — '+esc(textoRegraCandidata(v.regraAplicada,v.ncm)):(v.regraAplicada&&/^LC/.test(v.regraAplicada)?' — '+esc(v.regraAplicada):' — regra geral (sem benefício aplicável)'))
-  :'<strong>REQUER VALIDAÇÃO</strong>: '+(cands.length?'o NCM admite '+cands.length+' enquadramento(s) com benefício; sem confirmação, vale a regra geral 000/000001. Candidatas:<ul>'+cands.map(id=>'<li>'+esc(textoRegraCandidata(id,v.ncm))+'</li>').join('')+'</ul>Responda SIM/NÃO na tela Pendências.':'sem regra candidata.');
- const fundamentos=[];
- if(ausente){ fundamentos.push(FONTES_LEGAIS.obrigatoriedade); fundamentos.push(FONTES_LEGAIS.dispensa); }
- if(v.regraAplicada&&regrasUI[v.regraAplicada+'|'+v.ncm]) fundamentos.push((regrasUI[v.regraAplicada+'|'+v.ncm].fonte||'')+' — '+(regrasUI[v.regraAplicada+'|'+v.ncm].fundamentoLegal||''));
- cands.forEach(id=>{ const g=regrasUI[id+'|'+v.ncm]; if(g&&g.fonte) fundamentos.push(g.fonte+' — '+(g.fundamentoLegal||'')); });
- fundamentos.push(FONTES_LEGAIS.lc214); fundamentos.push(FONTES_LEGAIS.svrs);
- const impacto=v.exposicao!=null
-  ?formatarNumero(v.exposicao)+(v.esperado?' de IBS/CBS devido pelo enquadramento esperado, sem destaque no documento.':' de IBS/CBS devido no mínimo (considerando a maior redução entre as candidatas); o valor final depende da validação.')
-  :'não calculado (sem alíquota vigente ou sem enquadramento determinável).';
- return '<div class="card aud-risco"><h4>Diagnóstico do INCORRETO — risco</h4>'+
-  '<div class="small"><strong>No XML:</strong> NCM '+esc(v.ncm||'-')+' · CST '+esc(inf.cst??'ausente')+' · cClassTrib '+esc(inf.cClassTrib??'ausente')+' · base '+formatarNumero(v.baseCalculo)+' · IBS/CBS informado '+(v.valorInformadoTotal==null?'não informado':formatarNumero(v.valorInformadoTotal))+'</div>'+
-  '<div class="small"><strong>Problema identificado:</strong> '+esc(problema)+'</div>'+
-  '<div class="small"><strong>Enquadramento esperado:</strong> '+esperado+'</div>'+
-  '<div class="small"><strong>NCM:</strong> '+esc(v.motivo.includes('A descrição indica')?'possível divergência entre a descrição e o NCM (ver motivo); REQUER VALIDAÇÃO do NCM.':'sem indício de NCM incorreto na descrição; mantido '+(v.ncm||'-')+'.')+'</div>'+
-  '<div class="small"><strong>Impacto tributário potencial:</strong> '+impacto+'</div>'+
-  '<div class="small"><strong>Fontes:</strong><ul>'+[...new Set(fundamentos)].map(f=>'<li>'+esc(f)+'</li>').join('')+'</ul></div>'+
- '</div>';
-}
-/** Respostas SIM/NÃO já registradas para o produto, com os mesmos botões para revisar a resposta. */
-function blocoRespostasRegistradas(v){
- const rs=(respostas||[]).filter(r=>r.ncm===v.ncm&&(r.cProd===v.cProd||r.cProd===v.produto));
- if(!rs.length) return '';
- return '<div class="card aud-resposta"><h4>Resposta registrada nesta análise</h4>'+rs.map(r=>{
-  const g=regrasUI[r.regraId+'|'+r.ncm]||{};
-  return '<div class="small"><strong>'+(r.resposta==='NAO'?'NÃO':'SIM')+'</strong> para '+esc(textoRegraCandidata(r.regraId,r.ncm))+' · '+esc(r.autor||'')+' · '+esc(r.data||'')+'</div>'+
-   (g.descricaoLegal?'<div class="small">A regra exige: “'+esc(g.descricaoLegal)+'”. Confira se o produto “'+esc(v.produto)+'” atende a essa descrição.</div>':'')+
-   '<div class="barra"><span class="small">Revisar a resposta:</span>'+
-   '<button class="secondary'+(r.resposta==='SIM'?' validacao-selecionada':'')+'" data-validar="SIM" data-ncm="'+esc(r.ncm)+'" data-cprod="'+esc(r.cProd)+'" data-regra="'+esc(r.regraId)+'">SIM</button>'+
-   '<button class="secondary'+(r.resposta==='NAO'?' validacao-selecionada':'')+'" data-validar="NAO" data-ncm="'+esc(r.ncm)+'" data-cprod="'+esc(r.cProd)+'" data-regra="'+esc(r.regraId)+'">NÃO</button></div>';
- }).join('')+'</div>';
-}
-function explicacaoComposicao(c,r){
- if(!c||r.xmls===r.documentos&&!c.eventos.length&&!c.descartados.length&&!c.naoReconhecidos.length) return '';
- const partes=[];
- if(c.eventos.length) partes.push(c.eventos.length+' XML(s) de evento (não são documentos de venda): '+c.eventos.map(e=>e.arquivo+' — '+e.tipo).join('; '));
- if(c.naoReconhecidos.length) partes.push(c.naoReconhecidos.length+' XML(s) não reconhecido(s): '+c.naoReconhecidos.map(x=>x.arquivo+' — '+x.motivo).join('; '));
- Object.entries(c.descartadosPorMotivo||{}).forEach(([m,n])=>partes.push(n+' documento(s) descartado(s): '+m));
- const lidos=c.documentosLidos;
- return '<div class="aviso composicao-xmls"><strong>XMLs processados: '+c.arquivos+' · Documentos analisados: '+c.documentosAnalisados+' · Diferença: '+(c.arquivos-c.documentosAnalisados)+'</strong>'+
-  '<div class="small">'+c.arquivos+' XML(s) lidos = '+lidos+' documento(s) fiscal(is)'+(c.eventos.length?' + '+c.eventos.length+' evento(s)':'')+(c.naoReconhecidos.length?' + '+c.naoReconhecidos.length+' não reconhecido(s)':'')+'. Dos '+lidos+' documentos, '+(lidos-c.documentosAnalisados)+' foram descartados e '+c.documentosAnalisados+' analisados.</div>'+
-  '<details><summary>Ver o motivo de cada diferença</summary><ul>'+partes.map(p=>'<li class="small">'+esc(p)+'</li>').join('')+
-  (c.descartados.length?'<li class="small">Documentos descartados: '+c.descartados.map(d=>esc(d.documento+' ('+d.motivo+')')).join('; ')+'</li>':'')+'</ul></details></div>';
-}
 function auditoriaDetalhadaResultado(v){
- return blocoDiagnosticoRisco(v)+blocoRespostasRegistradas(v)+
-  '<div class="small">Documento '+esc(v.documento)+' · item '+esc(v.nItem)+' · regra aplicada: '+esc(v.regraAplicada||'nenhuma')+'</div>'+
+ return '<div class="small">Documento '+esc(v.documento)+' · item '+esc(v.nItem)+' · regra aplicada: '+esc(v.regraAplicada||'nenhuma')+'</div>'+
   '<div class="small">Benefício / enquadramento: '+esc(beneficioDoItem(v))+'</div>'+
   quadroRegraResultado(v)+blocoReducao(v)+blocoAuditoriaResultado(v)+blocosBloqueioDoItem(v)+
   '<div class="small">Por que este resultado: '+esc(textoMotivo(v))+'</div>'+
