@@ -29,15 +29,12 @@ const V2 = process.argv[3] ?? "data/base-normativa.v2.json";
 const RELATORIO = process.argv[4] ?? "data/base-normativa-relatorio.json";
 
 const ESPERADO = {
-  // Etapa 10 (D5 = incluir): 1.369 regras da planilha + 1.066 de fonte oficial no fim da base
-  shaAtual: "d67cc82b0376e1de1a611347881d4b3c637a9d02802bb4214adb52ba7146e7cc",
-  regrasPlanilha: 1369,
-  regrasD5: 1066,
+  shaAtual: "a451c459597ff6fa4d45c95713708a5220fd7701f4b835df039b8f962e031416",
   shaRelatorio: "4c0c634d3d59d592137a9fa2a0f3c632e458be7b169a066086436dd44216e5d0",
-  regras: 2435,
-  ncms: 1816,
+  regras: 1369,
+  ncms: 1193,
   codigosCatalogo: 12,
-  porCodigo: { "200033": { regras: 86, ncms: 64 }, "200043": { regras: 101, ncms: 86 } },
+  porCodigo: { "200033": { regras: 85, ncms: 63 }, "200043": { regras: 42, ncms: 38 } },
   linhasPlanilha: 1477,
   agrupadas: 108,
   agrupadasPorCodigo: { "200003": 93, "200004": 1, "200014": 8, "200034": 6 },
@@ -46,13 +43,13 @@ const ESPERADO = {
   fontes: ["PLANILHA", "F1", "F2"],
   arquivosPorTipo: { original: 3, metadados_captura: 1, extracao: 4 },
   vinculosCodigo: { inequivoco: 6, ambiguo: 3, conflito: 1, informativo: 2 },
-  vinculosRegra: { inequivoco: 112, ambiguo: 63, conflito: 12 },
-  resultadosRegra: { concorda: 112, item_entre_varios: 63, item_divergente: 11, ncm_so_na_F1: 1 },
-  ncmsOficiaisSemRegra: {},
-  regrasDeOutrosCodigos: 22,
+  vinculosRegra: { inequivoco: 70, ambiguo: 45, conflito: 12 },
+  resultadosRegra: { concorda: 70, item_entre_varios: 45, item_divergente: 11, ncm_so_na_F1: 1 },
+  ncmsOficiaisSemRegra: { "200033": 1, "200043": 48 },
+  regrasDeOutrosCodigos: 20,
   // Etapa 5.3 (Fase 3)
-  evidenciasPorStatus: { CONFIRMADA: 1615, VEDADO: 135, DIVERGENTE: 160, NAO_DETERMINADA: 510, NAO_LOCALIZADA: 15 },
-  comItemOficial: 1737,
+  evidenciasPorStatus: { CONFIRMADA: 856, VEDADO: 135, DIVERGENTE: 160, NAO_DETERMINADA: 203, NAO_LOCALIZADA: 15 },
+  comItemOficial: 978,
   vinculosCodigoEtapa53: 40,
 };
 const BLOCOS_NOVOS = ["original", "originaisAgrupados"];
@@ -117,38 +114,17 @@ for (const [cod, esp] of Object.entries(ESPERADO.porCodigo)) {
   conferir(rs.length === esp.regras && ncms(rs) === esp.ncms, `${cod}: ${rs.length} regras, ${ncms(rs)} NCMs`);
 }
 
-// 4. Etapa 3: forma dos blocos (regras da planilha primeiro; as da D5 no fim)
+// 4. Etapa 3: forma dos blocos
 const snap = lerSnapshot();
 const nomes = snap.colunas.map(([, nome]) => nome);
-const ehD5 = (r) => r.original?.fonte === "OFICIAL_D5";
-const daPlanilha = v2.regras.filter((r) => !ehD5(r));
-const regrasD5 = v2.regras.filter(ehD5);
-conferir(daPlanilha.length === ESPERADO.regrasPlanilha && regrasD5.length === ESPERADO.regrasD5 && v2.regras.slice(0, daPlanilha.length).every((r) => !ehD5(r)),
-  `origem: ${daPlanilha.length} regras da planilha seguidas de ${regrasD5.length} da D5`);
-const blocos = daPlanilha.flatMap((r) => [r.original, ...r.originaisAgrupados]);
+const blocos = v2.regras.flatMap((r) => [r.original, ...r.originaisAgrupados]);
 const formaOk = (b, motivo) =>
   JSON.stringify(Object.keys(b)) === JSON.stringify(motivo ? ["fonte", "aba", "linha", "motivo", "valores"] : ["fonte", "aba", "linha", "valores"]) &&
   b.fonte === "PLANILHA" && b.aba === "Base de dados" && Number.isInteger(b.linha) && (!motivo || b.motivo === "duplicata_exata") &&
   JSON.stringify(Object.keys(b.valores)) === JSON.stringify(nomes) &&
   Object.values(b.valores).every((x) => x === null || (typeof x === "string" && x !== ""));
-conferir(daPlanilha.every((r) => r.original && formaOk(r.original, false)), `original nas regras da planilha, com ${nomes.length} colunas na ordem da planilha (vazia = null)`);
-conferir(daPlanilha.every((r) => Array.isArray(r.originaisAgrupados) && r.originaisAgrupados.every((b) => formaOk(b, true))), "originaisAgrupados nas regras da planilha, com a mesma forma e motivo duplicata_exata");
-// Regras da D5: bloco de origem oficial, idênticas à proposta, com a lei no mesmo anexo/item e o SVRS PERMITIDO
-const proposta = JSON.parse(fs.readFileSync("docs/etapa10/proposta-d5.json", "utf8"));
-const propostaPorId = new Map(proposta.regras.map((x) => [`${x.id}|${x.ncm}`, x]));
-let d5Ruins = 0;
-for (const r of regrasD5) {
-  const p = propostaPorId.get(`${r.id}|${r.ncm}`);
-  const b = r.original;
-  const ok = p && JSON.stringify(Object.keys(b)) === JSON.stringify(["fonte", "aba", "linha", "decisao", "valores", "evidencia"]) &&
-    b.aba === null && b.linha === null && b.decisao === "D5" && b.valores === null && r.originaisAgrupados.length === 0 &&
-    JSON.stringify(b.evidencia) === JSON.stringify(p.evidencia) &&
-    b.evidencia.F1.dispositivo === `LC 214/2025, Anexo ${r.anexo}, item ${r.item}` && b.evidencia.F1.itensQueCobremONcm.includes(r.item) &&
-    b.evidencia.F2.length > 0 && b.evidencia.F2.every((f) => f.TipoPermissao === "PERMITIDO") &&
-    r.origemRegistro.startsWith("Fonte oficial (proposta D5)") && Object.keys(r).slice(0, 18).every((k) => JSON.stringify(r[k]) === JSON.stringify(p[k]));
-  if (!ok && d5Ruins++ < 5) console.log(`      regra D5 ${r.id}: não confere com a proposta ou com a evidência`);
-}
-conferir(d5Ruins === 0 && regrasD5.length === proposta.regras.length, `regras da D5: ${regrasD5.length}, idênticas à proposta, com lei no mesmo anexo e item e SVRS PERMITIDO (${d5Ruins} problema(s))`);
+conferir(v2.regras.every((r) => r.original && formaOk(r.original, false)), `original em todas as regras, com ${nomes.length} colunas na ordem da planilha (vazia = null)`);
+conferir(v2.regras.every((r) => Array.isArray(r.originaisAgrupados) && r.originaisAgrupados.every((b) => formaOk(b, true))), "originaisAgrupados em todas as regras, com a mesma forma e motivo duplicata_exata");
 
 // 5. Cobertura: cada linha da aba exatamente uma vez
 const linhas = blocos.map((b) => b.linha).sort((a, b) => a - b);
@@ -173,7 +149,6 @@ conferir(shaRemontada === snap.shaValores, `aba remontada da v2: shaValores ${sh
 const crlf = [];
 let incoerentes = 0;
 v2.regras.forEach((r, i) => {
-  if (ehD5(r)) return;
   const atualR = atual.regras[i];
   if (!atualR) { if (incoerentes++ < 5) console.log(`      regra[${i}]: não existe na base atual`); return; }
   const res = comparar(reproduzirRegra(r.original.valores, v2.catalogoCodigos) ?? {}, atualR);
@@ -232,7 +207,7 @@ for (const a of arquivos.filter((x) => x.fonte === "PLANILHA" && x.noProjeto)) {
 }
 
 // Referências das regras às fontes
-const refs = new Set(daPlanilha.flatMap((r) => [r.original, ...r.originaisAgrupados]).map((b) => b.fonte));
+const refs = new Set(v2.regras.flatMap((r) => [r.original, ...r.originaisAgrupados]).map((b) => b.fonte));
 conferir([...refs].every((f) => f in registros), `referências das regras resolvem no registro: ${[...refs].join(", ")}`);
 conferir(registros.PLANILHA.arquivos.some((a) => a.aba === "Base de dados" && a.caminho === "data/fontes/planilha-p3/base-de-dados.json"),
   "aba Base de dados usada na Etapa 3 está registrada em PLANILHA");
@@ -298,7 +273,7 @@ const sr = contar(vinc.ncmsOficiaisSemRegra, (x) => x.cClassTrib);
 conferir(igual(cc, ESPERADO.vinculosCodigo), `registros de código por status: ${JSON.stringify(cc)}`);
 conferir(igual(cr, ESPERADO.vinculosRegra), `registros de regra por status: ${JSON.stringify(cr)}`);
 conferir(igual(rr, ESPERADO.resultadosRegra), `registros de regra por resultado: ${JSON.stringify(rr)}`);
-conferir(igual(sr, ESPERADO.ncmsOficiaisSemRegra), `NCMs oficiais sem regra: ${JSON.stringify(sr)} (D5 = incluir)`);
+conferir(igual(sr, ESPERADO.ncmsOficiaisSemRegra), `NCMs oficiais sem regra: ${JSON.stringify(sr)} (nenhuma regra criada)`);
 conferir(vinc.regrasDeOutrosCodigosComNcmNaListaOficial.length === ESPERADO.regrasDeOutrosCodigos,
   `regras de outros códigos com NCM na lista oficial (informativo): ${vinc.regrasDeOutrosCodigosComNcmNaListaOficial.length}`);
 
@@ -326,7 +301,7 @@ conferir(evid.regras.length === ESPERADO.regras && evid.regras.every((x, i) => x
 conferir(evid.regras.every((x, i) => {
   const r = v2.regras[i], a = atual.regras[i];
   return r.id === x.regraId && r.ncm === x.ncm && r.cClassTrib === x.cClassTrib && x.itemDaBase === r.item && r.item === a.item && r.original.linha === x.linhaPlanilha;
-}), "cada evidência aponta para a sua regra (regraId, NCM, cClassTrib, linha); item original preservado em todas");
+}), "cada evidência aponta para a sua regra (regraId, NCM, cClassTrib, linha); item original preservado nas 1.369");
 // itemOficial só com evidência correspondente
 const vincPorId = new Map(vinc.regras.map((x) => [x.id, x]));
 let semEvidenciaItem = 0;

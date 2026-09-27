@@ -2,7 +2,8 @@
 //
 // Não altera a base nem a v2: grava só docs/etapa10/proposta-d5.json, com as regras que seriam
 // incluídas se a D5 for decidida como "incluir". Nada é presumido:
-//   - só códigos do catálogo atual (os 12 da planilha), com CST, redução, anexo e artigo do catálogo;
+//   - só códigos do catálogo atual (os 12 da planilha), com CST, redução e anexo do catálogo e o
+//     fundamento que a base já usa para o código;
 //   - só NCMs PERMITIDOS no SVRS (F2) para o código e não VEDADOS para ele;
 //   - só quando a LC 214/2025 (F1) cobre o NCM num item do anexo sem excluí-lo (a lei prevalece):
 //     uma regra por item que cobre o NCM; NCM sem item na lei fica fora e é listado;
@@ -48,7 +49,12 @@ export function montarProposta(buf) {
     if (!cls) continue;
     const anexoNum = ARABICO[cat.anexo];
     const linhas = lerAnexo(anexoNum);
-    const ncmsDaBase = new Set(base.regras.filter((r) => r.cClassTrib === cod).map((r) => r.ncm));
+    const doCodigo = base.regras.filter((r) => r.cClassTrib === cod);
+    const ncmsDaBase = new Set(doCodigo.map((r) => r.ncm));
+    // O código tem um único fundamento na base (a v2 exige); a divergência do código com a lei, se houver,
+    // continua registrada na auditoria e exibida como FUNDAMENTO_DIVERGENTE
+    const fundamentos = [...new Set(doCodigo.map((r) => r.fundamentoLegal))];
+    const fundamento = fundamentos.length === 1 ? fundamentos[0] : cat.artigo;
     const porNcm = new Map();
     for (const a of cls.Anexos ?? []) {
       if (a.TipoCodigo !== "NCM" || ncmsDaBase.has(a.CodNcmNbs)) continue;
@@ -78,7 +84,7 @@ export function montarProposta(buf) {
           reducaoAliquota: cat.reducao,
           anexo: cat.anexo,
           item: l.item,
-          fundamentoLegal: cat.artigo,
+          fundamentoLegal: fundamento,
           rotulo: cat.rotulo,
           descricaoLegal: l.descricao,
           descricaoNcmTipi: "",

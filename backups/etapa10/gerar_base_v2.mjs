@@ -22,10 +22,9 @@ import { etapa53 } from "./base_v2_evidencias.mjs";
 
 const ENTRADA = "data/base-normativa.json";
 const SAIDA = "data/base-normativa.v2.json";
-// Hash da base atual. Se a base mudar, o gerador para: a v2 só pode partir de uma entrada conhecida.
-// Etapa 1: a451c459597ff6fa4d45c95713708a5220fd7701f4b835df039b8f962e031416 (1.369 regras da planilha).
-// Etapa 10 (D5 = incluir): + 1.066 regras de fonte oficial (scripts/aplicar_d5.mjs).
-const SHA_ENTRADA = "d67cc82b0376e1de1a611347881d4b3c637a9d02802bb4214adb52ba7146e7cc";
+// Hash da base atual conferido na Etapa 1. Se a base mudar, o gerador para:
+// a v2 só pode partir de uma entrada conhecida.
+const SHA_ENTRADA = "a451c459597ff6fa4d45c95713708a5220fd7701f4b835df039b8f962e031416";
 
 // Campos que o Python gravou como float (1.0, 0.6). JSON.parse perde o ".0",
 // então a serialização o repõe para manter os bytes iguais aos do original.

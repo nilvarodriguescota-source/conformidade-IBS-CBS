@@ -107,17 +107,16 @@ test("explicador: validação legada não vira HUMANO_CONFIRMOU (estado do motor
   for (const x of explicados) assert.deepEqual(x.explicacaoInformativa?.humanoConfirmou, []);
 });
 
-test("explicador: lacuna não vira regra (87091100 continua INCORRETO_RISCO)", () => {
+test("explicador: 87091100 (D5 = incluir) tem regras oficiais e vai para validação", () => {
   const v = achar("SINT-55", 6);
   const e = v.explicacaoInformativa!;
-  assert.equal(v.estado, "INCORRETO_RISCO");
-  assert.deepEqual(e.regras, []);
-  assert.ok(e.ausencias.includes("SEM_REGRA_NA_BASE"));
-  assert.equal(e.lacunas.length, 1);
-  assert.equal(e.lacunas[0]?.status, "LACUNA_FONTE_SEM_REGRA");
-  assert.ok(e.lacunas[0]!.fatos.some((f) => f.fonte === "F2"), "a fonte oficial contém a NCM");
-  assert.equal(e.statusBeneficio, null);
-  assert.equal(base.regras.filter((r) => r.ncm === "87091100").length, 0, "nenhuma regra criada");
+  assert.equal(v.estado, "REQUER_VALIDACAO");
+  assert.deepEqual(e.lacunas, []);
+  assert.ok(!e.ausencias.includes("SEM_REGRA_NA_BASE"));
+  assert.deepEqual(e.regras.map((r) => r.statusNormativo), ["NORMA_POSSIVEL_MULTIPLOS_ITENS", "NORMA_POSSIVEL_MULTIPLOS_ITENS"]);
+  const novas = base.regras.filter((r) => r.ncm === "87091100");
+  assert.deepEqual(novas.map((r) => r.item), ["2.1", "2.3"]);
+  assert.ok(novas.every((r) => (r.origemRegistro ?? "").startsWith("Fonte oficial (proposta D5)")));
 });
 
 test("explicador: decisões pendentes continuam pendentes", () => {
@@ -131,7 +130,7 @@ test("explicador: decisões pendentes continuam pendentes", () => {
     }
     for (const div of e.regras.flatMap((r) => r.divergencias)) assert.equal(div.resolucao, null);
   }
-  assert.deepEqual(ex("SINT-55", 6).decisoesPendentes.map((d) => d.decisao), ["D5"]);
+  assert.deepEqual(ex("SINT-55", 6).decisoesPendentes.map((d) => d.decisao), ["D2", "D3", "D4"], "a D5 foi decidida; ficam as do 200043");
 });
 
 test("explicador: frutose fica em CONFLITO_ENTRE_FONTES, sem resolução", () => {
@@ -161,17 +160,19 @@ test("explicador: 200043 mantém \"e\" (lei) e \"ou\" (planilha); IndNfce é só
   assert.ok(nfce.explicacaoInformativa!.regras[0]!.fonteDiz.some((f) => f.valor === false && "campo" in f.localizacao && f.localizacao.campo === "IndNfce"));
 });
 
-test("explicador: as 49 NCMs oficiais sem regra continuam lacunas", () => {
-  const lacunas = ctx.v2.vinculacoes.ncmsOficiaisSemRegra;
-  assert.equal(lacunas.length, 49);
-  const vs = classificarDocumentos([doc("LAC", "55", lacunas.map((l, i) => item(i + 1, l.ncm, "200", l.cClassTrib, `L${i}`)))], { base, empresa, agora: "2026-09-24T00:00:00-03:00" });
-  const es = explicarVereditos(vs, ctx);
-  for (const x of es) {
+test("explicador: D5 = incluir — nenhuma NCM oficial sem regra; as regras novas são identificadas com segurança", () => {
+  assert.equal(ctx.v2.vinculacoes.ncmsOficiaisSemRegra.length, 0);
+  assert.equal(base.regras.length, 2435);
+  const d5 = base.regras.filter((r) => (r.origemRegistro ?? "").startsWith("Fonte oficial (proposta D5)"));
+  assert.equal(d5.length, 1066);
+  const amostra = d5.filter((r) => r.cClassTrib === "200043").slice(0, 5);
+  const vs = classificarDocumentos([doc("D5", "55", amostra.map((r, i) => item(i + 1, r.ncm, "200", r.cClassTrib, `D${i}`)))], { base, empresa, agora: "2026-09-24T00:00:00-03:00" });
+  for (const x of explicarVereditos(vs, ctx)) {
     const e = x.explicacaoInformativa!;
-    assert.ok(e.lacunas.length >= 1 && e.lacunas.every((l) => l.status === "LACUNA_FONTE_SEM_REGRA" && l.inclusaoComoRegra.status === "pendente"));
-    assert.ok(e.regras.every((r) => r.referencia === null || base.regras[r.referencia.indice]!.cClassTrib !== x.informado.cClassTrib), "nenhuma regra do código da lacuna");
+    assert.equal(x.estado, "REQUER_VALIDACAO");
+    assert.deepEqual(e.lacunas, []);
+    assert.ok(e.regras.length >= 1 && e.regras.every((r) => r.vinculo === "seguro" && r.referencia !== null && r.referencia.linha === null));
   }
-  assert.equal(base.regras.length, 1369);
 });
 
 test("explicador: regraId sozinho não é chave segura (23080000 duplicado)", () => {
@@ -223,6 +224,6 @@ test("explicador: nível de evidência reflete a composição das candidatas", (
   assert.equal(ex("SINT-55", 9).nivelEvidencia, "planilha");     // só planilha
   assert.equal(ex("SINT-55", 4).nivelEvidencia, "divergente");   // frutose: fontes em conflito
   assert.equal(ex("SINT-55", 3).nivelEvidencia, "divergente");   // item divergente
-  assert.equal(ex("SINT-55", 6).nivelEvidencia, "pendente");     // lacuna, sem regra
+  assert.equal(ex("SINT-55", 6).nivelEvidencia, "oficial");      // lacuna até a D5; hoje regra oficial
   assert.equal(ex("SINT-55", 7).nivelEvidencia, "pendente");     // regraId ambíguo
 });

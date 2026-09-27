@@ -130,27 +130,15 @@ const bloco = (linha, valores, motivo) => ({
   valores,
 });
 
-/** Regras incluídas pela decisão D5 (fonte oficial, sem linha na planilha); ficam no fim da base. */
-export const ORIGEM_D5 = "Fonte oficial (proposta D5)";
-export const PROPOSTA_D5 = "docs/etapa10/proposta-d5.json";
-export const ehRegraD5 = (r) => typeof r.origemRegistro === "string" && r.origemRegistro.startsWith(ORIGEM_D5);
-
 /** Etapa 3: acrescenta original e originaisAgrupados; os 18 campos ficam como estão. */
 export function etapa3(base) {
-  const daPlanilha = base.regras.filter((r) => !ehRegraD5(r));
-  if (base.regras.slice(0, daPlanilha.length).some(ehRegraD5)) throw new Error("as regras da D5 precisam ficar depois das regras da planilha");
-  const { mantidas, crlf } = ligar({ ...base, regras: daPlanilha }, lerSnapshot());
-  const evidenciaD5 = daPlanilha.length === base.regras.length ? new Map()
-    : new Map(JSON.parse(fs.readFileSync(PROPOSTA_D5, "utf8")).regras.map((r) => [`${r.id}|${r.ncm}`, r.evidencia]));
-  const regras = base.regras.map((r, i) => {
-    if (i < daPlanilha.length) {
-      return { ...r, original: bloco(mantidas[i].linha, mantidas[i].valores), originaisAgrupados: mantidas[i].agrupadas.map((g) => bloco(g.linha, g.valores, "duplicata_exata")) };
-    }
-    const evidencia = evidenciaD5.get(`${r.id}|${r.ncm}`);
-    if (!evidencia) throw new Error(`regra ${r.id} da D5 sem evidência em ${PROPOSTA_D5}`);
-    return { ...r, original: { fonte: "OFICIAL_D5", aba: null, linha: null, decisao: "D5", valores: null, evidencia }, originaisAgrupados: [] };
-  });
-  console.log(`etapa 3: ${daPlanilha.length} regras com original da planilha e ${regras.length - daPlanilha.length} da D5; ${mantidas.reduce((n, m) => n + m.agrupadas.length, 0)} linhas agrupadas; ` +
+  const { mantidas, crlf } = ligar(base, lerSnapshot());
+  const regras = base.regras.map((r, i) => ({
+    ...r,
+    original: bloco(mantidas[i].linha, mantidas[i].valores),
+    originaisAgrupados: mantidas[i].agrupadas.map((g) => bloco(g.linha, g.valores, "duplicata_exata")),
+  }));
+  console.log(`etapa 3: ${regras.length} regras com original; ${mantidas.reduce((n, m) => n + m.agrupadas.length, 0)} linhas agrupadas; ` +
     `CRLF preservado do snapshot nas linhas ${crlf.join(", ")}`);
   return { ...base, regras };
 }

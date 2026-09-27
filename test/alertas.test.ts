@@ -32,7 +32,7 @@ const docs = [
     item(3, "28272010", "200", "200033", "A3"),   // item divergente
     item(4, "17025000", "200", "200033", "A4"),   // frutose
     item(5, "85176259", "200", "200043", "A5"),   // 200043
-    item(6, "87091100", "200", "200043", "A6"),   // lacuna
+    item(6, "87091100", "200", "200043", "A6"),   // lacuna até a D5; hoje regra oficial (Anexo XI, itens 2.1 e 2.3)
     item(7, "23080000", "200", "200038", "A7"),   // regraId duplicado
     item(8, "19022000", "200", "200034", "2727"), // validação "Nilva"
     item(9, "19022000", "200", "200034", "2726"), // validação "Sistema"
@@ -91,14 +91,15 @@ test("alertas: 2106.90.90 com 9 candidatas, sem apontar uma como correta", () =>
   assert.equal(doItem("SINT-55", 2).filter((x) => x.codigo === "CONDICAO_NAO_COMPROVADA").length, 1, "condição repetida em 8 regras vira 1 alerta");
 });
 
-test("alertas: 87091100 é lacuna; o estado INCORRETO_RISCO não muda", () => {
-  const a = um("SINT-55", 6, "LACUNA_FONTE_SEM_REGRA");
-  assert.equal(a.categoria, "LACUNA");
-  assert.equal(a.estadoDoVeredito, "INCORRETO_RISCO");
-  // 8709 aparece em dois itens do Anexo XI (2.1 e 2.3); o alerta cita os dois
-  assert.match(a.mensagem, /consta da fonte oficial para o 200043 \(SVRS, lista do 200043; LC 214\/2025, Anexo XI, item 2\.1; LC 214\/2025, Anexo XI, item 2\.3\)/);
-  assert.match(a.mensagem, /O estado INCORRETO_RISCO foi produzido pelo motor e não foi alterado/);
-  assert.ok(doItem("SINT-55", 6).some((x) => x.codigo === "DECISAO_PENDENTE" && x.decisoes?.[0] === "D5"));
+test("alertas: 87091100 (D5 = incluir) tem regras oficiais e vai para validação, sem alerta de lacuna", () => {
+  const candidatas = um("SINT-55", 6, "MULTIPLAS_REGRAS_CANDIDATAS");
+  assert.equal(candidatas.estadoDoVeredito, "REQUER_VALIDACAO");
+  // 8709 aparece em dois itens do Anexo XI (2.1 e 2.3): as duas regras são candidatas
+  assert.deepEqual(candidatas.regras.map((r) => r.regraId).sort(), ["87091100-200043-XI-2.1", "87091100-200043-XI-2.3"]);
+  assert.ok(doItem("SINT-55", 6).some((x) => x.codigo === "MULTIPLOS_ITENS_DO_ANEXO"));
+  assert.ok(doItem("SINT-55", 6).some((x) => x.codigo === "CONDICAO_NAO_COMPROVADA"), "a condição do adquirente continua");
+  assert.ok(!doItem("SINT-55", 6).some((x) => x.codigo === "LACUNA_FONTE_SEM_REGRA"));
+  assert.ok(!doItem("SINT-55", 6).some((x) => x.decisoes?.includes("D5")));
   assert.ok(!doItem("SINT-55", 6).some((x) => x.codigo === "SEM_REGRA_NA_BASE"));
 });
 
@@ -210,7 +211,7 @@ test("alertas: textos sem o vocabulário proibido", () => {
 // ---------- 9B.1.1: correções da auditoria ----------
 
 test("9B.1.1 achado 1: os seis casos ausentes do lote real continuam cobertos pelos sintéticos", () => {
-  assert.ok(doItem("SINT-55", 6).some((a) => a.codigo === "LACUNA_FONTE_SEM_REGRA"), "87091100");
+  assert.ok(doItem("SINT-55", 6).some((a) => a.codigo === "MULTIPLOS_ITENS_DO_ANEXO"), "87091100: lacuna até a D5, hoje regra oficial");
   assert.ok(doItem("SINT-55", 4).some((a) => a.codigo === "CONFLITO_ENTRE_FONTES"), "frutose");
   assert.ok(doItem("SINT-55", 5).some((a) => a.codigo === "CONDICAO_NAO_COMPROVADA"), "200043");
   assert.ok(doItem("SINT-55", 7).some((a) => a.codigo === "REGRAID_AMBIGUO"), "regraId duplicado");

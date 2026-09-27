@@ -15,9 +15,11 @@ const aud = JSON.parse(readFileSync("data/auditoria-oficial.json", "utf8"));
 const evid = v2.evidenciasOficiais;
 const ev = (id: string) => evid.regras.find((x: { regraId: string }) => x.regraId === id);
 
-test("evidências v2: 1.369 regras, item original preservado, nenhum campo original alterado", () => {
-  assert.equal(v2.regras.length, 1369);
-  assert.equal(evid.regras.length, 1369);
+test("evidências v2: 1.369 regras da planilha + 1.066 da D5, item original preservado, nenhum campo original alterado", () => {
+  assert.equal(v2.regras.length, 2435);
+  assert.equal(evid.regras.length, 2435);
+  assert.ok(v2.regras.slice(0, 1369).every((r: { original: { fonte: string } }) => r.original.fonte === "PLANILHA"));
+  assert.ok(v2.regras.slice(1369).every((r: { original: { fonte: string; linha: null } }) => r.original.fonte === "OFICIAL_D5" && r.original.linha === null));
   v2.regras.forEach((r: Record<string, unknown>, i: number) => {
     for (const [k, valor] of Object.entries(atual.regras[i]!)) assert.deepEqual(r[k], valor, `regra[${i}].${k}`);
     assert.equal(evid.regras[i].itemDaBase, atual.regras[i]!.item);
@@ -26,7 +28,7 @@ test("evidências v2: 1.369 regras, item original preservado, nenhum campo origi
 
 test("evidências v2: itemOficial só com um único item oficial e com fato da lei do mesmo item", () => {
   const com = v2.regras.map((r: { itemOficial?: string }, i: number) => [r, i] as const).filter(([r]: readonly [{ itemOficial?: string }, number]) => r.itemOficial !== undefined);
-  assert.equal(com.length, 978);
+  assert.equal(com.length, 1737);
   for (const [r, i] of com) {
     const x = evid.regras[i];
     assert.equal(x.itemOficial, r.itemOficial);

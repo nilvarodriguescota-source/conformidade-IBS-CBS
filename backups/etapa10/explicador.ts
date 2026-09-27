@@ -59,7 +59,7 @@ interface LacunaRegistrada {
   fatos: FonteDiz[];
   regrasDeOutrosCodigosComEstaNcm: (RefRegra & { cClassTrib: string })[];
 }
-type RegraV2 = RegraClassificacao & { original?: { fonte: "PLANILHA"; linha: number; valores: Record<string, string | null> } | { fonte: "OFICIAL_D5"; linha: null; valores: null } };
+type RegraV2 = RegraClassificacao & { original?: { linha: number; valores: Record<string, string | null> } };
 export interface BaseV2Lida {
   regras: RegraV2[];
   fontes: { registros: Record<string, FonteRegistrada> };
@@ -230,7 +230,7 @@ function metaArquivo(ctx: ContextoExplicacao, fonte: IdFonte, arquivo: IdArquivo
 function fatosPlanilha(ctx: ContextoExplicacao, indice: number): FonteDiz[] {
   const orig = ctx.v2.regras[indice]?.original;
   const meta = metaArquivo(ctx, "PLANILHA", "PLANILHA.base-de-dados", "base interna da planilha V4.1; não oficial");
-  if (!orig || orig.fonte !== "PLANILHA" || !meta) return [];
+  if (!orig || !meta) return [];
   return ["Fundamento legal", "Descrição legal do benefício"].flatMap((coluna) => {
     const valor = orig.valores[coluna];
     return valor == null ? [] : [{ ...meta, localizacao: { aba: "Base de dados", linha: orig.linha, coluna }, trecho: valor }];
@@ -257,7 +257,7 @@ function reducaoNaoDeterminada(motivo: string): ReducaoExplicada {
  * Redução da regra identificada com segurança: o valor é o reducaoAliquota da base (o mesmo que o motor usa);
  * a evidência vem do vínculo do código (C-<cClassTrib>-reducaoAliquota), só quando ele alcança esta regra.
  */
-function reducaoDaRegra(ix: Indices, indice: number, linha: number | null, atual: RegraClassificacao): ReducaoExplicada {
+function reducaoDaRegra(ix: Indices, indice: number, linha: number, atual: RegraClassificacao): ReducaoExplicada {
   const comum = { valor: atual.reducaoAliquota, origem: "base_normativa" as const, regraIndice: indice, linhaPlanilha: linha };
   const rc = ix.codigo.get(`C-${atual.cClassTrib}-reducaoAliquota`);
   const alcanca = !!rc && (rc.alcance ?? []).some((a) => a.indice === indice);
@@ -304,8 +304,8 @@ function condicoes(ctx: ContextoExplicacao, ix: Indices, cod: string, ncm: strin
       };
   if (textoOperacional) base.textoOperacional = textoOperacional;
   const orig = ctx.v2.regras[indice]?.original;
-  const obs = orig?.fonte === "PLANILHA" ? orig.valores["Observação"] : null;
-  if (cod === "200043" && orig?.fonte === "PLANILHA" && obs) base.textoPlanilha = { fonte: "PLANILHA", aba: "Base de dados", linha: orig.linha, coluna: "Observação", valor: obs };
+  const obs = orig?.valores["Observação"];
+  if (cod === "200043" && orig && obs) base.textoPlanilha = { fonte: "PLANILHA", aba: "Base de dados", linha: orig.linha, coluna: "Observação", valor: obs };
   return { condicoes: [base], fatosF2 };
 }
 
@@ -366,9 +366,7 @@ function explicarRegra(ctx: ContextoExplicacao, ix: Indices, regraId: string, v:
     out.ausencias.push("SEM_EVIDENCIA_OFICIAL");
     if (!e.bloqueio && !vinculoNcmItemConfirmado(ctx, e, null)) out.decisoes.push("D3");
     out.situacoes.push(4);
-    out.limitacoes.push(ref.linha === null
-      ? `A regra ${regraId} foi incluída pela decisão D5 a partir da LC 214/2025 e do SVRS; o código ${cod} está fora do escopo das vinculações (${ctx.v2.vinculacoes.escopo.join(", ")}), e a conferência da regra está na auditoria oficial.`
-      : `A regra ${regraId} (linha ${ref.linha}) só tem a planilha como origem; o código ${cod} está fora do escopo auditado (${ctx.v2.vinculacoes.escopo.join(", ")}).`);
+    out.limitacoes.push(`A regra ${regraId} (linha ${ref.linha}) só tem a planilha como origem; o código ${cod} está fora do escopo auditado (${ctx.v2.vinculacoes.escopo.join(", ")}).`);
     return out;
   }
 

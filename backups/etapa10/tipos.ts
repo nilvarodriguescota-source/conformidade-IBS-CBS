@@ -174,8 +174,7 @@ export type IdArquivoFonte =
  */
 export interface RefRegra {
   indice: number;
-  /** Linha na planilha; null nas regras incluídas pela decisão D5. */
-  linha: number | null;
+  linha: number;
   regraId: string;
   ncm: string;
 }
@@ -515,18 +514,8 @@ export interface BlocoOriginal {
   valores: Record<string, string | null>;
 }
 
-/** Origem das regras incluídas pela decisão D5: LC 214/2025 + SVRS, sem linha na planilha. */
-export interface BlocoOriginalD5 {
-  fonte: "OFICIAL_D5";
-  aba: null;
-  linha: null;
-  decisao: "D5";
-  valores: null;
-  evidencia: unknown;
-}
-
 export interface RegraClassificacaoV2 extends RegraClassificacao {
-  original?: BlocoOriginal | BlocoOriginalD5;
+  original?: BlocoOriginal;
   originaisAgrupados?: BlocoOriginal[];
   /** Substituto do regraId como chave. Formato: decisão D7, sem padrão. */
   chaveEstavel?: DecisaoPendente<"D7"> | DecisaoTomada<"D7", string>;

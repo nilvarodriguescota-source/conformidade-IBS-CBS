@@ -117,24 +117,19 @@ test("tipos v2: condição do 200043 guarda \"e\" (lei) e \"ou\" (planilha), com
   assert.ok(condicao.combinacaoDosTipos && !("valor" in condicao.combinacaoDosTipos), "nenhuma leitura escolhida");
 });
 
-test("tipos v2: as 49 NCMs oficiais sem regra são Lacuna, sem regra criada e com D5 pendente", () => {
-  const lacunas: Lacuna[] = v2.vinculacoes.ncmsOficiaisSemRegra.map((s: Lacuna & { fatos: FonteDiz[] }) => ({
-    id: s.id,
-    status: "LACUNA_FONTE_SEM_REGRA",
-    cClassTrib: s.cClassTrib,
-    ncm: s.ncm,
-    fatos: s.fatos,
-    regrasDeOutrosCodigosComEstaNcm: s.regrasDeOutrosCodigosComEstaNcm,
-    inclusaoComoRegra: { status: "pendente", decisao: "D5" },
-  }));
-  assert.equal(lacunas.length, 49);
-  assert.equal(lacunas.filter((l) => l.cClassTrib === "200033").length, 1);
-  assert.equal(lacunas.filter((l) => l.cClassTrib === "200043").length, 48);
-  assert.equal(v2.regras.length, 1369, "nenhuma regra criada");
-  for (const l of lacunas) {
-    assert.equal(l.inclusaoComoRegra.status, "pendente");
-    assert.ok(!v2.regras.some((r: { ncm: string; cClassTrib: string }) => r.ncm === l.ncm && r.cClassTrib === l.cClassTrib));
-  }
+test("tipos v2: D5 decidida (incluir) — as 49 NCMs oficiais do escopo viraram regras de origem OFICIAL_D5", () => {
+  const decisao: Lacuna["inclusaoComoRegra"] = {
+    status: "decidida", decisao: "D5", valor: "incluir", autor: { tipo: "humano", nome: "Nilva" }, data: "2026-09-27",
+    justificativa: "Incluir as NCMs que a LC 214/2025 e o SVRS listam para os códigos da planilha (Etapa 10).",
+  };
+  assert.equal(decisao.status, "decidida");
+  assert.equal(v2.vinculacoes.ncmsOficiaisSemRegra.length, 0);
+  assert.equal(v2.regras.length, 2435);
+  const d5 = v2.regras.filter((r: { original: { fonte: string } }) => r.original.fonte === "OFICIAL_D5");
+  assert.equal(d5.length, 1066);
+  assert.equal(d5.filter((r: { cClassTrib: string }) => r.cClassTrib === "200033").length, 1);
+  assert.equal(d5.filter((r: { cClassTrib: string }) => r.cClassTrib === "200043").length, 59, "48 NCMs; algumas em mais de um item do Anexo XI");
+  assert.ok(d5.every((r: { original: { decisao: string; linha: null } }) => r.original.decisao === "D5" && r.original.linha === null));
 });
 
 test("tipos v2: frutose 1702.50.00 fica em conflito entre fontes, sem resolução", () => {
@@ -159,11 +154,11 @@ test("tipos v2: frutose 1702.50.00 fica em conflito entre fontes, sem resoluçã
   assert.deepEqual(div.valores.map((x) => x.fonte), ["F1", "F2"]);
 });
 
-test("tipos v2: os 771 fatos da Etapa 5 cabem em FonteDiz", () => {
+test("tipos v2: os 831 fatos da Etapa 5 cabem em FonteDiz (771 + os das regras D5 do escopo)", () => {
   const permitidos = new Set(["camada", "fonte", "arquivo", "sha256", "natureza", "versao", "dataConsulta", "localizacao", "trecho", "valor", "extracao", "linhaTabela"]);
   const vinc = v2.vinculacoes;
   const fatos: FonteDiz[] = [...vinc.codigo, ...vinc.regras, ...vinc.ncmsOficiaisSemRegra].flatMap((x: { fatos: FonteDiz[] }) => x.fatos);
-  assert.equal(fatos.length, 771);
+  assert.equal(fatos.length, 831);
   for (const f of fatos) {
     assert.ok(Object.keys(f).every((k) => permitidos.has(k)), `campo fora de FonteDiz em ${f.arquivo}`);
     assert.ok(["F1", "F2", "PLANILHA"].includes(f.fonte));

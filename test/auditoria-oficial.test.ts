@@ -41,8 +41,10 @@ test("auditoria oficial: o arquivo corresponde à base, à v2 e aos snapshots at
   assert.equal(a.entradas.v2.sha256, sha("data/base-normativa.v2.json"));
   assert.equal(a.entradas.F1.sha256, sha("data/fontes/lc214/lcp214.htm"));
   assert.equal(a.entradas.F2.sha256, sha("data/fontes/svrs/svrs.html"));
-  assert.deepEqual(a.resumo.porStatus, { CONFIRMADA: 856, DIVERGENTE: 295, NAO_DETERMINADA: 203, NAO_LOCALIZADA: 15 });
-  assert.equal(a.resumo.lacunas, 907);
+  // 1.369 regras da planilha (856/295/203/15) + 1.066 da D5 (759 confirmadas, 307 com mais de um item na lei)
+  assert.deepEqual(a.resumo.porStatus, { CONFIRMADA: 1615, DIVERGENTE: 295, NAO_DETERMINADA: 510, NAO_LOCALIZADA: 15 });
+  assert.equal(a.resumo.regras, 2435);
+  assert.equal(a.resumo.lacunas, 0, "D5 = incluir: as 907 lacunas viraram regras");
   assert.ok(ctx.auditoria, "o explicador carregou a auditoria");
 });
 
@@ -105,12 +107,15 @@ test("auditoria oficial: 21069090 tem vários itens e candidatas com tratamentos
   assert.equal(x.estado, "REQUER_VALIDACAO");
 });
 
-test("auditoria oficial: lacuna de cobertura é só informação (nenhuma candidata criada)", () => {
-  const a = JSON.parse(readFileSync("data/auditoria-oficial.json", "utf8")) as { lacunas: { ncm: string; cClassTrib: string }[] };
-  const semRegra = a.lacunas.find((l) => !base.regras.some((r) => r.ncm === l.ncm))!;
-  const x = explicar([item(1, semRegra.ncm, "000", "000001", "L1")]).explicados[0]!;
-  assert.deepEqual(x.regrasCandidatas, []);
-  assert.ok(x.explicacaoInformativa!.lacunasDeCobertura!.some((l) => l.cClassTrib === semRegra.cClassTrib));
+test("auditoria oficial: NCM que era lacuna (D5) vira regra candidata, com a pergunta SIM/NÃO", () => {
+  // 0207.14.00 (partes de galo/galinha congeladas): Anexo I, item 19, d); não estava na planilha
+  const x = explicar([item(1, "02071400", "000", "000001", "L1")]).explicados[0]!;
+  assert.deepEqual(x.regrasCandidatas, ["02071400-200003-I-19"]);
+  assert.equal(x.estado, "REQUER_VALIDACAO");
+  assert.deepEqual(x.explicacaoInformativa!.lacunasDeCobertura ?? [], []);
+  const r = base.regras.find((y) => y.id === "02071400-200003-I-19")!;
+  assert.match(r.origemRegistro ?? "", /^Fonte oficial \(proposta D5\)/);
+  assert.match(r.fonte, /LC 214\/2025, Anexo I, item 19; SVRS/);
 });
 
 test("auditoria oficial: regraId repetido (D7) não recebe conferência (regra não identificada com segurança)", () => {
