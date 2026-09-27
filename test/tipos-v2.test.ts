@@ -18,7 +18,7 @@ import type {
 } from "../src/tipos.js";
 
 const v2 = JSON.parse(readFileSync("data/base-normativa.v2.json", "utf8"));
-const empresa = JSON.parse(readFileSync("empresa.json", "utf8")) as { validacoes?: RespostaValidacao[] };
+const empresa = JSON.parse(readFileSync("test/fixtures/empresa-teste.json", "utf8")) as { validacoes?: RespostaValidacao[] };
 
 // ---------- verificações só de compilação ----------
 // A função nunca é chamada: o compilador confere o corpo, e nada disso roda.

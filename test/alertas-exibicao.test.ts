@@ -19,9 +19,9 @@ import {
 import { diferencasDeVereditos } from "../src/lote-explicativo.js";
 import type { BaseNormativa, Documento, ItemDocumento, RespostaValidacao, VereditoExplicado } from "../src/tipos.js";
 
-const ctx = carregarContexto({ base: "data/base-normativa.json", v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "empresa.json" });
+const ctx = carregarContexto({ base: "data/base-normativa.json", v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "test/fixtures/empresa-teste.json" });
 const base = JSON.parse(readFileSync("data/base-normativa.json", "utf8")) as BaseNormativa;
-const empresa = JSON.parse(readFileSync("empresa.json", "utf8")) as { cnpj: string; regime: "normal"; validacoes?: RespostaValidacao[] };
+const empresa = JSON.parse(readFileSync("test/fixtures/empresa-teste.json", "utf8")) as { cnpj: string; regime: "normal"; validacoes?: RespostaValidacao[] };
 
 function item(nItem: number, ncm: string, cst: string, cClassTrib: string, cProd: string, xProd = `P${cProd}`): ItemDocumento {
   return { nItem, cProd, xProd, ncm, cfop: "5102", quantidade: 1, valorProduto: 1000, desconto: 0, baseCalculo: 1000, cst, cClassTrib, aliquotas: {} };

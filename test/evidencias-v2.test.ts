@@ -96,7 +96,7 @@ test("evidências v2: fontes com URL, snapshot e SHA-256 da Etapa 4; vínculos d
 });
 
 test("evidências v2: a redução do 200034 passa a ter o vínculo registrado, sem mudar o veredito", () => {
-  const ctx = carregarContexto({ base: "data/base-normativa.json", v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "empresa.json" });
+  const ctx = carregarContexto({ base: "data/base-normativa.json", v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "test/fixtures/empresa-teste.json" });
   const empresa: Empresa = { cnpj: "00000000000000", regime: "normal", barOuRestaurante: false };
   const item: ItemDocumento = { nItem: 1, cProd: "P1", xProd: "PASTEL", ncm: "19022000", cfop: "5102", quantidade: 1, valorProduto: 1000, desconto: 0, baseCalculo: 1000, cst: "000", cClassTrib: "000001", aliquotas: {} };
   const doc: Documento = { chave: "EV", modelo: "55", numero: "1", serie: "1", dataEmissao: "2026-09-10T10:00:00-03:00", tipoOperacao: "saida", finalidade: "1", situacao: "100", cancelado: false,

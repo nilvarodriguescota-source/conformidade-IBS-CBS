@@ -39,7 +39,7 @@ function ambiente() {
   const saida = join(dir, "saida");
   const empresa = join(dir, "empresa.json");
   // empresa.json com uma validação antiga: não pode ser usada pela análise
-  const cfg = JSON.parse(readFileSync("empresa.json", "utf8"));
+  const cfg = JSON.parse(readFileSync("test/fixtures/empresa-teste.json", "utf8"));
   cfg.validacoes = [{ ncm: "19059090", cProd: "A1", regraId: "19059090-200003-I-16", resposta: "SIM", autor: "Antigo", data: "2026-01-01" }];
   writeFileSync(empresa, JSON.stringify(cfg, null, 2));
   const enviar = (nome: string, conteudo: string) => {

@@ -138,7 +138,7 @@ test("bloqueios: regra NÃO DETERMINADA continua igual (21069090: 9 candidatas, 
 });
 
 test("bloqueios: a explicação mantém a regra bloqueada como evidência, sem D3", () => {
-  const ctx = carregarContexto({ base: ARQ_BASE, v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "empresa.json" });
+  const ctx = carregarContexto({ base: ARQ_BASE, v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "test/fixtures/empresa-teste.json" });
   const v = comBloqueio(item("02074300"));
   const [x] = explicarVereditos([v], ctx, [{ ...doc, itens: [item("02074300")] }]);
   const r = x!.explicacaoInformativa!.regras.find((g) => g.regraIdInformado === "02074300-200003-I-19")!;

@@ -12,7 +12,7 @@ import { classificarDocumentos } from "../src/motor.js";
 import { carregarContexto, explicarVereditos } from "../src/explicador.js";
 import type { BaseNormativa, Documento, Empresa, ItemDocumento, RespostaValidacao } from "../src/tipos.js";
 
-const caminhos = { base: "data/base-normativa.json", v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "empresa.json" };
+const caminhos = { base: "data/base-normativa.json", v2: "data/base-normativa.v2.json", matriz: "docs/etapa6/matriz-decisao.json", empresa: "test/fixtures/empresa-teste.json" };
 const ctx = carregarContexto(caminhos);
 const base = JSON.parse(readFileSync(caminhos.base, "utf8")) as BaseNormativa;
 const empresa: Empresa = { cnpj: "00000000000000", regime: "normal", barOuRestaurante: false };

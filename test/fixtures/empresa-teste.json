@@ -1,0 +1,16 @@
+{
+  "cnpj": "00000000000000",
+  "nome": "Empresa de teste",
+  "regime": "normal",
+  "barOuRestaurante": false,
+  "validacoes": [
+    { "ncm": "19022000", "cProd": "2726", "regraId": "19022000-200034-VII-9", "resposta": "SIM", "autor": "Sistema", "data": "2026-09-21" },
+    { "ncm": "19022000", "cProd": "2727", "regraId": "19022000-200034-VII-9", "resposta": "SIM", "autor": "Nilva", "data": "2026-09-20", "justificativa": "Teste de validação do enquadramento." },
+    { "ncm": "19022000", "cProd": "2716", "regraId": "19022000-200034-VII-9", "resposta": "NAO", "autor": "Sistema", "data": "2026-09-21" },
+    { "ncm": "19022000", "cProd": "2729", "regraId": "19022000-200034-VII-9", "resposta": "NAO", "autor": "Sistema", "data": "2026-09-23" },
+    { "ncm": "19022000", "cProd": "2717", "regraId": "19022000-200034-VII-9", "resposta": "SIM", "autor": "Sistema", "data": "2026-09-21" },
+    { "ncm": "19022000", "cProd": "2718", "regraId": "19022000-200034-VII-9", "resposta": "SIM", "autor": "Sistema", "data": "2026-09-21" },
+    { "ncm": "19022000", "cProd": "2719", "regraId": "19022000-200034-VII-9", "resposta": "SIM", "autor": "Sistema", "data": "2026-09-22" },
+    { "ncm": "19022000", "cProd": "2720", "regraId": "19022000-200034-VII-9", "resposta": "NAO", "autor": "Sistema", "data": "2026-09-22" }
+  ]
+}
