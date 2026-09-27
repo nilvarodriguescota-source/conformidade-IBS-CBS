@@ -92,6 +92,9 @@ app.get("/", (_req, res) => {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 <title>Conformidade IBS/CBS</title>
 <style>
 *{box-sizing:border-box}
@@ -459,6 +462,12 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 <span id="contagemRelatorioFinal" class="small"></span>
 </div>
 
+<div class="barra">
+<button class="secondary" onclick="exportarRelatorioFinal('csv')">Exportar CSV</button>
+<button class="secondary" onclick="exportarRelatorioFinal('excel')">Exportar Excel</button>
+<button class="secondary" onclick="exportarRelatorioFinal('pdf')">Exportar PDF</button>
+</div>
+
 <div id="explicacaoRelatorioFinal" class="aviso"></div>
 
 <div style="overflow-x:auto;">
@@ -492,6 +501,8 @@ let pendentesFiltradas=[];
 let resultadosFiltrados=[];
 let regrasUI={};
 let modoRelatorioFinal='com';
+let linhasRelatorioFinal=[];
+const COLUNAS_RELATORIO_FINAL=['Código produto','Descrição','NCM','cClassTrib a utilizar','CST a utilizar','Alíquota de registro IBS/CBS','Instrução'];
 const ROTULO_ESTADO={CORRETO:'CORRETO',INCORRETO_ECONOMIA:'INCORRETO — economia',INCORRETO_RISCO:'INCORRETO — risco',REQUER_VALIDACAO:'PRECISA VALIDAR',NAO_OBRIGATORIO:'NÃO OBRIGATÓRIO',INDETERMINADO:'INDETERMINADO'};
 
 function abrirTela(id,botao){
@@ -557,12 +568,22 @@ async function carregarRelatorioFinal(){
 
  if(!corpo) return;
 
+ const modo=modoRelatorioFinal;
+ linhasRelatorioFinal=[];
  corpo.innerHTML='<tr><td colspan="7">Carregando relatório...</td></tr>';
 
- try{
-   const resultadosApi=await (await fetch('/api/resultados')).json();
+ const renderizar=(linhas,vazio)=>{
+   if(modo!==modoRelatorioFinal) return;
+   linhasRelatorioFinal=linhas;
+   corpo.innerHTML=linhas.length
+     ? linhas.map(l=>'<tr>'+l.map(c=>'<td>'+escaparRelatorio(c)+'</td>').join('')+'</tr>').join('')
+     : '<tr><td colspan="7">'+vazio+'</td></tr>';
+   contador.textContent=linhas.length+' produto(s)';
+ };
 
-   if(modoRelatorioFinal==='com'){
+ try{
+   if(modo==='com'){
+     const resultadosApi=await (await fetch('/api/resultados')).json();
      const mapa=new Map();
 
      resultadosApi
@@ -577,20 +598,10 @@ async function carregarRelatorioFinal(){
        const cst=v.esperado?.cst||'';
        const cClassTrib=v.esperado?.cClassTrib||'';
        const reducao=reducaoRelatorioFinal(v);
-
-       return '<tr>'+
-         '<td>'+escaparRelatorio(v.cProd)+'</td>'+
-         '<td>'+escaparRelatorio(v.produto)+'</td>'+
-         '<td>'+escaparRelatorio(v.ncm||'')+'</td>'+
-         '<td>'+escaparRelatorio(cClassTrib)+'</td>'+
-         '<td>'+escaparRelatorio(cst)+'</td>'+
-         '<td>'+escaparRelatorio(reducao)+'</td>'+
-         '<td>'+escaparRelatorio(instrucaoRelatorioFinal(cst,cClassTrib,reducao,true))+'</td>'+
-       '</tr>';
+       return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,instrucaoRelatorioFinal(cst,cClassTrib,reducao,true)];
      });
 
-     corpo.innerHTML=linhas.length?linhas.join(''):'<tr><td colspan="7">Nenhum produto retornou como INCORRETO — economia após a validação.</td></tr>';
-     contador.textContent=mapa.size+' produto(s)';
+     renderizar(linhas,'Nenhum produto retornou como INCORRETO — economia após a validação.');
      return;
    }
 
@@ -630,23 +641,61 @@ async function carregarRelatorioFinal(){
        ? instrucaoRelatorioFinal(cst,cClassTrib,reducao,false)
        : 'Validar o enquadramento entre as regras candidatas antes de alterar o cadastro do produto.';
 
-     return '<tr>'+
-       '<td>'+escaparRelatorio(p.cProd)+'</td>'+
-       '<td>'+escaparRelatorio(p.produto)+'</td>'+
-       '<td>'+escaparRelatorio(p.ncm||'')+'</td>'+
-       '<td>'+escaparRelatorio(cClassTrib)+'</td>'+
-       '<td>'+escaparRelatorio(cst)+'</td>'+
-       '<td>'+escaparRelatorio(reducao)+'</td>'+
-       '<td>'+escaparRelatorio(instrucao)+'</td>'+
-     '</tr>';
+     return [p.cProd,p.produto,p.ncm||'',cClassTrib,cst,reducao,instrucao];
    });
 
-   corpo.innerHTML=linhas.length?linhas.join(''):'<tr><td colspan="7">Nenhum produto pendente foi encontrado.</td></tr>';
-   contador.textContent=mapa.size+' produto(s)';
+   renderizar(linhas,'Nenhum produto pendente foi encontrado.');
  }catch(e){
    console.error(e);
+   if(modo!==modoRelatorioFinal) return;
    corpo.innerHTML='<tr><td colspan="7">Não foi possível carregar o Relatório Final.</td></tr>';
    contador.textContent='';
+ }
+}
+
+function exportarRelatorioFinal(formato){
+ if(!linhasRelatorioFinal.length){
+   alert('Não há dados no relatório selecionado para exportar.');
+   return;
+ }
+ const com=modoRelatorioFinal==='com';
+ const titulo='Relatório Final — '+(com?'COM VALIDAÇÃO':'SEM VALIDAÇÃO');
+ const nome='relatorio-final-'+(com?'com':'sem')+'-validacao';
+ const tabela=[COLUNAS_RELATORIO_FINAL].concat(linhasRelatorioFinal);
+
+ if(formato==='csv'){
+   baixar(nome+'.csv',csv(tabela));
+   return;
+ }
+
+ if(formato==='excel'){
+   if(typeof XLSX==='undefined'){ alert('Biblioteca de Excel indisponível. Verifique a conexão com a internet.'); return; }
+   const planilha=XLSX.utils.aoa_to_sheet(tabela);
+   planilha['!cols']=[{wch:16},{wch:45},{wch:12},{wch:16},{wch:12},{wch:22},{wch:70}];
+   const livro=XLSX.utils.book_new();
+   XLSX.utils.book_append_sheet(livro,planilha,com?'Com validação':'Sem validação');
+   XLSX.writeFile(livro,nome+'.xlsx');
+   return;
+ }
+
+ if(formato==='pdf'){
+   if(!window.jspdf||!window.jspdf.jsPDF){ alert('Biblioteca de PDF indisponível. Verifique a conexão com a internet.'); return; }
+   // A fonte padrão do jsPDF só cobre Latin-1; o travessão sairia corrompido.
+   const latin1=c=>(c==null?'':String(c)).replace(/[\\u2013\\u2014]/g,'-');
+   const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
+   doc.setFontSize(14);
+   doc.text(latin1(titulo),40,40);
+   doc.setFontSize(9);
+   doc.text('Gerado em '+new Date().toLocaleString('pt-BR')+' - '+linhasRelatorioFinal.length+' produto(s)',40,58);
+   doc.autoTable({
+     head:[COLUNAS_RELATORIO_FINAL],
+     body:linhasRelatorioFinal.map(l=>l.map(latin1)),
+     startY:70,
+     styles:{fontSize:7,cellPadding:3,overflow:'linebreak'},
+     headStyles:{fillColor:[109,40,217]},
+     columnStyles:{1:{cellWidth:150},6:{cellWidth:220}}
+   });
+   doc.save(nome+'.pdf');
  }
 }
 async function carregarAnalise(){
