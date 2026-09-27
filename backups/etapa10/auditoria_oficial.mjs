@@ -24,19 +24,19 @@ import { dadosOriginais } from "./snapshot_svrs.mjs";
 export const SAIDA = "data/auditoria-oficial.json";
 const ARQ = { base: "data/base-normativa.json", v2: "data/base-normativa.v2.json" };
 const sha = (b) => crypto.createHash("sha256").update(b).digest("hex");
-export const ARABICO = { I: 1, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10, XI: 11, XII: 12, XIII: 13, XV: 15 };
+const ARABICO = { I: 1, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10, XI: 11, XII: 12, XIII: 13, XV: 15 };
 const dig = (s) => s.replace(/\D/g, "");
 const norm = (s) => String(s ?? "").normalize("NFC").replace(/\s+/g, " ").replace(/[.;]\s*$/, "").trim().toLowerCase();
 
 /** Códigos NCM citados num texto: 8 dígitos, subposição, posição, capítulo. NBS (1.xxxx) fica de fora. */
-export function codigosNoTexto(t) {
+function codigosNoTexto(t) {
   const out = [];
   for (const m of t.matchAll(/Cap[ií]tulos?\s+(\d{1,2})(?:\s*(?:,|e)\s*(\d{1,2}))*/gi)) for (const n of m[0].match(/\d{1,2}/g)) out.push({ prefixo: n.padStart(2, "0") });
   for (const m of t.matchAll(/(?<![\d.])(\d{2}\.\d{2}(?:\.\d{2}){0,2}|\d{4}(?:\.\d{1,2}){0,2})(?![\d])/g)) out.push({ prefixo: dig(m[1]), pos: m.index });
   return out;
 }
 /** Exceção ("exceto"/"ressalvad") vale até o fim do parêntese em que está, ou até o próximo ";" / alínea. */
-export function incluidosExcluidos(desc) {
+function incluidosExcluidos(desc) {
   const todos = codigosNoTexto(desc);
   const trechos = [];
   for (const m of desc.matchAll(/\bexceto\b|\bressalvad/gi)) {
