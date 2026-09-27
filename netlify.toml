@@ -1,0 +1,19 @@
+# Publicação automática: o Netlify roda o build e publica a pasta public/.
+# O sistema roda inteiro no navegador (Web Worker); não há funções de servidor.
+[build]
+  command = "npm run build"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "same-origin"
+
+[[headers]]
+  for = "/dados/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

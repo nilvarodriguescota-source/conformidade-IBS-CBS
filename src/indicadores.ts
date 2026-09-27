@@ -6,7 +6,7 @@ export interface Indicadores {
   faturamento: number;
   porEstado: Record<EstadoVeredito, { itens: number; base: number }>;
   percentualConformidade: number | null;
-  /** Itens avaliÃ¡veis: exclui NAO_OBRIGATORIO e INDETERMINADO. */
+  /** Itens avaliáveis: exclui NAO_OBRIGATORIO e INDETERMINADO. */
   itensAvaliados: number;
   codigosAvaliados: number;
   codigosCorretos: number;
@@ -161,7 +161,7 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
     versaoBase: vereditos[0]?.versaoBase ?? null,
   };
 }
-/** Fila de validaÃ§Ã£o: um par produto + NCM por vez, com a descriÃ§Ã£o legal de cada regra. */
+/** Fila de validação: um par produto + NCM por vez, com a descrição legal de cada regra. */
 export interface PendenciaValidacao {
   ncm: string;
   cProd: string;

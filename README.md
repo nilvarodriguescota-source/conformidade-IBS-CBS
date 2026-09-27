@@ -6,14 +6,29 @@ humana, separa economia de risco e guarda a trilha de cada resultado.
 
 Escopo: só IBS e CBS. ICMS, ST, DIFAL, PIS/Cofins, IPI, CEST e CSOSN ficam fora.
 
-## Como rodar
+## Publicar no Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/nilvarodriguescota-source/conformidade-IBS-CBS)
+
+O `netlify.toml` já traz tudo: o Netlify roda `npm run build` e publica a pasta
+`public/`. Depois de ligado ao repositório, cada push publica sozinho.
+
+Na versão do Netlify o sistema roda inteiro no navegador (Web Worker), com o mesmo
+código do servidor: não há servidor nem banco de dados. A análise (XMLs,
+respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e continua
+lá ao reabrir a página; outro computador ou navegador começa com a análise vazia.
+
+## Como rodar no computador
 
 ```bash
 npm install
-npm test                     # 24 testes: regressão da planilha, parser e regras
-npx tsc -p tsconfig.json
+npm start                    # compila e abre em http://localhost:3000
+npm test                     # 123 testes
 node dist/src/cli.js --xml ./xmls --empresa ./empresa.json --saida ./saida
 ```
+
+`npm run build` gera `dist/` (servidor e CLI) e `public/` (site do Netlify e as
+bibliotecas de gráfico, Excel e PDF, servidas localmente, sem CDN).
 
 `empresa.json`:
 
@@ -69,6 +84,11 @@ período, os campos de economia e exposição voltam nulos e o motivo diz por qu
 | `src/indicadores.ts` | Indicadores do painel e fila de validação |
 | `scripts/extrair_base.py` | Gera `data/base-normativa.json` a partir da planilha, saneando a base |
 | `sql/schema.sql` | Esquema PostgreSQL com versão da base, vereditos e validações |
+| `src/servidor.ts` / `src/pagina.ts` | Rotas da API e HTML da tela |
+| `src/arquivos.ts` | Hash e cabeçalho de arquivos grandes sem carregá-los inteiros (explicacoes.json passa de 500 MB) |
+| `web/` | Versão do navegador: sistema de arquivos em memória, worker, gerador de .xlsx |
+| `scripts/build-web.mjs` | Gera `public/` para o Netlify |
+| `test/fixtures/empresa-teste.json` | Dados fixos dos testes (o `empresa.json` da raiz é configuração e pode mudar) |
 
 ## Base normativa
 

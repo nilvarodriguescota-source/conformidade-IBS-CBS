@@ -5,20 +5,32 @@
   "type": "module",
   "description": "Conferência de CST e cClassTrib de IBS/CBS em XMLs de saída, com base normativa versionada e trilha de auditoria.",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/build-web.mjs",
+    "start": "npm run build && node dist/src/servidor.js",
     "test": "tsc -p tsconfig.json && node --test \"dist/test/*.test.js\"",
     "cli": "tsc -p tsconfig.json && node dist/src/cli.js"
   },
   "dependencies": {
     "@types/multer": "^2.2.0",
+    "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",
     "express": "^5.2.1",
-    "fast-xml-parser": "^4.5.0",
+    "fast-xml-parser": "^5.11.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "multer": "^2.4.0"
   },
   "devDependencies": {
+    "@noble/hashes": "^1.8.0",
     "@types/express": "^5.0.6",
     "@types/node": "^22.7.0",
+    "buffer": "^6.0.3",
+    "esbuild": "^0.28.2",
+    "fflate": "^0.8.3",
+    "path-browserify": "^1.0.1",
     "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -4,35 +4,35 @@
  *
  *   XML -> parser -> motor atual -> explicador -> explicacoes.json -> alertas.json
  *
- * Mesma lÃ³gica que estava no cli-explicacao.ts (9A/9B.1): o motor recebe as mesmas
- * entradas e opÃ§Ãµes do cli.ts e do processador.ts; os alertas sÃ£o derivados somente do
- * explicacoes.json gravado (relido do disco). Nada aqui altera veredito, regra ou decisÃ£o.
+ * Mesma lógica que estava no cli-explicacao.ts (9A/9B.1): o motor recebe as mesmas
+ * entradas e opções do cli.ts e do processador.ts; os alertas são derivados somente do
+ * explicacoes.json gravado (relido do disco). Nada aqui altera veredito, regra ou decisão.
  *
- * Para o servidor hÃ¡ duas proteÃ§Ãµes opcionais:
+ * Para o servidor há duas proteções opcionais:
  *   - limparAntes: apaga explicacoes.json e alertas.json antes de gerar, para que uma falha
- *     nunca deixe alertas de uma execuÃ§Ã£o anterior;
- *   - vereditosDeReferencia: confere os vereditos desta execuÃ§Ã£o com o vereditos.json jÃ¡
- *     gravado pelo fluxo atual; se houver qualquer diferenÃ§a (fora calculadoEm), os dois
- *     arquivos sÃ£o apagados e a geraÃ§Ã£o falha, sem publicar alertas.
+ *     nunca deixe alertas de uma execução anterior;
+ *   - vereditosDeReferencia: confere os vereditos desta execução com o vereditos.json já
+ *     gravado pelo fluxo atual; se houver qualquer diferença (fora calculadoEm), os dois
+ *     arquivos são apagados e a geração falha, sem publicar alertas.
  */
 import { readFileSync, writeFileSync, appendFileSync, readdirSync, statSync, mkdirSync, mkdtempSync, rmSync, existsSync } from "node:fs";
 import { join, extname } from "node:path";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
-import { createHash } from "node:crypto";
 import { lerXml, selecionarVendas, type ResultadoLeitura } from "./parser.js";
 import { classificarDocumentos } from "./motor.js";
 import { bloqueiosParaBase, chavesBloqueadas } from "./bloqueios.js";
 import { carregarContexto, explicarVereditos } from "./explicador.js";
 import { gerarAlertas } from "./alertas.js";
 import type { BaseNormativa, Empresa, NaturezaItem, RespostaValidacao, Veredito, VereditoExplicado } from "./tipos.js";
+import { sha256DeArquivo } from "./arquivos.js";
 
 export interface OpcoesLoteExplicativo {
   pastaXml: string;
   arquivoEmpresa: string;
   /**
-   * ConfiguraÃ§Ã£o usada pelas explicaÃ§Ãµes e alertas (padrÃ£o: a mesma do motor). O servidor passa a
-   * configuraÃ§Ã£o sem respostas, para que as respostas da anÃ¡lise atual nÃ£o virem "respostas histÃ³ricas".
+   * Configuração usada pelas explicações e alertas (padrão: a mesma do motor). O servidor passa a
+   * configuração sem respostas, para que as respostas da análise atual não virem "respostas históricas".
    */
   arquivoEmpresaExplicacao?: string;
   saida: string;
@@ -53,7 +53,7 @@ export interface ResultadoLoteExplicativo {
   nivelEvidencia: Record<string, number>;
 }
 
-// Mesma leitura de pastas do cli.ts e do processador.ts (lÃ¡ a funÃ§Ã£o nÃ£o Ã© exportada).
+// Mesma leitura de pastas do cli.ts e do processador.ts (lá a função não é exportada).
 export function listarXmls(pasta: string): string[] {
   const achados: string[] = [];
   for (const nome of readdirSync(pasta)) {
@@ -71,9 +71,9 @@ export function listarXmls(pasta: string): string[] {
   return achados;
 }
 
-const sha = (arquivo: string): string => createHash("sha256").update(readFileSync(arquivo)).digest("hex");
+const sha = sha256DeArquivo;
 
-/** DiferenÃ§as entre dois conjuntos de vereditos, fora calculadoEm e a explicaÃ§Ã£o. */
+/** Diferenças entre dois conjuntos de vereditos, fora calculadoEm e a explicação. */
 export function diferencasDeVereditos(a: Veredito[], b: Veredito[]): string[] {
   const limpa = (v: Veredito | VereditoExplicado) => {
     const { calculadoEm: _c, ...resto } = v as VereditoExplicado;
@@ -81,7 +81,7 @@ export function diferencasDeVereditos(a: Veredito[], b: Veredito[]): string[] {
     return JSON.stringify(resto);
   };
   const difs: string[] = [];
-  if (a.length !== b.length) difs.push(`quantidade de vereditos: ${a.length} Ã— ${b.length}`);
+  if (a.length !== b.length) difs.push(`quantidade de vereditos: ${a.length} × ${b.length}`);
   for (let i = 0; i < Math.min(a.length, b.length); i++) {
     if (limpa(a[i]!) !== limpa(b[i]!)) difs.push(`veredito ${i} (${a[i]!.documento}, item ${a[i]!.nItem})`);
   }
@@ -98,7 +98,7 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
   const apagar = () => { rmSync(arquivoAlertas, { force: true }); rmSync(arquivoExplicacoes, { force: true }); };
   if (o.limparAntes) apagar();
 
-  // Motor: exatamente as mesmas entradas e opÃ§Ãµes do cli.ts
+  // Motor: exatamente as mesmas entradas e opções do cli.ts
   const base = JSON.parse(readFileSync(arquivoBase, "utf8")) as BaseNormativa;
   const cfg = JSON.parse(readFileSync(o.arquivoEmpresa, "utf8")) as Empresa & {
     naturezaPorProduto?: Record<string, NaturezaItem>;
@@ -117,17 +117,17 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
     regrasBloqueadas: chavesBloqueadas(bloqueiosParaBase(arquivoBase)),
   });
 
-  // ProteÃ§Ã£o do servidor: esta execuÃ§Ã£o precisa reproduzir o vereditos.json jÃ¡ gravado
+  // Proteção do servidor: esta execução precisa reproduzir o vereditos.json já gravado
   if (o.vereditosDeReferencia) {
     const referencia = existsSync(o.vereditosDeReferencia) ? (JSON.parse(readFileSync(o.vereditosDeReferencia, "utf8")) as Veredito[]) : null;
-    const difs = referencia ? diferencasDeVereditos(referencia, vereditos) : ["vereditos.json de referÃªncia ausente"];
+    const difs = referencia ? diferencasDeVereditos(referencia, vereditos) : ["vereditos.json de referência ausente"];
     if (difs.length) {
       apagar();
-      throw new Error(`Alertas nÃ£o publicados: os vereditos desta execuÃ§Ã£o divergem do vereditos.json (${difs.slice(0, 3).join("; ")}${difs.length > 3 ? "; â€¦" : ""}).`);
+      throw new Error(`Alertas não publicados: os vereditos desta execução divergem do vereditos.json (${difs.slice(0, 3).join("; ")}${difs.length > 3 ? "; …" : ""}).`);
     }
   }
 
-  // Explicador: depois do motor, sÃ³ leitura
+  // Explicador: depois do motor, só leitura
   const arquivoEmpresaExplicacao = o.arquivoEmpresaExplicacao ?? o.arquivoEmpresa;
   const ctx = carregarContexto({ base: arquivoBase, v2: arquivoV2, matriz: arquivoMatriz, empresa: arquivoEmpresaExplicacao });
   const explicados = explicarVereditos(vereditos, ctx, selecao.documentos);
@@ -175,8 +175,12 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
   const conta = <T>(xs: T[], f: (x: T) => string) => xs.reduce<Record<string, number>>((acc, x) => ((acc[f(x)] = (acc[f(x)] ?? 0) + 1), acc), {});
   writeFileSync(arquivoAlertas, JSON.stringify({
     fase: "B1_ALERTAS",
-    aviso: "Alertas somente para exibiÃ§Ã£o, derivados de explicacoes.json. NÃ£o alteram o estado dos vereditos nem decidem pelo usuÃ¡rio.",
-    origem: { explicacoes: arquivoExplicacoes, sha256: sha(arquivoExplicacoes) },
+    aviso: "Alertas somente para exibição, derivados de explicacoes.json. Não alteram o estado dos vereditos nem decidem pelo usuário.",
+    origem: {
+      explicacoes: arquivoExplicacoes,
+      sha256: sha(arquivoExplicacoes),
+      ...(o.vereditosDeReferencia && existsSync(o.vereditosDeReferencia) ? { vereditosSha256: sha(o.vereditosDeReferencia) } : {}),
+    },
     totais: {
       porItem: alertas.porItem.length,
       lote: alertas.lote.length,

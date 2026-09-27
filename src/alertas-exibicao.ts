@@ -8,10 +8,10 @@
  */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { createHash } from "node:crypto";
 import type { Alerta, AlertaDeLote, CategoriaAlerta } from "./alertas.js";
 import type { Veredito, VereditoExplicado } from "./tipos.js";
 import { diferencasDeVereditos } from "./lote-explicativo.js";
+import { sha256DeArquivo } from "./arquivos.js";
 
 /** Ordem de exibição (não é gravidade). */
 export const ORDEM_CATEGORIAS: readonly CategoriaAlerta[] = ["CONFLITO", "LACUNA", "PENDENCIA", "ATENCAO", "INFORMACAO"];
@@ -151,7 +151,7 @@ export type RespostaAlertas =
     }
   | { disponivel: false; motivo: string; painelHtml: string };
 
-interface AlertasJson { fase: string; origem: { explicacoes: string; sha256: string }; totais: unknown; lote: AlertaDeLote[]; porItem: Alerta[] }
+interface AlertasJson { fase: string; origem: { explicacoes: string; sha256: string; vereditosSha256?: string }; totais: unknown; lote: AlertaDeLote[]; porItem: Alerta[] }
 
 export function montarRespostaAlertas(al: AlertasJson, vereditos: VereditoParaCartao[]): RespostaAlertas {
   const porItem = indexarPorItem(al.porItem);
@@ -186,15 +186,18 @@ export function lerAlertasParaExibicao(pasta: string): RespostaAlertas {
   if (!existsSync(arqVereditos)) return indisponivel("o arquivo vereditos.json não existe.");
   try {
     const al = JSON.parse(readFileSync(arqAlertas, "utf8")) as AlertasJson;
-    const brutoEx = readFileSync(arqExplicacoes);
-    if (createHash("sha256").update(brutoEx).digest("hex") !== al.origem?.sha256) {
+    if (sha256DeArquivo(arqExplicacoes) !== al.origem?.sha256) {
       return indisponivel("o alertas.json não corresponde ao explicacoes.json atual.");
     }
-    const vereditos = JSON.parse(readFileSync(arqVereditos, "utf8")) as Veredito[];
-    const explicados = (JSON.parse(brutoEx.toString("utf8")) as { vereditos: VereditoExplicado[] }).vereditos;
-    if (diferencasDeVereditos(vereditos, explicados).length) {
-      return indisponivel("os alertas foram gerados para resultados diferentes dos atuais.");
+    const diferentes = indisponivel("os alertas foram gerados para resultados diferentes dos atuais.");
+    // Com o SHA do vereditos.json de origem, a conferência dispensa reler explicacoes.json (centenas de MB)
+    if (al.origem.vereditosSha256) {
+      if (sha256DeArquivo(arqVereditos) !== al.origem.vereditosSha256) return diferentes;
+    } else {
+      const explicados = (JSON.parse(readFileSync(arqExplicacoes, "utf8")) as { vereditos: VereditoExplicado[] }).vereditos;
+      if (diferencasDeVereditos(JSON.parse(readFileSync(arqVereditos, "utf8")) as Veredito[], explicados).length) return diferentes;
     }
+    const vereditos = JSON.parse(readFileSync(arqVereditos, "utf8")) as Veredito[];
     return montarRespostaAlertas(al, vereditos);
   } catch (e) {
     return indisponivel(`não foi possível ler os alertas (${e instanceof Error ? e.message : String(e)}).`);
