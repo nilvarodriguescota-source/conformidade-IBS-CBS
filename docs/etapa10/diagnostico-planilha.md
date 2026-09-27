@@ -12,6 +12,8 @@ Arquivos desta etapa:
 | `mapa-planilha-sistema.csv` | Uma linha por linha da aba "Base de dados" (1.477): regra do sistema, local, status na auditoria oficial, bloqueio, divergências e o que falta |
 | `proposta-d5.json` | Regras oficiais que entrariam se a decisão D5 for "incluir" (não estão em uso) |
 | `scripts/proposta_d5.mjs` | Gera a proposta a partir dos snapshots da LC 214/2025 e do SVRS |
+| `natureza-produtos-proposta.csv` | Natureza sugerida para cada um dos 433 produtos da análise (regime de lanchonete), para revisão |
+| `scripts/mapa_planilha_etapa10.py` | Refaz o mapa a partir da planilha |
 
 ## 1. O que a planilha contém
 
@@ -166,3 +168,41 @@ funções de leitura da lei (a saída continua idêntica, conferida com `--verif
 3. **Códigos fora da planilha**: 200013 pode entrar como a D5 (lista oficial sem condição); os demais
    dependem de dado que o XML não traz e ficam como pendência.
 4. **D3** (política para as 364 regras com ressalva) e **fundamento do Anexo XI** continuam decisões do usuário.
+
+## 9. Implementação (27/09/2026, após as decisões da usuária)
+
+### D5 = incluir — feito
+
+- `scripts/aplicar_d5.mjs` acrescentou as 1.066 regras de `proposta-d5.json` no fim da base (cópia anterior em
+  `backups/etapa10/base-normativa.antes-d5.json`). As 1.369 regras da planilha não mudaram (conferido byte a byte).
+- Cada regra nova traz o item da lei (F1) e as entradas PERMITIDO do SVRS (F2); a condição e a exceção do SVRS
+  ficam na observação. O fundamento é o que a base já usa para o código (a divergência do 200043, "Art. 140"
+  × art. 142, I, continua exibida como alerta).
+- A v2 e a auditoria foram regeneradas pelos scripts existentes. Na v2, a regra nova tem `original` de fonte
+  `OFICIAL_D5` (sem linha de planilha) com a evidência. Auditoria: 2.435 regras (1.615 confirmadas, 295
+  divergentes, 510 não determinadas, 15 não localizadas), 0 lacunas. Verificador da v2: todas as conferências passam.
+- Motor, telas, perguntas SIM/NÃO e Relatório Final não mudaram: a regra nova é candidata comum e o item vai para
+  "precisa validar". Impacto nesta análise: 1 item (ADC ARROZ).
+- Testes que registravam "lacuna não vira regra" e os totais antigos foram atualizados para a decisão tomada.
+
+### Regime de lanchonete — proposta pronta, ainda não ligado
+
+- `natureza-produtos-proposta.csv`: 433 produtos. Confiança alta (192) já vem com `natureza_final` preenchida;
+  média (226, a maioria padaria/confeitaria) e baixa (15) ficam em branco para a revisão.
+- Depois da revisão da coluna `natureza_final`: `node scripts/aplicar_natureza.mjs` liga `barOuRestaurante` e grava
+  `naturezaPorProduto` no `empresa.json` (cópia anterior em `backups/etapa10/`). Produto sem natureza fica
+  `INDETERMINADO`, como o sistema já faz.
+- Simulação nesta análise, com todas as sugestões: CORRETO 934, INCORRETO_ECONOMIA 1.068, INCORRETO_RISCO 2.425,
+  REQUER_VALIDACAO 2.340, NÃO_OBRIGATÓRIO 389, INDETERMINADO 48; economia R$ 98,63 e exposição R$ 164,96
+  (alíquotas de teste de 2026). Dos riscos, 1.685 itens preparados saem com 200003 (cesta básica, alíquota zero)
+  no lugar do 200047 e 709 saem sem o grupo IBS/CBS depois de 03/08/2026.
+
+### Correções no caminho do regime específico em `src/motor.ts`
+
+O caminho só roda com `barOuRestaurante = true`; os resultados atuais não mudaram (conferido).
+
+| Antes | Depois | Por quê |
+| --- | --- | --- |
+| Grupo IBS/CBS ausente virava `INCORRETO_ECONOMIA` (os dois lados do operador eram iguais) | `INCORRETO_RISCO`, como no fluxo geral | Documento sem o grupo exigido |
+| Outro benefício (ex.: 200038, 60%) no lugar do 200047 virava `INCORRETO_ECONOMIA` | `INCORRETO_RISCO`, com exposição = tributo × (redução informada − 40%) | Redução maior que a devida é imposto a menor |
+| Valor pago, valor correto e economia não eram calculados | Calculados como no fluxo geral (tributação integral → economia de 40%) | O indicador de economia ficava zerado |

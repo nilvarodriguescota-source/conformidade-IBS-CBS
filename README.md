@@ -88,6 +88,7 @@ período, os campos de economia e exposição voltam nulos e o motivo diz por qu
 | `src/arquivos.ts` | Hash e cabeçalho de arquivos grandes sem carregá-los inteiros (explicacoes.json passa de 500 MB) |
 | `web/` | Versão do navegador: sistema de arquivos em memória, worker, gerador de .xlsx |
 | `scripts/build-web.mjs` | Gera `public/` para o Netlify |
+| `docs/etapa10/` | Auditoria da planilha V4.1 frente ao sistema e às fontes oficiais (diagnóstico, mapa linha a linha, proposta D5, natureza dos produtos) |
 | `test/fixtures/empresa-teste.json` | Dados fixos dos testes (o `empresa.json` da raiz é configuração e pode mudar) |
 
 ## Base normativa
@@ -117,6 +118,13 @@ de validação.
 | D10-D13 | Base com texto livre, NCM de 7 dígitos, colunas deslocadas, fundamento errado | `scripts/extrair_base.py` |
 | D14-D16 | Devolução, cancelamento e XML duplicado entravam no cálculo | `selecionarVendas` |
 | D19, D23 | Erros sem log, limite de 1.000 XMLs, sem ZIP nem subpastas | `cli.ts` e `descartados.json` |
+
+## Base normativa após a Etapa 10
+
+Além das 1.369 regras da planilha, a base tem 1.066 regras de fonte oficial (decisão D5): NCMs que a
+LC 214/2025 e o SVRS listam para os mesmos 12 códigos. Cada uma traz o item da lei e a entrada do SVRS
+(`docs/etapa10/proposta-d5.json`). Ordem para refazer: `node scripts/proposta_d5.mjs`, `node scripts/aplicar_d5.mjs`,
+`node scripts/auditoria_oficial.mjs`, `node scripts/gerar_base_v2.mjs`, `node scripts/auditoria_oficial.mjs`.
 
 ## O que falta
 

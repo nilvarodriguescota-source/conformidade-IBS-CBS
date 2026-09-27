@@ -141,46 +141,14 @@ export function classificarItem(
     return veredito("INDETERMINADO", "Emitente atende consumo no local e a natureza do item não foi informada.");
   }
 
-  const aliquotasNaData = () => {
-    const usadas: Veredito["aliquotaUsada"] = [];
-    let total = 0;
-    for (const tributo of ["CBS", "IBS"] as const) {
-      const p = aliquotaVigente(tributo, data, opcoes.aceitarProjecao ?? false, opcoes.aliquotas ?? ALIQUOTAS);
-      if (p) {
-        usadas.push({ tributo, aliquota: p.aliquota, fonte: p.fonte, tipo: p.tipo });
-        total += p.aliquota;
-      } else {
-        faltantes.push(`alíquota de referência de ${tributo} vigente em ${data.slice(0, 10)}`);
-      }
-    }
-    return { usadas, total };
-  };
-
   if (natureza === "preparado_no_local") {
     const esperado = { cst: BARES_RESTAURANTES.cst, cClassTrib: BARES_RESTAURANTES.cClassTrib };
     const ok = mesmoCodigo(item.cst, esperado.cst) && mesmoCodigo(item.cClassTrib, esperado.cClassTrib);
-    const regime = `Regime específico de bares e restaurantes (${BARES_RESTAURANTES.fundamento}): redução de 40%.`;
-    const { usadas, total } = aliquotasNaData();
-    const base = item.baseCalculo ?? item.valorProduto - item.desconto;
-    const valorCheio = usadas.length === 2 ? base * total : null;
-    const comum = { esperado, regraAplicada: BARES_RESTAURANTES.fundamento, baseCalculo: base, aliquotaUsada: usadas };
-    if (!informouAlgo) {
-      return veredito("INCORRETO_RISCO", `Grupo IBS/CBS exigido e não informado no documento. ${regime}`, comum);
-    }
-    if (ok) {
-      return veredito("CORRETO", regime, { ...comum, valorPago: valorCheio, valorCorreto: valorCheio, economiaPotencial: 0 });
-    }
-    if (mesmoCodigo(item.cClassTrib, TRIBUTACAO_INTEGRAL.cClassTrib)) {
-      // Tributação integral no lugar da redução de 40%: imposto pago a mais.
-      const economia = valorCheio === null ? null : valorCheio * BARES_RESTAURANTES.reducao;
-      return veredito("INCORRETO_ECONOMIA", `${regime} O documento usa tributação integral.`, {
-        ...comum, valorPago: valorCheio, valorCorreto: valorCheio === null || economia === null ? null : valorCheio - economia, economiaPotencial: economia,
-      });
-    }
-    // Outro benefício no lugar do regime: redução maior que 40% é imposto a menor.
-    const informado = item.cClassTrib ? opcoes.base.catalogoCodigos[semZeros(item.cClassTrib)!.padStart(6, "0")] : undefined;
-    const exposicao = valorCheio !== null && informado ? valorCheio * Math.max(0, informado.reducao - BARES_RESTAURANTES.reducao) : null;
-    return veredito("INCORRETO_RISCO", `Código ${item.cClassTrib} informado no lugar do regime específico. ${regime}`, { ...comum, exposicao });
+    return veredito(
+      ok ? "CORRETO" : informouAlgo ? "INCORRETO_ECONOMIA" : "INCORRETO_ECONOMIA",
+      `Regime específico de bares e restaurantes (${BARES_RESTAURANTES.fundamento}): redução de 40%.`,
+      { esperado, regraAplicada: BARES_RESTAURANTES.fundamento },
+    );
   }
 
   const vigentes = natureza === "bebida_alcoolica" || natureza === "servico"
@@ -238,7 +206,17 @@ export function classificarItem(
     : TRIBUTACAO_INTEGRAL;
 
   // 4. Alíquotas vigentes na data
-  const { usadas, total: aliquotaTotal } = aliquotasNaData();
+  const usadas: Veredito["aliquotaUsada"] = [];
+  let aliquotaTotal = 0;
+  for (const tributo of ["CBS", "IBS"] as const) {
+    const p = aliquotaVigente(tributo, data, opcoes.aceitarProjecao ?? false, opcoes.aliquotas ?? ALIQUOTAS);
+    if (p) {
+      usadas.push({ tributo, aliquota: p.aliquota, fonte: p.fonte, tipo: p.tipo });
+      aliquotaTotal += p.aliquota;
+    } else {
+      faltantes.push(`alíquota de referência de ${tributo} vigente em ${data.slice(0, 10)}`);
+    }
+  }
 
   const base = item.baseCalculo ?? item.valorProduto - item.desconto;
   const reducao = escolhida?.reducaoAliquota ?? 0;

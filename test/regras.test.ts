@@ -134,8 +134,32 @@ test("bar: prato preparado no local usa o regime específico, não o anexo do NC
     item({ ncm: "23099090", xProd: "PICANHA & FRITAS", cst: "200", cClassTrib: "200038" }),
     { base, empresa: bar, naturezaPorProduto: natureza, agora: AGORA },
   );
-  assert.equal(errado.estado, "INCORRETO_ECONOMIA");
+  // 200038 reduz 60%; o regime do art. 275 reduz 40%: o documento recolhe a menos (risco, não economia)
+  assert.equal(errado.estado, "INCORRETO_RISCO");
   assert.deepEqual(errado.esperado, { cst: "200", cClassTrib: "200047" });
+  assert.equal(Number(errado.exposicao!.toFixed(2)), 2, "1.000 × 1% × (60% − 40%)");
+});
+
+test("bar: prato com tributação integral no lugar do regime específico é economia de 40%", () => {
+  const bar: Empresa = { cnpj: "00000000000000", regime: "normal", barOuRestaurante: true };
+  const v = classificarItem(doc(), item({ ncm: "21069090", xProd: "BUFFET ALMOÇO", cst: "000", cClassTrib: "000001" }), {
+    base, empresa: bar, naturezaPorProduto: new Map([["P1", "preparado_no_local"]]), agora: AGORA,
+  });
+  assert.equal(v.estado, "INCORRETO_ECONOMIA");
+  assert.deepEqual(v.esperado, { cst: "200", cClassTrib: "200047" });
+  assert.equal(Number(v.valorPago!.toFixed(2)), 10, "1.000 × (0,9% + 0,1%)");
+  assert.equal(Number(v.economiaPotencial!.toFixed(2)), 4, "40% de 10");
+  assert.equal(Number(v.valorCorreto!.toFixed(2)), 6);
+});
+
+test("bar: prato sem o grupo IBS/CBS, quando já exigido, é risco (como no fluxo geral)", () => {
+  const bar: Empresa = { cnpj: "00000000000000", regime: "normal", barOuRestaurante: true };
+  const v = classificarItem(doc(), item({ ncm: "21069090", xProd: "BUFFET ALMOÇO" }), {
+    base, empresa: bar, naturezaPorProduto: new Map([["P1", "preparado_no_local"]]), agora: AGORA,
+  });
+  assert.equal(v.estado, "INCORRETO_RISCO");
+  assert.match(v.motivo, /Grupo IBS\/CBS exigido e não informado/);
+  assert.deepEqual(v.esperado, { cst: "200", cClassTrib: "200047" });
 });
 
 test("bar: bebida alcoólica fica fora do regime, com tributação integral", () => {
