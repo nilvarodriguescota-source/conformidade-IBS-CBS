@@ -1989,7 +1989,7 @@ function blocoRegraCandidata(g,p,i,total){
   ?'<div class="aviso-regra">Atenção: o identificador '+esc(g.id)+' corresponde a '+esc(g.regrasComEsteIdentificador)+' regras na base; a regra não pôde ser identificada com segurança. Pelo comportamento atual do motor, um SIM confirma todas elas ao mesmo tempo e o item continua pendente (mais de um benefício confirmado).</div>'
   :'';
  return '<div class="regra-cand">'+
-  '<div class="small">'+(total>1?'<strong>'+esc(p.produto)+'</strong> (cProd '+esc(p.cProd)+') · ':'')+'Regra candidata'+(total>1?' '+(i+1)+' de '+total:'')+': '+esc(g.id)+' — aguardando validação</div>'+
+  '<div class="small">Regra candidata'+(total>1?' '+(i+1)+' de '+total:'')+': '+esc(g.id)+' — aguardando validação</div>'+
   duplicado+
   '<div class="bloco"><span class="rotulo">Descrição legal do benefício</span>'+descricao+'</div>'+
   quadroRegra({cst:g.cst,cClassTrib:g.cClassTrib,anexo:g.anexo,item:g.item,fundamento:g.fundamentoLegal,reducao:g.reducao,auditoria:g.auditoria,humano:'pendente',titulo:'Enquadramento proposto'})+
@@ -2108,22 +2108,13 @@ function exportarResultados(){
   resultadosFiltrados.map(v=>[v.produto,v.cProd,v.ncm,v.baseCalculo,v.estado,validacaoDoItem(v),v.informado?.cst,v.esperado?.cst,v.informado?.cClassTrib,v.esperado?.cClassTrib,v.valorInformadoTotal,rotuloValorCorreto(v)==='Valor correto segundo a regra'?v.valorCorreto:'',rotuloValorCorreto(v)==='Valor correto segundo a regra'?'':v.valorCorreto,v.regraAplicada,beneficioDoItem(v),reducaoCsv(v,'reducao'),reducaoCsv(v,'resultante'),reducaoCsv(v,'evidencia'),reducaoCsv(v,'origem'),v.economiaPotencial,v.exposicao,textoMotivo(v),v.documento,v.nItem]))));
 }
 function exportarPendencias(){
- // Uma linha por pendência exibida (mesma lista e mesma chave dos cards: pendentesFiltradas, um card por cProd);
- // as regras candidatas do card ficam na mesma linha, numeradas na ordem em que aparecem na tela.
  const reducaoPrev=g=>{const o=g.reducao;return !o||o.evidencia==='nao_determinada'||o.valor==null?'':textoReducao(o.valor);};
  const evidencia=g=>{const o=g.reducao;return !o?'indisponível':o.evidencia==='nao_determinada'||o.valor==null?'não determinada':statusEvidenciaReducao(o).texto;};
- const juntar=(regras,f)=>regras.length>1?regras.map((g,i)=>(i+1)+') '+(f(g)??'')).join(' | '):(regras[0]?(f(regras[0])??''):'');
- baixar('pendencias.csv',csv([['Produto','cProd','NCM','Base','Itens (vendas)','Quantidade de regras candidatas','Regra candidata','Descrição legal do benefício','CST IBS/CBS proposto','cClassTrib proposto','Anexo','Item','Redução prevista na regra','Status da evidência da redução','Resposta nesta análise','Pergunta']].concat(
-  pendentesFiltradas.map(p=>{
-   const regras=p.regrasDetalhe||(p.regras||[]).map(id=>({id}));
-   return [p.produto,p.cProd,p.ncm,p.base,p.itens,regras.length,
-    juntar(regras,g=>g.id),
-    juntar(regras,g=>g.descricaoLegal!=null?g.descricaoLegal:(g.descricoesLegaisDivergentes||[]).join(' / ')),
-    juntar(regras,g=>g.cst),juntar(regras,g=>g.cClassTrib),juntar(regras,g=>g.anexo),juntar(regras,g=>g.item),
-    juntar(regras,reducaoPrev),juntar(regras,evidencia),
-    juntar(regras,g=>(p.respostasDestaAnalise||[]).filter(x=>x.regraId===g.id).map(x=>x.resposta).join(', ')),
-    'Com base na descrição legal acima, o produto atende aos requisitos para este enquadramento?'];
-  }))));
+ baixar('pendencias.csv',csv([['Produto','cProd','NCM','Base','Itens','Regra candidata','Descrição legal do benefício','CST IBS/CBS proposto','cClassTrib proposto','Anexo','Item','Redução prevista na regra','Status da evidência da redução','Resposta nesta análise','Pergunta']].concat(
+  pendentesFiltradas.flatMap(p=>(p.regrasDetalhe||(p.regras||[]).map(id=>({id}))).map(g=>[p.produto,p.cProd,p.ncm,p.base,p.itens,g.id,
+   g.descricaoLegal!=null?g.descricaoLegal:(g.descricoesLegaisDivergentes||[]).join(' | '),g.cst,g.cClassTrib,g.anexo,g.item,reducaoPrev(g),evidencia(g),
+   (p.respostasDestaAnalise||[]).filter(x=>x.regraId===g.id).map(x=>x.resposta).join(', '),
+   'Com base na descrição legal acima, o produto atende aos requisitos para este enquadramento?'])))));
 }
 
 function formatarNumero(v){
