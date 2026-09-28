@@ -46,13 +46,7 @@ for (const [origem, nome] of [
   ["chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js", "chartjs-plugin-datalabels.min.js"],
   ["jspdf/dist/jspdf.umd.min.js", "jspdf.umd.min.js"],
   ["jspdf-autotable/dist/jspdf.plugin.autotable.min.js", "jspdf.plugin.autotable.min.js"],
-  ["@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2", "cormorant-garamond-latin-600-normal.woff2"],
-  ["@fontsource/cormorant-garamond/files/cormorant-garamond-latin-700-normal.woff2", "cormorant-garamond-latin-700-normal.woff2"],
 ]) cpSync(nm(origem), join(pub, "vendor", nome));
-
-// Imagens da marca Sabores Estratégicos (geradas por scripts/gerar_marca.py; a logo original fica fora)
-const origemDaMarca = join(raiz, "web", "marca", "origem");
-cpSync(join(raiz, "web", "marca"), join(pub, "marca"), { recursive: true, filter: (f) => !f.startsWith(origemDaMarca) });
 
 // Arquivos que o processamento lê do disco (base normativa, auditoria, matriz, empresa)
 const dados = [

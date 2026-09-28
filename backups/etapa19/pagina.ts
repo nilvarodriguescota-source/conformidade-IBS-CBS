@@ -5,497 +5,268 @@ export function paginaHtml(cabecalhoExtra = ""): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#2C4233">
-<link rel="icon" type="image/png" href="marca/icone.png">
-<link rel="preload" href="vendor/cormorant-garamond-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="vendor/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 ${cabecalhoExtra}<script src="vendor/chart.umd.js"></script><script src="vendor/chartjs-plugin-datalabels.min.js"></script>
 <script src="vendor/xlsx-mini.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
 <script src="vendor/jspdf.plugin.autotable.min.js"></script>
-<title>Conformidade IBS/CBS · Sabores Estratégicos</title>
+<title>Conformidade IBS/CBS</title>
 <style>
-/* ============ Identidade visual Sabores Estratégicos ============
-   Verde da coruja (#2C4233) como cor institucional, dourado (#AC9368) nos detalhes e
-   fundos off-white. Só aparência: regras, textos dos resultados e ações não dependem daqui. */
-@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:600;font-display:swap;src:url(vendor/cormorant-garamond-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:700;font-display:swap;src:url(vendor/cormorant-garamond-latin-700-normal.woff2) format("woff2")}
-:root{
- --verde-900:#1B2B21;--verde-800:#23372B;--verde-700:#2C4233;--verde-600:#3A5543;--verde-500:#557060;
- --verde-300:#A8BBAD;--verde-200:#CBD8CE;--verde-100:#E4ECE6;--verde-50:#F1F5F1;
- --ouro-800:#6B5427;--ouro-700:#7E6531;--ouro-600:#96794A;--ouro-500:#AC9368;--ouro-400:#C9AE7C;
- --ouro-300:#DCC9A3;--ouro-200:#EADDC2;--ouro-100:#F4ECDC;--ouro-50:#FAF6EC;
- --creme:#F4EEE2;--papel:#F6F3EC;--papel-2:#EFEAE0;--superficie:#FFFDF9;--superficie-2:#FAF8F3;
- --linha:#E6E0D3;--linha-2:#D9D1C1;
- --texto:#1D2922;--texto-2:#46544B;--texto-3:#626E66;
- --ok:#2E6B45;--ok-fundo:#EAF3EC;--ok-borda:#BFD8C6;--ok-forte:#3A7A52;
- --economia:#8F5316;--economia-fundo:#FBF1E4;--economia-borda:#EBCFA6;--economia-forte:#B26B26;
- --risco:#9C2F25;--risco-fundo:#FAEDEA;--risco-borda:#EBC5BE;--risco-forte:#A53E33;
- --pendente:#7A5E24;--pendente-fundo:#F8F1E0;--pendente-borda:#E4D0A2;--pendente-forte:#A8863F;
- --neutro:#5A665F;--neutro-fundo:#F0EFEA;--neutro-borda:#D8D6CC;
- --info:#44544B;--info-fundo:#F2F0E9;--info-borda:#DCD5C6;
- --sombra-1:0 1px 2px rgba(29,41,34,.05);
- --sombra-2:0 1px 2px rgba(29,41,34,.04),0 10px 28px -14px rgba(29,41,34,.20);
- --serif:"Cormorant Garamond","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
- --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-}
 *{box-sizing:border-box}
-[hidden]{display:none!important}
-html{scroll-padding-top:72px}
-body{margin:0;font-family:var(--sans);font-size:15px;line-height:1.5;font-variant-numeric:lining-nums;background:var(--papel);color:var(--texto);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-::selection{background:var(--ouro-200);color:var(--verde-900)}
-a{color:var(--verde-600);text-decoration-color:var(--ouro-400);text-underline-offset:2px}
-a:hover{color:var(--verde-900)}
-.ico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
-
-/* ---------- Cabeçalho ---------- */
-header.topo{position:relative;display:flex;align-items:center;gap:28px;padding:18px max(32px,calc((100% - 1500px) / 2 + 32px));background:linear-gradient(115deg,var(--verde-700) 0%,var(--verde-800) 62%,#1E3125 100%);color:var(--creme);overflow:hidden}
-.marca{display:flex;align-items:center;gap:14px;flex:none}
-.marca-coruja{display:block;height:56px;width:auto}
-.marca-assinatura{display:block;height:42px;width:auto}
-.topo-titulo{min-width:0;padding-left:28px;border-left:1px solid rgba(201,174,124,.45)}
-header.topo h1{margin:0;font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.05;letter-spacing:.01em;color:#FBF7EE}
-header.topo p{margin:5px 0 0;font-size:13.5px;color:rgba(244,238,226,.74)}
-.cabecalho-impressao{display:none}
-
-/* ---------- Navegação ---------- */
-nav{position:sticky;top:0;z-index:40;display:flex;gap:2px;padding:0 max(16px,calc((100% - 1500px) / 2 + 16px));background:var(--verde-800);border-top:1px solid rgba(244,238,226,.07);box-shadow:inset 0 -1px 0 rgba(201,174,124,.38),0 8px 18px -12px rgba(15,25,19,.55);overflow-x:auto;scrollbar-width:none}
-nav::-webkit-scrollbar{display:none}
-nav button{position:relative;display:inline-flex;align-items:center;gap:8px;flex:none;border:0;background:transparent;padding:14px 16px 15px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:.01em;color:rgba(244,238,226,.74);white-space:nowrap;transition:color .15s,background-color .15s}
-nav button .ico{width:17px;height:17px;opacity:.85}
-nav button:hover{color:#FBF7EE;background:rgba(244,238,226,.06)}
-nav button.active{color:#FFFDF6;background:rgba(244,238,226,.08)}
-nav button.active .ico{color:var(--ouro-400);opacity:1}
-nav button.active::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--ouro-400)}
-nav button:focus-visible{outline:2px solid var(--ouro-400);outline-offset:-4px;border-radius:8px}
-
-/* ---------- Estrutura ---------- */
-main{max-width:1500px;margin:0 auto;padding:30px 32px 40px}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#17202a}
+header{background:#17202a;color:white;padding:20px 30px}
+header h1{margin:0;font-size:25px}
+header p{margin:6px 0 0;color:#cbd5e1}
+nav{background:white;border-bottom:1px solid #ddd;padding:0 25px;display:flex;gap:5px;flex-wrap:wrap}
+nav button{border:0;background:white;padding:15px 18px;cursor:pointer;font-weight:bold;color:#475569}
+nav button.active{color:#6d28d9;border-bottom:3px solid #6d28d9}
+main{padding:25px;max-width:1500px;margin:auto}
 .tela{display:none}
-.tela.active{display:block;animation:surgir .28s ease-out}
-@keyframes surgir{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.card{background:var(--superficie);border:1px solid var(--linha);border-radius:14px;padding:26px 28px;margin-bottom:22px;box-shadow:var(--sombra-2)}
-.card .card{background:var(--superficie-2);box-shadow:none;border-radius:12px;padding:20px 22px}
-h1,h2,h3,h4{color:var(--verde-900)}
-h2{margin:0 0 20px;font-family:var(--serif);font-weight:700;font-size:34px;line-height:1.05;letter-spacing:.005em}
-h2::after{content:"";display:block;width:46px;height:2px;margin-top:12px;background:linear-gradient(90deg,var(--ouro-500),var(--ouro-300))}
-h3{margin:0 0 14px;font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.15}
-h4{margin:0 0 8px;font-size:14px;font-weight:700;letter-spacing:.01em}
-p{margin:0 0 10px}
-.small{font-size:12px;color:var(--texto-3)}
-.rotulo{display:block;color:var(--texto-3);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-.valor{font-weight:700}
-.rodape{display:flex;align-items:center;justify-content:center;gap:10px;padding:22px 16px 30px;color:var(--texto-3);font-size:12.5px;letter-spacing:.02em}
-.rodape img{height:24px;width:auto;opacity:.9}
-.rodape strong{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--verde-700);letter-spacing:.04em}
-.rodape-sep{width:1px;height:14px;background:var(--linha-2)}
+.tela.active{display:block}
+.card{background:white;border-radius:10px;padding:22px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+h2{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.analise-metricas{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.analise-metricas .label{white-space:nowrap}
+.aliquotas-analise{margin-top:20px}
+.aliquota-item{display:grid;grid-template-columns:90px 100px 1fr;gap:15px;align-items:start;padding:14px 0;border-bottom:1px solid #e2e8f0}
+.aliquota-item:last-child{border-bottom:0}
+.aliquota-percentual{font-size:20px;font-weight:bold;color:#6d28d9}
+.aliquota-descricao{font-size:13px;color:#475569;line-height:1.5}
+.metric{background:white;border:1px solid #e2e8f0;border-radius:10px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center}
+.metric .numero{font-size:27px;font-weight:bold;margin-top:8px;text-align:center}
 
-/* ---------- Botões ---------- */
-button{font-family:var(--sans)}
-button.primary,button.secondary,button.perigo{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:9px 18px;border-radius:10px;font-size:14px;font-weight:600;letter-spacing:.01em;line-height:1.2;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s}
-button.primary{background:var(--verde-700);color:#FBF8F1;border:1px solid var(--verde-700);box-shadow:0 1px 2px rgba(29,41,34,.2),inset 0 1px 0 rgba(255,255,255,.07)}
-button.primary:hover:not(:disabled){background:var(--verde-800);border-color:var(--verde-800)}
-button.primary:active:not(:disabled){background:var(--verde-900);border-color:var(--verde-900)}
-button.secondary{background:var(--superficie);color:var(--verde-800);border:1px solid var(--linha-2);box-shadow:var(--sombra-1)}
-button.secondary:hover:not(:disabled){background:var(--verde-50);border-color:var(--verde-500)}
-button.secondary:active:not(:disabled){background:var(--verde-100)}
-button.perigo{background:var(--risco-fundo);color:var(--risco);border:1px solid var(--risco-borda)}
-button.perigo:hover:not(:disabled){background:#F5DFDA;border-color:#DDA59B}
-button.relatorio-final-selecionado,button.relatorio-final-selecionado:hover:not(:disabled),
-button.validacao-selecionada,button.validacao-selecionada:hover:not(:disabled){background:var(--verde-700);color:#FBF8F1;border-color:var(--verde-700);box-shadow:0 0 0 3px var(--ouro-200)}
-button.link{background:none;border:0;color:var(--verde-600);cursor:pointer;padding:4px;font-size:13px}
+.metric .label{font-size:13px;color:#64748b;text-align:center;white-space:nowrap}
+
+/* Cores suaves dos cards da Análise */
+#importar .metric{
+  border:1px solid #dbe4ee;
+}
+
+#importar .metric:nth-child(1),
+#importar .metric:nth-child(2),
+#importar .metric:nth-child(3){
+  background:#f4f8fc;
+  border-color:#d7e5f2;
+}
+
+#importar .metric:nth-child(4){
+  background:#f1f8f3;
+  border-color:#cfe7d5;
+}
+
+#importar .metric:nth-child(5){
+  background:#fdf3f3;
+  border-color:#efd2d2;
+}
+
+#importar .metric:nth-child(6){
+  background:#f6f3fb;
+  border-color:#ded4ef;
+}
+
+button.primary{background:#6d28d9;color:white;border:0;border-radius:6px;padding:11px 18px;cursor:pointer;font-weight:bold}
+button.secondary{background:#e2e8f0;color:#17202a;border:0;border-radius:6px;padding:10px 16px;cursor:pointer}button.relatorio-final-selecionado{background:#6d28d9;color:white;font-weight:bold;box-shadow:0 0 0 2px #c4b5fd}button.validacao-selecionada{background:#6d28d9;color:white;font-weight:bold;box-shadow:0 0 0 2px #c4b5fd}
+button.perigo{background:#fee2e2;color:#991b1b;border:0;border-radius:6px;padding:11px 18px;cursor:pointer;font-weight:bold}
 button:disabled{opacity:.45;cursor:not-allowed}
-button:focus-visible{outline:2px solid var(--ouro-500);outline-offset:2px}
-.segmentado{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--linha-2);border-radius:12px;background:var(--papel)}
-.segmentado button.secondary{min-height:36px;padding:7px 14px;border-color:transparent;background:transparent;box-shadow:none;font-size:13px;letter-spacing:.04em;color:var(--texto-2)}
-.segmentado button.secondary:hover:not(:disabled){background:var(--superficie);border-color:var(--linha);color:var(--verde-900)}
-.segmentado button.relatorio-final-selecionado,.segmentado button.relatorio-final-selecionado:hover:not(:disabled){background:var(--verde-700);border-color:var(--verde-700);color:#FBF8F1;box-shadow:0 1px 3px rgba(29,41,34,.25)}
-
-/* ---------- Campos ---------- */
-input,select{font-family:var(--sans);font-size:14px;color:var(--texto);background-color:var(--superficie);padding:10px 12px;border:1px solid var(--linha-2);border-radius:10px;width:100%;min-height:42px;transition:border-color .15s,box-shadow .15s}
-input::placeholder{color:#8A938D}
-input:hover,select:hover{border-color:var(--verde-300)}
-input:focus,select:focus{outline:none;border-color:var(--verde-600);box-shadow:0 0 0 3px var(--ouro-100)}
-select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232C4233' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px}
-.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:14px}
-.barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-.barra .small{margin-left:4px}
-
-/* ---------- Análise atual ---------- */
-.painel-analise{position:relative;overflow:hidden;padding:30px 32px}
-.painel-analise::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--verde-700),var(--ouro-500))}
-.estado-analise{display:flex;align-items:center;gap:12px;margin:0 0 22px;padding:12px 16px;border:1px solid var(--verde-100);border-radius:10px;background:var(--verde-50);font-size:14.5px;font-weight:600;color:var(--verde-900)}
-.estado-analise::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--ouro-500);box-shadow:0 0 0 4px var(--ouro-100)}
-.upload{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:18px;margin-bottom:18px}
-.upload-zona{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:178px;padding:26px 22px;text-align:center;border:1.5px dashed var(--ouro-400);border-radius:14px;background:linear-gradient(180deg,var(--ouro-50),var(--superficie));cursor:pointer;transition:border-color .15s,background-color .15s,box-shadow .15s}
-.upload-zona:hover,.upload-zona.arrastando{border-color:var(--verde-600);background:var(--verde-50)}
-.upload-zona:focus-within,.upload-zona.arrastando{box-shadow:0 0 0 4px var(--ouro-100);border-color:var(--verde-600)}
-.upload-zona input[type=file]{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;opacity:0;cursor:pointer}
-.upload-icone{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-bottom:4px;border-radius:50%;background:var(--verde-700);color:var(--creme);box-shadow:0 0 0 6px var(--verde-100)}
-.upload-icone .ico{width:22px;height:22px}
-.upload-titulo{font-size:15.5px;font-weight:700;color:var(--verde-900)}
-.upload-detalhe{font-size:12.5px;color:var(--texto-3)}
-.upload-selecao{margin-top:8px;max-width:100%;padding:4px 14px;border:1px solid var(--linha);border-radius:999px;background:var(--superficie);font-size:12.5px;font-weight:600;color:var(--texto-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.upload-zona.com-arquivos{border-style:solid;border-color:var(--verde-500)}
-.upload-zona.com-arquivos .upload-selecao{background:var(--verde-700);border-color:var(--verde-700);color:#FBF8F1}
-.upload-passos{display:flex;flex-direction:column;justify-content:center;gap:14px;margin:0;padding:20px 22px;list-style:none;counter-reset:passo;border:1px solid var(--linha);border-radius:14px;background:var(--superficie-2)}
-.upload-passos li{counter-increment:passo;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start;font-size:13.5px;line-height:1.45;color:var(--texto-2)}
-.upload-passos li::before{content:counter(passo);display:flex;align-items:center;justify-content:center;width:28px;height:28px;margin-top:-4px;border:1.5px solid var(--ouro-500);border-radius:50%;background:var(--superficie);font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ouro-700)}
-.upload-passos strong{color:var(--verde-900)}
-.acoes-analise{margin-bottom:8px}
-.acoes-analise .perigo{margin-left:auto}
-.nota-analise{margin:0}
-#status:not(:empty){margin-top:14px;padding:10px 14px;border-left:3px solid var(--ouro-500);border-radius:8px;background:var(--ouro-50);font-size:14px;font-weight:600;color:var(--verde-900)}
-#resumoProcessamento:not(:empty){margin-top:24px;padding-top:24px;border-top:1px solid var(--linha)}
-#resumoProcessamento h3{margin-top:28px}
-.analise-complementos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:20px;align-items:start;margin-top:24px}
-.analise-complementos .card{margin:0}
-.aliquota-item{display:grid;grid-template-columns:64px 104px minmax(0,1fr);gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--linha)}
-.aliquota-item:last-child{border-bottom:0;padding-bottom:0}
-.aliquota-item>strong{display:flex;align-items:center;justify-content:center;height:30px;border-radius:8px;background:var(--verde-700);color:#FBF8F1;font-size:12.5px;letter-spacing:.1em}
-.aliquota-percentual{font-family:var(--serif);font-size:30px;font-weight:700;line-height:1;color:var(--ouro-700)}
-.aliquota-descricao{font-size:13px;line-height:1.55;color:var(--texto-2)}
-#beneficioAtividadeConteudo .aliquota-descricao{padding:5px 0}
-#beneficioAtividadeConteudo>.selo{margin:0 0 10px}
-
-/* ---------- Indicadores ---------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
-#resumoProcessamento h3+.grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-.metric{position:relative;overflow:hidden;background:var(--superficie);border:1px solid var(--linha);border-radius:12px;padding:16px 18px 15px 20px;box-shadow:var(--sombra-1);text-align:left}
-.metric::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ouro-300)}
-.metric .label{font-size:12.5px;font-weight:600;color:var(--texto-3);letter-spacing:.01em;text-align:left}
-.metric .numero{margin-top:6px;font-family:var(--serif);font-size:34px;font-weight:700;line-height:1.05;color:var(--verde-900);text-align:left;font-variant-numeric:lining-nums}
-.metric .numero .small{margin-top:4px;font-family:var(--sans);font-size:12px;font-weight:600;line-height:1.35;color:var(--texto-3)}
-.metric .numero.CORRETO{color:var(--ok)}.metric .numero.INCORRETO{color:var(--risco)}.metric .numero.REQUER_VALIDACAO{color:var(--pendente)}
-.metric:has(.numero.CORRETO)::before{background:var(--ok-forte)}
-.metric:has(.numero.INCORRETO)::before{background:var(--risco-forte)}
-.metric:has(.numero.REQUER_VALIDACAO)::before{background:var(--pendente-forte)}
-#resumoProcessamento h3+.grid .metric:nth-child(2)::before{background:var(--ok-forte)}
-#resumoProcessamento h3+.grid .metric:nth-child(3)::before{background:var(--risco-forte)}
-#resumoProcessamento h3+.grid .metric:nth-child(4)::before{background:var(--pendente-forte)}
-#resumoProcessamento h3+.grid .metric:nth-child(7){background:linear-gradient(180deg,var(--ouro-50),var(--superficie));border-color:var(--ouro-200)}
-#resumoProcessamento h3+.grid .metric:nth-child(7)::before{background:var(--ouro-500)}
-#resumoProcessamento h3+.grid .metric:nth-child(7) .numero{color:var(--ouro-700)}
-#resumoProcessamento h3+.grid .metric:nth-child(8){background:linear-gradient(180deg,var(--verde-50),var(--superficie));border-color:var(--verde-200)}
-#resumoProcessamento h3+.grid .metric:nth-child(8)::before{background:var(--verde-700)}
-
-/* ---------- Avisos e selos ---------- */
-.aviso{background:var(--ouro-50);border:1px solid var(--ouro-200);border-left:4px solid var(--ouro-500);color:#584521;padding:12px 16px;border-radius:10px;margin-bottom:14px;font-size:14px}
-.aviso.composicao-xmls{margin-top:16px;margin-bottom:0}
-.aviso-info{margin-top:6px;padding:7px 10px;background:var(--info-fundo);border:1px solid var(--info-borda);border-radius:8px;font-size:12px;color:var(--info)}
-.aviso-regra{margin-top:6px;padding:7px 10px;background:var(--risco-fundo);border:1px solid var(--risco-borda);border-radius:8px;font-size:12px;color:#7E271F}
-.selo{display:inline-flex;align-items:center;gap:5px;margin:4px 6px 0 0;padding:2px 10px;border:1px solid transparent;border-radius:999px;font-size:12px;font-weight:600;line-height:1.5}
-.selo-oficial{background:var(--ok-fundo);color:var(--ok);border-color:var(--ok-borda)}
-.selo-aviso{background:#F6F1E5;color:#6A5629;border-color:#E2D6B8}
-.selo-humano{background:var(--verde-700);color:#FBF8F1;border-color:var(--verde-700)}
-.selo-pendente{background:var(--superficie);color:var(--ouro-800);border-color:var(--ouro-400)}
-.selo-pendente::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--ouro-500)}
-.selo-sem-cadastro,.selo-bloqueio{background:var(--risco-fundo);color:var(--risco);border-color:var(--risco-borda)}
-.selo-info{background:var(--info-fundo);color:var(--info);border-color:var(--info-borda)}
-.selos-produto{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.selos-produto .selo{margin:0}
-
-/* ---------- Estados ---------- */
-.status{font-weight:700}
-.CORRETO{color:var(--ok)}
-.INCORRETO_ECONOMIA{color:var(--economia)}
-.INCORRETO_RISCO{color:var(--risco)}
-.REQUER_VALIDACAO{color:var(--pendente)}
-.NAO_OBRIGATORIO{color:var(--neutro)}
-.INDETERMINADO{color:var(--risco)}
-
-/* ---------- Tabelas ---------- */
+.estado-analise{font-weight:bold;font-size:15px}
+.aviso{background:#fef3c7;border:1px solid #f59e0b;color:#78350f;padding:10px 14px;border-radius:6px;margin-bottom:12px}
+.metric .numero.CORRETO{color:#15803d}.metric .numero.INCORRETO{color:#dc2626}.metric .numero.REQUER_VALIDACAO{color:#7c3aed}
+button.link{background:none;border:0;color:#6d28d9;cursor:pointer;padding:4px;font-size:13px}
+input,select{padding:10px;border:1px solid #cbd5e1;border-radius:6px;width:100%}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:15px}
+.barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:15px}
+.barra input[type=file]{width:auto;flex:1;min-width:220px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:11px 12px;border-bottom:1px solid var(--linha);text-align:left;vertical-align:top}
-th{background:var(--papel-2);color:var(--verde-900);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-.tabela-wrap{overflow-x:auto;border:1px solid var(--linha);border-radius:12px;background:var(--superficie)}
-.tabela-wrap th{border-bottom:1.5px solid var(--ouro-300)}
-.tabela-wrap td:nth-child(2){width:190px}
-.tabela-wrap table:has(th:nth-child(8)){min-width:3000px}
-.tabela-wrap table:has(th:nth-child(8)) th{white-space:nowrap}
-.tabela-wrap tbody tr:nth-child(even) td{background:#FCFAF6}
-.tabela-wrap tbody tr:hover td{background:var(--ouro-50)}
-.tabela-wrap tbody tr:last-child td{border-bottom:0}
-.tabela-wrap td:first-child{font-weight:600;color:var(--verde-800);font-variant-numeric:lining-nums tabular-nums}
-table.confronto{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;border:1px solid var(--linha);border-radius:8px;overflow:hidden}
-table.confronto th,table.confronto td{padding:5px 8px;border-bottom:1px solid var(--linha);white-space:nowrap}
-table.confronto tr:last-child td{border-bottom:0}
-table.confronto th{background:var(--papel-2);font-size:11px;text-transform:uppercase;color:var(--texto-2)}
-table.confronto td:first-child{color:var(--texto-3)}
-table.confronto td.igual{background:var(--ok-fundo);color:var(--ok);font-weight:700}
-table.confronto td.difere{background:var(--risco-fundo);color:var(--risco);font-weight:700}
-table.confronto td.indefinido{color:var(--pendente);font-style:italic;white-space:normal}
-.confronto-legenda{font-size:11px;color:var(--texto-3);margin-top:4px}
-
-/* ---------- Resultados ---------- */
+th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}
+th{background:#f8fafc}
 .itens-resultado{display:flex;flex-direction:column;gap:10px}
-.item-res{border:1px solid var(--linha);border-left:4px solid #A9ADA3;border-radius:12px;background:var(--superficie);padding:12px 16px;font-size:13px;overflow-wrap:anywhere;break-inside:avoid;box-shadow:var(--sombra-1);transition:box-shadow .15s,border-color .15s}
-.item-res:hover{box-shadow:0 1px 2px rgba(29,41,34,.05),0 8px 20px -14px rgba(29,41,34,.35)}
-.item-res[data-estado=CORRETO]{border-left-color:var(--ok-forte)}
-.item-res[data-estado=INCORRETO_ECONOMIA]{border-left-color:var(--economia-forte)}
-.item-res[data-estado=INCORRETO_RISCO],.item-res[data-estado=INDETERMINADO]{border-left-color:var(--risco-forte)}
-.item-res[data-estado=REQUER_VALIDACAO]{border-left-color:var(--pendente-forte)}
-.item-topo{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:8px;border-bottom:1px solid var(--linha)}
-.item-produto{font-weight:700;font-size:14px}
+.item-res{border:1px solid #e2e8f0;border-left:6px solid #94a3b8;border-radius:8px;background:#fff;padding:12px 14px;font-size:13px;overflow-wrap:anywhere;break-inside:avoid}
+.item-res[data-estado=CORRETO]{border-left-color:#15803d}
+.item-res[data-estado=INCORRETO_ECONOMIA]{border-left-color:#b45309}
+.item-res[data-estado=INCORRETO_RISCO],.item-res[data-estado=INDETERMINADO]{border-left-color:#dc2626}
+.item-res[data-estado=REQUER_VALIDACAO]{border-left-color:#7c3aed}
+.item-topo{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:8px;border-bottom:1px solid #f1f5f9}
+.item-produto{font-weight:bold;font-size:14px}
 .item-selo{text-align:right;white-space:nowrap}
 .item-selo .status{font-size:14px}
 .item-corpo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,1.35fr);gap:14px;margin-top:10px}
+.rotulo{display:block;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
 .dados{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;align-content:start}
 .dados div{min-width:0}
+.valor{font-weight:bold}
+table.confronto{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden}
+table.confronto th,table.confronto td{padding:5px 8px;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+table.confronto tr:last-child td{border-bottom:0}
+table.confronto th{background:#f8fafc;font-size:11px;text-transform:uppercase;color:#475569}
+table.confronto td:first-child{color:#64748b}
+table.confronto td.igual{background:#dcfce7;color:#166534;font-weight:bold}
+table.confronto td.difere{background:#fee2e2;color:#991b1b;font-weight:bold}
+table.confronto td.indefinido{color:#7c3aed;font-style:italic;white-space:normal}
+.confronto-legenda{font-size:11px;color:#64748b;margin-top:4px}
 .explica div{margin-bottom:5px}
+.reducao{display:grid;grid-template-columns:1fr;gap:4px;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:6px 8px;margin-bottom:6px}
+.reducao .valor{font-size:15px;color:#9a3412}
+.reducao.sem-evidencia{background:#fefce8;border-color:#facc15}
+.reducao.sem-evidencia .valor{color:#854d0e}
+.reducao.nao-determinada{background:#f1f5f9;border-color:#cbd5e1}
+.reducao.regime{background:#f0f9ff;border-color:#7dd3fc}
+.reducao .aviso-d3{font-size:12px;font-weight:bold;color:#92400e}
+.reducao ul.fatos,.reducao-prev ul.fatos{margin:2px 0 0;padding-left:16px;font-size:11px;color:#334155}
+.reducao div{margin-bottom:0}
+.item-res .alertas-item{margin-top:8px;padding-top:6px;border-top:1px dashed #e2e8f0}
 @media(max-width:1100px){.item-corpo{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.item-corpo .explica{grid-column:1 / -1}}
 @media(max-width:700px){.item-corpo{grid-template-columns:1fr}}
-#listaResultados{gap:8px}
-.item-res.compacto{padding:10px 14px 8px;font-size:12.5px}
-.r-linha{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:4px}
-.r-topo{margin-top:0}
-.r-prod{font-weight:700;font-size:14px;color:var(--verde-900)}
-.r-lbl{color:var(--texto-3);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-right:3px}
-.r-seta{color:var(--ouro-500)}
-.chip{display:inline-block;padding:0 7px;border:1px solid var(--linha);border-radius:6px;background:var(--papel);white-space:nowrap;line-height:20px;font-variant-numeric:lining-nums tabular-nums}
-.chip-r{color:var(--texto-3)}
-.chip-igual{background:var(--ok-fundo);border-color:var(--ok-borda)}
-.chip-difere{background:var(--risco-fundo);border-color:var(--risco-borda)}
-.chip-indef{background:var(--pendente-fundo);border-color:var(--pendente-borda)}
-.r-red{font-size:14px;color:var(--verde-700)}
-.r-valores>span{margin-right:12px;white-space:nowrap}
-.r-div{width:1px;height:14px;background:var(--linha-2);margin:0 4px}
-.r-economia{color:var(--economia);font-weight:700}
-.r-exposicao{color:var(--risco);font-weight:700}
-.r-motivo{margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.compacto .selo{margin:0;padding:0 8px;line-height:19px}
-.r-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-bottom:6px}
-.r-cab-esq{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0}
-.r-cab-dir{display:flex;align-items:center;flex:0 0 auto;gap:10px}
-.compacto .status-selo{padding:3px 12px;border:1.5px solid currentColor;border-radius:999px;background:var(--superficie);font-size:11.5px;font-weight:700;letter-spacing:.05em;white-space:nowrap}
-.status-selo.CORRETO{background:var(--ok-fundo)}
-.status-selo.INCORRETO_ECONOMIA{background:var(--economia-fundo)}
-.status-selo.INCORRETO_RISCO,.status-selo.INDETERMINADO{background:var(--risco-fundo)}
-.status-selo.REQUER_VALIDACAO{background:var(--pendente-fundo)}
-.status-selo.NAO_OBRIGATORIO{background:var(--neutro-fundo)}
-.r-par{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:3px 8px;border-radius:6px;background:var(--superficie-2)}
-.r-inf{margin-top:4px;border-left:3px solid var(--linha-2)}
-.r-enq{margin-top:3px;border-left:3px solid var(--verde-500)}
-.r-esq{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;min-width:0}
-.r-dir{display:flex;gap:14px;justify-content:flex-end;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums}
-.r-reducao .r-humano{margin-left:auto}
-.aud-det summary{margin-top:8px;font-size:13px;font-weight:700;cursor:pointer}
-.item-res[data-estado=CORRETO] .aud-det summary{color:var(--ok)}
-.item-res[data-estado=REQUER_VALIDACAO] .aud-det summary{color:var(--pendente)}
-.aud-det[open]{border-top:1px dashed var(--linha-2);margin-top:6px;padding-top:4px}
-.item-res .alertas-item{margin-top:8px;padding-top:6px;border-top:1px dashed var(--linha)}
-
-/* ---------- Redução, auditoria e regras ---------- */
-.reducao{display:grid;grid-template-columns:1fr;gap:4px;background:var(--verde-50);border:1px solid var(--verde-200);border-radius:10px;padding:8px 12px;margin-bottom:8px}
-.reducao .valor{font-size:15px;color:var(--verde-700)}
-.reducao.sem-evidencia{background:var(--pendente-fundo);border-color:var(--pendente-borda)}
-.reducao.sem-evidencia .valor{color:var(--pendente)}
-.reducao.nao-determinada{background:var(--neutro-fundo);border-color:var(--neutro-borda)}
-.reducao.regime{background:var(--ouro-50);border-color:var(--ouro-300)}
-.reducao .aviso-d3{font-size:12px;font-weight:700;color:var(--economia)}
-.reducao ul.fatos,.reducao-prev ul.fatos{margin:2px 0 0;padding-left:16px;font-size:11px;color:var(--texto-2)}
-.reducao div{margin-bottom:0}
-.bloco{margin-top:8px}
-.aud{border:1px solid var(--linha-2);border-radius:10px;padding:8px 12px;background:var(--superficie-2)}
-.aud-CONFIRMADA{border-color:var(--ok-borda);background:var(--ok-fundo)}
-.aud-DIVERGENTE,.aud-NAO_LOCALIZADA{border-color:var(--risco-borda);background:var(--risco-fundo)}
-.aud-NAO_DETERMINADA{border-color:var(--pendente-borda);background:var(--pendente-fundo)}
-.aud-status{font-weight:700;font-size:14px;margin-bottom:4px;color:var(--verde-900)}
-.aud .small{margin-top:3px}
-.aud-nota{font-style:italic}
-.bloqueio{border:1.5px solid var(--risco-forte);border-radius:10px;padding:10px 12px;background:var(--risco-fundo);margin-top:8px}
-.bloq-titulo{font-weight:700;color:var(--risco);font-size:14px;letter-spacing:.02em}
-.quadro-regra{border:1.5px solid var(--verde-200);border-radius:12px;padding:10px 14px;background:var(--verde-50)}
-.quadro-regra>.rotulo{color:var(--verde-700)}
-.quadro-campos{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px 10px;margin:6px 0 8px}
-.red-destaque{margin-top:2px;font-size:17px;font-weight:700;color:var(--verde-700)}
-.red-partes{font-size:13px;font-weight:700;color:var(--verde-600)}
-@media(max-width:900px){.quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.item-res .quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}
-.card.aud-risco,.card.aud-resposta{margin:8px 0;padding:14px 16px;background:var(--superficie)}
-.card.aud-risco{border-left:4px solid var(--risco-forte)}
-.card.aud-resposta{border-left:4px solid var(--verde-700)}
-.card.aud-risco ul{margin:4px 0 0;padding-left:18px}
-.card.aud-resposta .barra{margin:8px 0 4px}
-
-/* ---------- Pendências e consulta por NCM ---------- */
-.pendente{border:1px solid var(--linha);border-radius:14px;padding:18px 20px;margin-bottom:14px;background:var(--superficie);box-shadow:var(--sombra-1)}
-.pend-topo{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:12px;border-bottom:1px solid var(--linha)}
-.pend-topo strong{display:block;margin:2px 0 3px;font-size:16px;color:var(--verde-900)}
-.pend-ncm{flex:none;text-align:right;white-space:nowrap;padding:6px 12px;border:1px solid var(--ouro-200);border-radius:10px;background:var(--ouro-50)}
-.pend-ncm .valor{display:block;font-size:17px;letter-spacing:.03em;color:var(--verde-800);font-variant-numeric:lining-nums tabular-nums}
-.regra-cand,.enq-agrupados{margin-top:12px;padding:12px 16px;border:1px solid var(--linha);border-left:4px solid var(--ouro-500);border-radius:10px;background:var(--superficie-2)}
-.regra-cand .bloco{margin-top:10px}
-.enq-agrupados>.rotulo{color:var(--ouro-700)}
-.enq-agrupados>ol{margin:8px 0 0;padding-left:24px}
-.enq-agrupados>ol>li::marker{font-family:var(--serif);font-weight:700;font-size:17px;font-variant-numeric:lining-nums tabular-nums;color:var(--ouro-600)}
-.enq-opcao{margin:0 0 12px;padding-bottom:12px;border-bottom:1px dashed var(--linha-2)}
-.enq-opcao:last-child{border-bottom:0;margin-bottom:0}
-.enq-cab{font-weight:700;color:var(--verde-900)}
-.enq-opcao .descricao-legal{margin-top:6px}
-.descricao-legal{font-size:14px;line-height:1.55;padding:8px 12px;background:var(--superficie);border:1px solid var(--linha);border-left:3px solid var(--ouro-300);border-radius:6px;overflow-wrap:anywhere}
+.status{font-weight:bold}
+.CORRETO{color:#15803d}
+.INCORRETO_ECONOMIA{color:#b45309}
+.INCORRETO_RISCO{color:#dc2626}
+.REQUER_VALIDACAO{color:#7c3aed}
+.NAO_OBRIGATORIO{color:#475569}
+.INDETERMINADO{color:#dc2626}
+#status{margin-top:15px;font-weight:bold}
+.pendente{border:1px solid #e2e8f0;border-radius:8px;padding:15px;margin-bottom:10px;background:#fff}
+.pend-topo strong{display:block;margin-bottom:3px;font-size:15px}
+.pend-topo{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:8px;border-bottom:1px solid #f1f5f9}
+.pend-ncm{text-align:right;white-space:nowrap}
+.regra-cand{margin-top:10px;padding:10px 12px;border:1px solid #e2e8f0;border-left:5px solid #7c3aed;border-radius:6px;background:#fcfcff}
+.regra-cand .bloco{margin-top:8px}
+.descricao-legal{font-size:14px;line-height:1.45;padding:6px 8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;overflow-wrap:anywhere}
 ul.descricoes{margin:4px 0 0;padding-left:18px;font-size:13px}
 .proposto{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 12px}
-.reducao-prev{padding:8px 12px;border:1px solid var(--ok-borda);background:var(--ok-fundo);border-radius:10px}
-.reducao-prev.sem-evidencia{border-color:var(--pendente-borda);background:var(--pendente-fundo)}
-.reducao-prev.nao-determinada{border-color:var(--neutro-borda);background:var(--neutro-fundo)}
-.valor-grande{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.1;color:var(--verde-800)}
-.pergunta-validacao{margin-top:14px;font-weight:700;color:var(--verde-900)}
-.pergunta-validacao .rotulo{color:var(--ouro-700)}
-.resposta-registrada{margin-top:8px;font-weight:700;color:var(--verde-800)}
+.reducao-prev{padding:6px 8px;border:1px solid #86efac;background:#f0fdf4;border-radius:6px}
+.reducao-prev.sem-evidencia{border-color:#facc15;background:#fefce8}
+.reducao-prev.nao-determinada{border-color:#cbd5e1;background:#f1f5f9}
+.valor-grande{font-size:18px;font-weight:bold}
+.aud{border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;background:#f8fafc}
+.aud-CONFIRMADA{border-color:#86efac;background:#f0fdf4}
+.aud-DIVERGENTE,.aud-NAO_LOCALIZADA{border-color:#fca5a5;background:#fef2f2}
+.aud-NAO_DETERMINADA{border-color:#c4b5fd;background:#f5f3ff}
+.aud-status{font-weight:bold;font-size:14px;margin-bottom:4px}
+.aud .small{margin-top:3px}
+.aud-nota{font-style:italic}
+.aviso-info{margin-top:6px;padding:6px 8px;background:#eff6ff;border:1px solid #93c5fd;border-radius:4px;font-size:12px;color:#1e3a8a}
+.bloqueio{border:2px solid #b91c1c;border-radius:6px;padding:8px 10px;background:#fef2f2;margin-top:8px}
+.bloq-titulo{font-weight:bold;color:#991b1b;font-size:14px;letter-spacing:.02em}
+.quadro-regra{border:2px solid #0f766e;border-radius:8px;padding:8px 10px;background:#f0fdfa}
+.quadro-campos{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px 10px;margin:4px 0 6px}
+.red-destaque{font-size:17px;font-weight:bold;color:#0f766e;margin-top:2px}
+.red-partes{font-size:13px;font-weight:bold;color:#115e59}
+.selo{display:inline-block;margin:4px 6px 0 0;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:bold}
+.selo-oficial{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.selo-aviso{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
+.selo-humano{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
+.selo-pendente{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
+.selo-sem-cadastro{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.enq-agrupados{margin-top:10px;padding:10px 12px;border:1px solid #e2e8f0;border-left:5px solid #7c3aed;border-radius:6px;background:#fcfcff}
+.enq-agrupados>ol{margin:6px 0 0;padding-left:22px}
+.enq-opcao{margin:0 0 12px;padding-bottom:10px;border-bottom:1px dashed #e2e8f0}
+.enq-opcao:last-child{border-bottom:0;margin-bottom:0}
+.enq-cab{font-weight:600}
+.enq-opcao .descricao-legal{margin-top:4px}
+.selos-produto{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#consultaNcmResultado .pendente>.bloco{margin-top:14px;padding-top:10px;border-top:1px solid #e2e8f0}
+#consultaNcmResultado .pendente>.bloco>.rotulo{font-size:13px;font-weight:bold;color:#6d28d9;margin-bottom:6px}
+#consultaNcmResultado .valor{font-size:14px}
+#consultaNcmResultado .pendente>.bloco>div{margin-bottom:4px}
+@media(max-width:900px){.quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.item-res .quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}
+#listaResultados{gap:6px}
+.item-res.compacto{padding:6px 10px 4px;font-size:12.5px;border-left-width:5px}
+.r-linha{display:flex;flex-wrap:wrap;align-items:center;gap:3px 8px;margin-top:3px}
+.r-topo{margin-top:0}
+.r-prod{font-weight:bold;font-size:13.5px}
+.r-lbl{color:#64748b;font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;margin-right:3px}
+.r-seta{color:#94a3b8}
+.chip{display:inline-block;padding:0 6px;border-radius:4px;background:#f1f5f9;border:1px solid #e2e8f0;white-space:nowrap;line-height:18px}
+.chip-r{color:#64748b}
+.chip-igual{background:#dcfce7;border-color:#86efac}
+.chip-difere{background:#fee2e2;border-color:#fca5a5}
+.chip-indef{background:#f5f3ff;border-color:#c4b5fd}
+.r-red{font-size:14px;color:#0f766e}
+.r-valores>span{margin-right:12px;white-space:nowrap}
+.r-div{width:1px;height:14px;background:#cbd5e1;margin:0 4px}
+.r-economia{color:#b45309;font-weight:bold}
+.r-exposicao{color:#dc2626;font-weight:bold}
+.r-motivo{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.compacto .selo{margin:0;padding:0 7px;line-height:18px}
+.r-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.r-cab-esq{display:flex;flex-wrap:wrap;align-items:center;gap:3px 8px;min-width:0}
+.r-cab-dir{display:flex;align-items:center;flex:0 0 auto;gap:8px}
+.compacto .status-selo{font-size:14px;font-weight:bold;padding:2px 12px;border:2px solid currentColor;border-radius:14px;background:#fff;white-space:nowrap}
+.r-par{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:1px 6px;border-radius:4px;background:#f8fafc}
+.r-inf{margin-top:2px;border-left:3px solid #94a3b8}
+.r-enq{margin-top:2px;border-left:3px solid #0f766e}
+.r-esq{display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px;min-width:0}
+.r-dir{display:flex;gap:12px;justify-content:flex-end;white-space:nowrap}
+.r-reducao .r-humano{margin-left:auto}
+.aud-det summary{font-size:13px;font-weight:700;margin-top:8px;cursor:pointer}
+.item-res[data-estado=CORRETO] .aud-det summary{color:#15803d}
+.item-res[data-estado=REQUER_VALIDACAO] .aud-det summary{color:#7c3aed}
+.aud-det[open]{border-top:1px dashed #e2e8f0;margin-top:4px;padding-top:4px}
+.selo-bloqueio{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.selo-info{background:#eff6ff;color:#1e3a8a;border:1px solid #93c5fd}
+.aviso-regra{margin-top:6px;padding:6px 8px;background:#fee2e2;border:1px solid #fca5a5;border-radius:4px;font-size:12px;color:#7f1d1d}
+.pergunta-validacao{margin-top:10px;font-weight:bold}
+.resposta-registrada{margin-top:6px;font-weight:bold;color:#334155}
 @media(max-width:700px){.proposto{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.pergunta{margin-top:10px;padding-top:10px;border-top:1px solid var(--linha)}
-.acoes{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-details>summary{display:inline-flex;align-items:center;gap:7px;margin-top:8px;cursor:pointer;list-style:none;color:var(--verde-600);font-size:13px;font-weight:600}
-details>summary::-webkit-details-marker{display:none}
-details>summary::before{content:"";flex:none;width:6px;height:6px;margin:0 2px 0 1px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
-details[open]>summary::before{transform:rotate(45deg)}
-details>summary:hover{color:var(--verde-900)}
+.pergunta{margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9}
+.acoes{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.small{font-size:12px;color:#64748b}
+details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 .alertas-item ul,.alertas-cartao ul,.alertas-lote{margin:6px 0 0;padding-left:18px}
 .alertas-item li,.alertas-cartao li,.alertas-lote li{margin-bottom:4px}
-.alertas-cartao{border:1px dashed var(--linha-2);border-radius:10px;padding:10px 12px;margin-top:10px;background:var(--superficie-2)}
+.alertas-cartao{border:1px dashed #cbd5e1;border-radius:6px;padding:10px;margin-top:10px;background:#fafbfc}
 .alertas-totais{width:auto;margin-bottom:10px}
-.alerta-cat{display:inline-block;padding:1px 8px;border:1px solid var(--linha-2);border-radius:999px;background:var(--papel);font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--texto-2)}
-.alerta-cat-CONFLITO{background:var(--risco-fundo);color:var(--risco);border-color:var(--risco-borda)}
-.alerta-cat-LACUNA{background:var(--economia-fundo);color:var(--economia);border-color:var(--economia-borda)}
-.alerta-cat-PENDENCIA{background:var(--pendente-fundo);color:var(--pendente);border-color:var(--pendente-borda)}
-.alerta-cat-ATENCAO{background:var(--ouro-50);color:var(--ouro-800);border-color:var(--ouro-300)}
-.alerta-cat-INFORMACAO{background:var(--info-fundo);color:var(--info);border-color:var(--info-borda)}
-#consultaNcmResultado .pendente>.bloco{margin-top:18px;padding-top:14px;border-top:1px solid var(--linha)}
-#consultaNcmResultado .pend-topo+.bloco{margin-top:4px;border-top:0}
-#consultaNcmResultado .pendente>.bloco>.rotulo{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--verde-700)}
-#consultaNcmResultado .pendente>.bloco>.rotulo::before{content:"";width:18px;height:2px;background:var(--ouro-500)}
-#consultaNcmResultado .valor{font-size:14px}
-#consultaNcmResultado .pendente>.bloco>div{margin-bottom:6px}
-#consultaNcmResultado .regra-cand>div{margin-bottom:4px}
-#consultaNcmResultado .pend-topo strong{font-family:var(--serif);font-size:22px;letter-spacing:.01em}
-.consulta-ncm-filtros{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.5fr) auto}
-
-/* ---------- Dashboard ---------- */
-.dashboard-resumo,.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-bottom:22px}
-.dashboard-resumo .card,.dashboard-grid .card{margin-bottom:0}
-.card.destaque{position:relative;overflow:hidden;padding-top:28px}
-.card.destaque::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--verde-700),var(--ouro-500))}
-.card.destaque p{color:var(--texto-2)}
-.subtitulo{margin:-8px 0 16px;color:var(--texto-3);font-size:13px}
-.chart-container{position:relative;height:280px}
-.chart-container-wide{height:300px}
-.valores-grafico{margin-top:14px;padding:10px 12px;border-top:1px solid var(--linha);font-size:13.5px;line-height:1.5;text-align:center;color:var(--texto-2);font-variant-numeric:lining-nums tabular-nums}
-.valores-grafico strong{font-weight:700;color:var(--verde-900)}
-#economiaResumo>p:first-of-type{margin-top:12px}
-#detalhesBeneficios{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-#detalhesBeneficios p{margin:0;padding:7px 14px;border:1px solid var(--linha);border-radius:999px;background:var(--superficie-2);font-size:13px;color:var(--texto-2)}
-#detalhesBeneficios strong{color:var(--verde-900)}
-#aliquotas p{margin:0;padding:10px 0;border-bottom:1px solid var(--linha);font-size:14px;color:var(--texto-2)}
-#aliquotas p:last-child{border-bottom:0}
-#aliquotas strong{color:var(--verde-800);letter-spacing:.04em}
-.icone-situacao .ico{width:24px;height:24px;stroke-width:2.2}
-#painelPesquisaNcm>div:first-child select{width:auto;min-width:180px}
-#painelPesquisaNcm>div:first-child input{flex:1;min-width:220px}
-
-/* ---------- Telas menores ---------- */
-@media(max-width:1100px){.analise-complementos{grid-template-columns:1fr}}
-@media(max-width:760px){#resumoProcessamento h3+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:1000px){.dashboard-resumo,.dashboard-grid{grid-template-columns:1fr}}
-@media(max-width:900px){
- header.topo{flex-direction:column;align-items:flex-start;gap:12px;padding:16px 20px}
- .topo-titulo{padding-left:0;border-left:0}
- header.topo h1{font-size:25px}
- nav{padding:0 8px}
- main{padding:20px 14px 32px}
- .card{padding:20px 18px}
- .painel-analise{padding:22px 18px}
- .filters,.consulta-ncm-filtros{grid-template-columns:1fr 1fr}
- .upload{grid-template-columns:1fr}
- .acoes-analise .perigo{margin-left:0}
- h2{font-size:30px}
+.alerta-cat{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid #cbd5e1;background:#f1f5f9;color:#334155}
+@media(max-width:900px){.filters{grid-template-columns:1fr 1fr}}
+@media print{header,nav,.barra,.filters,button,.nao-imprimir{display:none!important}.tela{display:none!important}.tela.active{display:block!important}main{padding:0}.card{box-shadow:none}}
+</style><style>
+.valores-grafico{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:12px;
+  padding:10px;
+  font-size:14px;
+  line-height:1.5;
+  text-align:center;
 }
-@media(max-width:560px){
- .marca-coruja{height:46px}
- .marca-assinatura{height:34px}
- .filters,.consulta-ncm-filtros{grid-template-columns:1fr}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
- .metric{padding:12px 12px 12px 15px}
- .metric .numero{font-size:27px}
- .aliquota-item{grid-template-columns:56px 1fr}
- .aliquota-item .aliquota-descricao{grid-column:1 / -1}
- .r-par{grid-template-columns:1fr}
- .r-dir{justify-content:flex-start;flex-wrap:wrap}
- .r-cab{flex-direction:column}
- .pend-topo{flex-direction:column}
- .pend-ncm{text-align:left}
-}
-@media (prefers-reduced-motion:reduce){.tela.active{animation:none}}
-
-/* ---------- Impressão ---------- */
-@media print{
- header,nav,.barra,.filters,button,.nao-imprimir,.upload,.nota-analise,.rodape{display:none!important}
- .cabecalho-impressao{display:flex!important;align-items:center;gap:18px;padding:0 0 12px;margin-bottom:16px;border-bottom:1.5px solid #AC9368}
- .cabecalho-impressao img{height:44px;width:auto}
- .cabecalho-impressao strong{display:block;font-family:var(--serif);font-size:20px;color:#2C4233}
- .cabecalho-impressao span{font-size:11px;color:#555}
- body{background:#fff}
- .tela{display:none!important}.tela.active{display:block!important;animation:none}
- main{padding:0;max-width:none}
- .card{box-shadow:none}
- .item-res{box-shadow:none}
+.valores-grafico strong{
+  font-weight:700;
 }
 </style>
 </head>
 <body>
-<header class="topo">
-<div class="marca">
-<img class="marca-coruja" src="marca/coruja-negativa.png" alt="" width="48" height="56">
-<img class="marca-assinatura" src="marca/assinatura-negativa.png" alt="Sabores Estratégicos" width="172" height="42">
-</div>
-<div class="topo-titulo">
+<header>
 <h1>Conformidade IBS/CBS</h1>
 <p>Análise tributária, validação e acompanhamento de conformidade</p>
-</div>
 </header>
-<div class="cabecalho-impressao" aria-hidden="true">
-<img id="marcaPositiva" src="marca/marca-positiva.png" alt="" width="545" height="168">
-<div><strong>Conformidade IBS/CBS</strong><span>Análise tributária, validação e acompanhamento de conformidade</span></div>
-</div>
 
-<nav aria-label="Seções do sistema">
-<button class="active" onclick="abrirTela('importar',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg>Análise</button>
-<button onclick="abrirTela('dashboard',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Dashboard</button>
-<button onclick="abrirTela('resultados',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>Resultados</button>
-<button onclick="abrirTela('pendentes',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Pendências</button>
-<button onclick="abrirTela('relatorio-final',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>Relatório Final</button>
-<button onclick="abrirTela('consulta-ncm',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Consulta Tributária por NCM</button>
+<nav>
+<button class="active" onclick="abrirTela('importar',this)">Análise</button>
+<button onclick="abrirTela('dashboard',this)">Dashboard</button>
+<button onclick="abrirTela('resultados',this)">Resultados</button>
+<button onclick="abrirTela('pendentes',this)">Pendências</button>
+<button onclick="abrirTela('relatorio-final',this)">Relatório Final</button>
+<button onclick="abrirTela('consulta-ncm',this)">Consulta Tributária por NCM</button>
 </nav>
 
 <main>
 
 <section id="importar" class="tela active">
-<div class="card painel-analise">
+<div class="card">
 <h2>Análise atual</h2>
 <p id="resumoAnalise" class="estado-analise">Carregando...</p>
-<div class="upload">
-<label class="upload-zona" id="zonaUpload">
+<div class="barra">
 <input id="arquivos" type="file" multiple accept=".xml,.zip">
-<span class="upload-icone"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg></span>
-<span class="upload-titulo">Arraste os XMLs aqui ou clique para escolher</span>
-<span class="upload-detalhe">Arquivos .xml ou .zip · Limite máximo: 10.000 arquivos XML por envio.</span>
-<span class="upload-selecao" id="selecaoArquivos">Nenhum arquivo escolhido</span>
-</label>
-<ol class="upload-passos">
-<li><span>Escolha os arquivos.</span></li>
-<li><span><strong>"Adicionar XMLs"</strong> coloca os arquivos na análise atual, sem processar.</span></li>
-<li><span><strong>"Processar análise"</strong> analisa todos os XMLs da análise atual.</span></li>
-</ol>
-</div>
-<div class="barra acoes-analise">
-<button class="secondary" id="btnAdicionar" onclick="adicionarXmls()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Adicionar XMLs</button>
+<button class="secondary" id="btnAdicionar" onclick="adicionarXmls()">Adicionar XMLs</button>
 <button class="primary" id="btnProcessar" onclick="processarAnalise()" disabled>▶ Processar análise</button>
 <button class="perigo" onclick="iniciarNovaAnalise()">Nova análise (limpar dados)</button>
 </div>
-<p class="small nota-analise">"Nova análise" apaga XMLs, resultados, pendências e respostas da análise atual.</p>
+<p class="small">1. Escolha os arquivos. 2. "Adicionar XMLs" coloca os arquivos na análise atual, sem processar. 3. "Processar análise" analisa todos os XMLs da análise atual. "Nova análise" apaga XMLs, resultados, pendências e respostas da análise atual. Limite máximo: 10.000 arquivos XML por envio.</p>
 <div id="status"></div>
 <div id="resumoProcessamento"></div>
-<div class="analise-complementos">
 <div class="card aliquotas-analise">
 <h3>Alíquotas utilizadas</h3>
 <div class="aliquota-item">
@@ -512,7 +283,6 @@ details>summary:hover{color:var(--verde-900)}
 <div class="card aliquotas-analise" id="beneficioAtividade">
 <h3>Benefício ou redução de alíquota por atividade</h3>
 <div id="beneficioAtividadeConteudo" class="small">Carregando...</div>
-</div>
 </div>
 </div>
 </section>
@@ -593,7 +363,7 @@ details>summary:hover{color:var(--verde-900)}
 <input id="filtroClass" placeholder="cClassTrib" oninput="renderResultados()">
 <input id="filtroCst" placeholder="CST" oninput="renderResultados()">
 </div>
-<div class="barra"><button class="secondary" onclick="window.print()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>Imprimir</button><button class="secondary" onclick="exportarResultados()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar CSV</button><span id="contagemResultados" class="small"></span></div>
+<div class="barra"><button class="secondary" onclick="window.print()">Imprimir</button><button class="secondary" onclick="exportarResultados()">Exportar CSV</button><span id="contagemResultados" class="small"></span></div>
 <div id="listaResultados" class="itens-resultado"></div>
 </div>
 </section>
@@ -607,7 +377,7 @@ details>summary:hover{color:var(--verde-900)}
 <input id="buscaPendenteCprod" placeholder="Pesquisar por cProd">
 <input id="buscaPendenteNcm" placeholder="Pesquisar por NCM">
 </div>
-<div class="barra"><button class="secondary" onclick="window.print()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>Imprimir</button><button class="secondary" onclick="exportarPendencias()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar CSV</button><span id="contagemPendencias" class="small"></span></div>
+<div class="barra"><button class="secondary" onclick="window.print()">Imprimir</button><button class="secondary" onclick="exportarPendencias()">Exportar CSV</button><span id="contagemPendencias" class="small"></span></div>
 <div id="listaPendentes"></div>
 </div>
 </section>
@@ -618,23 +388,21 @@ details>summary:hover{color:var(--verde-900)}
 <p class="small">Relatório operacional dos produtos que precisam ter o cadastro IBS/CBS ajustado.</p>
 
 <div class="barra">
-<div class="segmentado" role="group" aria-label="Relatório">
-<button class="secondary relatorio-final-selecionado" id="btnRelatorioComValidacao" onclick="selecionarModoRelatorio('com')">COM VALIDAÇÃO</button>
+<button class="secondary" id="btnRelatorioComValidacao" onclick="selecionarModoRelatorio('com')">COM VALIDAÇÃO</button>
 <button class="secondary" id="btnRelatorioSemValidacao" onclick="selecionarModoRelatorio('sem')">SEM VALIDAÇÃO</button>
 <button class="secondary" id="btnRelatorioRisco" onclick="selecionarModoRelatorio('risco')">INCORRETO — RISCO</button>
-</div>
 <span id="contagemRelatorioFinal" class="small"></span>
 </div>
 
 <div class="barra">
-<button class="secondary" onclick="exportarRelatorioFinal('csv')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar CSV</button>
-<button class="secondary" onclick="exportarRelatorioFinal('excel')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar Excel</button>
-<button class="secondary" onclick="exportarRelatorioFinal('pdf')"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar PDF</button>
+<button class="secondary" onclick="exportarRelatorioFinal('csv')">Exportar CSV</button>
+<button class="secondary" onclick="exportarRelatorioFinal('excel')">Exportar Excel</button>
+<button class="secondary" onclick="exportarRelatorioFinal('pdf')">Exportar PDF</button>
 </div>
 
 <div id="explicacaoRelatorioFinal" class="aviso"></div>
 
-<div class="tabela-wrap">
+<div style="overflow-x:auto;">
 <table>
 <thead id="cabecalhoRelatorioFinal">
 <tr>
@@ -658,7 +426,7 @@ details>summary:hover{color:var(--verde-900)}
 <div class="card">
 <h2>Consulta Tributária por NCM</h2>
 <p class="small">Consulta preventiva, sem XML: o NCM informado passa pelo mesmo motor tributário, pelas mesmas regras e pela mesma auditoria usados na análise dos XMLs. Nada é gravado e a análise atual não é alterada.</p>
-<div class="filters consulta-ncm-filtros">
+<div class="filters">
 <input id="consultaNcmEntrada" placeholder="NCM (ex.: 1901.20.90 ou 19012090)" onkeydown="if(event.key==='Enter')consultarNcmTela()">
 <select id="consultaNcmModelo" aria-label="Modelo do documento">
 <option value="65">NFC-e (modelo 65)</option>
@@ -677,24 +445,9 @@ details>summary:hover{color:var(--verde-900)}
 </div>
 </section>
 </main>
-<footer class="rodape"><img src="marca/coruja-positiva.png" alt="" width="20" height="24"><strong>Sabores Estratégicos</strong><span class="rodape-sep"></span><span>Conformidade IBS/CBS</span></footer>
 
 <script>
 if(window.Chart&&window.ChartDataLabels) Chart.register(ChartDataLabels);
-// Gráficos na identidade da marca (só aparência)
-try{
- if(window.Chart){
-   Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
-   Chart.defaults.color='#46544B';
-   Chart.defaults.borderColor='#ECE6DA';
-   Chart.defaults.elements.bar.borderRadius=6;
-   Chart.defaults.elements.arc.borderColor='#FFFDF9';
-   Chart.defaults.elements.arc.borderWidth=2;
-   Chart.defaults.datasets.bar.maxBarThickness=150;
-   Chart.defaults.plugins.legend.labels.usePointStyle=true;
-   Object.assign(Chart.defaults.plugins.tooltip,{backgroundColor:'#1B2B21',titleColor:'#F4EEE2',bodyColor:'#F4EEE2',padding:10,cornerRadius:8});
- }
-}catch(e){ console.warn('Estilo padrão dos gráficos não aplicado:',e); }
 let resultados=[];
 let pendentes=[];
 let respostas=[];
@@ -903,24 +656,6 @@ async function carregarRelatorioFinal(){
  }
 }
 
-/** Marca Sabores Estratégicos no topo do PDF (só aparência; se a imagem não estiver carregada, o PDF sai sem ela). */
-function marcaNoPdf(doc){
- try{
-   const largura=doc.internal.pageSize.getWidth();
-   doc.setDrawColor(172,147,104);
-   doc.setLineWidth(0.8);
-   doc.line(40,64,largura-40,64);
-   const img=document.getElementById('marcaPositiva');
-   if(!img||!img.complete||!img.naturalWidth) return;
-   const tela=document.createElement('canvas');
-   tela.width=img.naturalWidth;
-   tela.height=img.naturalHeight;
-   tela.getContext('2d').drawImage(img,0,0);
-   const h=34, w=h*img.naturalWidth/img.naturalHeight;
-   doc.addImage(tela.toDataURL('image/png'),'PNG',largura-40-w,20,w,h,'marca','FAST');
- }catch(e){ console.warn('Marca não incluída no PDF:',e); }
-}
-
 function exportarRelatorioFinal(formato){
  if(!linhasRelatorioFinal.length){
    alert('Não há dados no relatório selecionado para exportar.');
@@ -948,20 +683,16 @@ function exportarRelatorioFinal(formato){
    // A fonte padrão do jsPDF só cobre Latin-1; o travessão sairia corrompido.
    const latin1=c=>(c==null?'':String(c)).replace(/[\\u2013\\u2014]/g,'-');
    const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
-   doc.setTextColor(44,66,51);
    doc.setFontSize(14);
    doc.text(latin1(titulo),40,40);
-   doc.setTextColor(90,102,95);
    doc.setFontSize(9);
    doc.text('Gerado em '+new Date().toLocaleString('pt-BR')+' - '+linhasRelatorioFinal.length+' produto(s)',40,58);
-   marcaNoPdf(doc);
    const opcoesTabela={
      head:[colunas],
      body:linhasRelatorioFinal.map(l=>l.map(latin1)),
      startY:70,
      styles:{fontSize:7,cellPadding:3,overflow:'linebreak'},
-     headStyles:{fillColor:[44,66,51],textColor:[251,248,241]},
-     alternateRowStyles:{fillColor:[250,248,243]},
+     headStyles:{fillColor:[109,40,217]},
      columnStyles:risco?{}:{1:{cellWidth:150},6:{cellWidth:220}},
      ...(risco?{styles:{fontSize:5,cellPadding:2,overflow:'linebreak'}}:{})
    };
@@ -1037,22 +768,6 @@ async function recarregarTudo(){
  carregarPendentes();
 }
 
-/** Área de envio: quantos arquivos foram escolhidos (só exibição; o envio continua lendo o próprio campo). */
-function atualizarSelecaoXml(){
- const input=document.getElementById('arquivos'), alvo=document.getElementById('selecaoArquivos');
- if(!input||!alvo) return;
- const n=input.files?input.files.length:0;
- alvo.textContent=!n?'Nenhum arquivo escolhido':n===1?'1 arquivo escolhido: '+input.files[0].name:n.toLocaleString('pt-BR')+' arquivos escolhidos';
- alvo.parentElement.classList.toggle('com-arquivos',n>0);
-}
-(function(){
- const zona=document.getElementById('zonaUpload'), input=document.getElementById('arquivos');
- if(!zona||!input) return;
- input.addEventListener('change',atualizarSelecaoXml);
- ['dragenter','dragover'].forEach(t=>zona.addEventListener(t,()=>zona.classList.add('arrastando')));
- ['dragleave','dragend','drop'].forEach(t=>zona.addEventListener(t,()=>zona.classList.remove('arrastando')));
-})();
-
 async function adicionarXmls(){
  const input=document.getElementById('arquivos');
  const status=document.getElementById('status');
@@ -1075,7 +790,6 @@ async function adicionarXmls(){
    if(!resposta.ok) throw new Error(dados.detalhe||dados.erro||'Erro ao carregar os XMLs.');
    status.textContent=dados.adicionados+' XML(s) adicionado(s) à análise atual, ainda não processado(s).';
    input.value='';
-   atualizarSelecaoXml();
    await carregarAnalise();
  }catch(erro){
    status.textContent='Erro: '+erro.message;
@@ -1114,38 +828,38 @@ async function carregarDashboard(){
 if(situacao){
 
   let classificacao='';
-  let cor='#9C2F25';
-  let fundo='#FAEDEA';
+  let cor='#c62828';
+  let fundo='#ffebee';
 
   if(conformidade>=0.98){
     classificacao='EXCELENTE';
-    cor='#2E6B45';
-    fundo='#EAF3EC';
+    cor='#2e7d32';
+    fundo='#e8f5e9';
   }else if(conformidade>=0.95){
     classificacao='MUITO BOA';
-    cor='#3A7A52';
-    fundo='#EDF4EE';
+    cor='#388e3c';
+    fundo='#e8f5e9';
   }else if(conformidade>=0.90){
     classificacao='BOA';
-    cor='#56703A';
-    fundo='#F0F4E8';
+    cor='#1976d2';
+    fundo='#e3f2fd';
   }else if(conformidade>=0.80){
     classificacao='ATENÇÃO';
-    cor='#8F5316';
-    fundo='#FBF1E4';
+    cor='#ef6c00';
+    fundo='#fff3e0';
   }else{
     classificacao='CRÍTICA';
-    cor='#9C2F25';
-    fundo='#FAEDEA';
+    cor='#c62828';
+    fundo='#ffebee';
   }
 
   situacao.innerHTML=
     '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'+
-      '<div style="font-family:var(--serif);font-size:48px;font-weight:700;line-height:1;color:var(--verde-900)">'+
+      '<div style="font-size:30px;font-weight:800;color:#263238">'+
         formatarPercentual(conformidade)+
       '</div>'+
-      '<div style="display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;background:'+fundo+';border:1px solid '+cor+';color:'+cor+';font-size:12.5px;font-weight:700;letter-spacing:.08em">'+
-        '<span style="font-size:10px">●</span>'+
+      '<div style="display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;background:'+fundo+';border:1px solid '+cor+';color:'+cor+';font-size:14px;font-weight:800;letter-spacing:.3px">'+
+        '<span style="font-size:16px">●</span>'+
         classificacao+
       '</div>'+
     '</div>'+
@@ -1155,7 +869,7 @@ if(situacao){
     const economiaResumo=document.getElementById('economiaResumo');
     if(economiaResumo){
       economiaResumo.innerHTML=
-        '<div style="font-family:var(--serif);font-size:48px;font-weight:700;line-height:1;color:var(--ouro-700)">'+
+        '<div style="font-size:28px;font-weight:700">'+
         formatarNumero(economia)+
         '</div>'+
         '<p>economia potencial identificada na análise (confirmada: itens validados ou com regra aplicável).</p>'+
@@ -1254,9 +968,9 @@ if(situacao){
             ],
 
             backgroundColor:[
-              '#3A7A52',
-              '#A53E33',
-              '#8F7137'
+              '#2e7d32',
+              '#c62828',
+              '#ef8f00'
             ]
           }]
         },
@@ -1361,7 +1075,7 @@ if(situacao){
           labels:['Corretos','Incorretos','Pendentes'],
           datasets:[{
             data:[corretos,incorretos,pendentes],
-            backgroundColor:['#3A7A52','#A53E33','#8F7137']
+            backgroundColor:['#2e7d32','#c62828','#ef8f00']
           }]
         },
 
@@ -1370,7 +1084,7 @@ if(situacao){
           maintainAspectRatio:false,
 
           plugins:{
-            datalabels:{display:true,color:'#ffffff',backgroundColor:'rgba(27,43,33,.78)',borderRadius:6,padding:{top:3,bottom:3,left:7,right:7},font:{weight:'bold',size:13},formatter:function(value,context){var total=context.dataset.data.reduce(function(a,b){return a+Number(b||0);},0);var p=total?((Number(value)/total)*100).toFixed(2):'0.00';return String(value)+' / '+p+'%';}},legend:{position:'bottom'},
+            datalabels:{display:true,color:'#ffffff',font:{weight:'bold',size:13},formatter:function(value,context){var total=context.dataset.data.reduce(function(a,b){return a+Number(b||0);},0);var p=total?((Number(value)/total)*100).toFixed(2):'0.00';return String(value)+' / '+p+'%';}},legend:{position:'bottom'},
 
             tooltip:{
               callbacks:{
@@ -1430,9 +1144,9 @@ if(situacao){
               semBeneficio
             ],
             backgroundColor:[
-              '#3A7A52',
-              '#8F7137',
-              '#737870'
+              '#2e7d32',
+              '#ef8f00',
+              '#777'
             ]
           }]
         },
@@ -1496,43 +1210,43 @@ if(situacao){
       function cartaoNcm(titulo,quantidade,classe){
   const configuracao={
     'Corretos':{
-      simbolo:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
-      cor:'#2E6B45',
-      fundo:'#EAF3EC',
-      borda:'#BFD8C6'
+      simbolo:'✓',
+      cor:'#2e7d32',
+      fundo:'#e8f5e9',
+      borda:'#a5d6a7'
     },
     'Incorretos':{
-      simbolo:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6"/><path d="M12 17h.01"/></svg>',
-      cor:'#9C2F25',
-      fundo:'#FAEDEA',
-      borda:'#EBC5BE'
+      simbolo:'!',
+      cor:'#c62828',
+      fundo:'#ffebee',
+      borda:'#ef9a9a'
     },
     'Requer validação':{
-      simbolo:'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.17a2 2 0 0 0-.59-1.42L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22"/><path d="M7 2v4.17a2 2 0 0 0 .59 1.42L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/></svg>',
-      cor:'#8F7137',
-      fundo:'#F8F1E0',
-      borda:'#E4D0A2'
+      simbolo:'⏳',
+      cor:'#ef6c00',
+      fundo:'#fff3e0',
+      borda:'#ffcc80'
     }
   };
 
   const cfg=configuracao[titulo]||{
     simbolo:'•',
-    cor:'#46544B',
-    fundo:'#F2F0E9',
-    borda:'#DCD5C6'
+    cor:'#37474f',
+    fundo:'#f5f5f5',
+    borda:'#cfd8dc'
   };
 
-  return '<div class="card" style="margin:0;text-align:center;padding:20px 14px;border-radius:14px;border:1px solid '+cfg.borda+';background:'+cfg.fundo+';box-shadow:0 1px 2px rgba(29,41,34,.05);min-height:150px;display:flex;flex-direction:column;justify-content:center">'+
-    '<div class="icone-situacao" style="width:46px;height:46px;margin:0 auto 10px;border-radius:50%;background:'+cfg.cor+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.12)">'+
+  return '<div class="card" style="margin:0;text-align:center;padding:20px 14px;border-radius:14px;border:1px solid '+cfg.borda+';background:'+cfg.fundo+';box-shadow:0 4px 12px rgba(0,0,0,.07);min-height:145px;display:flex;flex-direction:column;justify-content:center">'+
+    '<div style="width:46px;height:46px;margin:0 auto 10px;border-radius:50%;background:'+cfg.cor+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.12)">'+
       cfg.simbolo+
     '</div>'+
-    '<div style="font-size:14px;font-weight:700;letter-spacing:.02em;color:var(--verde-900)">'+
+    '<div style="font-size:15px;font-weight:700;color:#263238">'+
       titulo+
     '</div>'+
-    '<div style="font-family:var(--serif);font-size:42px;font-weight:700;line-height:1.05;margin-top:6px;color:'+cfg.cor+'">'+
+    '<div style="font-size:32px;font-weight:800;line-height:1.1;margin-top:7px;color:'+cfg.cor+'">'+
       quantidade+
     '</div>'+
-    '<div class="small" style="margin-top:2px;color:var(--texto-3)">NCM(s)</div>'+
+    '<div class="small" style="margin-top:4px;color:#607d8b">NCM(s)</div>'+
   '</div>';
 }
       function listaNcm(lista){
@@ -1558,7 +1272,7 @@ if(situacao){
           cartaoNcm('Incorretos',ncmIncorretos.length,'resultado-incorreto')+
           cartaoNcm('Requer validação',ncmPendentes.length,'resultado-pendente')+
         '</div>'+
-        '<button type="button" class="secondary" id="btnPesquisarNcm"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Pesquisar NCM por situação</button>'+
+        '<button type="button" class="secondary" id="btnPesquisarNcm">🔎 Pesquisar NCM por situação</button>'+
         '<div id="painelPesquisaNcm" hidden style="margin-top:14px">'+
           '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">'+
             '<select id="filtroSituacaoNcm">'+
@@ -2237,7 +1951,7 @@ document.addEventListener('toggle',e=>{
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-validar]');
  if(b){
- b.style.setProperty('background','#2C4233','important');
+ b.style.setProperty('background','#6d28d9','important');
  b.style.setProperty('color','white','important');
 }
 },true);

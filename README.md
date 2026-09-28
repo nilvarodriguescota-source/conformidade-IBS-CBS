@@ -87,6 +87,7 @@ período, os campos de economia e exposição voltam nulos e o motivo diz por qu
 | `src/servidor.ts` / `src/pagina.ts` | Rotas da API e HTML da tela |
 | `src/arquivos.ts` | Hash e cabeçalho de arquivos grandes sem carregá-los inteiros (explicacoes.json passa de 500 MB) |
 | `web/` | Versão do navegador: sistema de arquivos em memória, worker, gerador de .xlsx |
+| `web/marca/` | Imagens da marca Sabores Estratégicos usadas na tela, na impressão e no PDF; a logo original fica em `origem/` e as demais saem de `scripts/gerar_marca.py` |
 | `scripts/build-web.mjs` | Gera `public/` para o Netlify |
 | `docs/etapa10/` | Auditoria da planilha V4.1 frente ao sistema e às fontes oficiais (diagnóstico, mapa linha a linha, proposta D5, natureza dos produtos) |
 | `test/fixtures/empresa-teste.json` | Dados fixos dos testes (o `empresa.json` da raiz é configuração e pode mudar) |
