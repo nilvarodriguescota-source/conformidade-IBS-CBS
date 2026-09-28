@@ -1999,12 +1999,27 @@ function blocoRegraCandidata(g,p,i,total){
   blocoReducaoPrevista(g,p)+
   '</details>'+
   (resp.length?'<div class="small resposta-registrada">Resposta registrada nesta análise: '+esc(resp.map(x=>(x.resposta==='NAO'?'NÃO':'SIM')+' ('+x.data+')').join(', '))+'</div>':'')+
+  (total>1?'':
   '<div class="pergunta-validacao"><span class="rotulo">Pergunta</span>Com base na descrição legal acima, o produto atende aos requisitos para este enquadramento?</div>'+
   '<div class="acoes">'+
    '<button class="secondary'+classeSim+'" data-validar="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(g.id)+'">SIM</button>'+
    '<button class="secondary'+classeNao+'" data-validar="NAO" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(g.id)+'">NÃO</button>'+
-  '</div>'+
+  '</div>')+
  '</div>';
+}
+/** Uma única validação por produto quando o NCM tem várias regras candidatas. */
+function perguntaUnicaDoProduto(p,regras){
+ if(regras.length<2) return '';
+ const ids=regras.map(g=>g.id);
+ const opcoes=regras.map((g,i)=>'<option value="'+esc(g.id)+'">'+(i+1)+') '+esc((g.cst||'?')+'/'+(g.cClassTrib||'?')+' — Anexo '+(g.anexo||'?')+', item '+(g.item||'?')+': '+(g.descricaoLegal||g.id).slice(0,90))+'</option>').join('');
+ return '<div class="regra-cand pergunta-unica">'+
+  '<div class="pergunta-validacao"><span class="rotulo">Pergunta (uma validação para o produto '+esc(p.produto)+', cProd '+esc(p.cProd)+')</span>'+
+  'Com base nas '+regras.length+' descrições legais acima, o produto atende aos requisitos de alguma delas?</div>'+
+  '<div class="acoes">'+
+   '<button class="secondary" data-validar-lote="NAO" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regras="'+esc(ids.join(','))+'">NÃO — nenhuma se aplica</button>'+
+   '<select class="escolha-regra" aria-label="Regra que se aplica">'+opcoes+'</select>'+
+   '<button class="secondary" data-validar-escolha="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'">SIM — a regra escolhida</button>'+
+  '</div></div>';
 }
 
 function renderPendentes(){
@@ -2030,6 +2045,7 @@ function renderPendentes(){
      alertaReducoesDiferentes(regras.map(g=>g.reducao&&g.reducao.evidencia!=='nao_determinada'?g.reducao.valor:null))+
      alertaLacunas(p.lacunasDeCobertura)+
      regras.map((g,i)=>blocoRegraCandidata(g,p,i,regras.length)).join('')+
+     perguntaUnicaDoProduto(p,regras)+
      (p.regrasBloqueadasDetalhe||[]).map(blocoBloqueio).join('')+
      '<details class="nao-imprimir"><summary>Detalhes</summary>'+
       '<p class="small">'+esc(reformularMotivo(p.motivo))+'</p>'+
@@ -2045,6 +2061,23 @@ function renderPendentes(){
  document.getElementById(id).addEventListener('input',renderPendentes);
 });
 
+document.addEventListener('click',e=>{
+ const lote=e.target.closest('[data-validar-lote]');
+ const escolha=e.target.closest('[data-validar-escolha]');
+ if(!lote&&!escolha) return;
+ const b=lote||escolha;
+ b.classList.add('validacao-selecionada');
+ b.disabled=true;
+ if(lote){ validarLote(b.dataset.ncm,b.dataset.cprod,b.dataset.regras.split(','),'NAO'); return; }
+ const sel=b.parentElement.querySelector('.escolha-regra');
+ validar(b.dataset.ncm,b.dataset.cprod,sel.value,'SIM');
+});
+async function validarLote(ncm,cProd,regraIds,resposta){
+ const r=await fetch('/api/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm,cProd,regraIds,resposta,autor:'Sistema'})});
+ const d=await r.json();
+ if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
+ await recarregarTudo();
+}
 async function validar(ncm,cProd,regraId,resposta){
  const r=await fetch('/api/validar',{
   method:'POST',

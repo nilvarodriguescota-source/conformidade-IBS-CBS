@@ -146,19 +146,16 @@ app.get("/api/respostas", (_req, res) => {
 
 app.post("/api/validar", (req, res) => {
   try {
-    const { ncm, cProd, regraId, regraIds, resposta, autor, justificativa } = req.body;
-    // Uma validação por produto: a mesma resposta para várias regras candidatas, com um só reprocessamento
-    const ids: string[] = Array.isArray(regraIds) && regraIds.length ? regraIds.map(String) : regraId ? [String(regraId)] : [];
+    const { ncm, cProd, regraId, resposta, autor, justificativa } = req.body;
 
-    if (!ncm || !cProd || !ids.length || !["SIM", "NAO"].includes(resposta)) {
+    if (!ncm || !cProd || !regraId || !["SIM", "NAO"].includes(resposta)) {
       return res.status(400).json({
         erro: "Dados de validação inválidos."
       });
     }
 
     // Fase 2: regra bloqueada por incompatibilidade oficial não aceita validação
-    const bloqueadas = bloqueiosParaBase(arquivoBase);
-    if (ids.some((id) => bloqueadas.has(chaveBloqueio(id, ncm)))) {
+    if (bloqueiosParaBase(arquivoBase).has(chaveBloqueio(regraId, ncm))) {
       return res.status(400).json({
         erro: `${MENSAGEM_BLOQUEIO} A validação não está disponível para esta regra.`,
         bloqueada: true
@@ -166,18 +163,16 @@ app.post("/api/validar", (req, res) => {
     }
 
     // A resposta pertence só à análise atual; empresa.json não é alterado.
-    for (const id of ids) {
-      const registro: RespostaValidacao = {
-        ncm,
-        cProd,
-        regraId: id,
-        resposta,
-        autor: autor || "Sistema",
-        data: new Date().toISOString().slice(0, 10),
-        ...(justificativa ? { justificativa } : {})
-      };
-      registrarResposta(pastaAnalise, registro);
-    }
+    const registro: RespostaValidacao = {
+      ncm,
+      cProd,
+      regraId,
+      resposta,
+      autor: autor || "Sistema",
+      data: new Date().toISOString().slice(0, 10),
+      ...(justificativa ? { justificativa } : {})
+    };
+    registrarResposta(pastaAnalise, registro);
     const resultado = processarAnalise();
 
     res.json({
