@@ -2177,128 +2177,87 @@ function inferenciaNcm(i){
  return '<li><span class="small"><strong>SISTEMA_INFERE</strong> ('+esc(i.regra)+') · '+esc(i.conclusao)+'</span>'+
   ((i.premissas||[]).length?'<ul class="fatos">'+i.premissas.map(fatoNcm).join('')+'</ul>':'')+'</li>';
 }
-/** Rótulo da evidência da redução, como o explicador a classificou. */
-const ROTULO_EVIDENCIA_REDUCAO={oficial_confirmada:'confirmada nas fontes oficiais',oficial_divergente:'divergente das fontes oficiais',sem_evidencia_oficial:'não confirmada oficialmente (prevista na base normativa)',nao_determinada:'não determinada'};
-function listaNcm(titulo,itens){ return itens?'<div class="small"><strong>'+esc(titulo)+'</strong></div><ul class="fatos">'+itens+'</ul>':''; }
-function itemNcm(t){ return '<li class="small">'+esc(t)+'</li>'; }
-/** Auditoria de UMA regra: fonte, inferência, confirmação humana, critérios do motor, candidatura e pendências. */
-function auditoriaRegraNcm(g,e,r){
- const a=e&&e.auditoriaOficial, b=e&&e.bloqueio, p=r.parametros;
- const leiCobre=a?(a.fatosF1||[]).filter(f=>f.papel==='cobre o NCM'):[];
- const fonte=(e&&(e.fonteDiz||[]).length)
-  ?e.fonteDiz.map(fatoNcm).join('')
-  :leiCobre.map(f=>itemNcm('FONTE_DIZ · LC 214/2025, '+f.dispositivo+': '+f.trecho)).join('')+
-   (a?[...new Set((a.fatosF2||[]).map(f=>'FONTE_DIZ · SVRS: '+f.TipoPermissao+' — '+f.DescItemAnexo+(f.DescExcecao?' (exceção: '+f.DescExcecao+')':'')))].map(itemNcm).join(''):'');
- const inferido=(e?(e.sistemaInfere||[]).map(inferenciaNcm).join(''):'')+
-  (a?itemNcm('Conferência da regra com a fonte oficial: '+(ROTULO_AUDITORIA[a.status]||a.status))+alertasDaAuditoria(a).map(itemNcm).join('')+(a.status!=='CONFIRMADA'?(a.motivos||[]).map(m=>itemNcm('Motivo da conferência: '+m)).join(''):''):itemNcm('Sem conferência da regra com a fonte oficial.'))+
-  (e&&e.statusNormativo?itemNcm('Status normativo: '+(ROTULO_STATUS_NORMATIVO[e.statusNormativo]||e.statusNormativo)):'')+
-  (e&&(e.sinalizadores||[]).length?itemNcm('Sinalizadores: '+e.sinalizadores.join(', ')):'');
- const condNaoXml=(e?(e.condicoes||[]):[]).filter(c=>c.verificavelPeloXml!=='sim');
- const humano=g.situacao==='candidata'
-  ?itemNcm('Se o produto atende à descrição legal desta regra (Anexo '+g.anexo+', item '+g.item+'): "'+g.descricaoLegal+'".')+
-   condNaoXml.map(c=>itemNcm('Condição da norma que o XML não comprova ('+c.natureza+'): '+textoFato(c.textoOficial))).join('')+
-   itemNcm('HUMANO_CONFIRMOU: nenhuma confirmação — a consulta não tem produto, então nenhuma resposta SIM/NÃO é aproveitada. NORMA_CONFIRMADA não confirma o benefício para o produto.')
-  :g.situacao==='aplicada'?itemNcm('Regra aplicada pelo motor.')
-  :itemNcm('Nada: a regra não é candidata ('+(ROTULO_SITUACAO_REGRA_NCM[g.situacao]||g.situacao)+').');
- const noPeriodo=g.vigenciaInicio<=p.data&&(g.vigenciaFim===null||g.vigenciaFim>=p.data);
- const criterios=itemNcm('NCM da regra ('+g.ncmRegra+') igual ao NCM consultado ('+r.ncm+').')+
-  itemNcm('Vigência da regra ('+g.vigenciaInicio+' a '+(g.vigenciaFim||'sem data final')+') × data da consulta ('+p.data+'): '+(noPeriodo?'dentro da vigência':'fora da vigência')+'.')+
-  itemNcm('Bloqueio por incompatibilidade oficial do NCM com o enquadramento: '+(b?'sim':'não')+'.')+
-  itemNcm('Natureza do item: '+(p.natureza||(p.naturezaOrigem==='deduzida_pelo_motor'?'mercadoria (deduzida pelo motor)':'não informada'))+'.')+
-  itemNcm('Respostas SIM/NÃO consideradas: nenhuma.');
- const just=g.situacao==='candidata'?'O motor mantém a regra como candidata: regra da base para o NCM, vigente na data, não bloqueada e sem resposta humana. Sem a confirmação, ela não é aplicada nem descartada.'
-  :g.situacao==='aplicada'?'Regra aplicada pelo motor.'
-  :g.situacao==='bloqueada'?'O motor excluiu a regra das candidatas: '+(b?b.motivo:'regra bloqueada por incompatibilidade oficial.')
-  :g.situacao==='fora_da_vigencia'?'O motor excluiu a regra das candidatas: fora da vigência na data da consulta.'
-  :'O motor não considera regras de benefício da base para a natureza informada.';
- const pend=(e?(e.divergencias||[]):[]).map(d=>itemNcm('Divergência '+d.tipo+' ('+d.status+'; impacto: '+d.impacto+'): '+(d.valores||[]).map(x=>x.fonte+' = '+(typeof x.valor==='string'?x.valor:JSON.stringify(x.valor))).join(' · '))).join('')+
-  (r.alertas||[]).filter(al=>(al.regras||[]).some(x=>x.regraId===g.id)).map(al=>itemNcm(al.titulo+' ['+al.categoria+' · '+al.camada+']: '+al.mensagem)).join('');
- return listaNcm('O que a fonte informa',fonte||itemNcm('Nenhum fato de fonte oficial registrado para esta regra.'))+
-  listaNcm('O que o sistema inferiu',inferido)+
-  listaNcm('O que depende de confirmação humana',humano)+
-  listaNcm('Critérios utilizados pelo motor',criterios)+
-  listaNcm('Justificativa',itemNcm(just))+
-  listaNcm('Pendências ou lacunas',pend||itemNcm('Nenhuma pendência ou divergência registrada para esta regra.'));
+/** Evidências de uma regra, como o explicador devolveu: fatos (FONTE_DIZ) separados das inferências (SISTEMA_INFERE). */
+function evidenciasRegraNcm(e){
+ if(!e) return '<div class="small">Sem explicação do explicador para esta regra.</div>';
+ const cond=(e.condicoes||[]).map(c=>'<li><span class="small">Condição ('+esc(c.natureza)+', verificável pelo XML: '+esc(c.verificavelPeloXml)+'): '+esc(textoFato(c.textoOficial))+'</span>'+(c.textoOperacional?'<div class="small">SVRS: '+esc(textoFato(c.textoOperacional))+'</div>':'')+'</li>').join('');
+ const div=(e.divergencias||[]).map(d=>'<li class="small">Divergência '+esc(d.tipo)+' ('+esc(d.status)+'; impacto: '+esc(d.impacto)+'): '+esc((d.valores||[]).map(x=>x.fonte+' = '+(typeof x.valor==='string'?x.valor:JSON.stringify(x.valor))).join(' · '))+'</li>').join('');
+ return linhaNcm('Vínculo da regra',e.vinculo)+
+  linhaNcm('Situação da regra frente às fontes (status normativo)',e.statusNormativo?(ROTULO_STATUS_NORMATIVO[e.statusNormativo]||e.statusNormativo):'não determinada (regra não localizada com segurança)')+
+  ((e.sinalizadores||[]).length?linhaNcm('Sinalizadores',e.sinalizadores.join(', ')):'')+
+  ((e.fonteDiz||[]).length?'<div class="small"><strong>O que a fonte diz</strong></div><ul class="fatos">'+e.fonteDiz.map(fatoNcm).join('')+'</ul>':'<div class="small">Nenhum fato de fonte oficial registrado para esta regra.</div>')+
+  ((e.sistemaInfere||[]).length?'<div class="small"><strong>O que o sistema infere</strong></div><ul class="fatos">'+e.sistemaInfere.map(inferenciaNcm).join('')+'</ul>':'')+
+  (cond?'<div class="small"><strong>Condições de aplicação</strong></div><ul class="fatos">'+cond+'</ul>':'')+
+  (div?'<div class="small"><strong>Divergências</strong></div><ul class="fatos">'+div+'</ul>':'');
 }
-/** Fontes de UMA regra: registro na base, fundamento, referência na lei, URLs e arquivos das evidências. */
-function fontesRegraNcm(g,e){
- const a=e&&e.auditoriaOficial, c=a&&a.codigo||{};
- const arquivos=[...new Set((e?(e.fonteDiz||[]):[]).map(f=>f.fonte+' — arquivo '+f.arquivo+(f.versao?', versão '+f.versao:'')+(f.dataConsulta?', consultado em '+f.dataConsulta:'')+', snapshot '+curto(f.sha256)))];
- return '<ul class="fatos">'+
-  itemNcm('Fonte do registro na base: '+g.fonte+(g.origemRegistro?' ('+g.origemRegistro+')':''))+
-  itemNcm('Fundamento legal da regra: '+g.fundamentoLegal)+
-  (c.F1&&c.F1.dispositivo?itemNcm('Referência normativa (fonte oficial): LC 214/2025, '+c.F1.dispositivo):'')+
-  (a&&a.fontes?'<li class="small"><a href="'+esc(a.fontes.F1.url+(c.F1&&c.F1.ancora?'#'+c.F1.ancora:''))+'" target="_blank" rel="noopener">LC 214/2025 (Planalto)</a> — texto legal, snapshot '+esc(curto(a.fontes.F1.sha256))+'</li>'+
-   '<li class="small"><a href="'+esc(a.fontes.F2.url)+'" target="_blank" rel="noopener">SVRS — Classificação Tributária</a> — tabela de apoio, snapshot '+esc(curto(a.fontes.F2.sha256))+'</li>':'')+
-  arquivos.map(t=>itemNcm('Documento da evidência: '+t)).join('')+
- '</ul>';
-}
-/** Uma regra: identificação, classificação, enquadramento, condições, exceções, vedações; auditoria e fontes dela. */
-function regraNcmHtml(g,e,r){
- const a=e&&e.auditoriaOficial, b=e&&e.bloqueio;
- const cond=(e?(e.condicoes||[]):[]).map(c=>itemNcm('('+c.natureza+'; verificável pelo XML: '+c.verificavelPeloXml+') '+textoFato(c.textoOficial)+(c.textoOperacional?' — SVRS: '+textoFato(c.textoOperacional):''))).join('');
- const excecoes=(a?(a.fatosF1||[]).filter(f=>f.papel==='exclui o NCM').map(f=>itemNcm('LC 214/2025, '+f.dispositivo+' (exclui o NCM): '+f.trecho)).join('')+
-  [...new Set((a.fatosF2||[]).filter(f=>f.DescExcecao).map(f=>'SVRS: '+f.DescExcecao))].map(itemNcm).join('')+
-  ((a.excecaoNaLeiEmItens||[]).length?itemNcm('Exceção na lei nos itens: '+a.excecaoNaLeiEmItens.join(', ')):''):'');
- const vedSvrs=a?[...new Set((a.fatosF2||[]).filter(f=>f.TipoPermissao==='VEDADO').map(f=>'SVRS: VEDADO — '+f.DescItemAnexo))].map(itemNcm).join(''):'';
+function regraNcmHtml(g,e,v){
+ const bloqueio=e&&e.bloqueio;
  return '<div class="regra-cand">'+
   '<div class="enq-cab">'+esc(g.id)+' — '+esc(ROTULO_SITUACAO_REGRA_NCM[g.situacao]||g.situacao)+'</div>'+
-  '<div class="quadro-campos">'+campoQuadro('CST',g.cst)+campoQuadro('cClassTrib',g.cClassTrib)+campoQuadro('Anexo',g.anexo)+campoQuadro('Item',g.item)+campoQuadro('Fundamento',g.fundamentoLegal)+'</div>'+
-  linhaNcm('Classificação tributária',g.rotulo)+
-  linhaNcm('Código CBS / IBS','CST '+g.cst+' · cClassTrib '+g.cClassTrib+' (o grupo IBSCBS usa o mesmo par para CBS e IBS)')+
-  linhaNcm('Enquadramento','Anexo '+g.anexo+', item '+g.item+' ('+g.fundamentoLegal+')')+
-  '<div class="bloco"><span class="rotulo">Descrição do enquadramento (descrição legal)</span><div class="descricao-legal">'+esc(g.descricaoLegal||'Descrição legal não disponível na base para esta regra.')+'</div></div>'+
+  '<div class="bloco"><span class="rotulo">Descrição legal do benefício</span><div class="descricao-legal">'+esc(g.descricaoLegal||'Descrição legal não disponível na base para esta regra.')+'</div></div>'+
+  quadroRegra({cst:g.cst,cClassTrib:g.cClassTrib,anexo:g.anexo,item:g.item,fundamento:g.fundamentoLegal,reducao:e&&e.reducao?e.reducao:null,auditoria:e?e.auditoriaOficial:null,humano:g.situacao==='candidata'?'pendente':null,titulo:'Enquadramento da regra'})+
+  linhaNcm('Rótulo',g.rotulo)+linhaNcm('Redução da alíquota na base',pctNcm(g.reducaoAliquota))+
+  linhaNcm('Alíquota IBS + CBS com a redução, na data',g.aliquotaEfetiva==null?'sem alíquota vigente':pctNcm(g.aliquotaEfetiva))+
   linhaNcm('Vigência',g.vigenciaInicio+' a '+(g.vigenciaFim||'sem data final'))+
+  (g.descricaoNcmTipi?linhaNcm('Descrição do NCM (TIPI, na base)',g.descricaoNcmTipi):'')+
   (g.observacao?linhaNcm('Observação da base',g.observacao):'')+
-  listaNcm('Condições de aplicação',cond||itemNcm('Nenhuma condição registrada além da descrição legal.'))+
-  listaNcm('Exceções',excecoes||itemNcm('Nenhuma exceção registrada para esta regra.'))+
-  (b?'<div class="small"><strong>Vedações</strong></div>'+blocoBloqueio(b):listaNcm('Vedações',vedSvrs||itemNcm('Nenhuma vedação registrada para esta regra.')))+
-  '<details><summary>Auditoria da regra</summary>'+auditoriaRegraNcm(g,e,r)+'</details>'+
-  '<details><summary>Fontes da regra</summary>'+fontesRegraNcm(g,e)+'</details>'+
- '</div>';
-}
-/** Dados tributários de uma regra: só o que está na base, no motor ou na auditoria. */
-function dadosTributariosRegraNcm(g,e,r){
- const a=e&&e.auditoriaOficial, f2=a&&a.codigo&&a.codigo.F2, red=e&&e.reducao;
- return '<div class="regra-cand">'+
-  '<div class="enq-cab">'+esc(g.id)+' — CST '+esc(g.cst)+' · cClassTrib '+esc(g.cClassTrib)+'</div>'+
-  linhaNcm('Redução da alíquota (base normativa)',pctNcm(g.reducaoAliquota))+
-  (f2?linhaNcm('Redução no SVRS','IBS '+pctInteiro(f2.percRedIbs)+' · CBS '+pctInteiro(f2.percRedCbs)):'')+
-  (red?linhaNcm('Evidência da redução',ROTULO_EVIDENCIA_REDUCAO[red.evidencia]||red.evidencia):'')+
-  linhaNcm('Alíquota IBS + CBS com a redução, na data da consulta',g.aliquotaEfetiva==null?'sem alíquota vigente':pctNcm(g.aliquotaEfetiva))+
+  linhaNcm('Fonte do registro',g.fonte+(g.origemRegistro?' ('+g.origemRegistro+')':''))+
+  (bloqueio?blocoBloqueio(bloqueio):'')+
+  '<details><summary>Auditoria e fontes desta regra</summary>'+blocoAuditoria(e?e.auditoriaOficial:null)+evidenciasRegraNcm(e)+'</details>'+
  '</div>';
 }
 function resultadoConsultaNcmHtml(r){
  const v=r.veredito, x=v.explicacaoInformativa||{}, p=r.parametros;
  const porId={}; (x.regras||[]).forEach(e=>{porId[e.regraIdInformado]=e;});
- const regras=r.regras.map(g=>Object.assign({ncmRegra:r.ncm},g));
+ const naoEncontrado=!r.encontradoNaBase?'<div class="aviso-regra">NCM '+esc(r.ncm)+' não encontrado na base normativa: não há regra de benefício, lacuna oficial nem bloqueio registrados para ele. Nenhuma regra de outro NCM foi usada e nada foi aproximado. O sistema não confere se o código existe na TIPI.</div>':'';
  const esp=v.esperado;
- const regime=v.regraAplicada&&!regras.some(g=>g.id===v.regraAplicada);
- const regimeRed=x.reducaoDoItem&&x.reducaoDoItem.regimeEspecifico;
- // Enquadramento do motor sem regra de benefício da base: regra geral ou regime específico (texto do motor)
- const doMotor=esp&&(!v.regraAplicada||regime)
-  ?'<div class="regra-cand"><div class="enq-cab">'+esc(regime?'Regime específico aplicado pelo motor: '+v.regraAplicada:'Regra geral indicada pelo motor')+'</div>'+
-   '<div class="quadro-campos">'+campoQuadro('CST',esp.cst)+campoQuadro('cClassTrib',esp.cClassTrib)+'</div>'+
-   linhaNcm('Código CBS / IBS','CST '+esp.cst+' · cClassTrib '+esp.cClassTrib+' (o grupo IBSCBS usa o mesmo par para CBS e IBS)')+
-   linhaNcm('Motivo do motor',reformularMotivo(v.motivo))+'</div>'
-  :'';
+ const classificacao=esp
+  ?linhaNcm('CST',esp.cst)+linhaNcm('cClassTrib',esp.cClassTrib)+linhaNcm('Código CBS / IBS','CST '+esp.cst+' e cClassTrib '+esp.cClassTrib+' (o mesmo par vale para CBS e IBS no grupo IBSCBS)')
+  :'<div>CST e cClassTrib: <strong>REQUER VALIDAÇÃO</strong> — o motor não escolhe entre as regras candidatas.</div>'+
+   (v.regrasCandidatas||[]).map(id=>{const g=r.regras.find(z=>z.id===id);return g?'<div class="small">• '+esc(g.cst+'/'+g.cClassTrib+' — Anexo '+g.anexo+', item '+g.item+' — '+g.rotulo+' (redução '+pctNcm(g.reducaoAliquota)+')')+'</div>':'';}).join('');
+ const aliq=r.aliquotas.length?r.aliquotas.map(a=>'<div class="small">'+esc(a.tributo+': '+pctNcm(a.aliquota)+' ('+a.tipo+') — '+a.fonte)+'</div>').join(''):'<div class="small">Nenhuma alíquota vigente na data.</div>';
+ const sb=x.statusBeneficio;
+ const humano='<div>'+esc(sb?sb.status:'BENEFICIO_NAO_AVALIADO')+'</div>'+(sb&&sb.pergunta?'<div class="small">Pergunta: '+esc(sb.pergunta)+'</div>':'')+
+  '<div class="small">HUMANO_CONFIRMOU: '+((x.humanoConfirmou||[]).length?x.humanoConfirmou.length+' confirmação(ões)':'nenhuma — a consulta não tem produto, então nenhuma resposta SIM/NÃO é aproveitada')+'.</div>'+
+  (r.conclusao.tipo==='REQUER_VALIDACAO_HUMANA'?'<div class="aviso-regra">A escolha do enquadramento depende de confirmação humana de que o produto atende à descrição legal. Para registrar a resposta, analise os XMLs do produto e responda em Pendências.</div>':'');
+ const alertas=(r.alertas||[]).map(a=>'<li><span class="small"><strong>'+esc(a.titulo)+'</strong> ['+esc(a.categoria)+' · '+esc(a.camada)+'] '+esc(a.mensagem)+'</span>'+(a.limitacao?'<div class="small">'+esc(a.limitacao)+'</div>':'')+'</li>').join('');
  const lacunas=(x.lacunas||[]).map(l=>'<li><span class="small"><strong>'+esc(l.status)+'</strong> · cClassTrib '+esc(l.cClassTrib)+' · inclusão como regra: '+esc(l.inclusaoComoRegra&&l.inclusaoComoRegra.status)+' (D5)</span><ul class="fatos">'+(l.fatos||[]).map(fatoNcm).join('')+'</ul></li>').join('');
- const semRegra=!regras.length
-  ?'<div class="small">Nenhuma regra de benefício na base para este NCM.'+(r.encontradoNaBase?'':' O NCM não consta da base normativa: nenhuma regra de outro NCM foi usada e nada foi aproximado.')+'</div>'
-  :'';
- const aliq=(v.aliquotaUsada||[]).length?v.aliquotaUsada:r.aliquotas;
- const aliqTxt=aliq.length?aliq.map(a=>a.tributo+' '+pctNcm(a.aliquota)).join(' + ')+(aliq.length===2?' = '+pctNcm(aliq.reduce((s,a)=>s+a.aliquota,0)):''):'nenhuma alíquota vigente na data';
- const comDados=regras.filter(g=>g.situacao==='aplicada'||g.situacao==='candidata');
+ const decisoes=(x.decisoesPendentes||[]).map(d=>d.decisao+(d.opcoes&&d.opcoes.length?' ('+d.opcoes.join(' / ')+')':'')).join('; ');
+ const bloqueadas=r.regras.filter(g=>g.situacao==='bloqueada');
+ const demais=r.regras.filter(g=>g.situacao!=='bloqueada');
  return '<div class="pendente">'+
   '<div class="pend-topo"><div><span class="rotulo">Resultado da consulta</span><strong>'+esc(ROTULO_CONCLUSAO_NCM[r.conclusao.tipo]||r.conclusao.tipo)+'</strong><div class="small">'+esc(r.conclusao.texto)+'</div></div>'+
   '<div class="pend-ncm"><span class="rotulo">NCM</span><span class="valor">'+esc(r.ncm)+'</span></div></div>'+
+  naoEncontrado+
   secaoNcm(1,'Identificação do NCM',linhaNcm('NCM consultado',r.ncm)+linhaNcm('Informado como',p.entrada)+
-   linhaNcm('Descrição do NCM',r.descricaoNcm.length?r.descricaoNcm.join(' | '):'não disponível na base normativa (a base não contém a TIPI completa)'))+
-  secaoNcm(2,'Regras aplicadas e candidatas',doMotor+semRegra+regras.map(g=>regraNcmHtml(g,porId[g.id],r)).join('')+
-   listaNcm('Lacunas da fonte',lacunas)+alertaLacunas(x.lacunasDeCobertura))+
-  secaoNcm(3,'Dados tributários',linhaNcm('Alíquotas vigentes na data da consulta ('+p.data+')',aliqTxt)+
-   (regime&&regimeRed?linhaNcm('Redução do regime específico ('+regimeRed.fundamento+')',pctNcm(regimeRed.valor)):'')+
-   comDados.map(g=>dadosTributariosRegraNcm(g,porId[g.id],r)).join(''))+
+   linhaNcm('Descrição do NCM',r.descricaoNcm.length?r.descricaoNcm.join(' | '):'não disponível na base normativa (a base não contém a TIPI completa)')+
+   linhaNcm('Regras da base para este NCM',String(r.regras.length)))+
+  secaoNcm(2,'Classificação tributária',classificacao+
+   linhaNcm('Natureza utilizada',p.natureza?p.natureza+' (informada na consulta)':p.naturezaOrigem==='deduzida_pelo_motor'?'mercadoria (o motor deduz: a empresa não atende consumo no local)':'não informada')+
+   linhaNcm('Enquadramento','Regra geral CST 000 / cClassTrib 000001 quando nenhuma regra de benefício se aplica; benefício só com regra da base e, quando houver candidatas, confirmação humana'))+
+  secaoNcm(3,'Resultado do motor',linhaNcm('Veredito técnico do motor',v.estado+' — '+(ROTULO_ESTADO[v.estado]||v.estado))+
+   '<div class="small">A consulta entra no motor como um item sem CST/cClassTrib informados (não há XML).'+(v.estado==='INCORRETO_RISCO'?' Por isso o veredito técnico é INCORRETO — risco ("grupo exigido e não informado"): isso descreve a entrada da consulta, não um erro do produto. O que interessa é o enquadramento esperado e as regras abaixo.':'')+'</div>'+
+   linhaNcm('Motivo do motor',reformularMotivo(v.motivo))+
+   ((v.dadosFaltantes||[]).length?linhaNcm('Dados faltantes',v.dadosFaltantes.join('; ')):'')+
+   linhaNcm('Parâmetros','Data '+p.data+' · modelo '+p.modelo+' · regime '+p.regime+(p.barOuRestaurante?' · atende consumo no local':'')+' · base '+p.versaoBase)+
+   (r.obrigatoriedade?linhaNcm('Obrigatoriedade do grupo IBS/CBS',(r.obrigatoriedade.obrigatorio?'exigido':'ainda não exigido')+' — '+r.obrigatoriedade.fonte):''))+
+  secaoNcm(4,'Regras aplicadas e candidatas',demais.length?demais.map(g=>regraNcmHtml(g,porId[g.id],v)).join(''):'<div class="small">Nenhuma regra de benefício na base para este NCM.</div>')+
+  (bloqueadas.length?secaoNcm('4b','Vedações — regras bloqueadas',bloqueadas.map(g=>regraNcmHtml(g,porId[g.id],v)).join('')):'')+
+  secaoNcm(5,'Dados tributários',aliq+linhaNcm('Alíquota IBS + CBS sem redução',r.aliquotas.length===2?pctNcm(r.aliquotas.reduce((s,a)=>s+a.aliquota,0)):'—')+
+   ((v.aliquotaUsada||[]).length?'<div class="small">Alíquotas usadas pelo motor: '+esc(v.aliquotaUsada.map(a=>a.tributo+' '+pctNcm(a.aliquota)).join(' + '))+'</div>':''))+
+  secaoNcm(6,'Auditoria',linhaNcm('Nível de evidência',x.nivelEvidencia)+
+   linhaNcm('Ausências registradas',(x.ausencias||[]).join(', ')||'nenhuma')+
+   linhaNcm('SISTEMA_PODE_DECIDIR — situações da matriz de decisão',((x.matriz&&x.matriz.situacoes)||[]).join(', ')+(x.matriz?' (matriz '+x.matriz.versao+'; efeito: '+x.matriz.efeito+')':''))+
+   linhaNcm('Decisões pendentes',decisoes||'nenhuma')+
+   ((x.limitacoes||[]).length?'<div class="small"><strong>Limitações</strong></div><ul class="fatos">'+x.limitacoes.map(l=>'<li class="small">'+esc(l)+'</li>').join('')+'</ul>':'')+
+   '<div class="small aud-nota">NORMA_CONFIRMADA diz que a regra coincide com a norma; não confirma o benefício para o produto (BENEFICIO_CONFIRMADO só com HUMANO_CONFIRMOU).</div>')+
+  secaoNcm(7,'Fontes e fundamentos legais','<ul class="fatos">'+[...new Set(r.regras.map(g=>g.fundamentoLegal+' — '+g.fonte))].map(t=>'<li class="small">'+esc(t)+'</li>').join('')+
+   '<li class="small">'+esc(FONTES_LEGAIS.lc214)+'</li><li class="small">'+esc(FONTES_LEGAIS.svrs)+'</li>'+(r.obrigatoriedade?'<li class="small">'+esc(r.obrigatoriedade.fonte)+'</li>':'')+'</ul>'+
+   '<div class="small">As evidências de cada regra (FONTE_DIZ e SISTEMA_INFERE) estão em "Auditoria e fontes desta regra", na seção 4.</div>')+
+  secaoNcm(8,'Alertas, pendências e lacunas',(alertas?'<ul class="fatos">'+alertas+'</ul>':'<div class="small">Nenhum alerta.</div>')+
+   (lacunas?'<div class="small"><strong>Lacunas da fonte</strong></div><ul class="fatos">'+lacunas+'</ul>':'<div class="small">Nenhuma lacuna da fonte (LACUNA_FONTE_SEM_REGRA) para este NCM.</div>')+
+   alertaLacunas(x.lacunasDeCobertura))+
+  secaoNcm(9,'Confirmação humana',humano)+
  '</div>';
 }
 async function consultarNcmTela(){
