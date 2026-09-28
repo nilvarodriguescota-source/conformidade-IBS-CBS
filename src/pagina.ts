@@ -2295,7 +2295,6 @@ function regraNcmHtml(g,e,r){
   listaNcm('Condições de aplicação',cond||itemNcm('Nenhuma condição registrada além da descrição legal.'))+
   listaNcm('Exceções',excecoes||itemNcm('Nenhuma exceção registrada para esta regra.'))+
   (b?'<div class="small"><strong>Vedações</strong></div>'+blocoBloqueio(b):listaNcm('Vedações',vedSvrs||itemNcm('Nenhuma vedação registrada para esta regra.')))+
-  '<details><summary>Auditoria da regra</summary>'+auditoriaRegraNcm(g,e,r)+'</details>'+
   '<details><summary>Fontes da regra</summary>'+fontesRegraNcm(g,e)+'</details>'+
  '</div>';
 }
