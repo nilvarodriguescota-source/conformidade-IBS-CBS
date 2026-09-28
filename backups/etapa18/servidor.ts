@@ -22,9 +22,6 @@ const PORTA = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 
-/** Máximo de arquivos por "Adicionar XMLs" (era 5.000). */
-const LIMITE_XMLS_POR_ENVIO = 10000;
-
 const upload = multer({
   dest: path.join(process.cwd(), "uploads")
 });
@@ -201,7 +198,7 @@ app.post("/api/validar", (req, res) => {
 });
 
 /** Adicionar XMLs: acrescenta os arquivos à análise atual, sem processar (ficam aguardando). */
-app.post("/api/importar", upload.array("arquivos", LIMITE_XMLS_POR_ENVIO), (req, res) => {
+app.post("/api/importar", upload.array("arquivos", 5000), (req, res) => {
   try {
     const arquivos = (req.files ?? []) as Express.Multer.File[];
 

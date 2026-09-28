@@ -264,7 +264,7 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 <button class="primary" id="btnProcessar" onclick="processarAnalise()" disabled>▶ Processar análise</button>
 <button class="perigo" onclick="iniciarNovaAnalise()">Nova análise (limpar dados)</button>
 </div>
-<p class="small">1. Escolha os arquivos. 2. "Adicionar XMLs" coloca os arquivos na análise atual, sem processar. 3. "Processar análise" analisa todos os XMLs da análise atual. "Nova análise" apaga XMLs, resultados, pendências e respostas da análise atual. Limite máximo: 10.000 arquivos XML por envio.</p>
+<p class="small">1. Escolha os arquivos. 2. "Adicionar XMLs" coloca os arquivos na análise atual, sem processar. 3. "Processar análise" analisa todos os XMLs da análise atual. "Nova análise" apaga XMLs, resultados, pendências e respostas da análise atual.</p>
 <div id="status"></div>
 <div id="resumoProcessamento"></div>
 <div class="card aliquotas-analise">
@@ -773,10 +773,6 @@ async function adicionarXmls(){
  const status=document.getElementById('status');
  if(!input.files.length){
    status.textContent='Selecione pelo menos um arquivo XML.';
-   return;
- }
- if(input.files.length>10000){
-   status.textContent='Foram selecionados '+input.files.length.toLocaleString('pt-BR')+' arquivos. O limite máximo é de 10.000 arquivos XML por envio.';
    return;
  }
  const form=new FormData();
