@@ -164,10 +164,6 @@ ul.descricoes{margin:4px 0 0;padding-left:18px;font-size:13px}
 .enq-cab{font-weight:600}
 .enq-opcao .descricao-legal{margin-top:4px}
 .selos-produto{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-#consultaNcmResultado .pendente>.bloco{margin-top:14px;padding-top:10px;border-top:1px solid #e2e8f0}
-#consultaNcmResultado .pendente>.bloco>.rotulo{font-size:13px;font-weight:bold;color:#6d28d9;margin-bottom:6px}
-#consultaNcmResultado .valor{font-size:14px}
-#consultaNcmResultado .pendente>.bloco>div{margin-bottom:4px}
 @media(max-width:900px){.quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .item-res .quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}
 #listaResultados{gap:6px}
@@ -249,7 +245,6 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 <button onclick="abrirTela('resultados',this)">Resultados</button>
 <button onclick="abrirTela('pendentes',this)">Pendências</button>
 <button onclick="abrirTela('relatorio-final',this)">Relatório Final</button>
-<button onclick="abrirTela('consulta-ncm',this)">Consulta Tributária por NCM</button>
 </nav>
 
 <main>
@@ -415,29 +410,6 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 </table>
 </div>
 
-</div>
-</section>
-
-<section id="consulta-ncm" class="tela">
-<div class="card">
-<h2>Consulta Tributária por NCM</h2>
-<p class="small">Consulta preventiva, sem XML: o NCM informado passa pelo mesmo motor tributário, pelas mesmas regras e pela mesma auditoria usados na análise dos XMLs. Nada é gravado e a análise atual não é alterada.</p>
-<div class="filters">
-<input id="consultaNcmEntrada" placeholder="NCM (ex.: 1901.20.90 ou 19012090)" onkeydown="if(event.key==='Enter')consultarNcmTela()">
-<select id="consultaNcmModelo" aria-label="Modelo do documento">
-<option value="65">NFC-e (modelo 65)</option>
-<option value="55">NF-e (modelo 55)</option>
-</select>
-<select id="consultaNcmNatureza" aria-label="Natureza do produto">
-<option value="">Natureza: conforme cadastro da empresa</option>
-<option value="mercadoria">Mercadoria</option>
-<option value="preparado_no_local">Preparado e servido no local (bar/restaurante)</option>
-<option value="bebida_alcoolica">Bebida alcoólica</option>
-<option value="servico">Serviço</option>
-</select>
-<button class="primary" id="btnConsultarNcm" onclick="consultarNcmTela()">CONSULTAR NCM</button>
-</div>
-<div id="consultaNcmResultado"></div>
 </div>
 </section>
 </main>
@@ -2154,130 +2126,6 @@ async function validar(ncm,cProd,regraId,resposta){
  const d=await r.json();
  if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
  await recarregarTudo();
-}
-
-/* ---------- Consulta Tributária por NCM (aba nova; só exibição do que o motor e o explicador devolvem) ---------- */
-const ROTULO_CONCLUSAO_NCM={
- ENQUADRAMENTO_DETERMINADO:'Enquadramento determinado pelo motor',
- REQUER_VALIDACAO_HUMANA:'REQUER VALIDAÇÃO HUMANA',
- REGRA_GERAL_SEM_BENEFICIO:'Regra geral — sem benefício aplicável na base',
- INDETERMINADO:'INDETERMINADO — o motor não classificou',
- NAO_OBRIGATORIO:'Grupo IBS/CBS ainda não exigido na data'
-};
-const ROTULO_SITUACAO_REGRA_NCM={aplicada:'Regra aplicada pelo motor',candidata:'Regra candidata (aguarda confirmação humana)',bloqueada:'BLOQUEADA — incompatibilidade oficial',fora_da_vigencia:'Fora da vigência na data da consulta',nao_considerada:'Não considerada pelo motor para a natureza informada'};
-const ROTULO_STATUS_NORMATIVO={NORMA_CONFIRMADA:'NORMA_CONFIRMADA — a regra coincide com as fontes oficiais (não confirma o benefício para o produto)',NORMA_POSSIVEL_MULTIPLOS_ITENS:'NORMA_POSSIVEL_MULTIPLOS_ITENS — o NCM aparece em mais de um item da norma',CONFLITO_PLANILHA_FONTE:'CONFLITO_PLANILHA_FONTE — a base diverge da fonte oficial',CONFLITO_ENTRE_FONTES:'CONFLITO_ENTRE_FONTES — as fontes oficiais divergem entre si',SEM_EVIDENCIA_OFICIAL:'SEM_EVIDENCIA_OFICIAL — regra só da planilha, sem vínculo oficial registrado'};
-function secaoNcm(n,titulo,corpo){ return '<div class="bloco"><span class="rotulo">'+n+'. '+esc(titulo)+'</span>'+corpo+'</div>'; }
-function linhaNcm(rotulo,valor){ return '<div><span class="rotulo">'+esc(rotulo)+'</span><span class="valor">'+esc(valor==null||valor===''?'—':valor)+'</span></div>'; }
-function pctNcm(x){ return x==null?'—':(x*100).toLocaleString('pt-BR',{maximumFractionDigits:3})+'%'; }
-function fatoNcm(f){
- return '<li><span class="small"><strong>FONTE_DIZ</strong> · '+esc(textoFato(f))+'</span>'+
-  '<div class="small">Arquivo '+esc(f.arquivo||'')+(f.versao?' · versão '+esc(f.versao):'')+(f.dataConsulta?' · consultado em '+esc(f.dataConsulta):'')+(f.sha256?' · snapshot '+esc(curto(f.sha256)):'')+'</div></li>';
-}
-function inferenciaNcm(i){
- return '<li><span class="small"><strong>SISTEMA_INFERE</strong> ('+esc(i.regra)+') · '+esc(i.conclusao)+'</span>'+
-  ((i.premissas||[]).length?'<ul class="fatos">'+i.premissas.map(fatoNcm).join('')+'</ul>':'')+'</li>';
-}
-/** Evidências de uma regra, como o explicador devolveu: fatos (FONTE_DIZ) separados das inferências (SISTEMA_INFERE). */
-function evidenciasRegraNcm(e){
- if(!e) return '<div class="small">Sem explicação do explicador para esta regra.</div>';
- const cond=(e.condicoes||[]).map(c=>'<li><span class="small">Condição ('+esc(c.natureza)+', verificável pelo XML: '+esc(c.verificavelPeloXml)+'): '+esc(textoFato(c.textoOficial))+'</span>'+(c.textoOperacional?'<div class="small">SVRS: '+esc(textoFato(c.textoOperacional))+'</div>':'')+'</li>').join('');
- const div=(e.divergencias||[]).map(d=>'<li class="small">Divergência '+esc(d.tipo)+' ('+esc(d.status)+'; impacto: '+esc(d.impacto)+'): '+esc((d.valores||[]).map(x=>x.fonte+' = '+(typeof x.valor==='string'?x.valor:JSON.stringify(x.valor))).join(' · '))+'</li>').join('');
- return linhaNcm('Vínculo da regra',e.vinculo)+
-  linhaNcm('Situação da regra frente às fontes (status normativo)',e.statusNormativo?(ROTULO_STATUS_NORMATIVO[e.statusNormativo]||e.statusNormativo):'não determinada (regra não localizada com segurança)')+
-  ((e.sinalizadores||[]).length?linhaNcm('Sinalizadores',e.sinalizadores.join(', ')):'')+
-  ((e.fonteDiz||[]).length?'<div class="small"><strong>O que a fonte diz</strong></div><ul class="fatos">'+e.fonteDiz.map(fatoNcm).join('')+'</ul>':'<div class="small">Nenhum fato de fonte oficial registrado para esta regra.</div>')+
-  ((e.sistemaInfere||[]).length?'<div class="small"><strong>O que o sistema infere</strong></div><ul class="fatos">'+e.sistemaInfere.map(inferenciaNcm).join('')+'</ul>':'')+
-  (cond?'<div class="small"><strong>Condições de aplicação</strong></div><ul class="fatos">'+cond+'</ul>':'')+
-  (div?'<div class="small"><strong>Divergências</strong></div><ul class="fatos">'+div+'</ul>':'');
-}
-function regraNcmHtml(g,e,v){
- const bloqueio=e&&e.bloqueio;
- return '<div class="regra-cand">'+
-  '<div class="enq-cab">'+esc(g.id)+' — '+esc(ROTULO_SITUACAO_REGRA_NCM[g.situacao]||g.situacao)+'</div>'+
-  '<div class="bloco"><span class="rotulo">Descrição legal do benefício</span><div class="descricao-legal">'+esc(g.descricaoLegal||'Descrição legal não disponível na base para esta regra.')+'</div></div>'+
-  quadroRegra({cst:g.cst,cClassTrib:g.cClassTrib,anexo:g.anexo,item:g.item,fundamento:g.fundamentoLegal,reducao:e&&e.reducao?e.reducao:null,auditoria:e?e.auditoriaOficial:null,humano:g.situacao==='candidata'?'pendente':null,titulo:'Enquadramento da regra'})+
-  linhaNcm('Rótulo',g.rotulo)+linhaNcm('Redução da alíquota na base',pctNcm(g.reducaoAliquota))+
-  linhaNcm('Alíquota IBS + CBS com a redução, na data',g.aliquotaEfetiva==null?'sem alíquota vigente':pctNcm(g.aliquotaEfetiva))+
-  linhaNcm('Vigência',g.vigenciaInicio+' a '+(g.vigenciaFim||'sem data final'))+
-  (g.descricaoNcmTipi?linhaNcm('Descrição do NCM (TIPI, na base)',g.descricaoNcmTipi):'')+
-  (g.observacao?linhaNcm('Observação da base',g.observacao):'')+
-  linhaNcm('Fonte do registro',g.fonte+(g.origemRegistro?' ('+g.origemRegistro+')':''))+
-  (bloqueio?blocoBloqueio(bloqueio):'')+
-  '<details><summary>Auditoria e fontes desta regra</summary>'+blocoAuditoria(e?e.auditoriaOficial:null)+evidenciasRegraNcm(e)+'</details>'+
- '</div>';
-}
-function resultadoConsultaNcmHtml(r){
- const v=r.veredito, x=v.explicacaoInformativa||{}, p=r.parametros;
- const porId={}; (x.regras||[]).forEach(e=>{porId[e.regraIdInformado]=e;});
- const naoEncontrado=!r.encontradoNaBase?'<div class="aviso-regra">NCM '+esc(r.ncm)+' não encontrado na base normativa: não há regra de benefício, lacuna oficial nem bloqueio registrados para ele. Nenhuma regra de outro NCM foi usada e nada foi aproximado. O sistema não confere se o código existe na TIPI.</div>':'';
- const esp=v.esperado;
- const classificacao=esp
-  ?linhaNcm('CST',esp.cst)+linhaNcm('cClassTrib',esp.cClassTrib)+linhaNcm('Código CBS / IBS','CST '+esp.cst+' e cClassTrib '+esp.cClassTrib+' (o mesmo par vale para CBS e IBS no grupo IBSCBS)')
-  :'<div>CST e cClassTrib: <strong>REQUER VALIDAÇÃO</strong> — o motor não escolhe entre as regras candidatas.</div>'+
-   (v.regrasCandidatas||[]).map(id=>{const g=r.regras.find(z=>z.id===id);return g?'<div class="small">• '+esc(g.cst+'/'+g.cClassTrib+' — Anexo '+g.anexo+', item '+g.item+' — '+g.rotulo+' (redução '+pctNcm(g.reducaoAliquota)+')')+'</div>':'';}).join('');
- const aliq=r.aliquotas.length?r.aliquotas.map(a=>'<div class="small">'+esc(a.tributo+': '+pctNcm(a.aliquota)+' ('+a.tipo+') — '+a.fonte)+'</div>').join(''):'<div class="small">Nenhuma alíquota vigente na data.</div>';
- const sb=x.statusBeneficio;
- const humano='<div>'+esc(sb?sb.status:'BENEFICIO_NAO_AVALIADO')+'</div>'+(sb&&sb.pergunta?'<div class="small">Pergunta: '+esc(sb.pergunta)+'</div>':'')+
-  '<div class="small">HUMANO_CONFIRMOU: '+((x.humanoConfirmou||[]).length?x.humanoConfirmou.length+' confirmação(ões)':'nenhuma — a consulta não tem produto, então nenhuma resposta SIM/NÃO é aproveitada')+'.</div>'+
-  (r.conclusao.tipo==='REQUER_VALIDACAO_HUMANA'?'<div class="aviso-regra">A escolha do enquadramento depende de confirmação humana de que o produto atende à descrição legal. Para registrar a resposta, analise os XMLs do produto e responda em Pendências.</div>':'');
- const alertas=(r.alertas||[]).map(a=>'<li><span class="small"><strong>'+esc(a.titulo)+'</strong> ['+esc(a.categoria)+' · '+esc(a.camada)+'] '+esc(a.mensagem)+'</span>'+(a.limitacao?'<div class="small">'+esc(a.limitacao)+'</div>':'')+'</li>').join('');
- const lacunas=(x.lacunas||[]).map(l=>'<li><span class="small"><strong>'+esc(l.status)+'</strong> · cClassTrib '+esc(l.cClassTrib)+' · inclusão como regra: '+esc(l.inclusaoComoRegra&&l.inclusaoComoRegra.status)+' (D5)</span><ul class="fatos">'+(l.fatos||[]).map(fatoNcm).join('')+'</ul></li>').join('');
- const decisoes=(x.decisoesPendentes||[]).map(d=>d.decisao+(d.opcoes&&d.opcoes.length?' ('+d.opcoes.join(' / ')+')':'')).join('; ');
- const bloqueadas=r.regras.filter(g=>g.situacao==='bloqueada');
- const demais=r.regras.filter(g=>g.situacao!=='bloqueada');
- return '<div class="pendente">'+
-  '<div class="pend-topo"><div><span class="rotulo">Resultado da consulta</span><strong>'+esc(ROTULO_CONCLUSAO_NCM[r.conclusao.tipo]||r.conclusao.tipo)+'</strong><div class="small">'+esc(r.conclusao.texto)+'</div></div>'+
-  '<div class="pend-ncm"><span class="rotulo">NCM</span><span class="valor">'+esc(r.ncm)+'</span></div></div>'+
-  naoEncontrado+
-  secaoNcm(1,'Identificação do NCM',linhaNcm('NCM consultado',r.ncm)+linhaNcm('Informado como',p.entrada)+
-   linhaNcm('Descrição do NCM',r.descricaoNcm.length?r.descricaoNcm.join(' | '):'não disponível na base normativa (a base não contém a TIPI completa)')+
-   linhaNcm('Regras da base para este NCM',String(r.regras.length)))+
-  secaoNcm(2,'Classificação tributária',classificacao+
-   linhaNcm('Natureza utilizada',p.natureza?p.natureza+' (informada na consulta)':p.naturezaOrigem==='deduzida_pelo_motor'?'mercadoria (o motor deduz: a empresa não atende consumo no local)':'não informada')+
-   linhaNcm('Enquadramento','Regra geral CST 000 / cClassTrib 000001 quando nenhuma regra de benefício se aplica; benefício só com regra da base e, quando houver candidatas, confirmação humana'))+
-  secaoNcm(3,'Resultado do motor',linhaNcm('Veredito técnico do motor',v.estado+' — '+(ROTULO_ESTADO[v.estado]||v.estado))+
-   '<div class="small">A consulta entra no motor como um item sem CST/cClassTrib informados (não há XML).'+(v.estado==='INCORRETO_RISCO'?' Por isso o veredito técnico é INCORRETO — risco ("grupo exigido e não informado"): isso descreve a entrada da consulta, não um erro do produto. O que interessa é o enquadramento esperado e as regras abaixo.':'')+'</div>'+
-   linhaNcm('Motivo do motor',reformularMotivo(v.motivo))+
-   ((v.dadosFaltantes||[]).length?linhaNcm('Dados faltantes',v.dadosFaltantes.join('; ')):'')+
-   linhaNcm('Parâmetros','Data '+p.data+' · modelo '+p.modelo+' · regime '+p.regime+(p.barOuRestaurante?' · atende consumo no local':'')+' · base '+p.versaoBase)+
-   (r.obrigatoriedade?linhaNcm('Obrigatoriedade do grupo IBS/CBS',(r.obrigatoriedade.obrigatorio?'exigido':'ainda não exigido')+' — '+r.obrigatoriedade.fonte):''))+
-  secaoNcm(4,'Regras aplicadas e candidatas',demais.length?demais.map(g=>regraNcmHtml(g,porId[g.id],v)).join(''):'<div class="small">Nenhuma regra de benefício na base para este NCM.</div>')+
-  (bloqueadas.length?secaoNcm('4b','Vedações — regras bloqueadas',bloqueadas.map(g=>regraNcmHtml(g,porId[g.id],v)).join('')):'')+
-  secaoNcm(5,'Dados tributários',aliq+linhaNcm('Alíquota IBS + CBS sem redução',r.aliquotas.length===2?pctNcm(r.aliquotas.reduce((s,a)=>s+a.aliquota,0)):'—')+
-   ((v.aliquotaUsada||[]).length?'<div class="small">Alíquotas usadas pelo motor: '+esc(v.aliquotaUsada.map(a=>a.tributo+' '+pctNcm(a.aliquota)).join(' + '))+'</div>':''))+
-  secaoNcm(6,'Auditoria',linhaNcm('Nível de evidência',x.nivelEvidencia)+
-   linhaNcm('Ausências registradas',(x.ausencias||[]).join(', ')||'nenhuma')+
-   linhaNcm('SISTEMA_PODE_DECIDIR — situações da matriz de decisão',((x.matriz&&x.matriz.situacoes)||[]).join(', ')+(x.matriz?' (matriz '+x.matriz.versao+'; efeito: '+x.matriz.efeito+')':''))+
-   linhaNcm('Decisões pendentes',decisoes||'nenhuma')+
-   ((x.limitacoes||[]).length?'<div class="small"><strong>Limitações</strong></div><ul class="fatos">'+x.limitacoes.map(l=>'<li class="small">'+esc(l)+'</li>').join('')+'</ul>':'')+
-   '<div class="small aud-nota">NORMA_CONFIRMADA diz que a regra coincide com a norma; não confirma o benefício para o produto (BENEFICIO_CONFIRMADO só com HUMANO_CONFIRMOU).</div>')+
-  secaoNcm(7,'Fontes e fundamentos legais','<ul class="fatos">'+[...new Set(r.regras.map(g=>g.fundamentoLegal+' — '+g.fonte))].map(t=>'<li class="small">'+esc(t)+'</li>').join('')+
-   '<li class="small">'+esc(FONTES_LEGAIS.lc214)+'</li><li class="small">'+esc(FONTES_LEGAIS.svrs)+'</li>'+(r.obrigatoriedade?'<li class="small">'+esc(r.obrigatoriedade.fonte)+'</li>':'')+'</ul>'+
-   '<div class="small">As evidências de cada regra (FONTE_DIZ e SISTEMA_INFERE) estão em "Auditoria e fontes desta regra", na seção 4.</div>')+
-  secaoNcm(8,'Alertas, pendências e lacunas',(alertas?'<ul class="fatos">'+alertas+'</ul>':'<div class="small">Nenhum alerta.</div>')+
-   (lacunas?'<div class="small"><strong>Lacunas da fonte</strong></div><ul class="fatos">'+lacunas+'</ul>':'<div class="small">Nenhuma lacuna da fonte (LACUNA_FONTE_SEM_REGRA) para este NCM.</div>')+
-   alertaLacunas(x.lacunasDeCobertura))+
-  secaoNcm(9,'Confirmação humana',humano)+
- '</div>';
-}
-async function consultarNcmTela(){
- const alvo=document.getElementById('consultaNcmResultado');
- const botao=document.getElementById('btnConsultarNcm');
- const ncm=(document.getElementById('consultaNcmEntrada').value||'').trim();
- const digitos=ncm.split('.').join('').split(' ').join('');
- if(!ncm){ alvo.innerHTML='<div class="aviso-regra">Informe o NCM.</div>'; return; }
- if(!/^[0-9]{8}$/.test(digitos)){ alvo.innerHTML='<div class="aviso-regra">NCM inválido: informe 8 dígitos, com ou sem pontos (ex.: 1901.20.90 ou 19012090).</div>'; return; }
- botao.disabled=true;
- alvo.innerHTML='<p class="small">Consultando...</p>';
- try{
-   const resp=await fetch('/api/consulta-ncm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm,modelo:document.getElementById('consultaNcmModelo').value,natureza:document.getElementById('consultaNcmNatureza').value})});
-   const d=await resp.json();
-   alvo.innerHTML=resp.ok?resultadoConsultaNcmHtml(d):'<div class="aviso-regra">'+esc(d.erro||'Não foi possível consultar o NCM.')+'</div>';
- }catch(erro){
-   alvo.innerHTML='<div class="aviso-regra">Não foi possível consultar o NCM.</div>';
- }finally{
-   botao.disabled=false;
- }
 }
 
 async function carregarAlertas(){

@@ -12,9 +12,6 @@ import { lerCabecalhoJson } from "./arquivos.js";
 import { paginaHtml } from "./pagina.js";
 import { bloqueiosParaBase, chaveBloqueio, MENSAGEM_BLOQUEIO } from "./bloqueios.js";
 import type { AuditoriaOficialDaRegra, BaseNormativa, BloqueioOficial, LacunaDeCobertura, ReducaoDoItem, RespostaValidacao, Veredito, VereditoExplicado } from "./tipos.js";
-import { consultarNcm, type ContextoConsultaNcm } from "./consulta-ncm.js";
-import { carregarContexto } from "./explicador.js";
-import { chavesBloqueadas } from "./bloqueios.js";
 
 const app = express();
 const PORTA = Number(process.env.PORT) || 3000;
@@ -437,42 +434,6 @@ app.get("/api/fila-validacao", (_req, res) => {
 // Alertas somente para exibição. Não altera resultados, indicadores nem validações.
 app.get("/api/alertas", (_req, res) => {
   res.json(lerAlertasParaExibicao(pastaSaida));
-});
-
-/**
- * Consulta Tributária por NCM (sem XML): motor e explicador existentes, via src/consulta-ncm.ts. Nada é gravado;
- * não altera a análise atual, os resultados nem as respostas. As bases são lidas uma vez e reaproveitadas.
- */
-let contextoConsultaNcm: Omit<ContextoConsultaNcm, "empresa"> | null = null;
-app.post("/api/consulta-ncm", (req, res) => {
-  try {
-    if (!contextoConsultaNcm) {
-      const explicacao = carregarContexto({
-        base: arquivoBase,
-        v2: path.join(process.cwd(), "data", "base-normativa.v2.json"),
-        matriz: path.join(process.cwd(), "docs", "etapa6", "matriz-decisao.json"),
-        empresa: arquivoEmpresa,
-      });
-      const bloqueios = bloqueiosParaBase(arquivoBase);
-      contextoConsultaNcm = { base: explicacao.base, explicacao, bloqueios, regrasBloqueadas: chavesBloqueadas(bloqueios) };
-    }
-    // Configuração da empresa (regime, bar/restaurante), sem as respostas de validação
-    const { validacoes: _ignoradas, ...empresa } = lerJson(arquivoEmpresa, {}) as ContextoConsultaNcm["empresa"] & { validacoes?: unknown };
-    if (!empresa.regime) {
-      res.status(400).json({ erro: "empresa.json sem o regime do emitente: a consulta precisa dele para saber se o grupo IBS/CBS é exigido." });
-      return;
-    }
-    const { ncm, modelo, natureza } = req.body ?? {};
-    const r = consultarNcm({ ncm, modelo, natureza }, { ...contextoConsultaNcm, empresa });
-    if (!r.ok) {
-      res.status(400).json({ erro: r.erro });
-      return;
-    }
-    res.json(r);
-  } catch (erro) {
-    console.error("Erro na consulta por NCM:", erro);
-    res.status(500).json({ erro: "Não foi possível consultar o NCM." });
-  }
 });
 
 app.listen(PORTA, () => {
