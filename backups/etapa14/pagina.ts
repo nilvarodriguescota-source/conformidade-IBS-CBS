@@ -157,13 +157,6 @@ ul.descricoes{margin:4px 0 0;padding-left:18px;font-size:13px}
 .selo-humano{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
 .selo-pendente{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
 .selo-sem-cadastro{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
-.enq-agrupados{margin-top:10px;padding:10px 12px;border:1px solid #e2e8f0;border-left:5px solid #7c3aed;border-radius:6px;background:#fcfcff}
-.enq-agrupados>ol{margin:6px 0 0;padding-left:22px}
-.enq-opcao{margin:0 0 12px;padding-bottom:10px;border-bottom:1px dashed #e2e8f0}
-.enq-opcao:last-child{border-bottom:0;margin-bottom:0}
-.enq-cab{font-weight:600}
-.enq-opcao .descricao-legal{margin-top:4px}
-.selos-produto{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 @media(max-width:900px){.quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .item-res .quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}
 #listaResultados{gap:6px}
@@ -2016,51 +2009,18 @@ function blocoRegraCandidata(g,p,i,total){
   '</div>')+
  '</div>';
 }
-/** Selos do produto (uma vez por cartão quando há várias regras candidatas). */
-function selosDoProduto(p){
- const sc=p.itensSemInformacaoTributaria||0, nob=p.itensNaoObrigatoriosSemInformacao||0;
- return '<div class="selos-produto">'+
-  '<div class="selo selo-pendente">Enquadramento do produto: aguardando validação humana</div>'+
-  (sc?'<div class="selo selo-sem-cadastro" title="Vendas deste produto saíram sem o grupo IBS/CBS no XML: o cadastro do produto não tem CST nem cClassTrib.">Produto sem informação tributária no cadastro: '+sc+' venda(s) sem CST/cClassTrib'+(nob?' ('+nob+' não obrigatória(s) na data)':'')+'</div>':'')+
- '</div>';
-}
-/** Uma possibilidade legal dentro do produto agrupado: descrição, enquadramento, redução e o SIM desta hipótese. */
-function opcaoEnquadramento(g,p,i){
- const resp=(p.respostasDestaAnalise||[]).filter(x=>x.regraId===g.id);
- const respostaAtual=resp.length?resp[resp.length-1].resposta:null;
- const o=g.reducao;
- const red=o&&o.valor!=null&&o.evidencia!=='nao_determinada'?' · Redução da alíquota: '+pct(o.valor):'';
- const descricao=g.descricaoLegal!=null
-  ?'<div class="descricao-legal">'+esc(g.descricaoLegal)+'</div>'
-  :(g.descricoesLegaisDivergentes&&g.descricoesLegaisDivergentes.length
-    ?'<div class="small">A base tem '+esc(g.regrasComEsteIdentificador)+' regras com este identificador, com descrições legais diferentes:</div><ul class="descricoes">'+g.descricoesLegaisDivergentes.map(d=>'<li>'+esc(d)+'</li>').join('')+'</ul>'
-    :'<div class="small">Descrição legal não disponível na base para esta regra.</div>');
- const duplicado=g.identificadorRepetido
-  ?'<div class="aviso-regra">Atenção: o identificador '+esc(g.id)+' corresponde a '+esc(g.regrasComEsteIdentificador)+' regras na base; a regra não pôde ser identificada com segurança. Pelo comportamento atual do motor, um SIM confirma todas elas ao mesmo tempo e o item continua pendente (mais de um benefício confirmado).</div>'
-  :'';
- return '<li class="enq-opcao">'+
-  '<div class="enq-cab">CST '+esc(g.cst||'—')+' · cClassTrib '+esc(g.cClassTrib||'—')+' · Anexo '+esc(g.anexo||'—')+', item '+esc(g.item||'—')+esc(red)+'</div>'+
-  '<div class="small">Regra '+esc(g.id)+(g.fundamentoLegal?' · Fundamento: '+esc(g.fundamentoLegal):'')+'</div>'+
-  duplicado+descricao+
-  '<details><summary>Detalhes</summary>'+
-   quadroRegra({cst:g.cst,cClassTrib:g.cClassTrib,anexo:g.anexo,item:g.item,fundamento:g.fundamentoLegal,reducao:g.reducao,auditoria:g.auditoria,humano:null,titulo:'Enquadramento proposto'})+
-   blocoAuditoria(g.auditoria)+
-   blocoReducaoPrevista(g,p)+
-  '</details>'+
-  (resp.length?'<div class="small resposta-registrada">Resposta registrada nesta análise: '+esc(resp.map(x=>(x.resposta==='NAO'?'NÃO':'SIM')+' ('+x.data+')').join(', '))+'</div>':'')+
-  '<div class="acoes"><button class="secondary'+(respostaAtual==='SIM'?' validacao-selecionada':'')+'" data-validar="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(g.id)+'">SIM — este enquadramento ('+(i+1)+')</button></div>'+
- '</li>';
-}
-/** Produto com várias regras candidatas: aparece uma vez, com todas as possibilidades legais e uma única validação. */
-function enquadramentosAgrupados(p,regras){
+/** Uma única validação por produto quando o NCM tem várias regras candidatas. */
+function perguntaUnicaDoProduto(p,regras){
+ if(regras.length<2) return '';
  const ids=regras.map(g=>g.id);
- return '<div class="enq-agrupados">'+
-  '<span class="rotulo">Possíveis enquadramentos/benefícios legais ('+regras.length+')</span>'+
-  '<ol>'+regras.map((g,i)=>opcaoEnquadramento(g,p,i)).join('')+'</ol>'+
-  '<div class="pergunta-validacao"><span class="rotulo">Validação</span>'+
-  'Com base nas descrições legais acima, o produto atende aos requisitos de algum destes enquadramentos? Responda SIM no enquadramento aplicável, ou NÃO se nenhum se aplica.</div>'+
+ const opcoes=regras.map((g,i)=>'<option value="'+esc(g.id)+'">'+(i+1)+') '+esc((g.cst||'?')+'/'+(g.cClassTrib||'?')+' — Anexo '+(g.anexo||'?')+', item '+(g.item||'?')+': '+(g.descricaoLegal||g.id).slice(0,90))+'</option>').join('');
+ return '<div class="regra-cand pergunta-unica">'+
+  '<div class="pergunta-validacao"><span class="rotulo">Pergunta (uma validação para o produto '+esc(p.produto)+', cProd '+esc(p.cProd)+')</span>'+
+  'Com base nas '+regras.length+' descrições legais acima, o produto atende aos requisitos de alguma delas?</div>'+
   '<div class="acoes">'+
-   '<button class="secondary" data-validar-lote="NAO" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regras="'+esc(ids.join(','))+'">NÃO — nenhum se aplica</button>'+
+   '<button class="secondary" data-validar-lote="NAO" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regras="'+esc(ids.join(','))+'">NÃO — nenhuma se aplica</button>'+
+   '<select class="escolha-regra" aria-label="Regra que se aplica">'+opcoes+'</select>'+
+   '<button class="secondary" data-validar-escolha="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'">SIM — a regra escolhida</button>'+
   '</div></div>';
 }
 
@@ -2086,9 +2046,8 @@ function renderPendentes(){
      '</div>'+
      alertaReducoesDiferentes(regras.map(g=>g.reducao&&g.reducao.evidencia!=='nao_determinada'?g.reducao.valor:null))+
      alertaLacunas(p.lacunasDeCobertura)+
-     (regras.length>1
-      ?selosDoProduto(p)+enquadramentosAgrupados(p,regras)
-      :regras.map((g,i)=>blocoRegraCandidata(g,p,i,regras.length)).join(''))+
+     regras.map((g,i)=>blocoRegraCandidata(g,p,i,regras.length)).join('')+
+     perguntaUnicaDoProduto(p,regras)+
      (p.regrasBloqueadasDetalhe||[]).map(blocoBloqueio).join('')+
      '<details class="nao-imprimir"><summary>Detalhes</summary>'+
       '<p class="small">'+esc(reformularMotivo(p.motivo))+'</p>'+
@@ -2105,11 +2064,15 @@ function renderPendentes(){
 });
 
 document.addEventListener('click',e=>{
- const b=e.target.closest('[data-validar-lote]');
- if(!b) return;
+ const lote=e.target.closest('[data-validar-lote]');
+ const escolha=e.target.closest('[data-validar-escolha]');
+ if(!lote&&!escolha) return;
+ const b=lote||escolha;
  b.classList.add('validacao-selecionada');
  b.disabled=true;
- validarLote(b.dataset.ncm,b.dataset.cprod,b.dataset.regras.split(','),'NAO');
+ if(lote){ validarLote(b.dataset.ncm,b.dataset.cprod,b.dataset.regras.split(','),'NAO'); return; }
+ const sel=b.parentElement.querySelector('.escolha-regra');
+ validar(b.dataset.ncm,b.dataset.cprod,sel.value,'SIM');
 });
 async function validarLote(ncm,cProd,regraIds,resposta){
  const r=await fetch('/api/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm,cProd,regraIds,resposta,autor:'Sistema'})});
