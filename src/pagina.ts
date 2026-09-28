@@ -2170,7 +2170,6 @@ function beneficioAtividadeHtml(d){
  const aud=(d.auditoria||[]).map(p=>'<li class="small"><strong>'+esc(p.camada)+'</strong> · '+esc(p.texto)+'</li>').join('');
  const f=d.fonte||{};
  return '<div class="selo '+(CLASSE_BENEFICIO_ATIVIDADE[d.classificacao]||'selo-aviso')+'">'+esc(d.rotulo)+'</div>'+
-  '<div class="aliquota-descricao">'+esc(d.motivo)+'</div>'+
   linha('Atividade',d.atividade.descricao)+
   linha('Atividade confirmada no cadastro da empresa',d.atividade.declaradaNoCadastro?'sim':'não')+
   (b?linha('Benefício',b.descricao+' Atividade da lei: '+b.atividadeDaLei+'.')+
