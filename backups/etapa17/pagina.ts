@@ -280,10 +280,6 @@ details summary{cursor:pointer;color:#475569;font-size:13px;margin-top:8px}
 <div class="aliquota-descricao">LC 214/2025, período de teste de 2026: IBS de 0,1%.</div>
 </div>
 </div>
-<div class="card aliquotas-analise" id="beneficioAtividade">
-<h3>Benefício ou redução de alíquota por atividade</h3>
-<div id="beneficioAtividadeConteudo" class="small">Carregando...</div>
-</div>
 </div>
 </section>
 
@@ -702,7 +698,6 @@ function exportarRelatorioFinal(formato){
 }
 
 async function carregarAnalise(){
- carregarBeneficioAtividade();
  try{
    const d=await (await fetch('/api/analise')).json();
    let texto;
@@ -2159,44 +2154,6 @@ async function validar(ncm,cProd,regraId,resposta){
  const d=await r.json();
  if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
  await recarregarTudo();
-}
-
-/* ---------- Benefício ou redução de alíquota por atividade (aba Análise; independe do produto/NCM) ---------- */
-const CLASSE_BENEFICIO_ATIVIDADE={CONFIRMADO:'selo-oficial',REQUER_VALIDACAO:'selo-pendente',NENHUM:'selo-aviso'};
-function pctAtividade(x){ return x==null?'—':(x*100).toLocaleString('pt-BR',{maximumFractionDigits:3})+'%'; }
-function beneficioAtividadeHtml(d){
- const b=d.beneficio;
- const linha=(r,v)=>'<div class="aliquota-descricao"><strong>'+esc(r)+':</strong> '+esc(v)+'</div>';
- const aud=(d.auditoria||[]).map(p=>'<li class="small"><strong>'+esc(p.camada)+'</strong> · '+esc(p.texto)+'</li>').join('');
- const f=d.fonte||{};
- return '<div class="selo '+(CLASSE_BENEFICIO_ATIVIDADE[d.classificacao]||'selo-aviso')+'">'+esc(d.rotulo)+'</div>'+
-  '<div class="aliquota-descricao">'+esc(d.motivo)+'</div>'+
-  linha('Atividade',d.atividade.descricao)+
-  linha('Atividade confirmada no cadastro da empresa',d.atividade.declaradaNoCadastro?'sim':'não')+
-  (b?linha('Benefício',b.descricao+' Atividade da lei: '+b.atividadeDaLei+'.')+
-   linha('Percentual de redução',pctAtividade(b.percentualReducao))+
-   linha('Alíquota geral',b.aliquotaGeral==null?'sem alíquota vigente':pctAtividade(b.aliquotaGeral)+' ('+b.aliquotas.map(a=>a.tributo+' '+pctAtividade(a.aliquota)).join(' + ')+', em '+b.dataAliquotas+')')+
-   linha('Alíquota após redução',b.aliquotaAposReducao==null?'—':pctAtividade(b.aliquotaAposReducao)+' ('+b.aliquotas.map(a=>a.tributo+' '+pctAtividade(a.aliquota*(1-b.percentualReducao))).join(' + ')+')')+
-   linha('Fundamento legal',b.fundamentoLegal)+
-   '<div class="aliquota-descricao"><strong>Condições para aplicação:</strong></div><ul class="fatos">'+b.condicoes.map(c=>'<li class="small">'+esc(c.texto)+'</li>').join('')+'</ul>':'')+
-  '<details><summary>Auditoria e fontes</summary>'+
-   '<div class="small"><strong>Atividade da empresa → benefício → percentual → fundamento → condições → fonte</strong></div>'+
-   '<ul class="fatos">'+aud+'</ul>'+
-   (b?'<div class="small"><strong>Texto legal (literal)</strong></div><ul class="fatos">'+b.textoLegal.map(t=>'<li class="small"><a href="'+esc(t.url)+'" target="_blank" rel="noopener">'+esc(t.dispositivo)+'</a>: '+esc(t.texto)+'</li>').join('')+'</ul>':'')+
-   '<div class="small">Fonte: '+esc(f.nome||'')+' — <a href="'+esc(f.url||'')+'" target="_blank" rel="noopener">'+esc(f.url||'')+'</a> · '+esc(f.versao||'')+' · consultado em '+esc(f.dataConsulta||'')+' · arquivo '+esc(f.arquivo||'')+' · snapshot '+esc(curto(f.sha256))+'</div>'+
-   '<div class="small aud-nota">Esta verificação é só da atividade da empresa. A tributação de cada produto/NCM continua sendo a do motor, mostrada nas demais telas, e não é alterada aqui.</div>'+
-  '</details>';
-}
-async function carregarBeneficioAtividade(){
- const alvo=document.getElementById('beneficioAtividadeConteudo');
- if(!alvo) return;
- try{
-   const r=await fetch('/api/beneficio-atividade');
-   const d=await r.json();
-   alvo.innerHTML=r.ok?beneficioAtividadeHtml(d):'<div class="aviso-regra">'+esc(d.erro||'Não foi possível verificar o benefício por atividade.')+'</div>';
- }catch(erro){
-   alvo.innerHTML='<div class="aviso-regra">Não foi possível verificar o benefício por atividade.</div>';
- }
 }
 
 /* ---------- Consulta Tributária por NCM (aba nova; só exibição do que o motor e o explicador devolvem) ---------- */

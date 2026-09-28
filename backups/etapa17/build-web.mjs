@@ -56,7 +56,6 @@ const dados = [
   "data/auditoria-oficial.json",
   "data/fontes/svrs/svrs-200-200033-200043.json",
   "docs/etapa6/matriz-decisao.json",
-  "data/fontes/lc214/regime-bares-restaurantes.json",
 ];
 for (const rel of dados) {
   mkdirSync(dirname(join(pub, "dados", rel)), { recursive: true });

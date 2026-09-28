@@ -15,7 +15,6 @@ import type { AuditoriaOficialDaRegra, BaseNormativa, BloqueioOficial, LacunaDeC
 import { consultarNcm, type ContextoConsultaNcm } from "./consulta-ncm.js";
 import { carregarContexto } from "./explicador.js";
 import { chavesBloqueadas } from "./bloqueios.js";
-import { avaliarBeneficioAtividade, cnaesDosXmls, type TextoLegalAtividade } from "./beneficio-atividade.js";
 
 const app = express();
 const PORTA = Number(process.env.PORT) || 3000;
@@ -473,31 +472,6 @@ app.post("/api/consulta-ncm", (req, res) => {
   } catch (erro) {
     console.error("Erro na consulta por NCM:", erro);
     res.status(500).json({ erro: "Não foi possível consultar o NCM." });
-  }
-});
-
-/**
- * Benefício ou redução de alíquota por atividade da empresa (aba Análise), via src/beneficio-atividade.ts.
- * Não usa produto/NCM nem vereditos; só o CNAE do emitente nos XMLs da análise e o cadastro da empresa.
- * Nada é gravado. O CNAE é relido quando a lista de XMLs processados muda.
- */
-let cacheCnaes: { chave: string; valor: { cnae: string; xmls: number }[] } | null = null;
-app.get("/api/beneficio-atividade", (_req, res) => {
-  try {
-    const pastaXmls = path.join(pastaAnalise, "xmls");
-    const nomes = fs.existsSync(pastaXmls) ? fs.readdirSync(pastaXmls).filter((f) => f.toLowerCase().endsWith(".xml")).sort() : [];
-    const chave = `${nomes.length}|${nomes[0] ?? ""}|${nomes[nomes.length - 1] ?? ""}`;
-    if (cacheCnaes?.chave !== chave) cacheCnaes = { chave, valor: cnaesDosXmls(pastaXmls) };
-    const lei = lerJson(path.join(process.cwd(), "data", "fontes", "lc214", "regime-bares-restaurantes.json"), null) as TextoLegalAtividade | null;
-    if (!lei) {
-      res.status(500).json({ erro: "Texto legal do regime por atividade não encontrado (data/fontes/lc214/regime-bares-restaurantes.json)." });
-      return;
-    }
-    const empresa = lerJson(arquivoEmpresa, {}) as { barOuRestaurante?: boolean };
-    res.json(avaliarBeneficioAtividade({ empresa, cnaes: cacheCnaes.valor, lei }));
-  } catch (erro) {
-    console.error("Erro no benefício por atividade:", erro);
-    res.status(500).json({ erro: "Não foi possível verificar o benefício por atividade." });
   }
 });
 
