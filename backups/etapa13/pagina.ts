@@ -156,7 +156,6 @@ ul.descricoes{margin:4px 0 0;padding-left:18px;font-size:13px}
 .selo-aviso{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
 .selo-humano{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
 .selo-pendente{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
-.selo-sem-cadastro{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
 @media(max-width:900px){.quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .item-res .quadro-campos{grid-template-columns:repeat(3,minmax(0,1fr))}
 #listaResultados{gap:6px}
@@ -1665,13 +1664,12 @@ function quadroRegra(d){
  const regra=a?(a.status==='CONFIRMADA'?'Regra conferida com a fonte oficial':(ROTULO_AUDITORIA[a.status]||a.status)):'Sem conferência da regra com a fonte oficial';
  const humano=d.humano==='confirmado'?'<div class="selo selo-humano">Enquadramento confirmado na validação humana (resposta SIM nesta análise)</div>'
   :d.humano==='pendente'?'<div class="selo selo-pendente">Enquadramento do produto: aguardando validação humana</div>':'';
- const semCadastro=d.semCadastro&&d.semCadastro.total?'<div class="selo selo-sem-cadastro" title="Vendas deste produto saíram sem o grupo IBS/CBS no XML: o cadastro do produto não tem CST nem cClassTrib.">Produto sem informação tributária no cadastro: '+d.semCadastro.total+' venda(s) sem CST/cClassTrib'+(d.semCadastro.naoObrigatorios?' ('+d.semCadastro.naoObrigatorios+' não obrigatória(s) na data)':'')+'</div>':'';
  return '<div class="bloco quadro-regra">'+
   '<span class="rotulo">'+esc(d.titulo||'Enquadramento da regra')+'</span>'+
   '<div class="quadro-campos">'+campoQuadro('CST',d.cst)+campoQuadro('cClassTrib',d.cClassTrib)+campoQuadro('Anexo',d.anexo)+campoQuadro('Item',item)+campoQuadro('Fundamento',d.fundamento)+'</div>'+
   red+
   '<div class="selo '+(a&&a.status==='CONFIRMADA'?'selo-oficial':'selo-aviso')+'">'+esc(regra)+'</div>'+
-  humano+semCadastro+
+  humano+
   '<div class="small aud-nota">A conferência é da regra. Se o produto atende à descrição legal continua sendo decisão humana.</div>'+
  '</div>';
 }
@@ -1994,7 +1992,7 @@ function blocoRegraCandidata(g,p,i,total){
   '<div class="small">'+(total>1?'<strong>'+esc(p.produto)+'</strong> (cProd '+esc(p.cProd)+') · ':'')+'Regra candidata'+(total>1?' '+(i+1)+' de '+total:'')+': '+esc(g.id)+' — aguardando validação</div>'+
   duplicado+
   '<div class="bloco"><span class="rotulo">Descrição legal do benefício</span>'+descricao+'</div>'+
-  quadroRegra({cst:g.cst,cClassTrib:g.cClassTrib,anexo:g.anexo,item:g.item,fundamento:g.fundamentoLegal,reducao:g.reducao,auditoria:g.auditoria,humano:'pendente',semCadastro:{total:p.itensSemInformacaoTributaria||0,naoObrigatorios:p.itensNaoObrigatoriosSemInformacao||0},titulo:'Enquadramento proposto'})+
+  quadroRegra({cst:g.cst,cClassTrib:g.cClassTrib,anexo:g.anexo,item:g.item,fundamento:g.fundamentoLegal,reducao:g.reducao,auditoria:g.auditoria,humano:'pendente',titulo:'Enquadramento proposto'})+
     '<details>'+
   '<summary>Detalhes</summary>'+
   blocoAuditoria(g.auditoria)+

@@ -393,18 +393,8 @@ app.get("/api/fila-validacao", (_req, res) => {
   try {
     const dados = lerJson(arquivoFila, []) as { ncm: string; cProd: string; produto: string; regras: string[] }[];
     // Redução e evidência de cada regra candidata: as mesmas que o explicador resolveu (reducaoDoItem.opcoes)
-    const vereditos = lerJson(path.join(pastaSaida, "vereditos.json"), []) as Veredito[];
-    const reducoes = reducoesDaAnalise(vereditos);
+    const reducoes = reducoesDaAnalise(lerJson(path.join(pastaSaida, "vereditos.json"), []) as Veredito[]);
     const respostas = lerRespostas(pastaAnalise);
-    // Vendas do produto sem o grupo IBS/CBS no XML (cadastro sem informação tributária), por cProd
-    const semInformacao = new Map<string, { total: number; naoObrigatorios: number }>();
-    for (const v of vereditos) {
-      if (v.informado.cst !== null || v.informado.cClassTrib !== null) continue;
-      const c = semInformacao.get(v.cProd) ?? { total: 0, naoObrigatorios: 0 };
-      c.total += 1;
-      if (v.estado === "NAO_OBRIGATORIO") c.naoObrigatorios += 1;
-      semInformacao.set(v.cProd, c);
-    }
     res.json(dados.map((p) => {
       const doGrupo = reducoes.disponivel ? reducoes.porPendencia.get(`${p.ncm}|${p.cProd}|${p.produto}`) ?? null : null;
       return {
@@ -418,8 +408,6 @@ app.get("/api/fila-validacao", (_req, res) => {
         regrasBloqueadasDetalhe: Object.values(doGrupo?.bloqueios ?? {}),
         reducaoIndisponivel: reducoes.disponivel ? null : reducoes.motivo,
         respostasDestaAnalise: respostas.filter((x) => x.ncm === p.ncm && (x.cProd === p.cProd || x.cProd === p.produto)),
-        itensSemInformacaoTributaria: semInformacao.get(p.cProd)?.total ?? 0,
-        itensNaoObrigatoriosSemInformacao: semInformacao.get(p.cProd)?.naoObrigatorios ?? 0,
       };
     }));
   } catch (erro) {
