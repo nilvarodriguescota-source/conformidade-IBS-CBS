@@ -95,7 +95,6 @@ function detalharRegras(ncm: string, ids: string[]) {
 }
 
 app.use("/vendor", express.static(path.join(process.cwd(), "public", "vendor")));
-app.use("/marca", express.static(path.join(process.cwd(), "public", "marca")));
 
 app.get("/", (_req, res) => {
   res.send(paginaHtml());
