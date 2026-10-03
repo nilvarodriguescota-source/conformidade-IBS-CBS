@@ -203,6 +203,9 @@ select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer
 .REQUER_VALIDACAO{color:var(--pendente)}
 .NAO_OBRIGATORIO{color:var(--neutro)}
 .INDETERMINADO{color:var(--risco)}
+.INCORRETO_NCM{color:var(--risco)}
+.aviso-ncm{display:flex;flex-direction:column;gap:4px;margin:0 0 10px;padding:12px 14px;border:2px solid #B3261E;border-radius:10px;background:#FDECEA;color:#7A1A13}
+.aviso-ncm strong{font-size:1.05em;letter-spacing:.02em}
 
 /* ---------- Tabelas ---------- */
 table{width:100%;border-collapse:collapse;font-size:13px}
@@ -233,7 +236,7 @@ table.confronto td.indefinido{color:var(--pendente);font-style:italic;white-spac
 .item-res:hover{box-shadow:0 1px 2px rgba(29,41,34,.05),0 8px 20px -14px rgba(29,41,34,.35)}
 .item-res[data-estado=CORRETO]{border-left-color:var(--ok-forte)}
 .item-res[data-estado=INCORRETO_ECONOMIA]{border-left-color:var(--economia-forte)}
-.item-res[data-estado=INCORRETO_RISCO],.item-res[data-estado=INDETERMINADO]{border-left-color:var(--risco-forte)}
+.item-res[data-estado=INCORRETO_RISCO],.item-res[data-estado=INCORRETO_NCM],.item-res[data-estado=INDETERMINADO]{border-left-color:var(--risco-forte)}
 .item-res[data-estado=REQUER_VALIDACAO]{border-left-color:var(--pendente-forte)}
 .item-topo{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:8px;border-bottom:1px solid var(--linha)}
 .item-produto{font-weight:700;font-size:14px}
@@ -270,7 +273,7 @@ table.confronto td.indefinido{color:var(--pendente);font-style:italic;white-spac
 .compacto .status-selo{padding:3px 12px;border:1.5px solid currentColor;border-radius:999px;background:var(--superficie);font-size:11.5px;font-weight:700;letter-spacing:.05em;white-space:nowrap}
 .status-selo.CORRETO{background:var(--ok-fundo)}
 .status-selo.INCORRETO_ECONOMIA{background:var(--economia-fundo)}
-.status-selo.INCORRETO_RISCO,.status-selo.INDETERMINADO{background:var(--risco-fundo)}
+.status-selo.INCORRETO_RISCO,.status-selo.INCORRETO_NCM,.status-selo.INDETERMINADO{background:var(--risco-fundo)}
 .status-selo.REQUER_VALIDACAO{background:var(--pendente-fundo)}
 .status-selo.NAO_OBRIGATORIO{background:var(--neutro-fundo)}
 .r-par{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:3px 8px;border-radius:6px;background:var(--superficie-2)}
@@ -593,11 +596,11 @@ details>summary:hover{color:var(--verde-900)}
 <select id="filtroResultado" onchange="renderResultados()">
 <option value="">Todos os resultados</option>
 <option value="CORRETO">Correto</option>
-<option value="INCORRETO_ECONOMIA">Incorreto - economia</option>
+<option value="INCORRETO_ECONOMIA">Corretos c/ recal impostos</option>
 <option value="INCORRETO_RISCO">Incorreto - risco</option>
+<option value="INCORRETO_NCM">Incorreto - ajustar NCM</option>
 <option value="REQUER_VALIDACAO">Precisa validar</option>
 <option value="NAO_OBRIGATORIO">Não obrigatório</option>
-<option value="INDETERMINADO">Indeterminado</option>
 </select>
 <input id="filtroClass" placeholder="cClassTrib" oninput="renderResultados()">
 <input id="filtroCst" placeholder="CST" oninput="renderResultados()">
@@ -628,9 +631,10 @@ details>summary:hover{color:var(--verde-900)}
 
 <div class="barra">
 <div class="segmentado" role="group" aria-label="Relatório">
-<button class="secondary relatorio-final-selecionado" id="btnRelatorioComValidacao" onclick="selecionarModoRelatorio('com')">COM VALIDAÇÃO</button>
+<button class="secondary relatorio-final-selecionado" id="btnRelatorioComValidacao" onclick="selecionarModoRelatorio('com')">CORRETOS VALIDADOS</button>
 <button class="secondary" id="btnRelatorioSemValidacao" onclick="selecionarModoRelatorio('sem')">SEM VALIDAÇÃO</button>
-<button class="secondary" id="btnRelatorioRisco" onclick="selecionarModoRelatorio('risco')">INCORRETO — RISCO</button>
+<button class="secondary" id="btnRelatorioRecal" onclick="selecionarModoRelatorio('recal')">CORRETOS C/ RECAL IMPOSTOS</button>
+<button class="secondary" id="btnRelatorioCorretos" onclick="selecionarModoRelatorio('corretos')">CORRETOS</button>
 </div>
 <span id="contagemRelatorioFinal" class="small"></span>
 </div>
@@ -715,7 +719,23 @@ let modoRelatorioFinal='com';
 let linhasRelatorioFinal=[];
 const COLUNAS_RELATORIO_FINAL=['Código produto','Descrição','NCM','cClassTrib a utilizar','CST a utilizar','Alíquota de registro IBS/CBS','Instrução'];
 const COLUNAS_RELATORIO_RISCO=['cProd','Descrição','NCM informado','NCM adequado / possível enquadramento','CST atual','CST esperado','cClassTrib atual','cClassTrib esperado','Redução IBS','Redução CBS','Alíquota aplicável','Alíquota atualmente considerada','Diferença (R$)','Motivo do INCORRETO — risco','Fundamento legal','Fonte','Instrução'];
-const colunasRelatorio=()=>modoRelatorioFinal==='risco'?COLUNAS_RELATORIO_RISCO:COLUNAS_RELATORIO_FINAL;
+/** Recálculo e Corretos: as colunas do relatório final mais o resultado e o impacto do recálculo. */
+const COLUNAS_RELATORIO_IMPACTO=COLUNAS_RELATORIO_FINAL.concat(['Resultado','Economia (R$)','Valor a pagar (R$)']);
+const colunasRelatorio=()=>modoRelatorioFinal==='recal'||modoRelatorioFinal==='corretos'?COLUNAS_RELATORIO_IMPACTO:COLUNAS_RELATORIO_FINAL;
+const TITULO_RELATORIO={com:'CORRETOS VALIDADOS',sem:'SEM VALIDAÇÃO',recal:'CORRETOS C/ RECAL IMPOSTOS',corretos:'CORRETOS'};
+/** Corretos com recálculo: enquadramento determinado e imposto recalculado (economia ou valor a pagar). */
+const ehRecalculo=v=>(v.estado==='INCORRETO_ECONOMIA'||v.estado==='INCORRETO_RISCO')&&!!v.esperado;
+/** Uma linha por produto: enquadramento a utilizar, instrução, resultado e impacto somado dos itens. */
+function linhaRelatorioImpacto(itens){
+ const v=itens[0], cst=v.esperado?.cst||'', cClassTrib=v.esperado?.cClassTrib||'';
+ const reducao=reducaoRelatorioFinal(v);
+ const recal=ehRecalculo(v);
+ const instrucao=recal?instrucaoRelatorioFinal(cst,cClassTrib,reducao,true):'Cadastro correto: manter o CST '+cst+' e o cClassTrib '+cClassTrib+'.';
+ const economia=itens.reduce((s,x)=>s+(x.estado==='INCORRETO_ECONOMIA'?(x.economiaPotencial||0):0),0);
+ const aPagar=itens.reduce((s,x)=>s+(x.estado==='INCORRETO_RISCO'?(x.exposicao||0):0),0);
+ const num=n=>n?n.toFixed(2).replace('.',','):'0,00';
+ return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,instrucao,recal?'CORRETO C/ RECAL IMPOSTOS':'CORRETO',num(economia),num(aPagar)];
+}
 /** Alíquota IBS + CBS vigente no item (as mesmas usadas pelo motor), com a redução. */
 function aliquotaComReducao(v,red){
  const t=(v.aliquotaUsada||[]).reduce((s,a)=>s+a.aliquota,0);
@@ -744,7 +764,7 @@ function linhaRelatorioRisco(v,itens){
   reducoes,reducoes,esp?aliquotaComReducao(v,red):'depende da validação',ausente?'não informada no XML (grupo IBS/CBS ausente)':(inf.cClassTrib==='000001'?aliquotaComReducao(v,0):((cands.find(g=>g.cClassTrib===inf.cClassTrib)||{}).reducao!=null?aliquotaComReducao(v,cands.find(g=>g.cClassTrib===inf.cClassTrib).reducao):'cClassTrib '+inf.cClassTrib+' (redução sem regra na base para o NCM)')),
   dif?formatarNumero(dif)+(esp?'':' (mínimo)'):'-',v.motivo,fundamento,fonte,instrucao];
 }
-const ROTULO_ESTADO={CORRETO:'CORRETO',INCORRETO_ECONOMIA:'INCORRETO — economia',INCORRETO_RISCO:'INCORRETO — risco',REQUER_VALIDACAO:'PRECISA VALIDAR',NAO_OBRIGATORIO:'NÃO OBRIGATÓRIO',INDETERMINADO:'INDETERMINADO'};
+const ROTULO_ESTADO={CORRETO:'CORRETO',INCORRETO_ECONOMIA:'CORRETOS C/ RECAL IMPOSTOS',INCORRETO_RISCO:'INCORRETO — risco',INCORRETO_NCM:'INCORRETO — AJUSTAR NCM',REQUER_VALIDACAO:'PRECISA VALIDAR',NAO_OBRIGATORIO:'NÃO OBRIGATÓRIO',INDETERMINADO:'INDETERMINADO'};
 
 function abrirTela(id,botao){
  document.querySelectorAll('.tela').forEach(x=>x.classList.remove('active'));
@@ -763,6 +783,7 @@ function escaparRelatorio(v){
 }
 
 function reducaoRelatorioFinal(v){
+ if(v&&v.esperado&&v.esperado.cClassTrib==='000001') return '0% (tributação integral)';
  const r=v&&v.reducaoExibicao;
  if(!r) return 'Não determinada';
 
@@ -794,13 +815,12 @@ function instrucaoRelatorioFinal(cst,cClassTrib,reducao,validado){
 }
 
 function selecionarModoRelatorio(modo){
- modoRelatorioFinal=modo==='sem'||modo==='risco'?modo:'com';
- const btnCom=document.getElementById('btnRelatorioComValidacao');
- const btnSem=document.getElementById('btnRelatorioSemValidacao');
- const btnRisco=document.getElementById('btnRelatorioRisco');
- if(btnCom) btnCom.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal==='com');
- if(btnSem) btnSem.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal==='sem');
- if(btnRisco) btnRisco.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal==='risco');
+ modoRelatorioFinal=TITULO_RELATORIO[modo]?modo:'com';
+ const botoes={com:'btnRelatorioComValidacao',sem:'btnRelatorioSemValidacao',recal:'btnRelatorioRecal',corretos:'btnRelatorioCorretos'};
+ for(const [m,id] of Object.entries(botoes)){
+   const b=document.getElementById(id);
+   if(b) b.classList.toggle('relatorio-final-selecionado',modoRelatorioFinal===m);
+ }
  carregarRelatorioFinal();
 }
 
@@ -828,39 +848,37 @@ async function carregarRelatorioFinal(){
  };
 
  try{
-   if(modo==='risco'){
-     if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
+   if(modo==='recal'||modo==='corretos'||modo==='com'){
      const resultadosApi=await (await fetch('/api/resultados')).json();
+     let respostas=[];
+     if(modo==='com'){ try{ respostas=await (await fetch('/api/respostas')).json(); }catch(e){ respostas=[]; } }
+     const validado=new Set((Array.isArray(respostas)?respostas:[]).map(r=>r.ncm+'|'+r.cProd));
+     const incluir=v=>{
+       if(modo==='recal') return ehRecalculo(v);
+       const correto=v.estado==='CORRETO'||ehRecalculo(v);
+       if(modo==='corretos') return correto;
+       // Corretos validados: produto com resposta de validação que, após o reprocessamento, voltou como correto
+       return correto&&(validado.has(v.ncm+'|'+v.cProd)||validado.has(v.ncm+'|'+v.produto));
+     };
      const porProduto=new Map();
-     resultadosApi.filter(v=>v.estado==='INCORRETO_RISCO').forEach(v=>{
+     resultadosApi.filter(incluir).forEach(v=>{
        const k=v.cProd||v.ncm+'|'+v.produto;
        if(!porProduto.has(k)) porProduto.set(k,[]);
        porProduto.get(k).push(v);
      });
-     explicacao.textContent='INCORRETO — risco: produtos com imposto a menor ou grupo IBS/CBS ausente. Quando o enquadramento depende da natureza ou composição do produto, o esperado fica como REQUER VALIDAÇÃO e a pergunta SIM/NÃO continua em Pendências. A diferença é o IBS/CBS devido que não foi destacado (mínimo, quando depende da validação).';
-     renderizar([...porProduto.values()].map(itens=>linhaRelatorioRisco(itens[0],itens)),'Nenhum produto em INCORRETO — risco.');
-     return;
-   }
-   if(modo==='com'){
-     const resultadosApi=await (await fetch('/api/resultados')).json();
-     const mapa=new Map();
-
-     resultadosApi
-       .filter(v=>v.estado==='INCORRETO_ECONOMIA'&&v.esperado&&v.cProd)
-       .forEach(v=>{
-         if(!mapa.has(v.cProd)) mapa.set(v.cProd,v);
-       });
-
-     explicacao.textContent='Com validação: produtos que foram validados e, após o reprocessamento, retornaram como INCORRETO — economia.';
-
-     const linhas=[...mapa.values()].map(v=>{
-       const cst=v.esperado?.cst||'';
-       const cClassTrib=v.esperado?.cClassTrib||'';
-       const reducao=reducaoRelatorioFinal(v);
-       return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,instrucaoRelatorioFinal(cst,cClassTrib,reducao,true)];
-     });
-
-     renderizar(linhas,'Nenhum produto retornou como INCORRETO — economia após a validação.');
+     if(modo==='com'){
+       explicacao.textContent='Corretos validados: produtos que passaram pela validação e, após o reprocessamento, retornaram como CORRETOS (cadastro já correto ou correto com recálculo de impostos).';
+       renderizar([...porProduto.values()].map(itens=>{
+         const v=itens[0], cst=v.esperado?.cst||'', cClassTrib=v.esperado?.cClassTrib||'', reducao=reducaoRelatorioFinal(v);
+         const instrucao=ehRecalculo(v)?instrucaoRelatorioFinal(cst,cClassTrib,reducao,true):'Cadastro correto: manter o CST '+cst+' e o cClassTrib '+cClassTrib+'.';
+         return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,instrucao];
+       }),'Nenhum produto validado retornou como correto.');
+       return;
+     }
+     explicacao.textContent=modo==='recal'
+       ?'Corretos c/ recal impostos: produtos com enquadramento determinado cujo imposto foi recalculado. A economia (imposto pago a mais) e o valor a pagar (imposto destacado a menor) aparecem em colunas separadas.'
+       :'Corretos: todos os produtos corretos, somando os que já estavam corretos e os corretos com recálculo de impostos.';
+     renderizar([...porProduto.values()].map(linhaRelatorioImpacto),modo==='recal'?'Nenhum produto correto com recálculo de impostos.':'Nenhum produto correto.');
      return;
    }
 
@@ -935,9 +953,9 @@ function exportarRelatorioFinal(formato){
    alert('Não há dados no relatório selecionado para exportar.');
    return;
  }
- const com=modoRelatorioFinal==='com', risco=modoRelatorioFinal==='risco';
- const titulo='Relatório Final — '+(risco?'INCORRETO — RISCO':com?'COM VALIDAÇÃO':'SEM VALIDAÇÃO');
- const nome=risco?'relatorio-final-incorreto-risco':'relatorio-final-'+(com?'com':'sem')+'-validacao';
+ const impacto=modoRelatorioFinal==='recal'||modoRelatorioFinal==='corretos';
+ const titulo='Relatório Final — '+TITULO_RELATORIO[modoRelatorioFinal];
+ const nome={com:'relatorio-final-corretos-validados',sem:'relatorio-final-sem-validacao',recal:'relatorio-final-corretos-recal-impostos',corretos:'relatorio-final-corretos'}[modoRelatorioFinal];
  const colunas=colunasRelatorio();
  const tabela=[colunas].concat(linhasRelatorioFinal);
 
@@ -948,7 +966,7 @@ function exportarRelatorioFinal(formato){
 
  if(formato==='excel'){
    if(typeof gerarXlsx!=='function'){ alert('Não foi possível carregar o gerador de Excel. Recarregue a página.'); return; }
-   baixarArquivo(nome+'.xlsx',gerarXlsx(tabela,{aba:risco?'Incorreto - risco':com?'Com validação':'Sem validação',larguras:risco?[12,35,12,40,10,14,12,16,18,18,24,28,14,60,50,40,60]:[16,45,12,16,12,22,70]}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+   baixarArquivo(nome+'.xlsx',gerarXlsx(tabela,{aba:TITULO_RELATORIO[modoRelatorioFinal].slice(0,31),larguras:impacto?[16,45,12,16,12,22,70,26,14,16]:[16,45,12,16,12,22,70]}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
    return;
  }
 
@@ -971,8 +989,8 @@ function exportarRelatorioFinal(formato){
      styles:{fontSize:7,cellPadding:3,overflow:'linebreak'},
      headStyles:{fillColor:[44,66,51],textColor:[251,248,241]},
      alternateRowStyles:{fillColor:[250,248,243]},
-     columnStyles:risco?{}:{1:{cellWidth:150},6:{cellWidth:220}},
-     ...(risco?{styles:{fontSize:5,cellPadding:2,overflow:'linebreak'}}:{})
+     columnStyles:impacto?{1:{cellWidth:120},6:{cellWidth:170}}:{1:{cellWidth:150},6:{cellWidth:220}},
+     ...(impacto?{styles:{fontSize:7,cellPadding:3,overflow:'linebreak'}}:{})
    };
    window.jspdf.autoTable?window.jspdf.autoTable(doc,opcoesTabela):doc.autoTable(opcoesTabela);
    doc.save(nome+'.pdf');
@@ -1014,6 +1032,7 @@ function renderResumo(d){
   ['CORRETOS',r.corretos,'CORRETO'],
   ['INCORRETOS',r.incorretos,'INCORRETO'],
   ['PRECISAM VALIDAR',r.precisamValidar,'REQUER_VALIDACAO']];
+ if(r.ncmAAjustar) cards.push(['NCM A AJUSTAR',r.ncmAAjustar,'INCORRETO']);
  if(r.naoObrigatorio) cards.push(['Não obrigatórios',r.naoObrigatorio]);
  if(r.indeterminado) cards.push(['Indeterminados',r.indeterminado]);
  return '<div class="grid">'+htmlCards(cards)+'</div>'+explicacaoComposicao(d.composicao,r)+
@@ -2086,6 +2105,7 @@ function linhaInformado(v){
  return '<span class="r-lbl">Informado</span>'+chip('CST',inf.cst)+chip('cClassTrib',inf.cClassTrib);
 }
 function linhaEnquadramento(v){
+ if(v.estado==='INCORRETO_NCM') return '<span class="r-lbl">Esperado</span><strong class="INCORRETO_NCM">AJUSTAR O NCM — sem enquadramento para o NCM informado</strong>';
  const inf=v.informado||{};
  const r=v.reducaoExibicao, rc=regraDoCartao(v);
  if(r&&r.situacao==='regime_especifico'&&r.regimeEspecifico){
@@ -2221,9 +2241,15 @@ function auditoriaDetalhadaResultado(v){
   (v.dadosFaltantes&&v.dadosFaltantes.length?'<div class="small">Dados faltantes: '+esc(v.dadosFaltantes.join(', '))+'</div>':'')+
   (alertasUI.porItemHtml[v.documento+'|'+v.nItem]||'');
 }
+/** Aviso destacado: a validação indicou NCM errado; o cadastro do produto precisa ser ajustado no ERP. */
+function avisoAjusteNcm(v){
+ if(v.estado!=='INCORRETO_NCM'&&!v.ncmACorrigir) return '';
+ return '<div class="aviso-ncm" role="alert"><strong>⚠ AJUSTAR O NCM DO PRODUTO</strong>'+
+  '<span>A validação indicou que o NCM '+esc(v.ncm||'')+' informado está errado. Corrija o NCM no cadastro do produto no ERP e reprocesse com as novas notas. Nenhum benefício de outro NCM é aplicado.</span></div>';
+}
 function cartaoResultado(v,i){
  const red=linhaReducao(v);
- return '<div class="item-res compacto" data-estado="'+esc(v.estado)+'">'+
+ return '<div class="item-res compacto" data-estado="'+esc(v.estado)+'">'+avisoAjusteNcm(v)+
   '<div class="r-cab">'+
    '<div class="r-cab-esq"><span class="r-prod">'+esc(v.produto)+'</span><span class="small">cProd '+esc(v.cProd||'-')+'</span>'+chip('NCM',v.ncm)+'</div>'+
    '<div class="r-cab-dir"><span class="small">Validação: '+esc(validacaoDoItem(v))+'</span><span class="status status-selo '+esc(v.estado)+'" title="'+esc(v.estado)+'">'+esc(ROTULO_ESTADO[v.estado]||v.estado)+'</span></div>'+

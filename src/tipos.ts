@@ -101,7 +101,9 @@ export type EstadoVeredito =
   | "INCORRETO_RISCO" // pagou a menos: usou benefício sem regra que o ampare
   | "REQUER_VALIDACAO" // depende da descrição legal ou há conflito entre anexos
   | "NAO_OBRIGATORIO" // preenchimento ainda não exigido na data/regime
-  | "INDETERMINADO"; // falta dado para decidir
+  | "INCORRETO_NCM" // a validação humana indicou NCM errado: ajustar o NCM no ERP
+  /** Não é mais gerado pelo motor (os casos vão para REQUER_VALIDACAO); mantido para ler análises antigas. */
+  | "INDETERMINADO";
 
 /** Regra localizada pelo NCM e rejeitada para o produto concreto (regra encontrada ≠ benefício aplicável). */
 export interface RegraNaoAplicavel {

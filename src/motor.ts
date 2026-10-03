@@ -1,7 +1,8 @@
 /**
  * Motor de classificação. Decide o CST e o cClassTrib esperados a partir de
  * NCM + natureza do item + regime do emitente + data, e compara com o que o
- * XML informou. Nunca presume: sem dado suficiente o veredito é INDETERMINADO.
+ * XML informou. Nunca presume: sem dado suficiente o item vai para validação humana (REQUER_VALIDACAO),
+ * com o dado que falta em dadosFaltantes.
  */
 import type {
   BaseNormativa,
@@ -162,7 +163,7 @@ export function classificarItem(
   if (!doc.dataEmissao) faltantes.push("data de emissão do documento");
   if (!item.ncm) faltantes.push("NCM do item");
   if (faltantes.length > 0) {
-    return veredito("INDETERMINADO", `Falta: ${faltantes.join("; ")}.`);
+    return veredito("REQUER_VALIDACAO", `Falta: ${faltantes.join("; ")}. O enquadramento depende de validação humana.`);
   }
 
   const data = doc.dataEmissao ?? agora;
@@ -174,7 +175,7 @@ export function classificarItem(
     const obrig = preenchimentoObrigatorio(doc.modelo, opcoes.empresa.regime, data);
     if (obrig === null) {
       faltantes.push("modelo do documento ou regime do emitente");
-      return veredito("INDETERMINADO", "Não dá para saber se o preenchimento já era exigido.");
+      return veredito("REQUER_VALIDACAO", "Grupo IBS/CBS ausente e não dá para saber se o preenchimento já era exigido: validação humana.");
     }
     if (!obrig.obrigatorio) {
       return veredito("NAO_OBRIGATORIO", `Grupo IBS/CBS ainda não exigido nesta data. ${obrig.fonte}`);
@@ -188,7 +189,7 @@ export function classificarItem(
   const natureza = escolha === "CONSUMO_NO_LOCAL" ? "preparado_no_local" : naturezaDoItem(item, opcoes.empresa, opcoes.naturezaPorProduto);
   if (natureza === null) {
     faltantes.push(`natureza do item ${item.cProd || item.xProd} (preparado no local, bebida alcoólica ou mercadoria)`);
-    return veredito("INDETERMINADO", "Emitente atende consumo no local e a natureza do item não foi informada.");
+    return veredito("REQUER_VALIDACAO", "Emitente atende consumo no local e a natureza do item não foi informada: validação humana (consumo no local, bebida alcoólica ou mercadoria).");
   }
 
   const aliquotasNaData = () => {
@@ -312,6 +313,18 @@ export function classificarItem(
             ", ",
           )}. A composição do produto decide qual vale.`
         : `Enquadramento possível em ${resumo[0]}, sujeito à conferência da descrição legal.`;
+  }
+
+  // A validação humana indicou que o NCM informado está errado: resultado INCORRETO, com aviso de ajuste
+  // do NCM. Nenhum enquadramento é proposto para o NCM informado e nenhum benefício de outro NCM é aplicado.
+  if (escolha === "NCM_INCORRETO") {
+    return veredito(
+      "INCORRETO_NCM",
+      `AJUSTAR O NCM: a validação indicou que o NCM ${ncm} informado para "${item.xProd}" está errado. ` +
+        "Corrigir o NCM no cadastro do produto no ERP e reprocessar com as novas notas. " +
+        "Nenhum enquadramento é proposto para o NCM informado e nenhum benefício de outro NCM é aplicado.",
+      { regrasCandidatas: ids, baseCalculo: item.baseCalculo ?? item.valorProduto - item.desconto },
+    );
   }
 
   if (rejeitadas.length > 0 && aplicaveis.length > 0) {
