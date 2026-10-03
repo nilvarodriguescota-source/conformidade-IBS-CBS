@@ -41,9 +41,9 @@ test("1. NCM 2106.90.90 (outras preparações): não assume a regra geral; depen
   assert.ok(v.regrasCandidatas.includes("21069090-200003-I-4") && v.regrasCandidatas.includes("21069090-200033-VI-39"));
   assert.equal(v.economiaPotencial, null, "nada confirmado sem a resposta");
   assert.equal(reais(v.economiaSujeitaValidacao), 6, "estimativa: 1.000 × 1% × 60% (menor redução entre as candidatas)");
-  // Mesmo produto sem o grupo IBS/CBS: risco, mas o esperado continua dependendo da validação
+  // Mesmo produto sem o grupo IBS/CBS: o esperado depende da validação, então fica PRECISA VALIDAR
   const r = classificar(item({ ncm: "21069090", xProd: "BUFFET ALMOÇO" }));
-  assert.equal(r.estado, "INCORRETO_RISCO");
+  assert.equal(r.estado, "REQUER_VALIDACAO");
   assert.equal(r.esperado, null);
   assert.match(r.motivo, /Enquadramento esperado: depende da validação/);
   assert.equal(reais(r.exposicao), 0, "mínimo devido: a maior redução possível é 100% (fórmula infantil)");
@@ -80,10 +80,11 @@ test("4. Produto com redução (validado): economia de 60% confirmada", () => {
   assert.equal(v.economiaSujeitaValidacao, null);
 });
 
-test("5. Produto vedado ao benefício: regra bloqueada, benefício usado vira risco", () => {
+test("5. Produto vedado ao benefício: regra bloqueada, benefício usado vira recálculo com valor a pagar", () => {
   // 0207.43.00 (fígado gordo): excluído expressamente do Anexo I, item 19; VEDADO no SVRS para 200003
   const v = classificar(item({ ncm: "02074300", xProd: "FOIE GRAS", cst: "200", cClassTrib: "200003" }));
-  assert.equal(v.estado, "INCORRETO_RISCO");
+  assert.equal(v.estado, "INCORRETO_ECONOMIA");
+  assert.ok(v.economiaPotencial! < 0, "valor a pagar entra negativo na economia potencial");
   assert.ok(v.regrasBloqueadas?.includes("02074300-200003-I-19"));
   assert.deepEqual(v.esperado, { cst: "000", cClassTrib: "000001" });
   assert.equal(reais(v.exposicao), 10);
@@ -97,9 +98,10 @@ test("6. Classificação que deve permanecer: água mineral pela regra geral", (
   assert.doesNotMatch(v.motivo, /Imposto Seletivo|A descrição indica/);
 });
 
-test("7. INCORRETO — risco com enquadramento determinado: esperado, fundamento e impacto", () => {
+test("7. Grupo ausente com enquadramento determinado: CORRETOS C/ RECAL IMPOSTOS, com valor a pagar", () => {
   const v = classificar(item({ ncm: "22011000", xProd: "AGUA MINERAL SEM GAS 510 ML" }));
-  assert.equal(v.estado, "INCORRETO_RISCO");
+  assert.equal(v.estado, "INCORRETO_ECONOMIA");
+  assert.equal(reais(v.economiaPotencial), -10, "valor a pagar descontado da economia potencial");
   assert.deepEqual(v.esperado, { cst: "000", cClassTrib: "000001" });
   assert.match(v.motivo, /Grupo IBS\/CBS exigido e não informado no documento\. Enquadramento esperado: 000\/000001 \(regra geral, sem benefício aplicável\)/);
   assert.equal(reais(v.exposicao), 10, "1.000 × 1%, sem destaque no documento");
@@ -113,7 +115,8 @@ test("8. Pendência SIM/NÃO: produtos pendentes e riscos pendentes entram na fi
   assert.deepEqual(fila.map((f) => f.cProd).sort(), ["A", "B"]);
   assert.ok(fila.every((f) => f.regras.includes("21069090-200033-VI-39")));
   const ind = calcularIndicadores([pendente, riscoPendente, riscoDeterminado]);
-  assert.equal(ind.economiaPotencial, 0, "a estimativa não se mistura com a economia confirmada");
+  // a estimativa não se mistura com a economia confirmada; o valor a pagar do item determinado (10) é descontado
+  assert.equal(ind.economiaPotencial, -10);
   assert.equal(ind.economiaSujeitaValidacao, 6);
   assert.equal(ind.exposicao, 10);
 });
@@ -122,9 +125,10 @@ test("9. Produto já validado: SIM aplicado ao fluxo; o documento que já usa o 
   const v = classificar(item({ ncm: "19022000", xProd: "MINI PASTEL CARNE", cst: "200", cClassTrib: "200034" }), [sim("19022000", "19022000-200034-VII-9")]);
   assert.equal(v.estado, "CORRETO");
   assert.equal(v.regraAplicada, "19022000-200034-VII-9");
-  // Risco validado: o esperado passa a ser o benefício confirmado
+  // Grupo ausente validado: o esperado passa a ser o benefício confirmado e o imposto é recalculado
   const r = classificar(item({ ncm: "19022000", xProd: "MINI PASTEL CARNE" }), [sim("19022000", "19022000-200034-VII-9")]);
-  assert.equal(r.estado, "INCORRETO_RISCO");
+  assert.equal(r.estado, "INCORRETO_ECONOMIA");
+  assert.equal(reais(r.economiaPotencial), -4, "valor a pagar 4 descontado");
   assert.deepEqual(r.esperado, { cst: "200", cClassTrib: "200034" });
   assert.equal(reais(r.exposicao), 4, "1.000 × 1% × (1 − 60%)");
 });

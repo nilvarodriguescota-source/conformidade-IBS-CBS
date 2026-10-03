@@ -98,5 +98,8 @@ test("campo vazio antes da obrigatoriedade não vira não conformidade", () => {
     agora: "2026-09-20T00:00:00Z",
   });
   assert.equal(calcularIndicadores(depois).porEstado.NAO_OBRIGATORIO.itens, 0);
-  assert.equal(calcularIndicadores(depois).porEstado.INCORRETO_RISCO.itens, amostra.length);
+  // INCORRETO — risco não existe mais: grupo ausente vira recálculo (enquadramento determinado) ou PRECISA VALIDAR
+  const ind = calcularIndicadores(depois);
+  assert.equal(ind.porEstado.INCORRETO_RISCO.itens, 0);
+  assert.equal(ind.porEstado.INCORRETO_ECONOMIA.itens + ind.porEstado.REQUER_VALIDACAO.itens, amostra.length);
 });
