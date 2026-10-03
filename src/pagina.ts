@@ -345,6 +345,11 @@ ul.descricoes{margin:4px 0 0;padding-left:18px;font-size:13px}
 .reducao-prev.nao-determinada{border-color:var(--neutro-borda);background:var(--neutro-fundo)}
 .valor-grande{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.1;color:var(--verde-800)}
 .pergunta-validacao{margin-top:14px;font-weight:700;color:var(--verde-900)}
+table.relatorio-centralizado th,table.relatorio-centralizado td{text-align:center;vertical-align:middle;padding:12px 14px}
+table.relatorio-centralizado td{white-space:pre-line;line-height:1.45}
+table.relatorio-centralizado td:nth-child(2){font-weight:600}
+table.relatorio-centralizado td:last-child{min-width:320px;max-width:460px}
+table.relatorio-centralizado tbody tr:nth-child(even) td{background:var(--superficie)}
 .mc-opcoes{margin:8px 0 6px;padding-left:22px}
 .mc-opcao{margin:0 0 10px}
 .mc-opcao button{text-align:left;white-space:normal}
@@ -721,7 +726,29 @@ const COLUNAS_RELATORIO_FINAL=['Código produto','Descrição','NCM','cClassTrib
 const COLUNAS_RELATORIO_RISCO=['cProd','Descrição','NCM informado','NCM adequado / possível enquadramento','CST atual','CST esperado','cClassTrib atual','cClassTrib esperado','Redução IBS','Redução CBS','Alíquota aplicável','Alíquota atualmente considerada','Diferença (R$)','Motivo do INCORRETO — risco','Fundamento legal','Fonte','Instrução'];
 /** Recálculo e Corretos: as colunas do relatório final mais o resultado e o impacto do recálculo. */
 const COLUNAS_RELATORIO_IMPACTO=COLUNAS_RELATORIO_FINAL.concat(['Resultado','Economia (R$)','Valor a pagar (R$)']);
-const colunasRelatorio=()=>modoRelatorioFinal==='recal'||modoRelatorioFinal==='corretos'?COLUNAS_RELATORIO_IMPACTO:COLUNAS_RELATORIO_FINAL;
+const colunasRelatorio=()=>modoRelatorioFinal==='corretos'?COLUNAS_RELATORIO_IMPACTO:COLUNAS_RELATORIO_FINAL;
+/** Norma que define o enquadramento (e a alíquota) a utilizar: regra aplicada, regime do art. 275 ou regra geral. */
+function normaDoEnquadramento(v){
+ if(v.regraAplicada&&/art\\. 275/.test(v.regraAplicada)) return 'LC 214/2025, art. 275 (regime específico de bares e restaurantes: redução de 40%)';
+ const g=v.regraAplicada&&regrasUI[v.regraAplicada+'|'+v.ncm];
+ if(g){
+   const partes=['LC 214/2025'];
+   if(g.fundamentoLegal) partes.push(g.fundamentoLegal.replace(/^Art\\./,'art.'));
+   if(g.anexo) partes.push('Anexo '+g.anexo+(g.item?', item '+g.item:''));
+   return partes.join(', ')+(g.rotulo?' ('+g.rotulo+')':'');
+ }
+ if(v.esperado&&v.esperado.cClassTrib==='000001') return 'LC 214/2025, art. 4º (tributação integral: nenhuma regra de redução aplicável ao NCM)';
+ return 'Norma não identificada na base';
+}
+/** Linha dos Corretos validados e dos Corretos c/ recal impostos: enquadramento a utilizar e instrução com a norma. */
+function linhaCorretoComNorma(itens){
+ const v=itens[0], cst=v.esperado?.cst||'', cClassTrib=v.esperado?.cClassTrib||'', reducao=reducaoRelatorioFinal(v);
+ const integral=cClassTrib==='000001';
+ const acao=!ehRecalculo(v)?'Cadastro correto: manter o CST '+cst+' e o cClassTrib '+cClassTrib+'.'
+  :integral?'Alterar o cadastro do produto para o CST '+cst+' e cClassTrib '+cClassTrib+' (tributação integral, sem redução de IBS/CBS).'
+  :instrucaoRelatorioFinal(cst,cClassTrib,reducao,true);
+ return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,acao+'\\nNorma: '+normaDoEnquadramento(v)];
+}
 const TITULO_RELATORIO={com:'CORRETOS VALIDADOS',sem:'SEM VALIDAÇÃO',recal:'CORRETOS C/ RECAL IMPOSTOS',corretos:'CORRETOS'};
 /** Corretos com recálculo: enquadramento determinado e imposto recalculado (economia ou valor a pagar). */
 const ehRecalculo=v=>(v.estado==='INCORRETO_ECONOMIA'||v.estado==='INCORRETO_RISCO')&&!!v.esperado;
@@ -836,6 +863,8 @@ async function carregarRelatorioFinal(){
  const ncol=colunasRelatorio().length;
  linhasRelatorioFinal=[];
  const cab=document.getElementById('cabecalhoRelatorioFinal');
+ const tabelaRel=corpo.closest('table');
+ if(tabelaRel) tabelaRel.classList.toggle('relatorio-centralizado',modo==='com'||modo==='recal');
  if(cab) cab.innerHTML='<tr>'+colunasRelatorio().map(c=>'<th>'+escaparRelatorio(c)+'</th>').join('')+'</tr>';
  corpo.innerHTML='<tr><td colspan="'+ncol+'">Carregando relatório...</td></tr>';
 
@@ -850,6 +879,7 @@ async function carregarRelatorioFinal(){
 
  try{
    if(modo==='recal'||modo==='corretos'||modo==='com'){
+     if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
      const resultadosApi=await (await fetch('/api/resultados')).json();
      let respostas=[];
      if(modo==='com'){ try{ respostas=await (await fetch('/api/respostas')).json(); }catch(e){ respostas=[]; } }
@@ -869,17 +899,13 @@ async function carregarRelatorioFinal(){
      });
      if(modo==='com'){
        explicacao.textContent='Corretos validados: produtos que passaram pela validação e, após o reprocessamento, retornaram como CORRETOS (cadastro já correto ou correto com recálculo de impostos).';
-       renderizar([...porProduto.values()].map(itens=>{
-         const v=itens[0], cst=v.esperado?.cst||'', cClassTrib=v.esperado?.cClassTrib||'', reducao=reducaoRelatorioFinal(v);
-         const instrucao=ehRecalculo(v)?instrucaoRelatorioFinal(cst,cClassTrib,reducao,true):'Cadastro correto: manter o CST '+cst+' e o cClassTrib '+cClassTrib+'.';
-         return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,instrucao];
-       }),'Nenhum produto validado retornou como correto.');
+       renderizar([...porProduto.values()].map(linhaCorretoComNorma),'Nenhum produto validado retornou como correto.');
        return;
      }
      explicacao.textContent=modo==='recal'
-       ?'Corretos c/ recal impostos: produtos com enquadramento determinado cujo imposto foi recalculado. A economia (imposto pago a mais) e o valor a pagar (imposto destacado a menor) aparecem em colunas separadas.'
+       ?'Corretos c/ recal impostos: produtos com enquadramento determinado cujo imposto foi recalculado. A instrução traz o cadastro a utilizar e a norma que define a alíquota.'
        :'Corretos: todos os produtos corretos, somando os que já estavam corretos e os corretos com recálculo de impostos.';
-     renderizar([...porProduto.values()].map(linhaRelatorioImpacto),modo==='recal'?'Nenhum produto correto com recálculo de impostos.':'Nenhum produto correto.');
+     renderizar([...porProduto.values()].map(modo==='recal'?linhaCorretoComNorma:linhaRelatorioImpacto),modo==='recal'?'Nenhum produto correto com recálculo de impostos.':'Nenhum produto correto.');
      return;
    }
 
