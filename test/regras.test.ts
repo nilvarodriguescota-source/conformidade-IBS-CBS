@@ -107,15 +107,15 @@ test("NCM em dois anexos não duplica a linha: vira uma pendência com as duas o
   assert.match(v.motivo, /enquadramentos possíveis/);
 });
 
-test("benefício usado sem regra que o ampare vira risco, com o valor exposto", () => {
+test("benefício usado sem regra que o ampare: recálculo com valor a pagar (negativo na economia)", () => {
   const v = classificarItem(doc(), item({ ncm: "22030000", cst: "200", cClassTrib: "200034" }), {
     base,
     empresa: padaria,
     agora: AGORA,
   });
-  assert.equal(v.estado, "INCORRETO_RISCO");
+  assert.equal(v.estado, "INCORRETO_ECONOMIA");
   assert.equal(Number(v.exposicao!.toFixed(2)), 10.0); // 1000 x 1%
-  assert.equal(v.economiaPotencial, null);
+  assert.equal(Number(v.economiaPotencial!.toFixed(2)), -10);
 });
 
 test("bar: prato preparado no local usa o regime específico, não o anexo do NCM", () => {
@@ -134,8 +134,9 @@ test("bar: prato preparado no local usa o regime específico, não o anexo do NC
     item({ ncm: "23099090", xProd: "PICANHA & FRITAS", cst: "200", cClassTrib: "200038" }),
     { base, empresa: bar, naturezaPorProduto: natureza, agora: AGORA },
   );
-  // 200038 reduz 60%; o regime do art. 275 reduz 40%: o documento recolhe a menos (risco, não economia)
-  assert.equal(errado.estado, "INCORRETO_RISCO");
+  // 200038 reduz 60%; o regime do art. 275 reduz 40%: o documento recolhe a menos (valor a pagar)
+  assert.equal(errado.estado, "INCORRETO_ECONOMIA");
+  assert.equal(Number(errado.economiaPotencial!.toFixed(2)), -2);
   assert.deepEqual(errado.esperado, { cst: "200", cClassTrib: "200047" });
   assert.equal(Number(errado.exposicao!.toFixed(2)), 2, "1.000 × 1% × (60% − 40%)");
 });
@@ -152,12 +153,12 @@ test("bar: prato com tributação integral no lugar do regime específico é eco
   assert.equal(Number(v.valorCorreto!.toFixed(2)), 6);
 });
 
-test("bar: prato sem o grupo IBS/CBS, quando já exigido, é risco (como no fluxo geral)", () => {
+test("bar: prato sem o grupo IBS/CBS, quando já exigido, é recalculado (como no fluxo geral)", () => {
   const bar: Empresa = { cnpj: "00000000000000", regime: "normal", barOuRestaurante: true };
   const v = classificarItem(doc(), item({ ncm: "21069090", xProd: "BUFFET ALMOÇO" }), {
     base, empresa: bar, naturezaPorProduto: new Map([["P1", "preparado_no_local"]]), agora: AGORA,
   });
-  assert.equal(v.estado, "INCORRETO_RISCO");
+  assert.equal(v.estado, "INCORRETO_ECONOMIA");
   assert.match(v.motivo, /Grupo IBS\/CBS exigido e não informado/);
   assert.deepEqual(v.esperado, { cst: "200", cClassTrib: "200047" });
 });

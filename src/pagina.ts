@@ -204,6 +204,7 @@ select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer
 .NAO_OBRIGATORIO{color:var(--neutro)}
 .INDETERMINADO{color:var(--risco)}
 .INCORRETO_NCM{color:var(--risco)}
+.r-a-pagar{color:var(--risco);font-weight:600}
 .aviso-ncm{display:flex;flex-direction:column;gap:4px;margin:0 0 10px;padding:12px 14px;border:2px solid #B3261E;border-radius:10px;background:#FDECEA;color:#7A1A13}
 .aviso-ncm strong{font-size:1.05em;letter-spacing:.02em}
 
@@ -597,7 +598,6 @@ details>summary:hover{color:var(--verde-900)}
 <option value="">Todos os resultados</option>
 <option value="CORRETO">Correto</option>
 <option value="INCORRETO_ECONOMIA">Corretos c/ recal impostos</option>
-<option value="INCORRETO_RISCO">Incorreto - risco</option>
 <option value="INCORRETO_NCM">Incorreto - ajustar NCM</option>
 <option value="REQUER_VALIDACAO">Precisa validar</option>
 <option value="NAO_OBRIGATORIO">Não obrigatório</option>
@@ -731,8 +731,9 @@ function linhaRelatorioImpacto(itens){
  const reducao=reducaoRelatorioFinal(v);
  const recal=ehRecalculo(v);
  const instrucao=recal?instrucaoRelatorioFinal(cst,cClassTrib,reducao,true):'Cadastro correto: manter o CST '+cst+' e o cClassTrib '+cClassTrib+'.';
- const economia=itens.reduce((s,x)=>s+(x.estado==='INCORRETO_ECONOMIA'?(x.economiaPotencial||0):0),0);
- const aPagar=itens.reduce((s,x)=>s+(x.estado==='INCORRETO_RISCO'?(x.exposicao||0):0),0);
+ // Recálculo: economia positiva = imposto pago a mais; negativa = valor a pagar
+ const economia=itens.reduce((s,x)=>s+Math.max(0,x.economiaPotencial||0),0);
+ const aPagar=itens.reduce((s,x)=>s+Math.max(0,-(x.economiaPotencial||0)),0);
  const num=n=>n?n.toFixed(2).replace('.',','):'0,00';
  return [v.cProd,v.produto,v.ncm||'',cClassTrib,cst,reducao,instrucao,recal?'CORRETO C/ RECAL IMPOSTOS':'CORRETO',num(economia),num(aPagar)];
 }
@@ -1734,7 +1735,7 @@ function cardsIndicadores(i){
     ['Códigos pendentes',i.codigosPendentes??0],
     ['Valor calculado como pago',formatarNumero(i.valorPagoTotal??0)],
     ['Valor correto',formatarNumero(i.valorCorretoTotal??0)],
-    ['Economia potencial',formatarNumero(i.economiaPotencial??0)+(Number(i.economiaSujeitaValidacao||0)>0?'<div class="small">+ '+formatarNumero(i.economiaSujeitaValidacao)+' sujeita à validação</div>':'')],
+    ['Economia potencial',formatarNumero(i.economiaPotencial??0)+(Number(i.valorAPagarRecalculo||0)>0?'<div class="small">economia '+formatarNumero(i.economiaRecalculo??0)+' − valor a pagar '+formatarNumero(i.valorAPagarRecalculo)+'</div>':'')+(Number(i.economiaSujeitaValidacao||0)>0?'<div class="small">+ '+formatarNumero(i.economiaSujeitaValidacao)+' sujeita à validação</div>':'')],
     ['Conformidade',formatarPercentual(i.percentualConformidade??0)]];
 }
 
@@ -2152,8 +2153,11 @@ function valoresInformados(v){
 function valoresEnquadramento(v){
  const vv=x=>x==null?'—':formatarNumero(x);
  const partes=['<span><span class="r-lbl">'+(v.estado==='CORRETO'&&v.regraAplicada?'Calculado (sem redução)':'Correto')+'</span>'+vv(v.valorCorreto)+'</span>'];
- if(v.economiaPotencial!=null) partes.push('<span class="'+(v.economiaPotencial>0?'r-economia':'')+'"><span class="r-lbl">Economia</span>'+formatarNumero(v.economiaPotencial)+'</span>');
- if(v.exposicao!=null) partes.push('<span class="r-exposicao"><span class="r-lbl">Exposição</span>'+formatarNumero(v.exposicao)+'</span>');
+ if(v.economiaPotencial!=null) partes.push(v.economiaPotencial<0
+   ?'<span class="r-a-pagar"><span class="r-lbl">Valor a pagar</span>'+formatarNumero(-v.economiaPotencial)+'</span>'
+   :'<span class="'+(v.economiaPotencial>0?'r-economia':'')+'"><span class="r-lbl">Economia</span>'+formatarNumero(v.economiaPotencial)+'</span>');
+ // No recálculo com valor a pagar, a exposição é o próprio valor a pagar (já exibido acima)
+ if(v.exposicao!=null&&!(v.economiaPotencial!=null&&v.economiaPotencial<0)) partes.push('<span class="r-exposicao"><span class="r-lbl">Exposição</span>'+formatarNumero(v.exposicao)+'</span>');
  return partes.join('');
 }
 function avisosCompactos(v){

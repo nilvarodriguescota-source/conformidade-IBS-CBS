@@ -73,7 +73,7 @@ test("BOLO BANDEJA (1905.90.90): o Item 16 é encontrado, mas NÃO é aplicado �
 
 test("BOLO BANDEJA sem grupo IBS/CBS: exposição integral, não alíquota zero", () => {
   const v = classificar(item("BOLO BANDEJA", "19059090", { cst: null, cClassTrib: null }));
-  assert.equal(v.estado, "INCORRETO_RISCO");
+  assert.equal(v.estado, "REQUER_VALIDACAO");
   assert.equal(v.esperado, null);
   // base 1000 × 1% (alíquotas de teste 2026) × (1 − 0): o Item 16 rejeitado não zera a exposição
   assert.equal(Number(v.exposicao!.toFixed(2)), 10);

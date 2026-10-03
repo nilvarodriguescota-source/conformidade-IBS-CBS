@@ -110,7 +110,30 @@ export function explicarRegraNaoAplicavel(r: RegraClassificacao, designacao: str
   );
 }
 
-export function classificarItem(
+/**
+ * INCORRETO — risco deixa de existir como resultado:
+ *  - enquadramento determinado (inclusive após validação nas pendências) → CORRETOS C/ RECAL IMPOSTOS
+ *    (estado INCORRETO_ECONOMIA); o imposto a pagar entra com sinal negativo em economiaPotencial,
+ *    de modo que o card Economia potencial soma a economia e desconta o valor a pagar;
+ *  - enquadramento ainda dependente de validação → PRECISA VALIDAR (a exposição continua informada).
+ */
+function semRisco(v: Veredito): Veredito {
+  if (v.estado !== "INCORRETO_RISCO") return v;
+  if (v.esperado === null) return { ...v, estado: "REQUER_VALIDACAO" };
+  const aPagar = v.exposicao;
+  return {
+    ...v,
+    estado: "INCORRETO_ECONOMIA",
+    economiaPotencial: aPagar === null ? null : -aPagar,
+    motivo: `Recálculo de imposto: ${aPagar === null ? "valor a pagar não calculado" : `valor a pagar de ${aPagar.toFixed(2)}`}. ${v.motivo}`,
+  };
+}
+
+export function classificarItem(doc: Documento, item: ItemDocumento, opcoes: OpcoesMotor): Veredito {
+  return semRisco(classificarItemBase(doc, item, opcoes));
+}
+
+function classificarItemBase(
   doc: Documento,
   item: ItemDocumento,
   opcoes: OpcoesMotor,
