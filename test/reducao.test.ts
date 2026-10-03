@@ -164,11 +164,9 @@ test("redução: bares e restaurantes usam o regime específico do motor (40%), 
   assert.equal(d.situacao, "regime_especifico");
   assert.deepEqual(d.regimeEspecifico, { valor: 0.4, fundamento: "LC 214/2025, art. 275", origem: "regime_especifico_motor" });
   assert.deepEqual(d.opcoes, []);
-  // o regime não é uma regra da base: a explicação da "regra" continua não localizada, sem vínculo oficial criado
-  const regra = x.explicacaoInformativa!.regras.find((r) => r.regraIdInformado === "LC 214/2025, art. 275")!;
-  assert.equal(regra.vinculo, "nao_localizado");
-  assert.equal(regra.reducao!.evidencia, "nao_determinada");
-  assert.deepEqual(regra.reducao!.fatos, []);
+  // o regime não é uma regra da base: não é procurado na base (sem falso "regra não localizada") e nenhum
+  // vínculo oficial é criado para ele
+  assert.equal(x.explicacaoInformativa!.regras.find((r) => r.regraIdInformado === "LC 214/2025, art. 275"), undefined);
 });
 
 test("redução: o veredito do motor é preservado (explicação não altera nenhum campo)", () => {
