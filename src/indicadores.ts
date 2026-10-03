@@ -11,6 +11,10 @@ export interface Indicadores {
   codigosAvaliados: number;
   codigosCorretos: number;
   codigosIncorretos: number;
+  /** Códigos corretos com recálculo de imposto (economia ou valor a pagar). */
+  codigosRecalculo: number;
+  /** Códigos com NCM a ajustar (validação indicou NCM errado). */
+  codigosNcmAjustar: number;
   codigosPendentes: number;
   valorIBSInformadoTotal: number | null;
   valorCBSInformadoTotal: number | null;
@@ -66,6 +70,7 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
   const codigos = new Map<string, {
     correto: boolean;
     incorreto: boolean;
+    ncm: boolean;
     pendente: boolean;
     avaliavel: boolean;
   }>();
@@ -96,6 +101,7 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
     const atual = codigos.get(chaveCodigo) ?? {
       correto: false,
       incorreto: false,
+      ncm: false,
       pendente: false,
       avaliavel: false,
     };
@@ -110,6 +116,12 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
       atual.avaliavel = true;
     }
 
+    // NCM a ajustar (validação indicou NCM errado): continua sendo um código avaliado
+    if (v.estado === "INCORRETO_NCM") {
+      atual.ncm = true;
+      atual.avaliavel = true;
+    }
+
     if (v.estado === "REQUER_VALIDACAO") {
       atual.pendente = true;
       atual.avaliavel = true;
@@ -119,21 +131,28 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
   }
 
   let codigosCorretos = 0;
-  let codigosIncorretos = 0;
+  let codigosRecalculo = 0;
+  let codigosNcmAjustar = 0;
   let codigosPendentes = 0;
 
+  // Cada código em uma única categoria (pendente > NCM a ajustar > correto c/ recálculo > correto):
+  // a soma das categorias é sempre igual a codigosAvaliados.
   for (const codigo of codigos.values()) {
     if (codigo.pendente) {
       codigosPendentes += 1;
+    } else if (codigo.ncm) {
+      codigosNcmAjustar += 1;
     } else if (codigo.incorreto) {
-      codigosIncorretos += 1;
+      codigosRecalculo += 1;
     } else if (codigo.correto) {
       codigosCorretos += 1;
     }
   }
 
+  // Incorretos de fato: só o NCM a ajustar (recálculo de imposto é correto com recálculo)
+  const codigosIncorretos = codigosNcmAjustar;
   const codigosAvaliados =
-    codigosCorretos + codigosIncorretos + codigosPendentes;
+    codigosCorretos + codigosRecalculo + codigosNcmAjustar + codigosPendentes;
 
   const itensAvaliados =
     porEstado.CORRETO.itens +
@@ -160,6 +179,8 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
     codigosAvaliados,
     codigosCorretos,
     codigosIncorretos,
+    codigosRecalculo,
+    codigosNcmAjustar,
     codigosPendentes,
     valorIBSInformadoTotal: temIBSInformado ? Number(valorIBSInformadoTotal.toFixed(2)) : null,
     valorCBSInformadoTotal: temCBSInformado ? Number(valorCBSInformadoTotal.toFixed(2)) : null,

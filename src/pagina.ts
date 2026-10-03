@@ -1057,9 +1057,9 @@ function renderResumo(d){
   ['Documentos',r.documentos],
   ['Itens avaliados',r.itens],
   ['CORRETOS',r.corretos,'CORRETO'],
-  ['INCORRETOS',r.incorretos,'INCORRETO'],
+  ['CORRETOS C/ RECAL IMPOSTOS',r.recalculo??0,'CORRETO'],
+  ['INCORRETOS — AJUSTAR NCM',r.ncmAAjustar??0,'INCORRETO'],
   ['PRECISAM VALIDAR',r.precisamValidar,'REQUER_VALIDACAO']];
- if(r.ncmAAjustar) cards.push(['NCM A AJUSTAR',r.ncmAAjustar,'INCORRETO']);
  if(r.naoObrigatorio) cards.push(['Não obrigatórios',r.naoObrigatorio]);
  if(r.indeterminado) cards.push(['Indeterminados',r.indeterminado]);
  return '<div class="grid">'+htmlCards(cards)+'</div>'+explicacaoComposicao(d.composicao,r)+
@@ -1219,8 +1219,9 @@ if(situacao){
           : '');
     }
 
-    const corretos=Number(i.codigosCorretos||0);
-    const incorretos=Number(i.codigosIncorretos||0);
+    // Gráfico: corretos inclui os corretos c/ recal impostos; incorretos são só os de NCM a ajustar
+    const corretos=Number(i.codigosCorretos||0)+Number(i.codigosRecalculo||0);
+    const incorretos=Number(i.codigosNcmAjustar??i.codigosIncorretos??0);
     const pendentes=Number(i.codigosPendentes||0);
     const total=corretos+incorretos+pendentes;
 
@@ -1757,7 +1758,8 @@ function cardsIndicadores(i){
     ['Itens / linhas avaliados',i.itensAvaliados??i.itens??'-'],
     ['Códigos únicos avaliados',i.codigosAvaliados??0],
     ['Códigos corretos',i.codigosCorretos??0],
-    ['Códigos incorretos',i.codigosIncorretos??0],
+    ['Códigos corretos c/ recal impostos',i.codigosRecalculo??0],
+    ['Códigos com NCM a ajustar',i.codigosNcmAjustar??0],
     ['Códigos pendentes',i.codigosPendentes??0],
     ['Valor calculado como pago',formatarNumero(i.valorPagoTotal??0)],
     ['Valor correto',formatarNumero(i.valorCorretoTotal??0)],
