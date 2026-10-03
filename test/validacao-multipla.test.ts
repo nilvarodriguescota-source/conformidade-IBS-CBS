@@ -121,12 +121,14 @@ test("escolha MERCADORIA_SEM_BENEFICIO: integral com a verificação explicada",
   assert.equal(v.ncmACorrigir, undefined);
 });
 
-test("escolha NCM_INCORRETO: marca o cadastro para correção e não aplica benefício de outro NCM", () => {
+test("escolha NCM_INCORRETO: resultado INCORRETO com aviso de ajuste do NCM, sem benefício de outro NCM", () => {
   const v = classificar([resposta({ escolha: "NCM_INCORRETO" })]);
+  assert.equal(v.estado, "INCORRETO_NCM");
+  assert.equal(v.esperado, null);
+  assert.match(v.motivo, /^AJUSTAR O NCM/);
   assert.equal(v.ncmACorrigir, true);
-  assert.notEqual(v.esperado?.cClassTrib, "200034");
-  assert.notEqual(v.esperado?.cClassTrib, "200003");
-  assert.match(v.motivo, /corrigir o NCM no ERP/);
+  assert.equal(v.regraAplicada, null, "nenhum benefício (nem de outro NCM) é aplicado");
+  assert.match(v.motivo, /Corrigir o NCM no cadastro do produto no ERP/);
 });
 
 test("vale a última ação gravada: SIM depois de uma escolha a substitui (e vice-versa)", () => {

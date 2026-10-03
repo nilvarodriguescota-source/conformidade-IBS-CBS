@@ -6,7 +6,7 @@ export interface Indicadores {
   faturamento: number;
   porEstado: Record<EstadoVeredito, { itens: number; base: number }>;
   percentualConformidade: number | null;
-  /** Itens avaliáveis: exclui NAO_OBRIGATORIO e INDETERMINADO. */
+  /** Itens avaliáveis: exclui NAO_OBRIGATORIO (e INDETERMINADO de análises antigas). */
   itensAvaliados: number;
   codigosAvaliados: number;
   codigosCorretos: number;
@@ -33,6 +33,7 @@ const ESTADOS: EstadoVeredito[] = [
   "INCORRETO_RISCO",
   "REQUER_VALIDACAO",
   "NAO_OBRIGATORIO",
+  "INCORRETO_NCM",
   "INDETERMINADO",
 ];
 
@@ -129,6 +130,7 @@ export function calcularIndicadores(vereditos: Veredito[]): Indicadores {
     porEstado.CORRETO.itens +
     porEstado.INCORRETO_ECONOMIA.itens +
     porEstado.INCORRETO_RISCO.itens +
+    porEstado.INCORRETO_NCM.itens +
     porEstado.REQUER_VALIDACAO.itens;
 
   const alertas: string[] = [];

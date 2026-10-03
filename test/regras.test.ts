@@ -173,14 +173,15 @@ test("bar: bebida alcoólica fica fora do regime, com tributação integral", ()
   assert.equal(v.estado, "CORRETO");
 });
 
-test("bar sem a natureza do item cadastrada devolve INDETERMINADO, não um palpite", () => {
+test("bar sem a natureza do item cadastrada vai para validação humana, não um palpite", () => {
   const bar: Empresa = { cnpj: "00000000000000", regime: "normal", barOuRestaurante: true };
   const v = classificarItem(doc(), item({ ncm: "23099090", cst: "000", cClassTrib: "000001" }), {
     base,
     empresa: bar,
     agora: AGORA,
   });
-  assert.equal(v.estado, "INDETERMINADO");
+  assert.equal(v.estado, "REQUER_VALIDACAO");
+  assert.equal(v.esperado, null);
   assert.ok(v.dadosFaltantes.some((d) => /natureza/.test(d)));
 });
 
@@ -214,12 +215,14 @@ test("item sem NCM ou sem data não recebe classificação presumida", () => {
     empresa: padaria,
     agora: AGORA,
   });
-  assert.equal(semNcm.estado, "INDETERMINADO");
+  assert.equal(semNcm.estado, "REQUER_VALIDACAO");
+  assert.equal(semNcm.esperado, null);
 
   const semData = classificarItem({ ...doc(), dataEmissao: null }, item({ ncm: "22030000" }), {
     base,
     empresa: padaria,
     agora: AGORA,
   });
-  assert.equal(semData.estado, "INDETERMINADO");
+  assert.equal(semData.estado, "REQUER_VALIDACAO");
+  assert.equal(semData.esperado, null);
 });
