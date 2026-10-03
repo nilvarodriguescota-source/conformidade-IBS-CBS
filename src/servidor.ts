@@ -130,7 +130,9 @@ app.get("/api/analise", (_req, res) => {
       documentos: documentos.size,
       itens: Object.values(porEstado).reduce((a, b) => a + b, 0),
       corretos: n("CORRETO"),
-      incorretos: n("INCORRETO_ECONOMIA") + n("INCORRETO_RISCO") + n("INCORRETO_NCM"),
+      // Recálculo de imposto é correto com recálculo; incorreto é só o NCM a ajustar
+      recalculo: n("INCORRETO_ECONOMIA") + n("INCORRETO_RISCO"),
+      incorretos: n("INCORRETO_NCM"),
       ncmAAjustar: n("INCORRETO_NCM"),
       precisamValidar: n("REQUER_VALIDACAO"),
       naoObrigatorio: n("NAO_OBRIGATORIO"),

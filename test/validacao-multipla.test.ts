@@ -150,3 +150,26 @@ test("NÃO antigo, sem escolha, continua funcionando como antes", () => {
   assert.match(v.motivo, /Todas as regras do NCM foram descartadas/);
   assert.doesNotMatch(v.motivo, /vendido como mercadoria/);
 });
+
+test("painel: códigos únicos avaliados não mudam após validações e a soma das categorias fecha", async () => {
+  const { calcularIndicadores } = await import("../src/indicadores.js");
+  const itens = [
+    item({ cProd: "698" }),
+    item({ cProd: "P2", xProd: "PAO FRANCES KG" }),
+    item({ cProd: "P3", xProd: "CERVEJA", ncm: "22030000" }),
+    item({ cProd: "P4", xProd: "AGUA", ncm: "22011000", cst: null, cClassTrib: null }),
+  ];
+  const rodar = (validacoes: RespostaValidacao[]) =>
+    calcularIndicadores(itens.map((i) => classificarItem(doc(), i, { base, empresa, validacoes, agora: AGORA })));
+  const antes = rodar([]);
+  const depois = rodar([
+    resposta({ escolha: "NCM_INCORRETO" }),
+    resposta({ cProd: "P2", resposta: "SIM" }),
+  ]);
+  for (const ind of [antes, depois]) {
+    assert.equal(ind.codigosAvaliados, 4);
+    assert.equal(ind.codigosCorretos + ind.codigosRecalculo + ind.codigosNcmAjustar + ind.codigosPendentes, ind.codigosAvaliados);
+  }
+  assert.equal(depois.codigosNcmAjustar, 1, "brusqueta com NCM a ajustar continua contada");
+  assert.equal(depois.codigosIncorretos, 1, "incorretos são só os de NCM a ajustar");
+});
