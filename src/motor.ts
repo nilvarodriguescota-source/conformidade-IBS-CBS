@@ -13,8 +13,11 @@ import type {
   ParametroAliquota,
   RegraClassificacao,
   RespostaValidacao,
+  EscolhaValidacao,
+  RegraNaoAplicavel,
   Veredito,
 } from "./tipos.js";
+import { requisitoNaoAtendido } from "./requisitos-legais.js";
 import { ALIQUOTAS, aliquotaVigente, indicioNcm, observacoesEspecificas, preenchimentoObrigatorio } from "./parametros.js";
 
 export const TRIBUTACAO_INTEGRAL = { cst: "000", cClassTrib: "000001" };
@@ -75,6 +78,37 @@ export function naturezaDoItem(
   return null;
 }
 
+/**
+ * Escolha de múltipla escolha vigente para o produto neste NCM: vale a última ação
+ * registrada (as respostas são gravadas em ordem). Um SIM dado depois de uma
+ * escolha a substitui.
+ */
+export function escolhaDoProduto(
+  validacoes: RespostaValidacao[] | undefined,
+  ncm: string,
+  item: ItemDocumento,
+): EscolhaValidacao | null {
+  const doProduto = (validacoes ?? []).filter((v) => v.ncm === ncm && (v.cProd === item.cProd || v.cProd === item.xProd));
+  return doProduto[doProduto.length - 1]?.escolha ?? null;
+}
+
+function pctRegra(r: number): string {
+  return `${Math.round(r * 100)}%`;
+}
+
+/** Explicação ao usuário: regra encontrada pelo NCM, redução prevista, resultado e motivo. */
+export function explicarRegraNaoAplicavel(r: RegraClassificacao, designacao: string, produto: string, ncm: string): string {
+  const ncmFmt = ncm.length === 8 ? `${ncm.slice(0, 4)}.${ncm.slice(4, 6)}.${ncm.slice(6)}` : ncm;
+  return (
+    `Regra encontrada pelo NCM: CST ${r.cst} / cClassTrib ${r.cClassTrib} / Anexo ${r.anexo} / Item ${r.item || "?"}. ` +
+    `Redução prevista na regra: ${pctRegra(r.reducaoAliquota)} IBS / ${pctRegra(r.reducaoAliquota)} CBS. ` +
+    `Resultado da validação: NÃO APLICÁVEL AO PRODUTO. ` +
+    `Motivo: o benefício do Item ${r.item || "?"} do Anexo ${r.anexo} é específico para ${designacao}. ` +
+    `Embora o produto esteja classificado no NCM ${ncmFmt}, a descrição informada é "${produto}", que não atende, por si só, à descrição legal da regra. ` +
+    `A redução de ${pctRegra(r.reducaoAliquota)} NÃO deve ser aplicada.`
+  );
+}
+
 export function classificarItem(
   doc: Documento,
   item: ItemDocumento,
@@ -84,6 +118,10 @@ export function classificarItem(
   const faltantes: string[] = [];
   // Fase 2: regras bloqueadas deste item (preenchido na seleção das candidatas); só aparece no veredito quando há
   let idsBloqueados: string[] = [];
+  // Validação humana indicou NCM errado: o veredito sai marcado para correção do cadastro
+  let ncmACorrigir = false;
+  // Regras encontradas pelo NCM e rejeitadas para o produto (descrição legal específica não atendida)
+  let regrasNaoAplicaveis: RegraNaoAplicavel[] = [];
   // Tratamentos específicos (Imposto Seletivo) e indício de NCM divergente: só informação, no motivo
   const notas = [
     ...observacoesEspecificas(item.ncm, doc.dataEmissao ?? agora).map((o) => `${o.texto} Fonte: ${o.fonte}.${o.emVigor ? "" : " Ainda não vigente na data do documento."}`),
@@ -116,6 +154,8 @@ export function classificarItem(
     versaoBase: opcoes.base.versao,
     calculadoEm: agora,
     ...extra,
+    ...(ncmACorrigir ? { ncmACorrigir: true } : {}),
+    ...(regrasNaoAplicaveis.length ? { regrasNaoAplicaveis } : {}),
     ...(idsBloqueados.length ? { regrasBloqueadas: idsBloqueados, motivo: motivo.includes(MOTIVO_BLOQUEIO) ? motivo : `${motivo} ${MOTIVO_BLOQUEIO}: ${idsBloqueados.join(", ")}.` } : {}),
   });
 
@@ -141,8 +181,11 @@ export function classificarItem(
     }
   }
 
-  // 2. Qual a classificação esperada
-  const natureza = naturezaDoItem(item, opcoes.empresa, opcoes.naturezaPorProduto);
+  // 2. Qual a classificação esperada. A escolha "consumo no local" feita na validação
+  // humana vale como natureza do produto (regime de bares e restaurantes, art. 275).
+  const escolha = escolhaDoProduto(opcoes.validacoes, ncm, item);
+  ncmACorrigir = escolha === "NCM_INCORRETO";
+  const natureza = escolha === "CONSUMO_NO_LOCAL" ? "preparado_no_local" : naturezaDoItem(item, opcoes.empresa, opcoes.naturezaPorProduto);
   if (natureza === null) {
     faltantes.push(`natureza do item ${item.cProd || item.xProd} (preparado no local, bebida alcoólica ou mercadoria)`);
     return veredito("INDETERMINADO", "Emitente atende consumo no local e a natureza do item não foi informada.");
@@ -204,19 +247,50 @@ export function classificarItem(
   );
   const negadas = new Set(validacoes.filter((v) => v.resposta === "NAO").map((v) => v.regraId));
   const aprovadas = new Set(validacoes.filter((v) => v.resposta === "SIM").map((v) => v.regraId));
-  const aplicaveis = candidatas.filter((r) => !negadas.has(r.id));
+  const aplicaveisPelaValidacao = candidatas.filter((r) => !negadas.has(r.id));
+
+  // 3b. Regra encontrada ≠ benefício aplicável. O NCM só localiza a regra; quando a lei descreve um produto
+  // específico e a descrição do produto a contradiz, a regra não se aplica a este produto e o percentual dela
+  // não entra em nenhum valor. Um SIM humano registrado prevalece (a pessoa conhece o produto).
+  const rejeitadas = aplicaveisPelaValidacao
+    .filter((r) => !aprovadas.has(r.id))
+    .map((r) => ({ r, req: requisitoNaoAtendido(item.xProd, r.descricaoLegal, r.descricaoNcmTipi) }))
+    .filter((x): x is { r: RegraClassificacao; req: NonNullable<ReturnType<typeof requisitoNaoAtendido>> } => x.req !== null);
+  regrasNaoAplicaveis = rejeitadas.map(({ r, req }) => ({
+    regraId: r.id,
+    cst: r.cst,
+    cClassTrib: r.cClassTrib,
+    anexo: r.anexo,
+    item: r.item,
+    fundamentoLegal: r.fundamentoLegal,
+    reducaoPrevista: r.reducaoAliquota,
+    designacaoLegal: req.designacaoLegal,
+    motivo: explicarRegraNaoAplicavel(r, req.designacaoLegal, item.xProd, ncm),
+  }));
+  const aplicaveis = aplicaveisPelaValidacao.filter((r) => !rejeitadas.some((x) => x.r === r));
   const confirmadas = aplicaveis.filter((r) => aprovadas.has(r.id));
+  const textoRejeitadas = regrasNaoAplicaveis.map((x) => x.motivo).join(" ");
 
   const ids = candidatas.map((r) => r.id);
   let escolhida: RegraClassificacao | null = null;
   let estadoBase: EstadoVeredito | null = null;
   let motivo = "";
 
-  if (aplicaveis.length === 0) {
+  if (aplicaveis.length === 0 && rejeitadas.length > 0) {
+    // Todas as regras restantes foram rejeitadas pelo requisito legal, sem resposta humana que as descarte:
+    // nenhum benefício é concedido e o enquadramento correto fica aguardando validação humana.
+    estadoBase = "REQUER_VALIDACAO";
+    motivo = `${textoRejeitadas} Nenhuma outra regra de benefício do NCM ${ncm} se aplica automaticamente: o enquadramento aguarda validação humana (consumo no local pelo regime de bares e restaurantes, mercadoria sem benefício ou NCM incorreto).`;
+  } else if (aplicaveis.length === 0) {
     escolhida = null;
     motivo =
       candidatas.length > 0
-        ? "Todas as regras do NCM foram descartadas na validação: o produto não se enquadra na descrição legal."
+        ? "Todas as regras do NCM foram descartadas na validação: o produto não se enquadra na descrição legal." +
+          (escolha === "MERCADORIA_SEM_BENEFICIO"
+            ? " Verificado na validação: vendido como mercadoria, com o NCM informado correto; nenhuma outra regra de benefício do NCM se aplica e o regime de bares e restaurantes (art. 275) não vale para mercadoria."
+            : escolha === "NCM_INCORRETO"
+              ? " A validação indicou que o NCM informado está errado: corrigir o NCM no ERP e reprocessar com as novas notas. Nenhum benefício de outro NCM é aplicado ao NCM informado."
+              : "")
         : bloqueadas.length > 0
           ? `Nenhuma regra de benefício aplicável: ${MOTIVO_BLOQUEIO} (${idsBloqueados.join(", ")}).`
           : "Nenhuma regra de benefício cadastrada para este NCM nesta data.";
@@ -240,6 +314,10 @@ export function classificarItem(
         : `Enquadramento possível em ${resumo[0]}, sujeito à conferência da descrição legal.`;
   }
 
+  if (rejeitadas.length > 0 && aplicaveis.length > 0) {
+    motivo = `${textoRejeitadas} Reenquadramento entre as demais regras do NCM: ${motivo}`;
+  }
+
   const esperado = escolhida
     ? { cst: escolhida.cst, cClassTrib: escolhida.cClassTrib }
     : TRIBUTACAO_INTEGRAL;
@@ -259,7 +337,8 @@ export function classificarItem(
     if (estadoBase === "REQUER_VALIDACAO") {
       // O esperado depende da validação: não se presume a regra geral. Exposição = o mínimo devido em
       // qualquer enquadramento possível (a maior redução entre as candidatas).
-      const maior = Math.max(...aplicaveis.map((r) => r.reducaoAliquota));
+      // Só regras ainda aplicáveis contam; sem nenhuma, nenhuma redução é presumida (exposição integral).
+      const maior = aplicaveis.length ? Math.max(...aplicaveis.map((r) => r.reducaoAliquota)) : 0;
       return veredito("INCORRETO_RISCO", `${ausente} Enquadramento esperado: depende da validação. ${motivo}`, {
         esperado: null,
         regrasCandidatas: ids,
@@ -284,7 +363,8 @@ export function classificarItem(
   if (estadoBase === "REQUER_VALIDACAO") {
     // Estimativa, não economia realizada: só quando o documento usa a tributação integral, com a menor redução
     // entre as candidatas (se a validação confirmar alguma delas).
-    const menor = Math.min(...aplicaveis.map((r) => r.reducaoAliquota));
+    // Estimativa só com regras ainda aplicáveis: regra rejeitada pelo requisito legal não gera economia.
+    const menor = aplicaveis.length ? Math.min(...aplicaveis.map((r) => r.reducaoAliquota)) : 0;
     const usaIntegral = mesmoCodigo(item.cClassTrib, TRIBUTACAO_INTEGRAL.cClassTrib);
     const jaUsado = aplicaveis.find((r) => mesmoCodigo(item.cClassTrib, r.cClassTrib));
     const complemento = jaUsado

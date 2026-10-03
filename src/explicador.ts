@@ -585,7 +585,11 @@ function reducaoDoItem(v: Veredito, regras: ExplicacaoRegra[]): ReducaoDoItem | 
     return { situacao: "aplicada", opcoes: [o], regimeEspecifico: null, coerenciaEconomia };
   }
   if (v.estado === "REQUER_VALIDACAO" && v.regrasCandidatas.length) {
-    return { situacao: "prevista", opcoes: [...new Set(v.regrasCandidatas)].map(daRegra), regimeEspecifico: null, coerenciaEconomia: null };
+    // Regra rejeitada pelo requisito legal não é redução prevista para o produto (só "regra encontrada").
+    const rejeitadas = new Set((v.regrasNaoAplicaveis ?? []).map((x) => x.regraId));
+    const ids = [...new Set(v.regrasCandidatas)].filter((id) => !rejeitadas.has(id));
+    if (!ids.length) return null;
+    return { situacao: "prevista", opcoes: ids.map(daRegra), regimeEspecifico: null, coerenciaEconomia: null };
   }
   return null;
 }

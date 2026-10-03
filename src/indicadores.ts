@@ -1,5 +1,5 @@
 ﻿/** Indicadores do painel, calculados a partir dos vereditos. */
-import type { EstadoVeredito, Veredito } from "./tipos.js";
+import type { EstadoVeredito, RegraNaoAplicavel, Veredito } from "./tipos.js";
 
 export interface Indicadores {
   itens: number;
@@ -174,6 +174,8 @@ export interface PendenciaValidacao {
   itens: number;
   base: number;
   regras: string[];
+  /** Regras encontradas pelo NCM e rejeitadas para o produto (descrição legal específica não atendida). */
+  regrasNaoAplicaveis: RegraNaoAplicavel[];
   motivo: string;
 }
 
@@ -188,6 +190,9 @@ export function filaDeValidacao(vereditos: Veredito[]): PendenciaValidacao[] {
     if (atual) {
       atual.itens += 1;
       atual.base = Number((atual.base + v.baseCalculo).toFixed(2)); atual.regras = [...new Set([...atual.regras, ...v.regrasCandidatas])];
+      for (const x of v.regrasNaoAplicaveis ?? []) {
+        if (!atual.regrasNaoAplicaveis.some((y) => y.regraId === x.regraId)) atual.regrasNaoAplicaveis.push(x);
+      }
     } else {
       mapa.set(chave, {
         ncm: v.ncm,
@@ -196,6 +201,7 @@ export function filaDeValidacao(vereditos: Veredito[]): PendenciaValidacao[] {
         itens: 1,
         base: v.baseCalculo,
         regras: v.regrasCandidatas,
+        regrasNaoAplicaveis: [...(v.regrasNaoAplicaveis ?? [])],
         motivo: v.motivo,
       });
     }

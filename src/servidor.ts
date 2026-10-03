@@ -1,4 +1,5 @@
-﻿import express from "express";
+﻿import { opcoesDaPergunta } from "./opcoes-validacao.js";
+import express from "express";
 import fs from "fs";
 import path from "path";
 import multer from "multer";
@@ -68,11 +69,13 @@ function lerJson(arquivo: string, padrao: any = []) {
  * Quando o identificador corresponde a mais de uma regra, nenhuma é escolhida: um campo só é
  * informado se for igual em todas; as descrições legais diferentes são listadas como estão na base.
  */
+const ESCOLHAS = ["CONSUMO_NO_LOCAL", "MERCADORIA_SEM_BENEFICIO", "NCM_INCORRETO"];
+
 function detalharRegras(ncm: string, ids: string[]) {
   const base = lerJson(arquivoBase, { regras: [] }) as BaseNormativa;
   return ids.map((id) => {
     const achadas = base.regras.filter((r) => r.id === id && r.ncm === ncm);
-    const comum = <K extends "cst" | "cClassTrib" | "rotulo" | "anexo" | "item" | "descricaoLegal" | "fundamentoLegal" | "reducao">(k: K) => {
+    const comum = <K extends "cst" | "cClassTrib" | "rotulo" | "anexo" | "item" | "descricaoLegal" | "fundamentoLegal" | "reducao" | "reducaoAliquota" | "descricaoNcmTipi">(k: K) => {
       const valores = [...new Set(achadas.map((r) => (r as any)[k] ?? null))];
       return valores.length === 1 ? valores[0]! : null;
     };
@@ -86,6 +89,8 @@ function detalharRegras(ncm: string, ids: string[]) {
       descricaoLegal: comum("descricaoLegal"),
       fundamentoLegal: comum("fundamentoLegal"),
       reducao: comum("reducao"),
+      reducaoAliquota: comum("reducaoAliquota"),
+      descricaoNcmTipi: comum("descricaoNcmTipi"),
       identificadorRepetido: achadas.length > 1,
       regrasComEsteIdentificador: achadas.length,
       descricoesLegaisDivergentes: achadas.length > 1 && comum("descricaoLegal") === null
@@ -154,7 +159,11 @@ app.get("/api/respostas", (_req, res) => {
 
 app.post("/api/validar", (req, res) => {
   try {
-    const { ncm, cProd, regraId, regraIds, resposta, autor, justificativa } = req.body;
+    const { ncm, cProd, regraId, regraIds, resposta, autor, justificativa, escolha } = req.body;
+    // Múltipla escolha: a escolha vai junto de NÃO nas regras candidatas (compatível com quem lê só SIM/NÃO)
+    if (escolha !== undefined && (!ESCOLHAS.includes(escolha) || resposta !== "NAO")) {
+      return res.status(400).json({ erro: "Escolha de validação inválida." });
+    }
     // Uma validação por produto: a mesma resposta para várias regras candidatas, com um só reprocessamento
     const ids: string[] = Array.isArray(regraIds) && regraIds.length ? regraIds.map(String) : regraId ? [String(regraId)] : [];
 
@@ -182,7 +191,8 @@ app.post("/api/validar", (req, res) => {
         resposta,
         autor: autor || "Sistema",
         data: new Date().toISOString().slice(0, 10),
-        ...(justificativa ? { justificativa } : {})
+        ...(justificativa ? { justificativa } : {}),
+        ...(escolha ? { escolha } : {})
       };
       registrarResposta(pastaAnalise, registro);
     }
@@ -423,6 +433,18 @@ app.get("/api/fila-validacao", (_req, res) => {
           auditoria: doGrupo?.auditoria[g.id] ?? null,
         })),
         lacunasDeCobertura: doGrupo?.lacunas ?? [],
+        // Pergunta de múltipla escolha: "O que é este produto?", com o resultado de cada opção
+        opcoesValidacao: opcoesDaPergunta(p.ncm, p.produto, detalharRegras(p.ncm, p.regras ?? []).map((g) => ({
+          id: g.id,
+          cst: g.cst,
+          cClassTrib: g.cClassTrib,
+          anexo: g.anexo,
+          item: g.item,
+          descricaoLegal: g.descricaoLegal,
+          fundamentoLegal: g.fundamentoLegal,
+          reducaoAliquota: typeof g.reducaoAliquota === "number" ? g.reducaoAliquota : null,
+          descricaoNcmTipi: typeof g.descricaoNcmTipi === "string" ? g.descricaoNcmTipi : null,
+        }))),
         regrasBloqueadasDetalhe: Object.values(doGrupo?.bloqueios ?? {}),
         reducaoIndisponivel: reducoes.disponivel ? null : reducoes.motivo,
         respostasDestaAnalise: respostas.filter((x) => x.ncm === p.ncm && (x.cProd === p.cProd || x.cProd === p.produto)),
