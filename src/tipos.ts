@@ -103,6 +103,20 @@ export type EstadoVeredito =
   | "NAO_OBRIGATORIO" // preenchimento ainda não exigido na data/regime
   | "INDETERMINADO"; // falta dado para decidir
 
+/** Regra localizada pelo NCM e rejeitada para o produto concreto (regra encontrada ≠ benefício aplicável). */
+export interface RegraNaoAplicavel {
+  regraId: string;
+  cst: string;
+  cClassTrib: string;
+  anexo: string;
+  item: string;
+  fundamentoLegal: string;
+  /** Percentual previsto na hipótese legal; não é o percentual do produto. */
+  reducaoPrevista: number;
+  designacaoLegal: string;
+  motivo: string;
+}
+
 export interface Veredito {
   documento: string;
   nItem: number;
@@ -131,7 +145,24 @@ export interface Veredito {
   calculadoEm: string;
   /** Fase 2: regras do NCM bloqueadas por incompatibilidade oficial (não são candidatas). Só aparece quando há bloqueio. */
   regrasBloqueadas?: string[];
+  /** A validação humana indicou que o NCM informado está errado: corrigir no ERP e reprocessar. */
+  ncmACorrigir?: boolean;
+  /**
+   * Regras encontradas pelo NCM, mas NÃO aplicáveis a este produto: a descrição do produto contradiz a
+   * descrição legal específica da regra. O percentual delas não entra em nenhum valor do item.
+   */
+  regrasNaoAplicaveis?: RegraNaoAplicavel[];
 }
+
+/**
+ * Escolha feita na pergunta de múltipla escolha ("O que é este produto?"). Vai
+ * gravada com resposta NAO nas regras candidatas, para continuar compatível com
+ * quem só lê SIM/NÃO.
+ *   CONSUMO_NO_LOCAL         — preparado e servido no local: regime de bares e restaurantes (art. 275)
+ *   MERCADORIA_SEM_BENEFICIO — mercadoria, NCM correto, nenhuma regra se aplica: integral verificada
+ *   NCM_INCORRETO            — o NCM informado está errado: corrigir no ERP; nenhum benefício transferido
+ */
+export type EscolhaValidacao = "CONSUMO_NO_LOCAL" | "MERCADORIA_SEM_BENEFICIO" | "NCM_INCORRETO";
 
 export interface RespostaValidacao {
   ncm: string;
@@ -141,6 +172,7 @@ export interface RespostaValidacao {
   autor: string;
   data: string;
   justificativa?: string;
+  escolha?: EscolhaValidacao;
 }
 
 

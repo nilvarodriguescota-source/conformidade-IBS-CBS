@@ -341,6 +341,15 @@ ul.descricoes{margin:4px 0 0;padding-left:18px;font-size:13px}
 .reducao-prev.nao-determinada{border-color:var(--neutro-borda);background:var(--neutro-fundo)}
 .valor-grande{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.1;color:var(--verde-800)}
 .pergunta-validacao{margin-top:14px;font-weight:700;color:var(--verde-900)}
+.mc-opcoes{margin:8px 0 6px;padding-left:22px}
+.mc-opcao{margin:0 0 10px}
+.mc-opcao button{text-align:left;white-space:normal}
+.mc-resultado{font-weight:700;color:var(--verde-900);margin-top:3px}
+.mc-nao-recomendada button{opacity:.75}
+.mc-alerta{color:var(--ouro-700)}
+.regra-nao-aplicavel{border-left-color:#9B3B2E}
+.nao-aplicavel-quadro{display:grid;gap:6px;padding:10px 12px;border:1px solid var(--linha-2);border-radius:10px;background:#FBF3F1}
+.selo-nao-aplicavel{background:#F6E1DC;color:#7A2618;border:1px solid #E3B4A8;font-weight:700;width:fit-content}
 .pergunta-validacao .rotulo{color:var(--ouro-700)}
 .resposta-registrada{margin-top:8px;font-weight:700;color:var(--verde-800)}
 @media(max-width:700px){.proposto{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -2306,8 +2315,25 @@ function campoProposto(rotulo,valor){
  return '<div><span class="rotulo">'+rotulo+'</span><span class="valor">'+esc(valor==null?'não disponível na base':valor)+'</span></div>';
 }
 
+/** Regra encontrada pelo NCM e rejeitada para o produto: mostra a regra, a redução prevista e por que não se aplica. */
+function regraNaoAplicavel(g,p){ return (p.regrasNaoAplicaveis||[]).find(x=>x.regraId===g.id)||null; }
+function blocoRegraNaoAplicavel(g,x,p){
+ const pc=v=>Math.round((v||0)*100)+'%';
+ return '<div class="regra-cand regra-nao-aplicavel">'+
+  '<div class="small">Regra encontrada pelo NCM: '+esc(g.id)+'</div>'+
+  '<div class="bloco"><span class="rotulo">Descrição legal do benefício</span><div class="descricao-legal">'+esc(g.descricaoLegal||'')+'</div></div>'+
+  '<div class="nao-aplicavel-quadro">'+
+   '<div><span class="rotulo">Regra encontrada pelo NCM</span>CST '+esc(x.cst)+' / cClassTrib '+esc(x.cClassTrib)+' / Anexo '+esc(x.anexo)+' / Item '+esc(x.item||'?')+'</div>'+
+   '<div><span class="rotulo">Redução prevista na regra</span>'+pc(x.reducaoPrevista)+' IBS / '+pc(x.reducaoPrevista)+' CBS</div>'+
+   '<div class="selo selo-nao-aplicavel">Resultado da validação: NÃO APLICÁVEL AO PRODUTO</div>'+
+   '<div class="small"><strong>Motivo:</strong> o benefício é específico para '+esc(x.designacaoLegal)+'. A descrição do produto ("'+esc(p.produto)+'") não atende, por si só, à descrição legal. A redução de '+pc(x.reducaoPrevista)+' não é aplicada; o enquadramento correto é procurado entre as demais hipóteses.</div>'+
+  '</div>'+
+ '</div>';
+}
 /** Uma regra candidata: descrição legal, enquadramento proposto, redução prevista e a pergunta. */
 function blocoRegraCandidata(g,p,i,total){
+ const naoAplicavel=regraNaoAplicavel(g,p);
+ if(naoAplicavel) return blocoRegraNaoAplicavel(g,naoAplicavel,p);
  const resp=(p.respostasDestaAnalise||[]).filter(x=>x.regraId===g.id);
  const respostaAtual=resp.length?resp[resp.length-1].resposta:null;
  const classeSim=respostaAtual==='SIM'?' validacao-selecionada':'';
@@ -2331,7 +2357,7 @@ function blocoRegraCandidata(g,p,i,total){
   blocoReducaoPrevista(g,p)+
   '</details>'+
   (resp.length?'<div class="small resposta-registrada">Resposta registrada nesta análise: '+esc(resp.map(x=>(x.resposta==='NAO'?'NÃO':'SIM')+' ('+x.data+')').join(', '))+'</div>':'')+
-  (total>1?'':
+  (total>1||temMultipla(p)?'':
   '<div class="pergunta-validacao"><span class="rotulo">Pergunta</span>Com base na descrição legal acima, o produto atende aos requisitos para este enquadramento?</div>'+
   '<div class="acoes">'+
    '<button class="secondary'+classeSim+'" data-validar="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(g.id)+'">SIM</button>'+
@@ -2349,6 +2375,8 @@ function selosDoProduto(p){
 }
 /** Uma possibilidade legal dentro do produto agrupado: descrição, enquadramento, redução e o SIM desta hipótese. */
 function opcaoEnquadramento(g,p,i){
+ const naoAplicavel=regraNaoAplicavel(g,p);
+ if(naoAplicavel) return '<li class="enq-opcao">'+blocoRegraNaoAplicavel(g,naoAplicavel,p)+'</li>';
  const resp=(p.respostasDestaAnalise||[]).filter(x=>x.regraId===g.id);
  const respostaAtual=resp.length?resp[resp.length-1].resposta:null;
  const o=g.reducao;
@@ -2371,7 +2399,7 @@ function opcaoEnquadramento(g,p,i){
    blocoReducaoPrevista(g,p)+
   '</details>'+
   (resp.length?'<div class="small resposta-registrada">Resposta registrada nesta análise: '+esc(resp.map(x=>(x.resposta==='NAO'?'NÃO':'SIM')+' ('+x.data+')').join(', '))+'</div>':'')+
-  '<div class="acoes"><button class="secondary'+(respostaAtual==='SIM'?' validacao-selecionada':'')+'" data-validar="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(g.id)+'">SIM — este enquadramento ('+(i+1)+')</button></div>'+
+  (temMultipla(p)?'':'<div class="acoes"><button class="secondary'+(respostaAtual==='SIM'?' validacao-selecionada':'')+'" data-validar="SIM" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(g.id)+'">SIM — este enquadramento ('+(i+1)+')</button></div>')+
  '</li>';
 }
 /** Produto com várias regras candidatas: aparece uma vez, com todas as possibilidades legais e uma única validação. */
@@ -2380,11 +2408,48 @@ function enquadramentosAgrupados(p,regras){
  return '<div class="enq-agrupados">'+
   '<span class="rotulo">Possíveis enquadramentos/benefícios legais ('+regras.length+')</span>'+
   '<ol>'+regras.map((g,i)=>opcaoEnquadramento(g,p,i)).join('')+'</ol>'+
+  (temMultipla(p)?'':
   '<div class="pergunta-validacao"><span class="rotulo">Validação</span>'+
   'Com base nas descrições legais acima, o produto atende aos requisitos de algum destes enquadramentos? Responda SIM no enquadramento aplicável, ou NÃO se nenhum se aplica.</div>'+
   '<div class="acoes">'+
    '<button class="secondary" data-validar-lote="NAO" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regras="'+esc(ids.join(','))+'">NÃO — nenhum se aplica</button>'+
-  '</div></div>';
+  '</div>')+'</div>';
+}
+
+/** Há pergunta de múltipla escolha para o produto ("O que é este produto?"). */
+function temMultipla(p){ return !!(p&&p.opcoesValidacao&&p.opcoesValidacao.length); }
+/** Pergunta de múltipla escolha: cada opção mostra o resultado e o porquê antes do clique. */
+function perguntaMultiplaEscolha(p){
+ if(!temMultipla(p)) return '';
+ const resp=p.respostasDestaAnalise||[];
+ const ult=resp.length?resp[resp.length-1]:null;
+ const marcada=o=>!!ult&&(o.tipo==='REGRA'?(ult.resposta==='SIM'&&ult.regraId===o.regraId):ult.escolha===o.tipo);
+ const ids=(p.regras||[]).join(',');
+ return '<div class="pergunta-multipla">'+
+  '<div class="pergunta-validacao"><span class="rotulo">Pergunta</span>O que é este produto? Escolha a opção que corresponde à realidade. O resultado de cada opção aparece ao lado.</div>'+
+  '<ol class="mc-opcoes">'+p.opcoesValidacao.map(o=>
+   '<li class="mc-opcao'+(o.naoRecomendada?' mc-nao-recomendada':'')+'">'+
+    '<button class="secondary'+(marcada(o)?' validacao-selecionada':'')+'" data-escolha="'+esc(o.tipo)+'" data-ncm="'+esc(p.ncm)+'" data-cprod="'+esc(p.cProd)+'" data-regra="'+esc(o.regraId||'')+'" data-regras="'+esc(ids)+'">'+esc(o.rotulo)+'</button>'+
+    '<div class="mc-resultado">→ '+esc(o.resultado)+'</div>'+
+    '<div class="small">'+esc(o.explicacao)+'</div>'+
+    (o.naoRecomendada?'<div class="small mc-alerta">Não recomendada: '+esc(o.naoRecomendada)+'</div>':'')+
+   '</li>').join('')+'</ol>'+
+  '<div class="small">Não sabe? Deixe sem resposta: o produto continua pendente.</div>'+
+ '</div>';
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-escolha]');
+ if(!b) return;
+ b.classList.add('validacao-selecionada');
+ b.disabled=true;
+ if(b.dataset.escolha==='REGRA') validar(b.dataset.ncm,b.dataset.cprod,b.dataset.regra,'SIM');
+ else validarEscolha(b.dataset.ncm,b.dataset.cprod,b.dataset.regras.split(',').filter(Boolean),b.dataset.escolha);
+});
+async function validarEscolha(ncm,cProd,regraIds,escolha){
+ const r=await fetch('/api/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm,cProd,regraIds,resposta:'NAO',escolha,autor:'Sistema'})});
+ const d=await r.json();
+ if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
+ await recarregarTudo();
 }
 
 function renderPendentes(){
@@ -2412,6 +2477,7 @@ function renderPendentes(){
      (regras.length>1
       ?selosDoProduto(p)+enquadramentosAgrupados(p,regras)
       :regras.map((g,i)=>blocoRegraCandidata(g,p,i,regras.length)).join(''))+
+     perguntaMultiplaEscolha(p)+
      (p.regrasBloqueadasDetalhe||[]).map(blocoBloqueio).join('')+
      '<details class="nao-imprimir"><summary>Detalhes</summary>'+
       '<p class="small">'+esc(reformularMotivo(p.motivo))+'</p>'+
