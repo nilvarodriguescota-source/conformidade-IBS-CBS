@@ -467,7 +467,10 @@ function classificarLegada(ctx: ContextoExplicacao, ix: Indices, r: RespostaVali
 /** Explica um veredito já calculado pelo motor. O veredito recebido não é alterado. */
 export function explicarVeredito(v: Veredito, ctx: ContextoExplicacao, doc?: Documento): VereditoExplicado {
   const ix = indices(ctx);
-  const ids = [...new Set([...v.regrasCandidatas, ...(v.regraAplicada && !v.regrasCandidatas.includes(v.regraAplicada) ? [v.regraAplicada] : []), ...(v.regrasBloqueadas ?? [])])];
+  // O regime de bares e restaurantes (art. 275) é aplicado pelo motor, não é regra da base: não se procura
+  // na base (evita o falso "regra não localizada"); sua redução é explicada à parte em reducaoDoItem.
+  const regraDaBase = v.regraAplicada && v.regraAplicada !== BARES_RESTAURANTES.fundamento ? v.regraAplicada : null;
+  const ids = [...new Set([...v.regrasCandidatas, ...(regraDaBase && !v.regrasCandidatas.includes(regraDaBase) ? [regraDaBase] : []), ...(v.regrasBloqueadas ?? [])])];
   const partes = ids.map((id) => explicarRegra(ctx, ix, id, v));
   const regras = partes.map((p) => p.explicacao);
   const limitacoes = partes.flatMap((p) => p.limitacoes);
