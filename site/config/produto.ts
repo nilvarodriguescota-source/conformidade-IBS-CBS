@@ -1,8 +1,8 @@
 /**
  * Dados comerciais do produto, usados pelo site de venda e pela área do cliente.
  *
- * Tudo que ainda não foi definido pelo negócio fica como `null` e aparece na tela
- * como "a definir" (classe .a-definir), fácil de localizar e substituir.
+ * Campo `null` aparece na tela como "a definir" (classe .a-definir), fácil de
+ * localizar e substituir.
  */
 export const produto = {
   nome: "Conformidade IBS/CBS",
@@ -15,18 +15,20 @@ export const produto = {
   enderecoSistema: "sistema.html",
 
   contato: {
-    /** A DEFINIR: e-mail de suporte exibido no rodapé, no FAQ e na área do cliente. */
-    emailSuporte: null as string | null,
-    /** A DEFINIR: WhatsApp comercial, só números com DDI (ex.: "5548999999999"). */
-    whatsapp: null as string | null,
-    /** A DEFINIR: horário de atendimento. */
-    horario: null as string | null,
+    /** E-mail de suporte exibido no rodapé, no FAQ e na área do cliente. */
+    emailSuporte: "saboresestrategicosconsultoria@gmail.com" as string | null,
+    /** WhatsApp, só números com DDI e DDD (o site formata para exibir). */
+    whatsapp: "5548991040611" as string | null,
+    /** Instagram, sem o @. */
+    instagram: "nilva.consultoria" as string | null,
+    /** Entra no meio de frases ("Fale com a gente em horário comercial") e sozinho no rodapé. */
+    horario: "horário comercial" as string | null,
   },
 
   empresa: {
-    /** A DEFINIR: razão social e CNPJ de quem vende a assinatura (rodapé e documentos legais). */
-    razaoSocial: null as string | null,
-    cnpj: null as string | null,
+    /** Quem vende a assinatura (rodapé e documentos legais). */
+    razaoSocial: "SABORES ESTRATEGICOS CONSULTORIA LTDA - ME" as string | null,
+    cnpj: "34.545.200/0001-41" as string | null,
   },
 
   anoCopyright: 2026,

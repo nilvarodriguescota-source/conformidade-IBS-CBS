@@ -88,26 +88,49 @@ export function revelarAoRolar(raiz: ParentNode = document): void {
   alvos.forEach((el) => obs.observe(el));
 }
 
-/** Preenche contatos e dados da empresa a partir de config/produto.ts (ou "a definir"). */
+/** "5548991040611" → "(48) 99104-0611" (aceita com ou sem o 55). */
+export function formatarTelefone(numeros: string): string {
+  const d = numeros.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return numeros;
+}
+
+/**
+ * Preenche contatos e dados da empresa a partir de config/produto.ts (ou "a definir").
+ * data-contato="email|whatsapp|instagram|horario"; com data-icone, o link leva o ícone;
+ * data-maiuscula começa o horário com maiúscula.
+ */
 export function preencherDadosComerciais(): void {
   const { contato, empresa } = produto;
+  const link = (href: string, texto: string, simbolo: string, el: HTMLElement, externo = true) =>
+    `<a class="contato" href="${esc(href)}"${externo ? ' target="_blank" rel="noopener"' : ""}>${el.hasAttribute("data-icone") ? icone(simbolo, "i-sm") : ""}<span>${esc(texto).replace("@", "<wbr>@")}</span></a>`;
   for (const el of $$("[data-contato]")) {
     const tipo = el.dataset.contato;
     if (tipo === "email") {
       el.innerHTML = contato.emailSuporte
-        ? `<a href="mailto:${esc(contato.emailSuporte)}">${esc(contato.emailSuporte)}</a>`
+        ? link(`mailto:${contato.emailSuporte}`, contato.emailSuporte, "email", el, false)
         : `<span class="a-definir">e-mail de suporte</span>`;
     } else if (tipo === "whatsapp") {
       el.innerHTML = contato.whatsapp
-        ? `<a href="https://wa.me/${esc(contato.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>`
+        ? link(`https://wa.me/${contato.whatsapp.replace(/\D/g, "")}`, `WhatsApp ${formatarTelefone(contato.whatsapp)}`, "whatsapp", el)
         : `<span class="a-definir">WhatsApp</span>`;
+    } else if (tipo === "instagram") {
+      el.innerHTML = contato.instagram
+        ? link(`https://www.instagram.com/${contato.instagram}/`, `@${contato.instagram}`, "instagram", el)
+        : `<span class="a-definir">Instagram</span>`;
     } else if (tipo === "horario") {
-      el.innerHTML = contato.horario ? esc(contato.horario) : `<span class="a-definir">horário de atendimento</span>`;
+      // data-maiuscula: horário sozinho (rodapé), em vez de no meio de uma frase
+      const horario = contato.horario && el.hasAttribute("data-maiuscula") ? contato.horario[0]!.toUpperCase() + contato.horario.slice(1) : contato.horario;
+      el.innerHTML = horario
+        ? `<span class="contato">${el.hasAttribute("data-icone") ? icone("relogio", "i-sm") : ""}<span>${esc(horario)}</span></span>`
+        : `<span class="a-definir">horário de atendimento</span>`;
     }
   }
   for (const el of $$("[data-empresa]")) {
-    const valor = el.dataset.empresa === "cnpj" ? empresa.cnpj : empresa.razaoSocial;
-    el.innerHTML = valor ? esc(valor) : `<span class="a-definir">${el.dataset.empresa === "cnpj" ? "CNPJ" : "razão social"}</span>`;
+    const cnpj = el.dataset.empresa === "cnpj";
+    const valor = cnpj ? empresa.cnpj : empresa.razaoSocial;
+    el.innerHTML = valor ? esc(cnpj ? `CNPJ ${valor}` : valor) : `<span class="a-definir">${cnpj ? "CNPJ" : "razão social"}</span>`;
   }
   for (const el of $$("[data-ano]")) el.textContent = String(produto.anoCopyright);
   for (const el of $$("[data-links-planos]")) {

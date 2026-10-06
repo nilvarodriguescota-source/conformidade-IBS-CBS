@@ -44,9 +44,9 @@ body.menu-aberto{overflow:hidden}
 /* ---------- Rodapé ---------- */
 .rodape{position:relative;padding:clamp(64px,8vw,96px) 0 32px;background:var(--noite);overflow:hidden}
 .rodape::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,174,124,.4),transparent)}
-.rodape-topo{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2fr);gap:clamp(40px,6vw,96px);padding-bottom:48px;border-bottom:1px solid var(--noite-linha)}
+.rodape-topo{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,2.3fr);gap:clamp(40px,6vw,96px);padding-bottom:48px;border-bottom:1px solid var(--noite-linha)}
 .rodape-marca p{max-width:340px;margin:22px 0 26px;font-size:14.5px;color:var(--noite-texto-3)}
-.rodape-colunas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.rodape-colunas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.7fr);gap:28px}
 .rodape-colunas>div,.rodape-planos{display:flex;flex-direction:column;gap:12px}
 .rodape-colunas h4{margin-bottom:6px;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro-400)}
 .rodape-colunas a,.rodape-colunas span{font-size:14.5px;color:var(--noite-texto-2);transition:color .2s}
@@ -56,7 +56,10 @@ body.menu-aberto{overflow:hidden}
 .rodape-legal{display:flex;flex-wrap:wrap;gap:22px}
 .rodape-legal a:hover{color:var(--noite-texto)}
 
-@media (max-width:900px){
+@media (max-width:1100px){
   .rodape-topo{grid-template-columns:1fr}
+}
+@media (max-width:900px){
   .rodape-colunas{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 20px}
+  .rodape-colunas>div:last-child{grid-column:1/-1}
 }

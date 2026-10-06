@@ -121,3 +121,9 @@
 .segmentado-pequeno .indicador{top:4px;bottom:4px}
 .carregando-grande{width:36px;height:36px;border:3px solid var(--linha-2);border-top-color:var(--verde-700);border-radius:50%;animation:girar .8s linear infinite}
 @media (max-width:560px){.grade-campos{grid-template-columns:1fr}}
+
+/* ---------- Contatos (data-contato) ---------- */
+.contato{display:inline-flex;align-items:center;gap:8px;max-width:100%}
+.contato>span{min-width:0;overflow-wrap:break-word}
+.contato .i{flex:none;color:var(--ouro-500)}
+.no-escuro .contato .i{color:var(--ouro-400)}
