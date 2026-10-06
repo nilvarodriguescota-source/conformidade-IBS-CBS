@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criar conta · Conformidade IBS/CBS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B140F">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="stylesheet" href="site/css/autenticacao.css">
+<script type="module" src="site/js/cadastro.js"></script>
+</head>
+<body class="pagina-auth" data-etapa-atual="conta">
+<!-- @parte icones -->
+<div class="auth">
+  <!-- @parte painel-marca -->
+  <main class="auth-principal" id="conteudo">
+    <div class="auth-topo">
+      <a class="auth-voltar" href="index.html#planos"><svg class="i i-sm" aria-hidden="true"><use href="#i-seta-esq"/></svg>Voltar aos planos</a>
+      <span>Já tem conta? <a href="entrar.html" data-link-entrar-cadastro>Entrar</a></span>
+    </div>
+
+    <div class="auth-caixa auth-caixa-larga" data-revelar>
+      <!-- @parte etapas-compra -->
+      <h1>Crie sua conta</h1>
+      <p class="auth-sub">Leva menos de um minuto. Depois é só confirmar o pagamento para liberar o acesso.</p>
+
+      <div class="alerta alerta-aviso" data-ja-logado hidden></div>
+
+      <!-- Plano escolhido -->
+      <section class="escolha-plano" aria-labelledby="titulo-plano">
+        <div class="escolha-topo">
+          <h2 id="titulo-plano" class="rotulo-secao">Seu plano</h2>
+          <div class="segmentado segmentado-pequeno" role="group" aria-label="Período de cobrança" data-ciclo>
+            <button type="button" data-valor="mensal" aria-pressed="true">Mensal</button>
+            <button type="button" data-valor="anual" aria-pressed="false">Anual <span class="tag" data-vantagem-anual></span></button>
+          </div>
+        </div>
+        <div class="opcoes-plano" role="radiogroup" aria-label="Plano" data-opcoes-plano></div>
+      </section>
+
+      <div class="alerta alerta-erro" role="alert" data-erro hidden></div>
+
+      <form class="auth-form" data-form-cadastro novalidate>
+        <h2 class="rotulo-secao">Seus dados</h2>
+        <div class="grade-campos">
+          <div class="campo campo-inteiro">
+            <label for="nome">Nome completo</label>
+            <input id="nome" name="nome" autocomplete="name" placeholder="Como devemos chamar você" required>
+          </div>
+          <div class="campo campo-inteiro">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="voce@empresa.com.br" required>
+            <span class="ajuda">Será o seu login de acesso.</span>
+          </div>
+          <div class="campo">
+            <label for="empresa">Empresa <span class="opcional">(opcional)</span></label>
+            <input id="empresa" name="empresa" autocomplete="organization" placeholder="Nome da empresa">
+          </div>
+          <div class="campo">
+            <label for="cnpj">CNPJ <span class="opcional">(opcional)</span></label>
+            <input id="cnpj" name="cnpj" inputmode="numeric" placeholder="00.000.000/0000-00" data-mascara="cnpj">
+          </div>
+          <div class="campo campo-inteiro">
+            <label for="telefone">Telefone <span class="opcional">(opcional)</span></label>
+            <input id="telefone" name="telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" data-mascara="telefone">
+          </div>
+          <div class="campo campo-inteiro">
+            <label for="senha">Crie uma senha</label>
+            <div class="entrada">
+              <input id="senha" name="senha" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres" minlength="8" required data-senha>
+              <button type="button" class="ver-senha" aria-label="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-olho"/></svg></button>
+            </div>
+            <div class="forca-senha" data-forca aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <span class="ajuda" data-forca-texto>Use letras, números e um símbolo para uma senha forte.</span>
+          </div>
+        </div>
+        <label class="marcar">
+          <input type="checkbox" name="termos" required>
+          <span>Li e aceito os <a href="termos.html" target="_blank">Termos de uso</a> e a <a href="privacidade.html" target="_blank">Política de privacidade</a>.</span>
+        </label>
+        <button class="btn btn-verde btn-grande btn-bloco" type="submit" data-enviar>Criar conta e continuar <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></button>
+        <p class="auth-seguro"><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg>Próximo passo: pagamento em ambiente seguro.</p>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -13,6 +13,10 @@ Escopo: só IBS e CBS. ICMS, ST, DIFAL, PIS/Cofins, IPI, CEST e CSOSN ficam fora
 O `netlify.toml` já traz tudo: o Netlify roda `npm run build` e publica a pasta
 `public/`. Depois de ligado ao repositório, cada push publica sozinho.
 
+A raiz do site é a página comercial (landing, planos, login, cadastro, checkout e área
+do cliente) e o sistema fica em `/sistema.html`, sem nenhuma mudança. Arquitetura,
+modo demonstração e pontos de integração (login, pagamento, assinatura): `site/README.md`.
+
 Na versão do Netlify o sistema roda inteiro no navegador (Web Worker), com o mesmo
 código do servidor: não há servidor nem banco de dados. A análise (XMLs,
 respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e continua
@@ -22,7 +26,8 @@ lá ao reabrir a página; outro computador ou navegador começa com a análise v
 
 ```bash
 npm install
-npm start                    # compila e abre em http://localhost:3000
+npm start                    # compila e abre o sistema em http://localhost:3000
+npm run site                 # site completo (página comercial + sistema) em http://localhost:4173
 npm test                     # 123 testes
 node dist/src/cli.js --xml ./xmls --empresa ./empresa.json --saida ./saida
 ```
@@ -88,7 +93,8 @@ período, os campos de economia e exposição voltam nulos e o motivo diz por qu
 | `src/arquivos.ts` | Hash e cabeçalho de arquivos grandes sem carregá-los inteiros (explicacoes.json passa de 500 MB) |
 | `web/` | Versão do navegador: sistema de arquivos em memória, worker, gerador de .xlsx |
 | `web/marca/` | Imagens da marca Sabores Estratégicos usadas na tela, na impressão e no PDF; a logo original fica em `origem/` e as demais saem de `scripts/gerar_marca.py` |
-| `scripts/build-web.mjs` | Gera `public/` para o Netlify |
+| `scripts/build-web.mjs` | Gera `public/` para o Netlify (o sistema vai para `sistema.html`) |
+| `site/` | Site comercial e área do cliente; `scripts/build-site.mjs` monta em `public/` (ver `site/README.md`) |
 | `docs/etapa10/` | Auditoria da planilha V4.1 frente ao sistema e às fontes oficiais (diagnóstico, mapa linha a linha, proposta D5, natureza dos produtos) |
 | `test/fixtures/empresa-teste.json` | Dados fixos dos testes (o `empresa.json` da raiz é configuração e pode mudar) |
 

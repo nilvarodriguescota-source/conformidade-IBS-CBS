@@ -1,5 +1,6 @@
 # Publicação automática: o Netlify roda o build e publica a pasta public/.
 # O sistema roda inteiro no navegador (Web Worker); não há funções de servidor.
+# A raiz (index.html) é o site comercial; o sistema fica em sistema.html.
 [build]
   command = "npm run build"
   publish = "public"
@@ -12,8 +13,47 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "same-origin"
+    # Login e área do cliente não podem ser embutidos por outros sites (a área do cliente embute o sistema, mesma origem)
+    X-Frame-Options = "SAMEORIGIN"
 
 [[headers]]
   for = "/dados/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Site comercial na raiz; o sistema de XML fica em /sistema.html (área do cliente em /conta.html).
+# Endereços sem ".html", para links e divulgação.
+[[redirects]]
+  from = "/entrar"
+  to = "/entrar.html"
+  status = 200
+
+[[redirects]]
+  from = "/cadastro"
+  to = "/cadastro.html"
+  status = 200
+
+[[redirects]]
+  from = "/recuperar-senha"
+  to = "/recuperar-senha.html"
+  status = 200
+
+[[redirects]]
+  from = "/checkout"
+  to = "/checkout.html"
+  status = 200
+
+[[redirects]]
+  from = "/conta"
+  to = "/conta.html"
+  status = 200
+
+[[redirects]]
+  from = "/app"
+  to = "/conta.html"
+  status = 301
+
+[[redirects]]
+  from = "/sistema"
+  to = "/sistema.html"
+  status = 200

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Conformidade IBS/CBS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B140F">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="stylesheet" href="site/css/autenticacao.css">
+<script type="module" src="site/js/entrar.js"></script>
+</head>
+<body class="pagina-auth">
+<!-- @parte icones -->
+<div class="auth">
+  <!-- @parte painel-marca -->
+  <main class="auth-principal" id="conteudo">
+    <div class="auth-topo">
+      <a class="auth-voltar" href="index.html"><svg class="i i-sm" aria-hidden="true"><use href="#i-seta-esq"/></svg>Voltar ao site</a>
+      <span>Ainda não é cliente? <a href="index.html#planos">Ver planos</a></span>
+    </div>
+
+    <div class="auth-caixa" data-revelar>
+      <p class="eyebrow">Área do cliente</p>
+      <h1>Bem-vindo de volta</h1>
+      <p class="auth-sub">Entre com seu e-mail e senha para acessar sua conta e o sistema.</p>
+
+      <div class="alerta alerta-erro" role="alert" data-erro hidden></div>
+
+      <form class="auth-form" data-form-entrar novalidate>
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="voce@empresa.com.br" required>
+        </div>
+        <div class="campo">
+          <div class="campo-linha"><label for="senha">Senha</label><a class="auth-link" href="recuperar-senha.html">Esqueci minha senha</a></div>
+          <div class="entrada">
+            <input id="senha" name="senha" type="password" autocomplete="current-password" placeholder="Sua senha" required>
+            <button type="button" class="ver-senha" aria-label="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-olho"/></svg></button>
+          </div>
+        </div>
+        <button class="btn btn-verde btn-grande btn-bloco" type="submit">Entrar <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></button>
+      </form>
+
+      <div class="auth-separador"><span>novo por aqui?</span></div>
+      <a class="btn btn-contorno btn-grande btn-bloco" href="index.html#planos">Conhecer os planos</a>
+
+      <p class="auth-seguro"><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg>Conexão protegida. Nunca pedimos sua senha por e-mail ou telefone.</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>
