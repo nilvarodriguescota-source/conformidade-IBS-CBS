@@ -90,7 +90,7 @@
 .barras-grafico .ok,.barras-legenda .ok{background:var(--ok-forte)}
 .barras-grafico .eco,.barras-legenda .eco{background:var(--economia-forte)}
 .barras-grafico .pend,.barras-legenda .pend{background:var(--pendente-forte)}
-.barras-grafico .neutro{background:var(--linha-2)}
+.barras-grafico .neutro,.barras-legenda .neutro{background:var(--linha-2)}
 @keyframes crescer{from{transform:scaleY(0)}}
 .barras-legenda{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:9px;color:var(--texto-3)}
 .barras-legenda i{width:7px;height:7px;margin-left:6px;border-radius:2px}
@@ -218,22 +218,23 @@
 .demo-abas button{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr);gap:16px;align-items:start;padding:18px 20px;border:1px solid transparent;border-radius:var(--r-lg);background:transparent;text-align:left;overflow:hidden;
   transition:background-color .3s,border-color .3s}
 .demo-abas button:hover{background:rgba(244,238,226,.04)}
-.demo-abas button[aria-selected="true"]{border-color:var(--noite-linha-2);background:rgba(244,238,226,.06)}
+.demo-abas button[aria-pressed="true"]{border-color:var(--noite-linha-2);background:rgba(244,238,226,.06)}
 .demo-aba-icone{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:rgba(244,238,226,.06);color:var(--ouro-300);transition:background .3s,color .3s}
-.demo-abas button[aria-selected="true"] .demo-aba-icone{background:var(--grad-ouro);color:var(--verde-950)}
+.demo-abas button[aria-pressed="true"] .demo-aba-icone{background:var(--grad-ouro);color:var(--verde-950)}
 .demo-abas b{display:block;font-family:var(--serif);font-size:23px;line-height:1.15;color:var(--noite-texto)}
 .demo-abas small{display:block;margin-top:4px;font-size:14px;line-height:1.5;color:var(--noite-texto-3)}
 .demo-tempo{position:absolute;left:20px;right:20px;bottom:0;height:2px;background:var(--noite-linha);opacity:0;overflow:hidden}
-.demo-abas button[aria-selected="true"] .demo-tempo{opacity:1}
+.demo-abas button[aria-pressed="true"] .demo-tempo{opacity:1}
 .demo-tempo::after{content:"";position:absolute;inset:0;background:var(--grad-ouro);transform:scaleX(0);transform-origin:left}
-.demo.rodando button[aria-selected="true"] .demo-tempo::after{animation:tempo var(--duracao,7s) linear forwards}
+.demo.rodando button[aria-pressed="true"] .demo-tempo::after{animation:tempo var(--duracao,7s) linear forwards}
 @keyframes tempo{to{transform:scaleX(1)}}
 .demo-palco{grid-area:palco;position:relative}
 .demo-palco::before{content:"";position:absolute;inset:8% -6% -8% 8%;border-radius:40px;background:radial-gradient(circle at 70% 30%,rgba(201,174,124,.28),transparent 60%);filter:blur(30px);z-index:0}
-.demo-janela{position:relative;z-index:1;min-height:500px;border-radius:20px;background:var(--superficie);color:var(--texto);box-shadow:0 60px 120px -40px rgba(0,0,0,.75),0 0 0 1px rgba(244,238,226,.14);overflow:hidden}
+.demo-janela{position:relative;z-index:1;display:grid;grid-template-rows:auto 1fr;border-radius:20px;background:var(--superficie);color:var(--texto);box-shadow:0 60px 120px -40px rgba(0,0,0,.75),0 0 0 1px rgba(244,238,226,.14);overflow:hidden}
 .demo-janela .janela-url{transform:translateX(-26px)}
-.demo-tela{position:absolute;inset:34px 0 auto 0;padding:24px;opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease);pointer-events:none}
-.demo-tela.ativa{position:relative;inset:auto;opacity:1;transform:none;pointer-events:auto}
+.demo-janela>.janela-barra{grid-area:1/1}
+.demo-tela{position:relative;grid-area:2/1;padding:24px;opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease);pointer-events:none}
+.demo-tela.ativa{opacity:1;transform:none;pointer-events:auto}
 .dt-titulo{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;font-family:var(--serif);font-size:27px;font-weight:700;line-height:1.1;color:var(--verde-900)}
 .dt-dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .dt-cartao{padding:16px 18px;border:1px solid var(--linha);border-radius:14px;background:var(--superficie-2)}
@@ -251,7 +252,7 @@
 .dt-barras-h i::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w);min-width:6px;border-radius:inherit;transform-origin:left}
 .ativa .dt-barras-h i::after{animation:encher 1s var(--ease) .2s both}
 @keyframes encher{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.dt-barras-h .ok::after{background:var(--ok-forte)}.dt-barras-h .eco::after{background:var(--economia-forte)}.dt-barras-h .pend::after{background:var(--pendente-forte)}
+.dt-barras-h .risco::after{background:var(--risco-forte)}.dt-barras-h .ok::after{background:var(--ok-forte)}.dt-barras-h .eco::after{background:var(--economia-forte)}.dt-barras-h .pend::after{background:var(--pendente-forte)}
 .dt-barras-h b{font-size:12px;text-align:right;color:var(--verde-900);font-variant-numeric:tabular-nums}
 .dt-tabela{margin-top:8px}
 .dt-tabela div{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--linha);font-size:13px;font-variant-numeric:tabular-nums}
@@ -443,6 +444,7 @@
 .plano-limites{margin-bottom:22px;border-top:1px solid var(--noite-linha)}
 .plano-limites li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--noite-linha);font-size:14px;color:var(--noite-texto-2)}
 .plano-limites b{font-weight:700;color:var(--noite-texto);text-align:right}
+.plano-resumo{margin:0 0 18px;font-size:14.5px;line-height:1.55;color:var(--noite-texto-2)}
 .plano-chamada{margin:0 0 14px;font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--ouro-300)}
 .plano-recursos{display:grid;gap:13px;margin-bottom:24px}
 .plano-recursos li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:11px;font-size:14.5px;line-height:1.45;color:var(--noite-texto)}
@@ -668,7 +670,6 @@
   .exemplo-cta .btn,.contratar ol{flex:1 1 100%}
   .exemplo-cta .btn{width:100%}
   .contratar ol{grid-template-columns:1fr;gap:18px}
-  .demo-janela{min-height:0}
   .demo-tela{padding:18px}
   .dt-dupla{grid-template-columns:1fr}
   .dt-cartao>b{font-size:27px}

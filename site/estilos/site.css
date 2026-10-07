@@ -29,20 +29,17 @@
 .menu-movel-acoes{display:grid;gap:12px}
 body.menu-aberto{overflow:hidden}
 
-/* Telas médias: o menu completo e o botão "Analisar meus XMLs" precisam caber numa linha só.
-   Até 1240px o "Entrar" sai do topo (continua no menu do celular e no início da página);
-   até 1100px entra o menu recolhido. */
-@media (min-width:1101px) and (max-width:1240px){
-  .topo-faixa{gap:16px}
-  .topo-nav a{padding:10px 10px}
-  .topo-entrar{display:none}
-}
-@media (max-width:1100px){
+/* O menu completo e o botão "Analisar meus XMLs" só cabem juntos numa linha acima de 1240px;
+   abaixo disso entra o menu recolhido. No celular o "Entrar" sai do topo (continua no menu). */
+@media (max-width:1240px){
   .topo-nav{display:none}
   .topo-menu{display:grid}
   .topo-acoes{margin-left:auto}
 }
-@media (max-width:560px){
+@media (max-width:700px){
+  .topo-entrar{display:none}
+}
+@media (max-width:600px){
   .topo-entrar,.topo-cta{display:none}
   .topo .marca-texto strong{font-size:19px}
   .topo .marca-texto small{font-size:9px;letter-spacing:.2em}

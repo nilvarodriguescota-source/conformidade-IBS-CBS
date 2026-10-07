@@ -50,7 +50,9 @@ function cartaoPlano(plano: Plano, ciclo: CicloCobranca): string {
     </a>
     <ul class="plano-limites">${plano.limites.map((l) => `<li><span>${esc(l.rotulo)}</span><b>${esc(l.valor)}</b></li>`).join("")}</ul>
     ${plano.chamadaRecursos ? `<p class="plano-chamada">${esc(plano.chamadaRecursos)}</p>` : ""}
-    <ul class="plano-recursos">${recursos.map(recursoHtml).join("")}</ul>
+    ${plano.resumo
+      ? `<p class="plano-resumo">${esc(plano.resumo)}</p><button type="button" class="plano-incluidos" data-ver-comparacao>${icone("lista", "i-sm")}<span>Ver todos os recursos</span>${icone("chevron-d", "i-sm")}</button>`
+      : `<ul class="plano-recursos">${recursos.map(recursoHtml).join("")}</ul>`}
     ${plano.chamadaRecursos ? `<button type="button" class="plano-incluidos" data-ver-comparacao>${icone("camadas", "i-sm")}<span>Inclui os ${plano.recursos.length - recursos.length} recursos do plano anterior</span>${icone("chevron-d", "i-sm")}</button>` : ""}
   </article>`;
 }
@@ -241,7 +243,7 @@ function iniciarDemo(): void {
   const mostrar = (i: number) => {
     indice = (i + abas.length) % abas.length;
     const alvo = abas[indice]!.dataset.demoAba;
-    abas.forEach((a, j) => a.setAttribute("aria-selected", String(j === indice)));
+    abas.forEach((a, j) => a.setAttribute("aria-pressed", String(j === indice)));
     telas.forEach((t) => t.classList.toggle("ativa", t.dataset.demoTela === alvo));
     demo.classList.remove("rodando");
     void demo.offsetWidth;
@@ -291,6 +293,28 @@ function iniciarFaq(): void {
       }
     });
   }
+
+  // Link para uma pergunta (ex.: #faq-simples) abre a resposta; o navegador só rola até ela
+  const abrir = (d: HTMLDetailsElement) => {
+    if (d.open) return;
+    d.open = true;
+    requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("expandida")));
+  };
+  const pergunta = (id: string) => {
+    const el = id ? document.getElementById(id) : null;
+    return el instanceof HTMLDetailsElement && el.matches("details.pergunta") ? el : null;
+  };
+  const abrirPeloHash = () => {
+    const d = pergunta(location.hash.slice(1));
+    if (d) abrir(d);
+  };
+  addEventListener("hashchange", abrirPeloHash);
+  document.addEventListener("click", (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href^='#']");
+    const d = a ? pergunta(a.hash.slice(1)) : null;
+    if (d) abrir(d);
+  });
+  abrirPeloHash();
 }
 
 /* ---------------- Textos que dependem do modo e dados da responsável ---------------- */

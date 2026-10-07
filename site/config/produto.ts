@@ -34,9 +34,6 @@ export const produto = {
   /**
    * Quem está por trás do produto (seção "Quem está por trás" da landing).
    * Campo null aparece como "a definir". Preencha só com fatos que possam ser confirmados.
-   * Sugestão para `motivo`, a aprovar ou reescrever (de preferência na primeira pessoa):
-   * "Para transformar a Reforma Tributária em algo prático para empresas de alimentação:
-   * saber o que está certo, o que precisa ser revisado e onde pode haver imposto calculado a mais."
    */
   responsavel: {
     nome: "Nilva Rodrigues Cota" as string | null,
@@ -45,7 +42,7 @@ export const produto = {
     /** Experiência em até duas frases. */
     experiencia: null as string | null,
     /** Por que a análise existe, em uma ou duas frases. */
-    motivo: null as string | null,
+    motivo: "Nasceu da necessidade de transformar a complexidade da Reforma Tributária em uma análise prática: identificar o que está correto, o que precisa ser revisado e onde pode haver imposto calculado a mais." as string | null,
     /** Caminho da foto (retrato 4:5) dentro de site/imagens/, ex.: "site/imagens/nilva.jpg". */
     foto: null as string | null,
   },
