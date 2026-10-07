@@ -27,15 +27,14 @@
   <div class="hero-fundo" aria-hidden="true">
     <div class="hero-brilho um"></div>
     <div class="hero-brilho dois"></div>
-    <div class="hero-grade"></div>
     <img class="hero-coruja" src="site/imagens/coruja-negativa-grande.png" alt="" width="408" height="480">
   </div>
 
   <div class="container hero-conteudo">
     <div class="hero-texto">
       <a class="hero-selo" href="#problema" data-revelar>
-        <span class="pulso" aria-hidden="true"></span>
-        Reforma Tributária · IBS e CBS já nas notas de 2026
+        <em>Reforma Tributária</em><span class="sr"> · </span>
+        <span class="hero-selo-texto">IBS e CBS já nas notas de 2026</span>
         <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-d"/></svg>
       </a>
       <h1 data-revelar style="--atraso:.08s">Cada nota conferida. <em>Cada imposto</em> no lugar certo.</h1>
@@ -140,9 +139,8 @@
   <div class="container">
     <div class="problema-grade">
       <div class="cabeca-secao" data-revelar>
-        <p class="eyebrow">O desafio</p>
         <h2 class="titulo-secao">A Reforma Tributária chegou ao <em>cadastro dos seus produtos.</em></h2>
-        <p class="lead">As notas fiscais já trazem os campos de IBS e CBS. Cada produto precisa do CST e do cClassTrib certos, e um código errado no cadastro se repete em todas as vendas daquele item.</p>
+        <p class="lead">As notas fiscais já trazem os campos de IBS e CBS. Cada produto precisa do CST e do cClassTrib certos, e <span class="grifo">um código errado no cadastro se repete em todas as vendas daquele item.</span></p>
       </div>
       <div class="dores">
         <article class="dor" data-revelar style="--atraso:.05s">
@@ -187,16 +185,16 @@
 <!-- ================= COMO FUNCIONA ================= -->
 <section class="secao como-funciona" id="como-funciona">
   <div class="container">
-    <div class="cabeca-secao centro" data-revelar>
-      <p class="eyebrow">Como funciona</p>
-      <h2 class="titulo-secao">Simples do primeiro clique <em>ao relatório final.</em></h2>
-      <p class="lead">Sem instalação, sem configuração complicada. Veja como contratar e como fica a sua rotina depois.</p>
-    </div>
-
     <div class="abas-passos" data-abas>
-      <div class="segmentado abas-seletor" role="tablist" aria-label="Etapas" data-revelar>
-        <button type="button" role="tab" data-valor="contratar" aria-pressed="true" aria-selected="true" aria-controls="passos-contratar" id="aba-contratar">Contratar e acessar</button>
-        <button type="button" role="tab" data-valor="usar" aria-pressed="false" aria-selected="false" aria-controls="passos-usar" id="aba-usar">Usar no dia a dia</button>
+      <div class="como-cabeca">
+        <div class="cabeca-secao" data-revelar>
+          <h2 class="titulo-secao">Simples do primeiro clique <em>ao relatório final.</em></h2>
+          <p class="lead">Sem instalação, sem configuração complicada. Veja como contratar e como fica a sua rotina depois.</p>
+        </div>
+        <div class="segmentado abas-seletor" role="tablist" aria-label="Etapas" data-revelar style="--atraso:.1s">
+          <button type="button" role="tab" data-valor="contratar" aria-pressed="true" aria-selected="true" aria-controls="passos-contratar" id="aba-contratar">Contratar e acessar</button>
+          <button type="button" role="tab" data-valor="usar" aria-pressed="false" aria-selected="false" aria-controls="passos-usar" id="aba-usar">Usar no dia a dia</button>
+        </div>
       </div>
 
       <ol class="passos" id="passos-contratar" role="tabpanel" aria-labelledby="aba-contratar" data-painel="contratar">
@@ -261,7 +259,6 @@
   <div class="beneficios-fundo" aria-hidden="true"></div>
   <div class="container">
     <div class="cabeca-secao" data-revelar>
-      <p class="eyebrow">Benefícios</p>
       <h2 class="titulo-secao">Menos trabalho manual. <em>Mais controle</em> sobre cada centavo.</h2>
       <p class="lead">O que antes levava dias de conferência vira uma análise de minutos, com o motivo de cada resultado à vista.</p>
     </div>
@@ -340,7 +337,6 @@
   <div class="container">
     <div class="modulos-cabeca" data-revelar>
       <div>
-        <p class="eyebrow">Explore o sistema</p>
         <h2 class="titulo-secao">Tudo o que você usa <em>no dia a dia.</em></h2>
       </div>
       <div class="trilho-controles">
@@ -442,13 +438,12 @@
 <!-- ================= PRODUTO NO DIA A DIA ================= -->
 <section class="secao vitrine-produto" id="produto">
   <div class="container">
-    <div class="cabeca-secao centro" data-revelar>
-      <p class="eyebrow">Na prática</p>
-      <h2 class="titulo-secao">Veja como o sistema <em>trabalha por você.</em></h2>
-      <p class="lead">Do painel geral à resposta de cada pendência, as informações aparecem prontas para decidir.</p>
-    </div>
-
     <div class="demo" data-demo>
+      <div class="cabeca-secao demo-cabeca" data-revelar>
+        <h2 class="titulo-secao">Veja como o sistema <em>trabalha por você.</em></h2>
+        <p class="lead">Do painel geral à resposta de cada pendência, as informações aparecem prontas para decidir.</p>
+      </div>
+
       <div class="demo-abas" role="tablist" aria-label="Telas do sistema" data-revelar="esquerda">
         <button type="button" role="tab" aria-selected="true" data-demo-aba="visao">
           <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-painel"/></svg></span>
@@ -566,7 +561,6 @@
 <section class="secao para-quem" id="para-quem">
   <div class="container">
     <div class="cabeca-secao" data-revelar>
-      <p class="eyebrow">Para quem é</p>
       <h2 class="titulo-secao">Pensado para o setor de alimentação. <em>Útil para quem emite nota.</em></h2>
       <p class="lead">Se a sua empresa emite NF-e ou NFC-e de venda, o sistema mostra o que está certo, o que pode ser recuperado e o que precisa mudar.</p>
     </div>
@@ -600,7 +594,6 @@
   <div class="planos-fundo" aria-hidden="true"></div>
   <div class="container">
     <div class="cabeca-secao centro" data-revelar>
-      <p class="eyebrow">Planos</p>
       <h2 class="titulo-secao">Escolha o plano ideal <em>para a sua operação.</em></h2>
       <p class="lead">Todos os planos dão acesso ao sistema completo de análise. O que muda é o volume, o número de empresas e o nível de suporte.</p>
       <div class="segmentado ciclo" role="group" aria-label="Período de cobrança" data-ciclo>
@@ -632,7 +625,6 @@
 <section class="secao faq" id="faq">
   <div class="container faq-grade">
     <div class="faq-lado" data-revelar>
-      <p class="eyebrow">Perguntas frequentes</p>
       <h2 class="titulo-secao">Tudo o que você precisa <em>saber antes.</em></h2>
       <div class="faq-suporte">
         <span class="faq-suporte-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-whatsapp"/></svg></span>
@@ -697,7 +689,6 @@
         <img src="site/imagens/coruja-negativa-grande.png" alt="" width="408" height="480">
       </div>
       <div class="cta-conteudo">
-        <p class="eyebrow">Comece hoje</p>
         <h2 class="titulo-secao">Pronto para simplificar <em>sua rotina tributária?</em></h2>
         <p class="lead">Escolha seu plano, crie sua conta e faça a primeira análise dos seus XMLs ainda hoje.</p>
         <div class="cta-botoes">
