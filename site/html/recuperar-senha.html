@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recuperar senha · Conformidade IBS/CBS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B140F">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="stylesheet" href="site/css/autenticacao.css">
+<script type="module" src="site/js/recuperar-senha.js"></script>
+</head>
+<body class="pagina-auth">
+<!-- @parte icones -->
+<div class="auth">
+  <!-- @parte painel-marca -->
+  <main class="auth-principal" id="conteudo">
+    <div class="auth-topo">
+      <a class="auth-voltar" href="entrar.html"><svg class="i i-sm" aria-hidden="true"><use href="#i-seta-esq"/></svg>Voltar para o login</a>
+    </div>
+
+    <div class="auth-caixa" data-revelar>
+      <span class="auth-icone-grande" aria-hidden="true"><svg class="i i-lg"><use href="#i-cadeado"/></svg></span>
+      <h1>Recuperar senha</h1>
+      <p class="auth-sub">Informe o e-mail da sua conta. Enviaremos um link para você criar uma nova senha.</p>
+
+      <div class="alerta" role="status" data-retorno hidden></div>
+
+      <form class="auth-form" data-form-recuperar novalidate>
+        <div class="campo">
+          <label for="email">E-mail da conta</label>
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="voce@empresa.com.br" required>
+        </div>
+        <button class="btn btn-verde btn-grande btn-bloco" type="submit">Enviar link de redefinição</button>
+      </form>
+
+      <p class="auth-rodape">Lembrou a senha? <a href="entrar.html">Entrar</a></p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

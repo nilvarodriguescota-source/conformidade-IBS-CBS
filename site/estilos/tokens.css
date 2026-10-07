@@ -1,0 +1,67 @@
+/* =====================================================================
+   Tokens da identidade Sabores Estratégicos — site comercial
+   Mesma paleta do sistema (src/pagina.ts): verde da coruja (#2C4233),
+   dourado (#AC9368) e fundos off-white. Para mudar a identidade do site,
+   altere só este arquivo.
+   ===================================================================== */
+@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:500;font-display:swap;src:url(../fontes/cormorant-garamond-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:600;font-display:swap;src:url(../fontes/cormorant-garamond-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:700;font-display:swap;src:url(../fontes/cormorant-garamond-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:500;font-display:swap;src:url(../fontes/cormorant-garamond-latin-500-italic.woff2) format("woff2")}
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:600;font-display:swap;src:url(../fontes/cormorant-garamond-latin-600-italic.woff2) format("woff2")}
+
+:root{
+  /* Verde institucional */
+  --verde-950:#0E1712;--verde-900:#1B2B21;--verde-800:#23372B;--verde-700:#2C4233;--verde-600:#3A5543;--verde-500:#557060;
+  --verde-400:#7A9283;--verde-300:#A8BBAD;--verde-200:#CBD8CE;--verde-100:#E4ECE6;--verde-50:#F1F5F1;
+
+  /* Dourado dos detalhes */
+  --ouro-800:#6B5427;--ouro-700:#7E6531;--ouro-600:#96794A;--ouro-500:#AC9368;--ouro-400:#C9AE7C;
+  --ouro-300:#DCC9A3;--ouro-200:#EADDC2;--ouro-100:#F4ECDC;--ouro-50:#FAF6EC;
+  --ouro-brilho:#E4CD9E;
+
+  /* Fundos claros */
+  --creme:#F4EEE2;--papel:#F6F3EC;--papel-2:#EFEAE0;--superficie:#FFFDF9;--superficie-2:#FAF8F3;
+  --linha:#E6E0D3;--linha-2:#D9D1C1;
+
+  /* Texto sobre claro */
+  --texto:#1D2922;--texto-2:#46544B;--texto-3:#626E66;
+
+  /* Superfícies escuras (seções de destaque) */
+  --noite:#0B140F;--noite-2:#101B15;--noite-3:#15231B;--noite-4:#1B2C22;
+  --noite-linha:rgba(244,238,226,.10);--noite-linha-2:rgba(244,238,226,.16);
+  --noite-texto:#F4EEE2;--noite-texto-2:rgba(244,238,226,.74);--noite-texto-3:rgba(244,238,226,.54);
+
+  /* Estados (mesmos do sistema) */
+  --ok:#2E6B45;--ok-fundo:#EAF3EC;--ok-borda:#BFD8C6;--ok-forte:#3A7A52;--ok-claro:#7FC596;
+  --economia:#8F5316;--economia-fundo:#FBF1E4;--economia-borda:#EBCFA6;--economia-forte:#B26B26;
+  --risco:#9C2F25;--risco-fundo:#FAEDEA;--risco-borda:#EBC5BE;--risco-forte:#A53E33;
+  --pendente:#7A5E24;--pendente-fundo:#F8F1E0;--pendente-borda:#E4D0A2;--pendente-forte:#A8863F;
+
+  /* Gradientes */
+  --grad-ouro:linear-gradient(135deg,#EAD6AA 0%,#C9AE7C 45%,#AC9368 100%);
+  --grad-ouro-texto:linear-gradient(100deg,#F1E1BC 0%,#D6BC8A 40%,#B59A6B 100%);
+  --grad-verde:linear-gradient(135deg,#2C4233 0%,#23372B 55%,#17251C 100%);
+  --grad-noite:radial-gradient(120% 90% at 70% 0%,#1C3024 0%,#101B15 45%,#0B140F 100%);
+
+  /* Tipografia */
+  --serif:"Cormorant Garamond","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+  /* Forma */
+  --r-xs:8px;--r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:28px;--r-pill:999px;
+  --sombra-1:0 1px 2px rgba(29,41,34,.06);
+  --sombra-2:0 1px 2px rgba(29,41,34,.04),0 12px 32px -16px rgba(29,41,34,.24);
+  --sombra-3:0 2px 6px rgba(29,41,34,.05),0 30px 60px -28px rgba(29,41,34,.38);
+  --sombra-noite:0 30px 80px -30px rgba(0,0,0,.65),0 0 0 1px rgba(244,238,226,.06);
+  --brilho-ouro:0 0 0 1px rgba(201,174,124,.55),0 24px 70px -24px rgba(201,174,124,.45);
+
+  /* Movimento */
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --ease-saida:cubic-bezier(.4,0,.2,1);
+
+  /* Layout */
+  --largura:1240px;
+  --gutter:clamp(16px,4vw,32px);
+  --altura-topo:72px;
+}

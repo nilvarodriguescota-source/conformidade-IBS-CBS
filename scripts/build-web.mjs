@@ -70,7 +70,12 @@ for (const rel of dados) {
 }
 writeFileSync(join(pub, "dados", "manifesto.json"), JSON.stringify(dados));
 
+// O sistema (mesmo HTML de sempre) fica em sistema.html; a raiz do site é a página comercial.
 const { paginaHtml } = await import(pathToFileURL(join(raiz, "dist", "src", "pagina.js")).href);
-writeFileSync(join(pub, "index.html"), paginaHtml('<script src="navegador.js"></script>\n'));
+writeFileSync(join(pub, "sistema.html"), paginaHtml('<script src="navegador.js"></script>\n'));
+
+// Site comercial: landing (index.html), login, cadastro, checkout e área do cliente
+const { construirSite } = await import(pathToFileURL(join(raiz, "scripts", "build-site.mjs")).href);
+await construirSite({ raiz, pub });
 
 console.log("public/ gerado.");

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pagamento · Conformidade IBS/CBS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B140F">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="stylesheet" href="site/css/autenticacao.css">
+<script type="module" src="site/js/checkout.js"></script>
+</head>
+<body class="pagina-checkout" data-etapa-atual="pagamento">
+<!-- @parte icones -->
+<header class="checkout-topo">
+  <div class="container checkout-topo-faixa">
+    <a class="marca" href="index.html" aria-label="Início">
+      <img class="marca-coruja" src="site/imagens/coruja-positiva-grande.png" alt="" width="34" height="40">
+      <span class="marca-texto"><strong>Conformidade IBS/CBS</strong><small>Sabores Estratégicos</small></span>
+    </a>
+    <span class="checkout-seguro"><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg>Ambiente seguro</span>
+  </div>
+</header>
+
+<main class="checkout container" id="conteudo">
+  <!-- @parte etapas-compra -->
+
+  <div class="checkout-carregando" data-carregando><span class="carregando-grande" aria-hidden="true"></span>Preparando seu pedido...</div>
+
+  <!-- Pedido -->
+  <div class="checkout-grade" data-pedido hidden>
+    <section class="checkout-principal">
+      <h1>Confirme sua assinatura</h1>
+      <p class="auth-sub" data-saudacao>Revise o plano e escolha como prefere pagar.</p>
+
+      <div class="alerta alerta-aviso" data-aviso-assinatura hidden></div>
+      <div class="alerta alerta-erro" role="alert" data-erro hidden></div>
+
+      <h2 class="rotulo-secao">Forma de pagamento</h2>
+      <div class="formas-pagamento" role="radiogroup" aria-label="Forma de pagamento" data-formas></div>
+
+      <div class="pagamento-seguro">
+        <span class="pagamento-seguro-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-escudo"/></svg></span>
+        <div>
+          <b>Pagamento processado no ambiente do meio de pagamento</b>
+          <p>Os dados do cartão são digitados diretamente na página segura do meio de pagamento, nunca neste site. Assim que o pagamento é confirmado, sua conta é liberada.</p>
+        </div>
+      </div>
+
+      <div class="alerta alerta-aviso demo-checkout" data-demo-checkout hidden>
+        <svg class="i" aria-hidden="true"><use href="#i-info"/></svg>
+        <span><strong>Modo demonstração.</strong> Nenhum meio de pagamento está conectado ainda: ao confirmar, a assinatura é ativada só neste navegador, sem nenhuma cobrança.</span>
+      </div>
+    </section>
+
+    <aside class="resumo" aria-label="Resumo do pedido">
+      <div class="resumo-cartao">
+        <div class="resumo-cabeca">
+          <span class="resumo-selo" data-resumo-selo hidden></span>
+          <p class="rotulo-secao">Resumo do pedido</p>
+          <h2 data-resumo-nome>Plano</h2>
+          <p data-resumo-desc></p>
+          <a class="auth-link" href="index.html#planos">Trocar de plano</a>
+        </div>
+        <div class="segmentado segmentado-pequeno resumo-ciclo" role="group" aria-label="Período de cobrança" data-ciclo>
+          <button type="button" data-valor="mensal" aria-pressed="true">Mensal</button>
+          <button type="button" data-valor="anual" aria-pressed="false">Anual <span class="tag" data-vantagem-anual></span></button>
+        </div>
+        <ul class="resumo-itens" data-resumo-itens></ul>
+        <dl class="resumo-valores" data-resumo-valores></dl>
+        <button class="btn btn-ouro btn-grande btn-bloco" type="button" data-confirmar>Confirmar assinatura</button>
+        <p class="resumo-nota" data-resumo-nota></p>
+        <ul class="resumo-garantias">
+          <li><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg>Pagamento seguro</li>
+          <li><svg class="i i-sm" aria-hidden="true"><use href="#i-raio"/></svg>Acesso liberado após a confirmação</li>
+          <li><svg class="i i-sm" aria-hidden="true"><use href="#i-historico"/></svg>Troque de plano quando precisar</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Conta liberada -->
+  <section class="checkout-sucesso" data-sucesso hidden aria-live="polite">
+    <div class="sucesso-cartao">
+      <div class="sucesso-selo" aria-hidden="true">
+        <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="36"/><path d="m24 41 11 11 22-23"/></svg>
+      </div>
+      <p class="eyebrow">Assinatura ativa</p>
+      <h1>Conta liberada!</h1>
+      <p class="auth-sub" data-sucesso-texto>Seu acesso ao sistema está pronto.</p>
+      <dl class="sucesso-detalhes" data-sucesso-detalhes></dl>
+      <div class="sucesso-acoes">
+        <a class="btn btn-verde btn-grande" href="conta.html#sistema">Abrir o sistema <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+        <a class="btn btn-contorno btn-grande" href="conta.html">Ir para minha conta</a>
+      </div>
+      <p class="resumo-nota">Para entrar depois, use o botão <b>Entrar</b> no topo do site, com seu e-mail e senha.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

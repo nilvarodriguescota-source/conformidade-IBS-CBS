@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minha conta · Conformidade IBS/CBS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#101B15">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="stylesheet" href="site/css/conta.css">
+<script type="module" src="site/js/conta.js"></script>
+</head>
+<body class="pagina-conta carregando-conta">
+<!-- @parte icones -->
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<div class="app">
+  <!-- Menu lateral (computador) -->
+  <aside class="app-lateral no-escuro" aria-label="Menu da conta">
+    <a class="marca clara" href="index.html" aria-label="Voltar ao site">
+      <img class="marca-coruja" src="site/imagens/coruja-negativa-grande.png" alt="" width="30" height="35">
+      <span class="marca-texto"><strong>Conformidade IBS/CBS</strong><small>Área do cliente</small></span>
+    </a>
+    <nav class="app-nav">
+      <a href="#inicio" data-ir="inicio"><svg class="i" aria-hidden="true"><use href="#i-casa"/></svg>Início</a>
+      <a href="#sistema" data-ir="sistema"><svg class="i" aria-hidden="true"><use href="#i-xml"/></svg>Sistema<span class="app-nav-selo" data-selo-sistema hidden><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg></span></a>
+      <a href="#assinatura" data-ir="assinatura"><svg class="i" aria-hidden="true"><use href="#i-coroa"/></svg>Minha assinatura</a>
+      <a href="#perfil" data-ir="perfil"><svg class="i" aria-hidden="true"><use href="#i-usuario"/></svg>Perfil</a>
+      <a href="#configuracoes" data-ir="configuracoes"><svg class="i" aria-hidden="true"><use href="#i-engrenagem"/></svg>Configurações</a>
+    </nav>
+    <a class="lateral-plano" href="#assinatura" data-lateral-plano>
+      <span class="lateral-plano-rotulo">Seu plano</span>
+      <b data-lateral-plano-nome>—</b>
+      <span data-lateral-plano-status></span>
+    </a>
+    <div class="app-usuario">
+      <span class="avatar" data-avatar aria-hidden="true">·</span>
+      <span class="app-usuario-texto"><b data-usuario-nome>—</b><small data-usuario-email></small></span>
+      <button type="button" class="app-sair" data-sair aria-label="Sair da conta" title="Sair"><svg class="i" aria-hidden="true"><use href="#i-sair"/></svg></button>
+    </div>
+  </aside>
+
+  <div class="app-corpo">
+    <header class="app-topo">
+      <a class="marca app-topo-marca" href="index.html" aria-label="Voltar ao site">
+        <img class="marca-coruja" src="site/imagens/coruja-positiva-grande.png" alt="" width="28" height="33">
+      </a>
+      <div class="app-topo-titulo">
+        <span class="app-trilha">Área do cliente</span>
+        <h1 data-titulo-secao>Início</h1>
+      </div>
+      <div class="app-topo-acoes">
+        <span data-topo-status></span>
+        <a class="btn btn-verde btn-pequeno app-topo-abrir" href="#sistema" data-ir="sistema"><svg class="i i-sm" aria-hidden="true"><use href="#i-play"/></svg>Abrir sistema</a>
+        <div class="menu-usuario">
+          <button type="button" class="avatar avatar-botao" data-abrir-menu-usuario aria-haspopup="menu" aria-expanded="false" aria-label="Menu da conta"><span data-avatar>·</span></button>
+          <div class="menu-usuario-lista" role="menu" data-menu-usuario hidden>
+            <div class="menu-usuario-cabeca"><b data-usuario-nome>—</b><small data-usuario-email></small></div>
+            <a role="menuitem" href="#perfil" data-ir="perfil"><svg class="i i-sm" aria-hidden="true"><use href="#i-usuario"/></svg>Perfil</a>
+            <a role="menuitem" href="#assinatura" data-ir="assinatura"><svg class="i i-sm" aria-hidden="true"><use href="#i-coroa"/></svg>Minha assinatura</a>
+            <a role="menuitem" href="#configuracoes" data-ir="configuracoes"><svg class="i i-sm" aria-hidden="true"><use href="#i-engrenagem"/></svg>Configurações</a>
+            <a role="menuitem" href="index.html"><svg class="i i-sm" aria-hidden="true"><use href="#i-externo"/></svg>Voltar ao site</a>
+            <button role="menuitem" type="button" data-sair><svg class="i i-sm" aria-hidden="true"><use href="#i-sair"/></svg>Sair</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-conteudo" id="conteudo" tabindex="-1">
+
+      <!-- ===== Início ===== -->
+      <section class="painel" data-painel="inicio" aria-labelledby="titulo-inicio">
+        <div class="boas-vindas no-escuro">
+          <div class="boas-vindas-fundo" aria-hidden="true"><span></span><img src="site/imagens/coruja-negativa-grande.png" alt="" width="408" height="480"></div>
+          <p class="eyebrow" data-saudacao-dia>Boas-vindas</p>
+          <h2 id="titulo-inicio" data-saudacao>Olá!</h2>
+          <p class="boas-vindas-texto" data-boas-vindas-texto>Seu ambiente de conformidade está pronto.</p>
+          <div class="boas-vindas-acoes" data-boas-vindas-acoes></div>
+        </div>
+
+        <div class="cartoes-status">
+          <article class="cartao cartao-status">
+            <span class="cartao-icone"><svg class="i" aria-hidden="true"><use href="#i-coroa"/></svg></span>
+            <span class="cartao-rotulo">Plano atual</span>
+            <b data-status-plano>—</b>
+            <small data-status-plano-preco></small>
+            <a class="cartao-link" href="#assinatura" data-ir="assinatura">Gerenciar plano <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-d"/></svg></a>
+          </article>
+          <article class="cartao cartao-status">
+            <span class="cartao-icone"><svg class="i" aria-hidden="true"><use href="#i-escudo"/></svg></span>
+            <span class="cartao-rotulo">Status da assinatura</span>
+            <b data-status-assinatura>—</b>
+            <small data-status-assinatura-texto></small>
+          </article>
+          <article class="cartao cartao-status">
+            <span class="cartao-icone"><svg class="i" aria-hidden="true"><use href="#i-calendario"/></svg></span>
+            <span class="cartao-rotulo" data-status-data-rotulo>Próxima renovação</span>
+            <b data-status-data>—</b>
+            <small data-status-data-texto></small>
+          </article>
+        </div>
+
+        <div class="bloco-cabeca">
+          <h3>Acesso rápido</h3>
+          <p>Vá direto para a parte do sistema que você precisa.</p>
+        </div>
+        <div class="atalhos" data-atalhos></div>
+
+        <div class="inicio-duplo">
+          <article class="cartao">
+            <h3 class="cartao-titulo">Como usar em 3 passos</h3>
+            <ol class="mini-passos">
+              <li><span>1</span><div><b>Envie os XMLs</b><small>Na tela Análise, arraste os arquivos .xml ou .zip de venda e clique em "Processar análise".</small></div></li>
+              <li><span>2</span><div><b>Responda as pendências</b><small>Para os produtos que dependem da composição, escolha a descrição que corresponde ao produto.</small></div></li>
+              <li><span>3</span><div><b>Exporte o relatório final</b><small>Veja o cClassTrib e o CST a usar em cada produto e ajuste o cadastro no seu sistema de emissão.</small></div></li>
+            </ol>
+          </article>
+          <article class="cartao">
+            <h3 class="cartao-titulo">Recursos do seu plano</h3>
+            <ul class="lista-recursos" data-recursos-plano></ul>
+          </article>
+        </div>
+
+        <article class="cartao cartao-ajuda">
+          <span class="cartao-icone grande"><svg class="i i-lg" aria-hidden="true"><use href="#i-email"/></svg></span>
+          <div><h3 class="cartao-titulo">Precisa de ajuda?</h3><p>Fale com o suporte em <span data-contato="horario"></span>:</p><div class="contatos-ajuda"><span data-contato="whatsapp" data-icone></span><span data-contato="email" data-icone></span><span data-contato="instagram" data-icone></span></div></div>
+        </article>
+      </section>
+
+      <!-- ===== Sistema ===== -->
+      <section class="painel painel-sistema" data-painel="sistema" aria-label="Sistema de conformidade" hidden>
+        <div class="sistema-barra">
+          <div class="sistema-barra-texto">
+            <b>Sistema de conformidade</b>
+            <small><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg>Suas análises ficam salvas neste navegador.</small>
+          </div>
+          <div class="sistema-barra-acoes">
+            <a class="btn btn-contorno btn-pequeno" href="sistema.html" target="_blank" rel="noopener" data-tela-cheia><svg class="i i-sm" aria-hidden="true"><use href="#i-expandir"/></svg>Tela cheia</a>
+          </div>
+        </div>
+        <div class="sistema-moldura" data-moldura-sistema>
+          <div class="sistema-carregando" data-sistema-carregando><span class="carregando-grande" aria-hidden="true"></span>Abrindo o sistema...</div>
+        </div>
+        <div class="sistema-bloqueado" data-sistema-bloqueado hidden>
+          <span class="bloqueado-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-cadeado"/></svg></span>
+          <h2 data-bloqueio-titulo>Acesso bloqueado</h2>
+          <p data-bloqueio-texto></p>
+          <div data-bloqueio-acao></div>
+        </div>
+      </section>
+
+      <!-- ===== Assinatura ===== -->
+      <section class="painel" data-painel="assinatura" aria-labelledby="titulo-assinatura" hidden>
+        <div class="assinatura-destaque no-escuro">
+          <div class="assinatura-destaque-fundo" aria-hidden="true"></div>
+          <div class="assinatura-topo">
+            <div>
+              <p class="eyebrow">Minha assinatura</p>
+              <h2 id="titulo-assinatura" data-assinatura-nome>—</h2>
+              <p data-assinatura-desc></p>
+            </div>
+            <span data-assinatura-status></span>
+          </div>
+          <dl class="assinatura-dados" data-assinatura-dados></dl>
+          <div class="assinatura-acoes" data-assinatura-acoes></div>
+        </div>
+
+        <div class="alerta" data-assinatura-alerta hidden></div>
+
+        <div class="trocar-plano" data-trocar-plano hidden>
+          <div class="bloco-cabeca bloco-cabeca-linha">
+            <div><h3>Trocar de plano</h3><p>Escolha o novo plano e confirme no próximo passo.</p></div>
+            <div class="segmentado segmentado-pequeno" role="group" aria-label="Período de cobrança" data-ciclo-troca>
+              <button type="button" data-valor="mensal" aria-pressed="true">Mensal</button>
+              <button type="button" data-valor="anual" aria-pressed="false">Anual</button>
+            </div>
+          </div>
+          <div class="planos-compactos" data-planos-troca></div>
+        </div>
+
+        <div class="inicio-duplo">
+          <article class="cartao">
+            <h3 class="cartao-titulo">Recursos incluídos</h3>
+            <ul class="lista-recursos" data-recursos-assinatura></ul>
+          </article>
+          <article class="cartao">
+            <h3 class="cartao-titulo">Pagamento</h3>
+            <p class="texto-suave" data-pagamento-texto></p>
+            <div class="nota-integracao"><svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg><span>Cartão, segunda via e notas fiscais ficam no ambiente do meio de pagamento, que será conectado aqui.</span></div>
+          </article>
+        </div>
+
+        <article class="cartao">
+          <h3 class="cartao-titulo">Histórico de pagamentos</h3>
+          <div data-historico></div>
+        </article>
+      </section>
+
+      <!-- ===== Perfil ===== -->
+      <section class="painel" data-painel="perfil" aria-labelledby="titulo-perfil" hidden>
+        <div class="perfil-cabeca">
+          <span class="avatar avatar-grande" data-avatar aria-hidden="true">·</span>
+          <div><h2 id="titulo-perfil" data-usuario-nome>—</h2><p data-perfil-desde></p></div>
+        </div>
+        <article class="cartao">
+          <h3 class="cartao-titulo">Dados da conta</h3>
+          <div class="alerta" data-perfil-retorno hidden></div>
+          <form class="form-conta" data-form-perfil novalidate>
+            <div class="grade-campos">
+              <div class="campo campo-inteiro"><label for="perfil-nome">Nome completo</label><input id="perfil-nome" name="nome" autocomplete="name" required></div>
+              <div class="campo campo-inteiro"><label for="perfil-email">E-mail de acesso</label><input id="perfil-email" name="email" type="email" readonly aria-describedby="perfil-email-ajuda"><span class="ajuda" id="perfil-email-ajuda">Para trocar o e-mail de acesso, fale com o suporte.</span></div>
+              <div class="campo"><label for="perfil-empresa">Empresa <span class="opcional">(opcional)</span></label><input id="perfil-empresa" name="empresa" autocomplete="organization"></div>
+              <div class="campo"><label for="perfil-cnpj">CNPJ <span class="opcional">(opcional)</span></label><input id="perfil-cnpj" name="cnpj" inputmode="numeric" data-mascara="cnpj" placeholder="00.000.000/0000-00"></div>
+              <div class="campo campo-inteiro"><label for="perfil-telefone">Telefone <span class="opcional">(opcional)</span></label><input id="perfil-telefone" name="telefone" type="tel" inputmode="tel" data-mascara="telefone" placeholder="(00) 00000-0000"></div>
+            </div>
+            <div class="form-acoes"><button class="btn btn-verde" type="submit">Salvar alterações</button></div>
+          </form>
+        </article>
+      </section>
+
+      <!-- ===== Configurações ===== -->
+      <section class="painel" data-painel="configuracoes" aria-labelledby="titulo-config" hidden>
+        <h2 class="sr" id="titulo-config">Configurações</h2>
+        <article class="cartao">
+          <h3 class="cartao-titulo">Alterar senha</h3>
+          <div class="alerta" data-senha-retorno hidden></div>
+          <form class="form-conta" data-form-senha novalidate>
+            <div class="grade-campos">
+              <div class="campo campo-inteiro"><label for="senha-atual">Senha atual</label><div class="entrada"><input id="senha-atual" name="atual" type="password" autocomplete="current-password" required><button type="button" class="ver-senha" aria-label="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-olho"/></svg></button></div></div>
+              <div class="campo campo-inteiro"><label for="senha-nova">Nova senha</label><div class="entrada"><input id="senha-nova" name="nova" type="password" autocomplete="new-password" minlength="8" required data-senha><button type="button" class="ver-senha" aria-label="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-olho"/></svg></button></div>
+                <div class="forca-senha" data-forca aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="ajuda" data-forca-texto>Mínimo de 8 caracteres.</span></div>
+            </div>
+            <div class="form-acoes"><button class="btn btn-verde" type="submit">Atualizar senha</button></div>
+          </form>
+        </article>
+
+        <div class="inicio-duplo">
+          <article class="cartao">
+            <h3 class="cartao-titulo">Onde ficam suas análises</h3>
+            <p class="texto-suave">Os XMLs e os resultados ficam salvos no navegador deste computador. Ao abrir o sistema em outro computador ou navegador, a análise começa vazia. Para apagar a análise atual, use "Nova análise" dentro do sistema.</p>
+          </article>
+          <article class="cartao">
+            <h3 class="cartao-titulo">Sessão</h3>
+            <p class="texto-suave">Saia da conta ao terminar, principalmente em computadores compartilhados.</p>
+            <button class="btn btn-contorno" type="button" data-sair><svg class="i i-sm" aria-hidden="true"><use href="#i-sair"/></svg>Sair desta conta</button>
+          </article>
+        </div>
+
+        <article class="cartao cartao-perigo">
+          <div>
+            <h3 class="cartao-titulo">Excluir conta</h3>
+            <p class="texto-suave">Remove sua conta e o vínculo com a assinatura. A análise salva no navegador não é apagada por aqui.</p>
+          </div>
+          <button class="btn btn-perigo" type="button" data-excluir-conta><svg class="i i-sm" aria-hidden="true"><use href="#i-lixeira"/></svg>Excluir minha conta</button>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <!-- Navegação inferior (celular) -->
+  <nav class="app-abas" aria-label="Menu da conta">
+    <a href="#inicio" data-ir="inicio"><svg class="i" aria-hidden="true"><use href="#i-casa"/></svg><span>Início</span></a>
+    <a href="#sistema" data-ir="sistema"><svg class="i" aria-hidden="true"><use href="#i-xml"/></svg><span>Sistema</span></a>
+    <a href="#assinatura" data-ir="assinatura"><svg class="i" aria-hidden="true"><use href="#i-coroa"/></svg><span>Plano</span></a>
+    <a href="#perfil" data-ir="perfil"><svg class="i" aria-hidden="true"><use href="#i-usuario"/></svg><span>Perfil</span></a>
+    <a href="#configuracoes" data-ir="configuracoes"><svg class="i" aria-hidden="true"><use href="#i-engrenagem"/></svg><span>Ajustes</span></a>
+  </nav>
+</div>
+
+<dialog class="dialogo" data-dialogo>
+  <form method="dialog">
+    <span class="dialogo-icone" data-dialogo-icone></span>
+    <h2 data-dialogo-titulo></h2>
+    <p data-dialogo-texto></p>
+    <div class="dialogo-acoes">
+      <button class="btn btn-contorno" value="cancelar">Voltar</button>
+      <button class="btn btn-verde" value="ok" data-dialogo-ok>Confirmar</button>
+    </div>
+  </form>
+</dialog>
+</body>
+</html>
