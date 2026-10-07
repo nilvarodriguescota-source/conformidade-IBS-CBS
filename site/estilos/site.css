@@ -6,7 +6,7 @@
 .topo-faixa{display:flex;align-items:center;gap:24px;height:var(--altura-topo)}
 .topo .marca-coruja{height:38px}
 .topo-nav{display:flex;align-items:center;gap:4px;margin:0 auto}
-.topo-nav a{position:relative;padding:10px 14px;border-radius:var(--r-pill);font-size:14.5px;font-weight:600;color:var(--noite-texto-2);transition:color .2s,background-color .2s}
+.topo-nav a{position:relative;padding:10px 14px;white-space:nowrap;border-radius:var(--r-pill);font-size:14.5px;font-weight:600;color:var(--noite-texto-2);transition:color .2s,background-color .2s}
 .topo-nav a:hover{color:var(--noite-texto);background:rgba(244,238,226,.06)}
 .topo-nav a.ativo{color:var(--noite-texto)}
 .topo-nav a::after{content:"";position:absolute;left:50%;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--ouro-400);transform:translateX(-50%) scale(0);transition:transform .3s var(--ease)}
@@ -29,7 +29,15 @@
 .menu-movel-acoes{display:grid;gap:12px}
 body.menu-aberto{overflow:hidden}
 
-@media (max-width:960px){
+/* Telas médias: o menu completo e o botão "Analisar meus XMLs" precisam caber numa linha só.
+   Até 1240px o "Entrar" sai do topo (continua no menu do celular e no início da página);
+   até 1100px entra o menu recolhido. */
+@media (min-width:1101px) and (max-width:1240px){
+  .topo-faixa{gap:16px}
+  .topo-nav a{padding:10px 10px}
+  .topo-entrar{display:none}
+}
+@media (max-width:1100px){
   .topo-nav{display:none}
   .topo-menu{display:grid}
   .topo-acoes{margin-left:auto}

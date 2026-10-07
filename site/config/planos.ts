@@ -66,7 +66,8 @@ export interface ConfiguracaoPlanos {
 export const configuracaoPlanos: ConfiguracaoPlanos = {
   moeda: "BRL",
   valoresIlustrativos: true,
-  textoValoresIlustrativos: "Valores, limites e condições ilustrativos, sujeitos a confirmação no lançamento.",
+  /** Aviso de pré-lançamento (landing, acima dos planos, e resumo do checkout). Em modo demonstração, a landing acrescenta que nada é cobrado. */
+  textoValoresIlustrativos: "Pré-lançamento: os valores são de referência e podem mudar até a abertura das assinaturas.",
   /** Texto do selo do ciclo anual. */
   vantagemAnual: "2 meses grátis",
   /** Condições exibidas abaixo dos planos (EXEMPLO: confirmar com o negócio). */
@@ -77,7 +78,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
     {
       id: "essencial",
       nome: "Essencial",
-      descricao: "Para a empresa que quer conferir as próprias notas com segurança.",
+      descricao: "Para analisar as vendas da sua empresa e ajustar o cadastro por conta própria, com o relatório final em CSV.",
       precoMensal: 149,
       precoAnual: 1490,
       destaque: false,
@@ -91,11 +92,11 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
     {
       id: "profissional",
       nome: "Profissional",
-      descricao: "Para quem emite muitas notas e precisa entregar relatórios prontos.",
+      descricao: "Para levar o resultado ao contador ou à equipe: relatório final em Excel e PDF e suporte prioritário.",
       precoMensal: 297,
       precoAnual: 2970,
       destaque: true,
-      seloDestaque: "Recomendado",
+      seloDestaque: "Nossa recomendação",
       limites: [
         { rotulo: "Empresas (CNPJ)", valor: "até 3" },
         { rotulo: "XMLs por mês", valor: "até 10.000" },
@@ -110,7 +111,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
     {
       id: "premium",
       nome: "Premium",
-      descricao: "Para redes, grupos e escritórios que cuidam de várias empresas.",
+      descricao: "Para redes, grupos e escritórios com várias empresas, com acompanhamento na primeira análise.",
       precoMensal: 597,
       precoAnual: 5970,
       destaque: false,

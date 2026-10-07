@@ -14,7 +14,7 @@ Visitante → index.html (landing) → Planos → cadastro.html → checkout.htm
 
 | Endereço | Arquivo-fonte | Papel |
 | --- | --- | --- |
-| `/` | `html/index.html` + `paginas/inicio.ts` | Landing: hero, como funciona, benefícios, módulos, planos, FAQ |
+| `/` | `html/index.html` + `paginas/inicio.ts` | Página de venda: problema, risco, solução, demonstração, o que você descobre, diferenciais, público, exemplo de análise, planos, quem está por trás, FAQ |
 | `/entrar` | `html/entrar.html` + `paginas/entrar.ts` | Login (volta para `?voltar=` ou para a área do cliente) |
 | `/cadastro` | `html/cadastro.html` + `paginas/cadastro.ts` | Escolha do plano e criação da conta |
 | `/recuperar-senha` | `html/recuperar-senha.html` + `paginas/recuperar-senha.ts` | Pedido do e-mail de redefinição |
@@ -60,10 +60,13 @@ npm run site:tipos   # checagem de tipos do código do site
 ## Editar sem programar
 
 - **Preços, limites e recursos:** `config/planos.ts`. Enquanto `valoresIlustrativos`
-  for `true`, a página mostra "valores ilustrativos" abaixo dos planos. Os números atuais
-  são exemplos.
+  for `true`, a página mostra o aviso de pré-lançamento (`textoValoresIlustrativos`) acima
+  dos planos e no resumo do checkout. Os números atuais são exemplos.
 - **Contatos e dados da empresa:** `config/produto.ts`. Campos `null` aparecem com o selo
   "A DEFINIR" (classe `.a-definir`).
+- **Quem está por trás:** `config/produto.ts`, em `responsavel` (nome, especialidade,
+  experiência, motivo e foto). A foto vai em `site/imagens/` e o caminho entra em `foto`;
+  sem foto, a seção mostra a coruja da marca.
 - **Cores e fontes:** `estilos/tokens.css` (mesma paleta do sistema).
 - **Textos:** direto nos arquivos de `html/`.
 
@@ -118,9 +121,26 @@ estão em `MODULOS`, em `paginas/conta.ts`. A análise continua salva no navegad
 
 ## Textos que dependem do funcionamento atual
 
-O FAQ e o card "Privacidade" dizem que os XMLs são processados e salvos no navegador.
-Isso é verdade na versão atual (Netlify). Se o processamento passar para um servidor,
-revise esses textos e a página de privacidade.
+O FAQ, o cartão "Seus XMLs não saem do navegador" e o hero dizem que os XMLs são
+processados e salvos no navegador, sem scripts de terceiros. Isso é verdade na versão atual
+(Netlify). Se o processamento passar para um servidor, revise esses textos e a página de
+privacidade.
+
+Outros textos da página de venda repetem o comportamento do sistema e precisam acompanhar
+qualquer mudança nele:
+
+- **Telas de demonstração** (painel do hero e seção "Demonstração"): faixa "ATENÇÃO" para 84%,
+  as quatro opções de "O que é este produto?", a instrução do Relatório Final e o resultado
+  "Requer validação humana" da Consulta por NCM imitam a tela real (`src/pagina.ts`,
+  `src/opcoes-validacao.ts`). Os números são de demonstração e aparecem rotulados como tal.
+- **FAQ do Simples Nacional:** diz que a análise segue o calendário do regime normal porque a
+  versão do navegador usa `empresa.json` com `regime: "normal"`. Se o regime passar a ser lido
+  da nota, revise a resposta.
+- **Alíquotas de teste de 2026** (seção do risco e FAQ da economia potencial): CBS 0,9% e
+  IBS 0,1%, de `src/parametros.ts`.
+- **Modo demonstração:** elementos com `data-so-demonstracao` (por exemplo, "nesta fase nada é
+  cobrado") só aparecem enquanto `integracoes.modo` for `"demonstracao"`; os com
+  `data-so-producao`, o contrário.
 
 ## Fontes
 

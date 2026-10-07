@@ -7,6 +7,8 @@ import {
   type Plano,
   type RecursoId,
 } from "../config/planos.js";
+import { emDemonstracao } from "../config/integracoes.js";
+import { produto } from "../config/produto.js";
 import { rotas } from "../servicos/rotas.js";
 import type { CicloCobranca } from "../servicos/tipos.js";
 import { $, $$, esc, formatarMoeda, icone, iniciarPagina, numeroDoPreco, segmentado } from "../ui/comum.js";
@@ -90,7 +92,8 @@ function iniciarPlanos(): void {
   if (condicoes) condicoes.innerHTML = configuracaoPlanos.condicoes.map((c) => `<li>${icone("check-circulo", "i-sm")}${esc(c)}</li>`).join("");
   const aviso = $("[data-valores-ilustrativos]");
   if (aviso && configuracaoPlanos.valoresIlustrativos) {
-    aviso.innerHTML = `${icone("info")}${esc(configuracaoPlanos.textoValoresIlustrativos)}`;
+    const semCobranca = emDemonstracao() ? " Nesta fase nada é cobrado: cadastro e assinatura funcionam em modo demonstração." : "";
+    aviso.innerHTML = `${icone("info")}<span>${esc(configuracaoPlanos.textoValoresIlustrativos + semCobranca)}</span>`;
     aviso.hidden = false;
   }
 
@@ -208,27 +211,6 @@ function iniciarContadores(): void {
   alvos.forEach((a) => obs.observe(a));
 }
 
-/* ---------------- Como funciona (abas) ---------------- */
-
-function iniciarAbasPassos(): void {
-  const raiz = $("[data-abas]");
-  const seletor = $(".abas-seletor", raiz ?? document);
-  if (!raiz || !seletor) return;
-  segmentado(seletor, (valor) => {
-    $$<HTMLButtonElement>("button", seletor).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.valor === valor)));
-    for (const painel of $$("[data-painel]", raiz)) {
-      const ativo = painel.dataset.painel === valor;
-      painel.hidden = !ativo;
-      if (ativo) {
-        painel.classList.remove("entrando");
-        void painel.offsetWidth;
-        painel.classList.add("entrando");
-        $$("[data-revelar]", painel).forEach((el) => el.classList.add("visivel"));
-      }
-    }
-  });
-}
-
 /* ---------------- Benefícios: brilho que segue o cursor ---------------- */
 
 function iniciarBrilhoCartoes(): void {
@@ -240,58 +222,6 @@ function iniciarBrilhoCartoes(): void {
       card.style.setProperty("--my", `${e.clientY - r.top}px`);
     });
   }
-}
-
-/* ---------------- Módulos: trilho com setas ---------------- */
-
-function iniciarTrilho(): void {
-  const trilho = $("[data-trilho]");
-  const anterior = $<HTMLButtonElement>("[data-trilho-anterior]");
-  const proximo = $<HTMLButtonElement>("[data-trilho-proximo]");
-  if (!trilho || !anterior || !proximo) return;
-  const passo = () => ($(".poster", trilho)?.offsetWidth ?? 280) + 20;
-  const atualizar = () => {
-    anterior.disabled = trilho.scrollLeft <= 4;
-    proximo.disabled = trilho.scrollLeft + trilho.clientWidth >= trilho.scrollWidth - 4;
-  };
-  const mover = (dir: number) => trilho.scrollBy({ left: dir * passo() * 2, behavior: semMovimento ? "auto" : "smooth" });
-  anterior.addEventListener("click", () => mover(-1));
-  proximo.addEventListener("click", () => mover(1));
-  trilho.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight") mover(1);
-    if (e.key === "ArrowLeft") mover(-1);
-  });
-  trilho.addEventListener("scroll", () => requestAnimationFrame(atualizar), { passive: true });
-  addEventListener("resize", atualizar);
-  atualizar();
-
-  // Arrastar com o mouse (no toque, a rolagem já é nativa)
-  let inicioX = 0;
-  let inicioScroll = 0;
-  let arrastando = false;
-  let moveu = false;
-  trilho.addEventListener("pointerdown", (e) => {
-    if (e.pointerType !== "mouse") return;
-    arrastando = true;
-    moveu = false;
-    inicioX = e.clientX;
-    inicioScroll = trilho.scrollLeft;
-  });
-  addEventListener("pointermove", (e) => {
-    if (!arrastando) return;
-    const dx = e.clientX - inicioX;
-    if (Math.abs(dx) > 4) {
-      moveu = true;
-      trilho.style.scrollSnapType = "none";
-      trilho.scrollLeft = inicioScroll - dx;
-    }
-  });
-  addEventListener("pointerup", () => {
-    if (!arrastando) return;
-    arrastando = false;
-    trilho.style.scrollSnapType = "";
-  });
-  trilho.addEventListener("click", (e) => moveu && e.preventDefault(), true);
 }
 
 /* ---------------- Na prática: telas que se alternam ---------------- */
@@ -363,6 +293,32 @@ function iniciarFaq(): void {
   }
 }
 
+/* ---------------- Textos que dependem do modo e dados da responsável ---------------- */
+
+/** data-so-demonstracao: só enquanto contas e pagamentos forem simulados; data-so-producao: o contrário. */
+function textosDoModo(): void {
+  const demo = emDemonstracao();
+  for (const el of $$("[data-so-demonstracao]")) el.hidden = !demo;
+  for (const el of $$("[data-so-producao]")) el.hidden = demo;
+}
+
+/** Seção "Quem está por trás": lê config/produto.ts (responsavel); campo null vira "a definir". */
+function preencherResponsavel(): void {
+  const r = produto.responsavel;
+  const rotulos = { nome: "nome", especialidade: "especialidade", experiencia: "experiência", motivo: "por que a análise existe" } as const;
+  for (const el of $$("[data-responsavel]")) {
+    const campo = el.dataset.responsavel as keyof typeof rotulos;
+    if (!(campo in rotulos)) continue;
+    const valor = r[campo];
+    el.innerHTML = valor ? esc(valor) : `<span class="a-definir">${rotulos[campo]}</span>`;
+  }
+  const figura = $("[data-responsavel-foto]");
+  if (figura && r.foto) {
+    figura.classList.add("com-foto");
+    figura.innerHTML = `<img src="${esc(r.foto)}" alt="${esc(r.nome ?? "")}" loading="lazy">`;
+  }
+}
+
 /* ---------------- Chamada flutuante no celular ---------------- */
 
 function iniciarCtaMovel(): void {
@@ -381,11 +337,11 @@ function iniciarCtaMovel(): void {
 iniciarPagina();
 iniciarTopo();
 iniciarPlanos();
+textosDoModo();
+preencherResponsavel();
 iniciarParalaxe();
 iniciarContadores();
-iniciarAbasPassos();
 iniciarBrilhoCartoes();
-iniciarTrilho();
 iniciarDemo();
 iniciarFaq();
 iniciarCtaMovel();

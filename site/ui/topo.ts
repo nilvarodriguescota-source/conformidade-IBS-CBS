@@ -44,7 +44,7 @@ export function iniciarTopo(): void {
       botao.focus();
     }
   });
-  matchMedia("(min-width: 961px)").addEventListener("change", (m) => m.matches && fechar());
+  matchMedia("(min-width: 1101px)").addEventListener("change", (m) => m.matches && fechar());
 
   // Seção ativa no menu
   const links = $$<HTMLAnchorElement>(".topo-nav a[href*='#']");
