@@ -40,13 +40,13 @@ export const produto = {
     nome: "Nilva Rodrigues Cota" as string | null,
     /** Especialidade em uma linha. */
     especialidade: "Consultora em gestão e negócios para o setor de alimentação: administração, finanças, gestão tributária e processos de padarias, cafeterias, indústrias de alimentos e distribuidoras." as string | null,
-    /** Experiência em até duas frases. */
-    experiencia: "Mais de 20 anos de gestão no setor alimentício, 8 deles como diretora geral de uma indústria de alimentos, no comando de operação, equipe e resultado." as string | null,
+    /** Experiência em até duas frases. Os "+20 anos" estão em `destaque`; se ele sair, volte com eles para cá. */
+    experiencia: "Oito anos como diretora-geral em indústria de alimentos, no comando de operação, equipe e resultado." as string | null,
     /** Por que a análise existe, em uma ou duas frases. */
-    motivo: "Nasceu da necessidade de transformar a complexidade da Reforma Tributária em uma análise prática: identificar o que está correto, o que precisa ser revisado e onde pode haver imposto calculado a mais." as string | null,
+    motivo: "O Conformidade IBS/CBS nasceu da necessidade de transformar a complexidade da Reforma Tributária em uma análise prática: identificar o que está correto, o que precisa ser revisado e onde pode haver imposto calculado a mais." as string | null,
     /** Caminho da foto (retrato 4:5) dentro de site/imagens/, ex.: "site/imagens/nilva.jpg". */
     foto: "site/imagens/nilva-rodrigues.webp" as string | null,
-    /** Número em destaque sobre a foto. */
+    /** Número em destaque sobre a foto; sem foto, não aparece. */
     destaque: { valor: "+20 anos", texto: "de gestão no setor alimentício" } as { valor: string; texto: string } | null,
     /** Formação, na ordem em que aparece; `destaque` marca o curso ligado à análise. */
     formacao: [
@@ -60,8 +60,8 @@ export const produto = {
     ] as { curso: string; nivel: string; destaque?: boolean }[],
     /** Frase da responsável, exibida abaixo da foto. */
     citacao: "Gestão boa não é a mais complexa. É a que o dono consegue acompanhar todos os dias." as string | null,
-    /** Cidade, no rodapé da seção. */
-    local: "Florianópolis (SC)" as string | null,
+    /** Região de atendimento, como no cartão (fica junto dos contatos). */
+    local: "Florianópolis e região" as string | null,
     /** Endereços completos; os vazios não aparecem. */
     linkedin: "https://www.linkedin.com/in/nilva-rodrigues-bb845122/" as string | null,
     site: "https://saboresestrategicos.com.br" as string | null,

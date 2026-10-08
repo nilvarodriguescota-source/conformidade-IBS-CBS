@@ -67,8 +67,8 @@ npm run site:tipos   # checagem de tipos do código do site
 - **Quem está por trás:** `config/produto.ts`, em `responsavel` (nome, especialidade,
   experiência, motivo, foto, número em destaque sobre a foto, formação, frase, cidade,
   LinkedIn e site). A foto (retrato 4:5) vai em `site/imagens/` e o caminho entra em `foto`;
-  sem foto, a seção mostra a coruja da marca. Destaque, formação, frase, cidade e links
-  somem quando vazios.
+  sem foto, a seção mostra a coruja da marca. Destaque, formação, frase, região e links
+  somem quando vazios; o destaque só aparece junto com a foto.
 - **Cores e fontes:** `estilos/tokens.css` (mesma paleta do sistema).
 - **Textos:** direto nos arquivos de `html/`.
 

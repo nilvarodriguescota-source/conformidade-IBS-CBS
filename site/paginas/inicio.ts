@@ -339,10 +339,10 @@ function preencherResponsavel(): void {
   const figura = $("[data-responsavel-foto]");
   if (figura && r.foto) {
     figura.classList.add("com-foto");
-    figura.innerHTML = `<img src="${esc(r.foto)}" alt="${esc(r.nome ? `Foto de ${r.nome}` : "")}" width="720" height="900" loading="lazy" decoding="async">`;
+    figura.innerHTML = `<img src="${esc(r.foto)}" alt="${esc(r.nome ?? "")}" width="720" height="900" loading="lazy" decoding="async">`;
   }
   const destaque = $("[data-responsavel-destaque]");
-  if (destaque && r.destaque) {
+  if (destaque && r.destaque && r.foto) {
     destaque.innerHTML = `<b>${esc(r.destaque.valor)}</b> <span>${esc(r.destaque.texto)}</span>`;
     destaque.hidden = false;
   }
@@ -354,7 +354,9 @@ function preencherResponsavel(): void {
   const formacao = $("[data-responsavel-formacao]");
   if (formacao && r.formacao.length) {
     formacao.querySelector("ul")!.innerHTML = r.formacao
-      .map((f) => `<li${f.destaque ? ' class="destaque"' : ""}><span>${esc(f.curso)}</span><small>${esc(f.nivel)}</small></li>`)
+      .map((f) => f.destaque
+        ? `<li class="destaque">${esc(f.nivel)} em ${esc(f.curso)}</li>`
+        : `<li><span>${esc(f.curso)}</span> <small>${esc(f.nivel)}</small></li>`)
       .join("");
     formacao.hidden = false;
   }
@@ -371,7 +373,8 @@ function preencherResponsavel(): void {
     el.innerHTML = `<a class="contato" href="${esc(href)}" target="_blank" rel="noopener">${el.hasAttribute("data-icone") ? icone(dados.simbolo, "i-sm") : ""}<span>${esc(dados.texto)}</span></a>`;
   }
   const local = $("[data-responsavel-local]");
-  if (local) local.textContent = r.local ? ` · ${r.local}` : "";
+  if (local && !r.local) local.remove();
+  else if (local && r.local) local.innerHTML = `<span class="contato">${local.hasAttribute("data-icone") ? icone("local", "i-sm") : ""}<span>${esc(r.local)}</span></span>`;
 }
 
 /* ---------------- Chamada flutuante no celular ---------------- */
