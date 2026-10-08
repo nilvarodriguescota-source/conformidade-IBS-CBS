@@ -339,8 +339,42 @@ function preencherResponsavel(): void {
   const figura = $("[data-responsavel-foto]");
   if (figura && r.foto) {
     figura.classList.add("com-foto");
-    figura.innerHTML = `<img src="${esc(r.foto)}" alt="${esc(r.nome ?? "")}" loading="lazy">`;
+    figura.innerHTML = `<img src="${esc(r.foto)}" alt="${esc(r.nome ?? "")}" width="720" height="900" loading="lazy" decoding="async">`;
   }
+  const destaque = $("[data-responsavel-destaque]");
+  if (destaque && r.destaque && r.foto) {
+    destaque.innerHTML = `<b>${esc(r.destaque.valor)}</b> <span>${esc(r.destaque.texto)}</span>`;
+    destaque.hidden = false;
+  }
+  const citacao = $("[data-responsavel-citacao]");
+  if (citacao && r.citacao) {
+    citacao.innerHTML = `<p>${esc(r.citacao)}</p>`;
+    citacao.hidden = false;
+  }
+  const formacao = $("[data-responsavel-formacao]");
+  if (formacao && r.formacao.length) {
+    formacao.querySelector("ul")!.innerHTML = r.formacao
+      .map((f) => f.destaque
+        ? `<li class="destaque">${esc(f.nivel)} em ${esc(f.curso)}</li>`
+        : `<li><span>${esc(f.curso)}</span> <small>${esc(f.nivel)}</small></li>`)
+      .join("");
+    formacao.hidden = false;
+  }
+  // LinkedIn e site da consultoria: o vazio some, em vez de "a definir"
+  const links = {
+    linkedin: r.linkedin && { texto: "LinkedIn", simbolo: "linkedin" },
+    site: r.site && { texto: r.site.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""), simbolo: "globo" },
+  };
+  for (const el of $$("[data-responsavel-link]")) {
+    const tipo = el.dataset.responsavelLink as keyof typeof links;
+    const href = r[tipo];
+    const dados = links[tipo];
+    if (!href || !dados) { el.remove(); continue; }
+    el.innerHTML = `<a class="contato" href="${esc(href)}" target="_blank" rel="noopener">${el.hasAttribute("data-icone") ? icone(dados.simbolo, "i-sm") : ""}<span>${esc(dados.texto)}</span></a>`;
+  }
+  const local = $("[data-responsavel-local]");
+  if (local && !r.local) local.remove();
+  else if (local && r.local) local.innerHTML = `<span class="contato">${local.hasAttribute("data-icone") ? icone("local", "i-sm") : ""}<span>${esc(r.local)}</span></span>`;
 }
 
 /* ---------------- Chamada flutuante no celular ---------------- */

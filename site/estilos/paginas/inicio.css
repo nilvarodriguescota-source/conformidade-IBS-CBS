@@ -492,7 +492,9 @@
 
 /* =========================== QUEM ESTÁ POR TRÁS =========================== */
 .quem{padding-top:calc(clamp(80px,11vw,136px) + var(--curva) / 2)}
-.quem-cartao{display:grid;grid-template-columns:minmax(0,.6fr) minmax(0,1.4fr);gap:clamp(36px,6vw,96px);align-items:center}
+.quem-cartao{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:clamp(40px,6vw,96px);align-items:start}
+.quem-lado{order:-1}
+.quem-foto{position:relative}
 /* Retrato com uma moldura dourada deslocada (a foto entra em config/produto.ts) */
 .quem-retrato{position:relative;display:grid;place-items:center;margin:0 18px 18px 0;aspect-ratio:4/5;isolation:isolate}
 .quem-retrato::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:26px;background:var(--grao-escuro),var(--papel-2)}
@@ -500,10 +502,26 @@
 .quem-retrato img{width:46%;opacity:.5}
 .quem-retrato figcaption{position:absolute;left:0;right:0;bottom:18px;text-align:center;font-size:13px;color:var(--texto-2)}
 .quem-retrato.com-foto img{width:100%;height:100%;border-radius:26px;object-fit:cover;opacity:1}
+/* Os anos de estrada, num bilhete verde que escapa da foto */
+.quem-destaque{position:absolute;left:-28px;bottom:56px;display:grid;gap:4px;max-width:190px;margin:0;padding:14px 18px 15px;border-radius:18px 18px 18px 6px;background:var(--grad-verde);box-shadow:var(--sombra-3);transform:rotate(-2.5deg)}
+.quem-destaque b{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1;background:var(--grad-ouro-texto);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quem-destaque span{font-size:13px;line-height:1.35;color:var(--noite-texto-2)}
+.quem-citacao{position:relative;margin:clamp(48px,5vw,64px) 18px 0 0;padding-top:30px}
+.quem-citacao::before{content:"\201C";position:absolute;top:-22px;left:-6px;font-family:var(--serif);font-size:96px;line-height:1;color:var(--ouro-400)}
+.quem-citacao p{margin:0;font-family:var(--serif);font-size:clamp(21px,1.9vw,26px);font-style:italic;font-weight:500;line-height:1.28;color:var(--verde-800)}
 .quem-texto .lead{max-width:600px}
 .quem-pessoa{display:grid;gap:8px;margin-top:22px;font-size:15.5px;line-height:1.6;color:var(--texto-2)}
 .quem-pessoa p{margin:0}
-.quem-contatos{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:26px;font-size:14.5px}
+.quem-formacao{margin-top:32px}
+.quem-formacao h3{margin:0 0 10px;font-size:23px;color:var(--verde-900)}
+.quem-formacao ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px;margin:0;padding:0;list-style:none}
+.quem-formacao li{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 0;border-bottom:1px solid var(--linha);font-size:14.5px;line-height:1.4;color:var(--texto)}
+.quem-formacao small{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-3)}
+/* O MBA da reforma, que é o assunto da análise, ganha a linha inteira */
+.quem-formacao li.destaque{display:block;grid-column:1/-1;margin:4px 0 6px;padding:13px 16px;border:1px solid var(--ouro-300);border-radius:14px 14px 14px 4px;background:var(--ouro-50);font-family:var(--serif);font-size:20px;font-weight:600;line-height:1.25;color:var(--verde-900)}
+/* Em duas colunas, o nível vai para baixo do curso, para o nome não ficar espremido */
+@media (min-width:1101px){.quem-formacao li:not(.destaque){flex-direction:column;justify-content:flex-start;align-items:flex-start;gap:2px}}
+.quem-contatos{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:28px;font-size:14.5px}
 .quem-contatos a{color:var(--verde-700);text-decoration:underline;text-decoration-color:var(--ouro-400);text-underline-offset:3px}
 .quem-contatos .contato{color:var(--texto-2)}
 .quem-empresa{margin:18px 0 0;font-size:12.5px;letter-spacing:.02em;color:var(--texto-3)}
@@ -599,6 +617,19 @@
   .demo-aba-icone .i{width:17px;height:17px}
   .demo-tempo{left:18px;right:18px}
 }
+/* Sem margem lateral para o bilhete escapar da foto */
+@media (max-width:1340px){
+  .quem-destaque{left:-12px}
+}
+@media (max-width:1100px){
+  .quem-destaque{max-width:160px;padding:12px 14px}
+  .quem-destaque b{font-size:30px}
+  .quem-formacao ul{grid-template-columns:1fr}
+}
+/* Texto mais longo que a foto: a coluna da foto acompanha a leitura */
+@media (min-width:861px) and (max-width:1279px) and (min-height:760px){
+  .quem-lado{position:sticky;top:calc(var(--altura-topo) + 24px)}
+}
 @media (max-width:860px){
   /* Planos viram um carrossel com o recomendado no centro */
   .planos-grade{display:flex;align-items:flex-start;gap:14px;margin:0 calc(var(--gutter) * -1);padding:30px var(--gutter) 12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
@@ -614,12 +645,16 @@
   .comparativo-meio{height:0;transform:translateY(-10px)}
   .comparativo-meio span{transform:rotate(90deg)}
   .quem-cartao{grid-template-columns:1fr}
-  .quem-retrato{width:min(280px,72%)}
+  .quem-lado{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px 40px;align-items:end}
+  .quem-citacao{margin:0}
   .exemplo-trilha{grid-template-columns:1fr;gap:22px}
   .exemplo-trilha li:not(:last-child)::after{content:"↓";right:auto;left:22px;top:auto;bottom:-21px;transform:none}
   .cta-movel{display:flex}
 }
 @media (max-width:640px){
+  .quem-lado{grid-template-columns:1fr}
+  .quem-foto{width:min(300px,82%)}
+  .quem-destaque{left:auto;right:-14%;bottom:32px}
   :root{--altura-topo:64px}
   .hero{padding-top:calc(var(--altura-topo) + 36px)}
   .hero h1{font-size:clamp(38px,10.6vw,54px)}
