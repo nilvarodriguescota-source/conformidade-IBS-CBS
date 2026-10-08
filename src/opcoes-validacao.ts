@@ -52,7 +52,11 @@ function pct(r: number | null): string {
   return r === null ? "redução não disponível" : `${Math.round(r * 100)}%`;
 }
 
-export function opcoesDaPergunta(ncm: string, produto: string, regras: RegraParaPergunta[]): OpcaoValidacao[] {
+/**
+ * `consumoNoLocal`: o emitente atende consumo no local (bar, restaurante, lanchonete). Nesse caso a opção do regime
+ * de bares e restaurantes aparece para todo produto, mesmo sem regra de alimentos no NCM.
+ */
+export function opcoesDaPergunta(ncm: string, produto: string, regras: RegraParaPergunta[], contexto: { consumoNoLocal?: boolean } = {}): OpcaoValidacao[] {
   const opcoes: OpcaoValidacao[] = regras.map((r) => {
     const designacao = designacaoEspecifica(r.descricaoLegal);
     return {
@@ -65,7 +69,7 @@ export function opcoesDaPergunta(ncm: string, produto: string, regras: RegraPara
     };
   });
 
-  if (regras.some((r) => r.anexo !== null && ANEXOS_ALIMENTOS.has(r.anexo))) {
+  if (contexto.consumoNoLocal || regras.some((r) => r.anexo !== null && ANEXOS_ALIMENTOS.has(r.anexo))) {
     opcoes.push({
       tipo: "CONSUMO_NO_LOCAL",
       regraId: null,
@@ -84,7 +88,9 @@ export function opcoesDaPergunta(ncm: string, produto: string, regras: RegraPara
   opcoes.push({
     tipo: "MERCADORIA_SEM_BENEFICIO",
     regraId: null,
-    rotulo: `Vendido como mercadoria; não corresponde às regras acima; NCM ${ncm} correto`,
+    rotulo: regras.length
+      ? `Vendido como mercadoria; não corresponde às regras acima; NCM ${ncm} correto`
+      : `Vendido como mercadoria (revenda ou para levar); NCM ${ncm} correto`,
     resultado: "Tributação integral · CST 000 · cClassTrib 000001",
     explicacao: `${verificadas}${sem60} O regime de bares e restaurantes não se aplica a mercadoria.`,
     naoRecomendada: null,

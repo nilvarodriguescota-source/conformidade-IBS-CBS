@@ -38,7 +38,7 @@ test("3. CNAE de lanchonete sem confirmação no cadastro: potencialmente aplic�
   assert.equal(r.classificacao, "REQUER_VALIDACAO");
   assert.equal(r.rotulo, "BENEFÍCIO POTENCIALMENTE APLICÁVEL — REQUER VALIDAÇÃO");
   assert.ok(r.auditoria.some((p) => p.camada === "SISTEMA_INFERE" && /5611-2\/03/.test(p.texto)), "vínculo CNAE → atividade é inferência");
-  assert.ok(r.auditoria.some((p) => p.camada === "PENDENTE" && /não foi confirmada no cadastro/.test(p.texto)));
+  assert.ok(r.auditoria.some((p) => p.camada === "PENDENTE" && /Atividade não confirmada/.test(p.texto)));
   assert.ok(r.beneficio!.condicoes.some((c) => /bebidas alcoólicas, ainda que preparadas/.test(c.texto)), "condições literais do art. 273, § 2º");
 });
 

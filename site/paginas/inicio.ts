@@ -7,6 +7,8 @@ import {
   type Plano,
   type RecursoId,
 } from "../config/planos.js";
+import { emDemonstracao } from "../config/integracoes.js";
+import { produto } from "../config/produto.js";
 import { rotas } from "../servicos/rotas.js";
 import type { CicloCobranca } from "../servicos/tipos.js";
 import { $, $$, esc, formatarMoeda, icone, iniciarPagina, numeroDoPreco, segmentado } from "../ui/comum.js";
@@ -48,7 +50,9 @@ function cartaoPlano(plano: Plano, ciclo: CicloCobranca): string {
     </a>
     <ul class="plano-limites">${plano.limites.map((l) => `<li><span>${esc(l.rotulo)}</span><b>${esc(l.valor)}</b></li>`).join("")}</ul>
     ${plano.chamadaRecursos ? `<p class="plano-chamada">${esc(plano.chamadaRecursos)}</p>` : ""}
-    <ul class="plano-recursos">${recursos.map(recursoHtml).join("")}</ul>
+    ${plano.resumo
+      ? `<p class="plano-resumo">${esc(plano.resumo)}</p><button type="button" class="plano-incluidos" data-ver-comparacao>${icone("lista", "i-sm")}<span>Ver todos os recursos</span>${icone("chevron-d", "i-sm")}</button>`
+      : `<ul class="plano-recursos">${recursos.map(recursoHtml).join("")}</ul>`}
     ${plano.chamadaRecursos ? `<button type="button" class="plano-incluidos" data-ver-comparacao>${icone("camadas", "i-sm")}<span>Inclui os ${plano.recursos.length - recursos.length} recursos do plano anterior</span>${icone("chevron-d", "i-sm")}</button>` : ""}
   </article>`;
 }
@@ -90,7 +94,8 @@ function iniciarPlanos(): void {
   if (condicoes) condicoes.innerHTML = configuracaoPlanos.condicoes.map((c) => `<li>${icone("check-circulo", "i-sm")}${esc(c)}</li>`).join("");
   const aviso = $("[data-valores-ilustrativos]");
   if (aviso && configuracaoPlanos.valoresIlustrativos) {
-    aviso.innerHTML = `${icone("info")}${esc(configuracaoPlanos.textoValoresIlustrativos)}`;
+    const semCobranca = emDemonstracao() ? " Nesta fase nada é cobrado: cadastro e assinatura funcionam em modo demonstração." : "";
+    aviso.innerHTML = `${icone("info")}<span>${esc(configuracaoPlanos.textoValoresIlustrativos + semCobranca)}</span>`;
     aviso.hidden = false;
   }
 
@@ -208,27 +213,6 @@ function iniciarContadores(): void {
   alvos.forEach((a) => obs.observe(a));
 }
 
-/* ---------------- Como funciona (abas) ---------------- */
-
-function iniciarAbasPassos(): void {
-  const raiz = $("[data-abas]");
-  const seletor = $(".abas-seletor", raiz ?? document);
-  if (!raiz || !seletor) return;
-  segmentado(seletor, (valor) => {
-    $$<HTMLButtonElement>("button", seletor).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.valor === valor)));
-    for (const painel of $$("[data-painel]", raiz)) {
-      const ativo = painel.dataset.painel === valor;
-      painel.hidden = !ativo;
-      if (ativo) {
-        painel.classList.remove("entrando");
-        void painel.offsetWidth;
-        painel.classList.add("entrando");
-        $$("[data-revelar]", painel).forEach((el) => el.classList.add("visivel"));
-      }
-    }
-  });
-}
-
 /* ---------------- Benefícios: brilho que segue o cursor ---------------- */
 
 function iniciarBrilhoCartoes(): void {
@@ -240,58 +224,6 @@ function iniciarBrilhoCartoes(): void {
       card.style.setProperty("--my", `${e.clientY - r.top}px`);
     });
   }
-}
-
-/* ---------------- Módulos: trilho com setas ---------------- */
-
-function iniciarTrilho(): void {
-  const trilho = $("[data-trilho]");
-  const anterior = $<HTMLButtonElement>("[data-trilho-anterior]");
-  const proximo = $<HTMLButtonElement>("[data-trilho-proximo]");
-  if (!trilho || !anterior || !proximo) return;
-  const passo = () => ($(".poster", trilho)?.offsetWidth ?? 280) + 20;
-  const atualizar = () => {
-    anterior.disabled = trilho.scrollLeft <= 4;
-    proximo.disabled = trilho.scrollLeft + trilho.clientWidth >= trilho.scrollWidth - 4;
-  };
-  const mover = (dir: number) => trilho.scrollBy({ left: dir * passo() * 2, behavior: semMovimento ? "auto" : "smooth" });
-  anterior.addEventListener("click", () => mover(-1));
-  proximo.addEventListener("click", () => mover(1));
-  trilho.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight") mover(1);
-    if (e.key === "ArrowLeft") mover(-1);
-  });
-  trilho.addEventListener("scroll", () => requestAnimationFrame(atualizar), { passive: true });
-  addEventListener("resize", atualizar);
-  atualizar();
-
-  // Arrastar com o mouse (no toque, a rolagem já é nativa)
-  let inicioX = 0;
-  let inicioScroll = 0;
-  let arrastando = false;
-  let moveu = false;
-  trilho.addEventListener("pointerdown", (e) => {
-    if (e.pointerType !== "mouse") return;
-    arrastando = true;
-    moveu = false;
-    inicioX = e.clientX;
-    inicioScroll = trilho.scrollLeft;
-  });
-  addEventListener("pointermove", (e) => {
-    if (!arrastando) return;
-    const dx = e.clientX - inicioX;
-    if (Math.abs(dx) > 4) {
-      moveu = true;
-      trilho.style.scrollSnapType = "none";
-      trilho.scrollLeft = inicioScroll - dx;
-    }
-  });
-  addEventListener("pointerup", () => {
-    if (!arrastando) return;
-    arrastando = false;
-    trilho.style.scrollSnapType = "";
-  });
-  trilho.addEventListener("click", (e) => moveu && e.preventDefault(), true);
 }
 
 /* ---------------- Na prática: telas que se alternam ---------------- */
@@ -311,7 +243,7 @@ function iniciarDemo(): void {
   const mostrar = (i: number) => {
     indice = (i + abas.length) % abas.length;
     const alvo = abas[indice]!.dataset.demoAba;
-    abas.forEach((a, j) => a.setAttribute("aria-selected", String(j === indice)));
+    abas.forEach((a, j) => a.setAttribute("aria-pressed", String(j === indice)));
     telas.forEach((t) => t.classList.toggle("ativa", t.dataset.demoTela === alvo));
     demo.classList.remove("rodando");
     void demo.offsetWidth;
@@ -361,6 +293,54 @@ function iniciarFaq(): void {
       }
     });
   }
+
+  // Link para uma pergunta (ex.: #faq-simples) abre a resposta; o navegador só rola até ela
+  const abrir = (d: HTMLDetailsElement) => {
+    if (d.open) return;
+    d.open = true;
+    requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("expandida")));
+  };
+  const pergunta = (id: string) => {
+    const el = id ? document.getElementById(id) : null;
+    return el instanceof HTMLDetailsElement && el.matches("details.pergunta") ? el : null;
+  };
+  const abrirPeloHash = () => {
+    const d = pergunta(location.hash.slice(1));
+    if (d) abrir(d);
+  };
+  addEventListener("hashchange", abrirPeloHash);
+  document.addEventListener("click", (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href^='#']");
+    const d = a ? pergunta(a.hash.slice(1)) : null;
+    if (d) abrir(d);
+  });
+  abrirPeloHash();
+}
+
+/* ---------------- Textos que dependem do modo e dados da responsável ---------------- */
+
+/** data-so-demonstracao: só enquanto contas e pagamentos forem simulados; data-so-producao: o contrário. */
+function textosDoModo(): void {
+  const demo = emDemonstracao();
+  for (const el of $$("[data-so-demonstracao]")) el.hidden = !demo;
+  for (const el of $$("[data-so-producao]")) el.hidden = demo;
+}
+
+/** Seção "Quem está por trás": lê config/produto.ts (responsavel); campo null vira "a definir". */
+function preencherResponsavel(): void {
+  const r = produto.responsavel;
+  const rotulos = { nome: "nome", especialidade: "especialidade", experiencia: "experiência", motivo: "por que a análise existe" } as const;
+  for (const el of $$("[data-responsavel]")) {
+    const campo = el.dataset.responsavel as keyof typeof rotulos;
+    if (!(campo in rotulos)) continue;
+    const valor = r[campo];
+    el.innerHTML = valor ? esc(valor) : `<span class="a-definir">${rotulos[campo]}</span>`;
+  }
+  const figura = $("[data-responsavel-foto]");
+  if (figura && r.foto) {
+    figura.classList.add("com-foto");
+    figura.innerHTML = `<img src="${esc(r.foto)}" alt="${esc(r.nome ?? "")}" loading="lazy">`;
+  }
 }
 
 /* ---------------- Chamada flutuante no celular ---------------- */
@@ -381,11 +361,11 @@ function iniciarCtaMovel(): void {
 iniciarPagina();
 iniciarTopo();
 iniciarPlanos();
+textosDoModo();
+preencherResponsavel();
 iniciarParalaxe();
 iniciarContadores();
-iniciarAbasPassos();
 iniciarBrilhoCartoes();
-iniciarTrilho();
 iniciarDemo();
 iniciarFaq();
 iniciarCtaMovel();

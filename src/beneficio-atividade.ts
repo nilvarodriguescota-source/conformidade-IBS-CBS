@@ -137,8 +137,8 @@ export function avaliarBeneficioAtividade(o: {
     ? { camada: "FONTE_DIZ", texto: `CNAE do emitente nos XMLs da análise (campo emit/CNAE): ${cnaes.map((c) => `${c.formatado}${c.descricao ? ` (${c.descricao})` : ""} em ${c.xmls} XML(s)`).join("; ")}.` }
     : { camada: "PENDENTE", texto: "Os XMLs da análise não informam o CNAE do emitente (ou a análise não tem XMLs)." });
   aud.push({ camada: declarada ? "HUMANO_CONFIRMOU" : "PENDENTE", texto: declarada
-    ? "Cadastro da empresa (empresa.json): marcada como bar ou restaurante (barOuRestaurante = true)."
-    : "Cadastro da empresa (empresa.json): não marcada como bar ou restaurante (barOuRestaurante ausente ou false). A atividade não foi confirmada no cadastro." });
+    ? "Atividade confirmada: a empresa atende consumo no local (bar, restaurante ou lanchonete), declarada nesta análise ou no cadastro da empresa (barOuRestaurante = true)."
+    : "Atividade não confirmada: a empresa não foi declarada bar, restaurante ou lanchonete, nem nesta análise nem no cadastro da empresa (barOuRestaurante ausente ou false)." });
   if (corresponde.length) aud.push({ camada: "SISTEMA_INFERE", texto: `O sistema associou o CNAE ${corresponde.map((c) => c.formatado).join(", ")} (classe 56.11-2, restaurantes e outros estabelecimentos de serviços de alimentação e bebidas) à atividade "bares e restaurantes, inclusive lanchonetes" do art. 273. A lei não lista CNAEs para o regime; o vínculo é do sistema.` });
   if (excluidos.length) aud.push({ camada: "FONTE_DIZ", texto: `LC 214/2025, art. 273, § 2º, I: o fornecimento "por empresa classificada na posição 5620-1/01 da Classificação Nacional de Atividades Econômicas (CNAE)" não está sujeito ao regime.` });
   aud.push({ camada: "FONTE_DIZ", texto: `LC 214/2025, art. 275: "${a275.texto.replace(/^Art\. 275\.\s*/, "")}"` });
@@ -158,8 +158,8 @@ export function avaliarBeneficioAtividade(o: {
   } else if (declarada || corresponde.length) {
     classificacao = "REQUER_VALIDACAO";
     motivo = declarada
-      ? `A empresa está marcada como bar ou restaurante no cadastro, mas ${cnaes.length ? `o CNAE dos XMLs (${outros.concat(excluidos).map((c) => c.formatado).join(", ")}) não confirma a atividade` : "os XMLs não informam o CNAE"}.`
-      : `O CNAE dos XMLs (${corresponde.map((c) => c.formatado).join(", ")}) indica bares e restaurantes, mas a atividade não está confirmada no cadastro da empresa (empresa.json, barOuRestaurante). Enquanto não for confirmada, o motor trata os itens como mercadoria.`;
+      ? `A empresa foi declarada bar ou restaurante, mas ${cnaes.length ? `o CNAE dos XMLs (${outros.concat(excluidos).map((c) => c.formatado).join(", ")}) não confirma a atividade` : "os XMLs não informam o CNAE"}.`
+      : `O CNAE dos XMLs (${corresponde.map((c) => c.formatado).join(", ")}) indica bares e restaurantes, mas a atividade não foi confirmada. Enquanto não for confirmada (botão "A empresa atende consumo no local"), o motor trata os itens como mercadoria.`;
   } else {
     classificacao = "NENHUM";
     motivo = cnaes.length
@@ -170,7 +170,7 @@ export function avaliarBeneficioAtividade(o: {
   const descricaoAtividade = corresponde.length
     ? corresponde.map((c) => `${c.formatado}${c.descricao ? ` — ${c.descricao}` : ""}`).join("; ")
     : cnaes.length ? cnaes.map((c) => `${c.formatado}${c.descricao ? ` — ${c.descricao}` : ""}`).join("; ")
-      : declarada ? "Bar ou restaurante (cadastro da empresa)" : "não identificada";
+      : declarada ? "Bar ou restaurante (declarado pela empresa)" : "não identificada";
 
   return {
     classificacao,

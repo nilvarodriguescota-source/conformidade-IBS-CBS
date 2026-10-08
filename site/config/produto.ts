@@ -7,9 +7,9 @@
 export const produto = {
   nome: "Conformidade IBS/CBS",
   marca: "Sabores Estratégicos",
-  slogan: "Cada nota conferida. Cada imposto no lugar certo.",
+  slogan: "Seu cadastro pode estar colocando imposto a mais nas suas notas.",
   descricaoCurta:
-    "Confira o CST e o cClassTrib de IBS/CBS dos seus XMLs de venda, descubra o imposto pago a mais e saiba exatamente o que ajustar no cadastro dos produtos.",
+    "Envie seus XMLs de venda e descubra quais produtos estão com o IBS/CBS diferente da regra, onde a redução pode ter ficado de fora e o que ajustar no cadastro.",
 
   /** Página do sistema atual (análise de XMLs). Fica no mesmo site, fora do site de venda. */
   enderecoSistema: "sistema.html",
@@ -29,6 +29,22 @@ export const produto = {
     /** Quem vende a assinatura (rodapé e documentos legais). */
     razaoSocial: "SABORES ESTRATEGICOS CONSULTORIA LTDA - ME" as string | null,
     cnpj: "34.545.200/0001-41" as string | null,
+  },
+
+  /**
+   * Quem está por trás do produto (seção "Quem está por trás" da landing).
+   * Campo null aparece como "a definir". Preencha só com fatos que possam ser confirmados.
+   */
+  responsavel: {
+    nome: "Nilva Rodrigues Cota" as string | null,
+    /** Especialidade em uma linha. */
+    especialidade: null as string | null,
+    /** Experiência em até duas frases. */
+    experiencia: null as string | null,
+    /** Por que a análise existe, em uma ou duas frases. */
+    motivo: "Nasceu da necessidade de transformar a complexidade da Reforma Tributária em uma análise prática: identificar o que está correto, o que precisa ser revisado e onde pode haver imposto calculado a mais." as string | null,
+    /** Caminho da foto (retrato 4:5) dentro de site/imagens/, ex.: "site/imagens/nilva.jpg". */
+    foto: null as string | null,
   },
 
   anoCopyright: 2026,

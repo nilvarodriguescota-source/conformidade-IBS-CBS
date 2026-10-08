@@ -55,6 +55,12 @@ bibliotecas de gráfico, Excel e PDF, servidas localmente, sem CDN).
 A pasta de XMLs pode conter subpastas e arquivos `.zip`, sem limite de
 quantidade.
 
+Na tela do sistema, o cartão "Benefício por atividade" (aba Análise) permite declarar que a
+empresa atende consumo no local (bar, restaurante, lanchonete). A declaração vale só para a
+análise atual (`analise-atual/atividade.json`), prevalece sobre o `barOuRestaurante` do
+`empresa.json` e faz cada produto vendido receber a pergunta "preparado e servido no local
+ou mercadoria" em Pendências, inclusive quando o NCM não tem regra de redução.
+
 ## Saída
 
 | Arquivo | Conteúdo |

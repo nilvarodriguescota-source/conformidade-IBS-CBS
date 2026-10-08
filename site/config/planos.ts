@@ -16,14 +16,14 @@ import type { CicloCobranca } from "../servicos/tipos.js";
  * o controle de acesso por plano (servicos/acesso.ts) usa estes ids.
  */
 export const catalogoRecursos = {
-  analise_xml: { nome: "Análise de XMLs de NF-e e NFC-e", detalhe: "Arquivos .xml ou .zip, até 10.000 por envio" },
+  analise_xml: { nome: "Análise de XMLs de NF-e e NFC-e", detalhe: "Arquivos .xml ou .zip, dentro do volume mensal do plano" },
   conferencia: { nome: "Conferência de CST e cClassTrib", detalhe: "Item a item, com o fundamento de cada resultado" },
   dashboard: { nome: "Dashboard de conformidade", detalhe: "Situação da empresa, economia potencial e gráficos" },
   resultados: { nome: "Resultados com filtros e CSV", detalhe: "Busca por produto, código, NCM, CST e cClassTrib" },
-  pendencias: { nome: "Validação guiada de pendências", detalhe: "Perguntas simples para os produtos que dependem da composição" },
+  pendencias: { nome: "Validação guiada de pendências", detalhe: "Uma pergunta por produto quando a regra depende do que ele é" },
   consulta_ncm: { nome: "Consulta tributária por NCM", detalhe: "Consulta preventiva, sem precisar de XML" },
   relatorio_csv: { nome: "Relatório final em CSV", detalhe: "O que ajustar em cada produto" },
-  relatorio_excel_pdf: { nome: "Relatório final em Excel e PDF", detalhe: "Pronto para enviar ao time ou ao cliente" },
+  relatorio_excel_pdf: { nome: "Relatório final em Excel e PDF", detalhe: "Pronto para enviar à equipe ou ao cliente" },
   suporte_prioritario: { nome: "Suporte prioritário", detalhe: "Atendimento com prioridade na fila" },
   onboarding: { nome: "Onboarding assistido", detalhe: "Acompanhamento na primeira análise" },
 } as const;
@@ -47,6 +47,8 @@ export interface Plano {
   seloDestaque?: string;
   limites: LimitePlano[];
   recursos: RecursoId[];
+  /** Resumo em linguagem de resultado, mostrado no cartão no lugar da lista de recursos (a lista completa fica na comparação). */
+  resumo?: string;
   /** Texto curto antes da lista de recursos, ex.: "Tudo do Essencial, mais:". */
   chamadaRecursos?: string;
   gateway: { idPrecoMensal: string | null; idPrecoAnual: string | null };
@@ -66,7 +68,8 @@ export interface ConfiguracaoPlanos {
 export const configuracaoPlanos: ConfiguracaoPlanos = {
   moeda: "BRL",
   valoresIlustrativos: true,
-  textoValoresIlustrativos: "Valores, limites e condições ilustrativos, sujeitos a confirmação no lançamento.",
+  /** Aviso de pré-lançamento (landing, acima dos planos, e resumo do checkout). Em modo demonstração, a landing acrescenta que nada é cobrado. */
+  textoValoresIlustrativos: "Pré-lançamento: valores, limites e condições são de referência e podem mudar até a abertura das assinaturas.",
   /** Texto do selo do ciclo anual. */
   vantagemAnual: "2 meses grátis",
   /** Condições exibidas abaixo dos planos (EXEMPLO: confirmar com o negócio). */
@@ -77,10 +80,11 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
     {
       id: "essencial",
       nome: "Essencial",
-      descricao: "Para a empresa que quer conferir as próprias notas com segurança.",
+      descricao: "Para analisar as vendas da sua empresa e ajustar o cadastro por conta própria, com o relatório final em CSV.",
       precoMensal: 149,
       precoAnual: 1490,
       destaque: false,
+      resumo: "Análise completa das suas vendas: o que está certo, o que recalcular, o que validar e o que ajustar no cadastro, com o relatório final em CSV.",
       limites: [
         { rotulo: "Empresa (CNPJ)", valor: "1" },
         { rotulo: "XMLs por mês", valor: "até 2.000" },
@@ -91,11 +95,11 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
     {
       id: "profissional",
       nome: "Profissional",
-      descricao: "Para quem emite muitas notas e precisa entregar relatórios prontos.",
+      descricao: "Para levar o resultado ao contador ou à equipe: relatório final em Excel e PDF, mais suporte prioritário.",
       precoMensal: 297,
       precoAnual: 2970,
       destaque: true,
-      seloDestaque: "Recomendado",
+      seloDestaque: "Nossa recomendação",
       limites: [
         { rotulo: "Empresas (CNPJ)", valor: "até 3" },
         { rotulo: "XMLs por mês", valor: "até 10.000" },
@@ -110,7 +114,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
     {
       id: "premium",
       nome: "Premium",
-      descricao: "Para redes, grupos e escritórios que cuidam de várias empresas.",
+      descricao: "Para redes, grupos e escritórios com várias empresas. Inclui acompanhamento na primeira análise.",
       precoMensal: 597,
       precoAnual: 5970,
       destaque: false,

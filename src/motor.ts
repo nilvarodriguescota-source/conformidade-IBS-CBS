@@ -209,10 +209,19 @@ function classificarItemBase(
   // humana vale como natureza do produto (regime de bares e restaurantes, art. 275).
   const escolha = escolhaDoProduto(opcoes.validacoes, ncm, item);
   ncmACorrigir = escolha === "NCM_INCORRETO";
-  const natureza = escolha === "CONSUMO_NO_LOCAL" ? "preparado_no_local" : naturezaDoItem(item, opcoes.empresa, opcoes.naturezaPorProduto);
+  // Qualquer outra resposta registrada para o produto (regra confirmada, mercadoria ou NCM errado) já decidiu que
+  // ele não é preparado e servido no local: para quem atende consumo no local, vale como natureza "mercadoria".
+  const respondido = (opcoes.validacoes ?? []).some((v) => v.ncm === ncm && (v.cProd === item.cProd || v.cProd === item.xProd));
+  const natureza = escolha === "CONSUMO_NO_LOCAL"
+    ? "preparado_no_local"
+    : naturezaDoItem(item, opcoes.empresa, opcoes.naturezaPorProduto) ?? (respondido ? "mercadoria" : null);
   if (natureza === null) {
     faltantes.push(`natureza do item ${item.cProd || item.xProd} (preparado no local, bebida alcoólica ou mercadoria)`);
-    return veredito("REQUER_VALIDACAO", "Emitente atende consumo no local e a natureza do item não foi informada: validação humana (consumo no local, bebida alcoólica ou mercadoria).");
+    // As regras de benefício do NCM entram na mesma pergunta: uma resposta só decide a natureza e o enquadramento.
+    const doNcm = regrasVigentes(opcoes.base, ncm, data).filter((r) => !opcoes.regrasBloqueadas?.has(`${r.id}|${r.ncm}`));
+    return veredito("REQUER_VALIDACAO", "Emitente atende consumo no local e a natureza do item não foi informada: validação humana (consumo no local, bebida alcoólica ou mercadoria).", {
+      regrasCandidatas: doNcm.map((r) => r.id),
+    });
   }
 
   const aliquotasNaData = () => {
