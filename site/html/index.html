@@ -569,10 +569,16 @@
 <section class="secao quem" id="quem-somos">
   <div class="container">
     <div class="quem-cartao" data-revelar>
-      <figure class="quem-retrato" data-responsavel-foto>
-        <img src="site/imagens/coruja-positiva-grande.png" alt="" width="408" height="480">
-        <figcaption><span class="a-definir">foto da responsável</span></figcaption>
-      </figure>
+      <div class="quem-lado">
+        <div class="quem-foto">
+          <figure class="quem-retrato" data-responsavel-foto>
+            <img src="site/imagens/coruja-positiva-grande.png" alt="" width="408" height="480">
+            <figcaption><span class="a-definir">foto da responsável</span></figcaption>
+          </figure>
+          <p class="quem-destaque" data-responsavel-destaque hidden></p>
+        </div>
+        <blockquote class="quem-citacao" data-responsavel-citacao hidden></blockquote>
+      </div>
       <div class="quem-texto">
         <h2 class="titulo-secao">Por trás da análise, <em>uma pessoa que você pode chamar.</em></h2>
         <p class="lead">O Conformidade IBS/CBS é um produto da Sabores Estratégicos, consultoria de <span data-responsavel="nome">Nilva Rodrigues Cota</span>.</p>
@@ -581,13 +587,19 @@
           <p data-responsavel="experiencia"></p>
           <p data-responsavel="motivo"></p>
         </div>
+        <div class="quem-formacao" data-responsavel-formacao hidden>
+          <h3>Formação</h3>
+          <ul></ul>
+        </div>
         <div class="quem-contatos">
           <span data-contato="whatsapp" data-icone></span>
           <span data-contato="email" data-icone></span>
           <span data-contato="instagram" data-icone></span>
+          <span data-responsavel-link="linkedin" data-icone></span>
+          <span data-responsavel-link="site" data-icone></span>
           <span data-contato="horario" data-icone data-maiuscula></span>
         </div>
-        <p class="quem-empresa"><span data-empresa="razaoSocial"></span> · <span data-empresa="cnpj"></span></p>
+        <p class="quem-empresa"><span data-empresa="razaoSocial"></span> · <span data-empresa="cnpj"></span><span data-responsavel-local></span></p>
       </div>
     </div>
   </div>
