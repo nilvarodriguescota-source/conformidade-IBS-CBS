@@ -20,7 +20,7 @@ export const produto = {
     /** WhatsApp, só números com DDI e DDD (o site formata para exibir). */
     whatsapp: "5548991040611" as string | null,
     /** Instagram, sem o @. */
-    instagram: "nilvarodriguesoficial" as string | null,
+    instagram: "nilva.consultoria" as string | null,
     /** Entra no meio de frases ("Fale com a gente em horário comercial") e sozinho no rodapé. */
     horario: "horário comercial" as string | null,
   },
