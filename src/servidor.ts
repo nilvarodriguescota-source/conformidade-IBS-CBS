@@ -5,8 +5,8 @@ import path from "path";
 import multer from "multer";
 import { lerAlertasParaExibicao } from "./alertas-exibicao.js";
 import {
-  adicionarXmls, incorporarAguardando, lerRespostas, novaAnalise, processarAnaliseAtual, quantidadeAguardando,
-  quantidadeDeXmls, registrarResposta,
+  adicionarXmls, configuracaoDaEmpresa, gravarAtividade, incorporarAguardando, lerRespostas, novaAnalise, processarAnaliseAtual,
+  quantidadeAguardando, quantidadeDeXmls, registrarResposta,
 } from "./analise-atual.js";
 import { diferencasDeVereditos } from "./lote-explicativo.js";
 import { lerCabecalhoJson } from "./arquivos.js";
@@ -55,6 +55,15 @@ function processarAnalise() {
   });
 }
 
+/** Configuração da empresa nesta análise: empresa.json (sem as validações) + declaração de atividade feita na tela. */
+function empresaDaAnalise(): Record<string, unknown> & { barOuRestaurante?: boolean } {
+  try {
+    return configuracaoDaEmpresa(pastaAnalise, arquivoEmpresa);
+  } catch {
+    return {};
+  }
+}
+
 function lerJson(arquivo: string, padrao: any = []) {
   try {
     return JSON.parse(fs.readFileSync(arquivo, "utf8"));
@@ -70,6 +79,11 @@ function lerJson(arquivo: string, padrao: any = []) {
  * informado se for igual em todas; as descrições legais diferentes são listadas como estão na base.
  */
 const ESCOLHAS = ["CONSUMO_NO_LOCAL", "MERCADORIA_SEM_BENEFICIO", "NCM_INCORRETO"];
+/**
+ * Produto sem regra de benefício no NCM (só a natureza do item está em aberto, em bar ou restaurante): a escolha
+ * é gravada com este identificador, que não corresponde a nenhuma regra da base.
+ */
+const SEM_REGRA_CANDIDATA = "NATUREZA_DO_ITEM";
 
 function detalharRegras(ncm: string, ids: string[]) {
   const base = lerJson(arquivoBase, { regras: [] }) as BaseNormativa;
@@ -169,6 +183,7 @@ app.post("/api/validar", (req, res) => {
     }
     // Uma validação por produto: a mesma resposta para várias regras candidatas, com um só reprocessamento
     const ids: string[] = Array.isArray(regraIds) && regraIds.length ? regraIds.map(String) : regraId ? [String(regraId)] : [];
+    if (!ids.length && escolha !== undefined) ids.push(SEM_REGRA_CANDIDATA);
 
     if (!ncm || !cProd || !ids.length || !["SIM", "NAO"].includes(resposta)) {
       return res.status(400).json({
@@ -417,6 +432,7 @@ app.get("/api/fila-validacao", (_req, res) => {
     const vereditos = lerJson(path.join(pastaSaida, "vereditos.json"), []) as Veredito[];
     const reducoes = reducoesDaAnalise(vereditos);
     const respostas = lerRespostas(pastaAnalise);
+    const consumoNoLocal = empresaDaAnalise().barOuRestaurante;
     // Vendas do produto sem o grupo IBS/CBS no XML (cadastro sem informação tributária), por cProd
     const semInformacao = new Map<string, { total: number; naoObrigatorios: number }>();
     for (const v of vereditos) {
@@ -447,7 +463,7 @@ app.get("/api/fila-validacao", (_req, res) => {
           fundamentoLegal: g.fundamentoLegal,
           reducaoAliquota: typeof g.reducaoAliquota === "number" ? g.reducaoAliquota : null,
           descricaoNcmTipi: typeof g.descricaoNcmTipi === "string" ? g.descricaoNcmTipi : null,
-        }))),
+        })), { consumoNoLocal: consumoNoLocal === true }),
         regrasBloqueadasDetalhe: Object.values(doGrupo?.bloqueios ?? {}),
         reducaoIndisponivel: reducoes.disponivel ? null : reducoes.motivo,
         respostasDestaAnalise: respostas.filter((x) => x.ncm === p.ncm && (x.cProd === p.cProd || x.cProd === p.produto)),
@@ -487,7 +503,7 @@ app.post("/api/consulta-ncm", (req, res) => {
       contextoConsultaNcm = { base: explicacao.base, explicacao, bloqueios, regrasBloqueadas: chavesBloqueadas(bloqueios) };
     }
     // Configuração da empresa (regime, bar/restaurante), sem as respostas de validação
-    const { validacoes: _ignoradas, ...empresa } = lerJson(arquivoEmpresa, {}) as ContextoConsultaNcm["empresa"] & { validacoes?: unknown };
+    const empresa = empresaDaAnalise() as unknown as ContextoConsultaNcm["empresa"];
     if (!empresa.regime) {
       res.status(400).json({ erro: "empresa.json sem o regime do emitente: a consulta precisa dele para saber se o grupo IBS/CBS é exigido." });
       return;
@@ -522,11 +538,32 @@ app.get("/api/beneficio-atividade", (_req, res) => {
       res.status(500).json({ erro: "Texto legal do regime por atividade não encontrado (data/fontes/lc214/regime-bares-restaurantes.json)." });
       return;
     }
-    const empresa = lerJson(arquivoEmpresa, {}) as { barOuRestaurante?: boolean };
+    const empresa = empresaDaAnalise();
     res.json(avaliarBeneficioAtividade({ empresa, cnaes: cacheCnaes.valor, lei }));
   } catch (erro) {
     console.error("Erro no benefício por atividade:", erro);
     res.status(500).json({ erro: "Não foi possível verificar o benefício por atividade." });
+  }
+});
+
+/**
+ * Declaração de atividade desta análise: a empresa atende consumo no local (bar, restaurante, lanchonete).
+ * Com ela, cada produto vendido recebe a pergunta "preparado e servido no local ou mercadoria" nas Pendências.
+ * Vale só para a análise atual (some com a nova análise); empresa.json não é alterado.
+ */
+app.post("/api/atividade", (req, res) => {
+  try {
+    const { barOuRestaurante } = req.body ?? {};
+    if (typeof barOuRestaurante !== "boolean") {
+      res.status(400).json({ erro: "Informe barOuRestaurante: true ou false." });
+      return;
+    }
+    gravarAtividade(pastaAnalise, { barOuRestaurante });
+    const resultado = quantidadeDeXmls(pastaAnalise) > 0 ? processarAnalise() : null;
+    res.json({ sucesso: true, barOuRestaurante, pendencias: resultado?.pendencias ?? 0 });
+  } catch (erro) {
+    console.error("Erro ao gravar a atividade da empresa:", erro);
+    res.status(500).json({ erro: "Não foi possível gravar a atividade da empresa." });
   }
 });
 

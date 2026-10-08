@@ -136,6 +136,9 @@ qualquer mudança nele:
 - **FAQ do Simples Nacional:** diz que a análise segue o calendário do regime normal porque a
   versão do navegador usa `empresa.json` com `regime: "normal"`. Se o regime passar a ser lido
   da nota, revise a resposta.
+- **Bares e restaurantes** (cartão de restaurantes e FAQ "O que exatamente é conferido?"): a
+  pergunta sobre consumo no local vale para todo produto quando a empresa é declarada bar ou
+  restaurante na análise (`POST /api/atividade`, `src/analise-atual.ts`).
 - **Alíquotas de teste de 2026** (seção do risco e FAQ da economia potencial): CBS 0,9% e
   IBS 0,1%, de `src/parametros.ts`.
 - **Modo demonstração:** elementos com `data-so-demonstracao` (por exemplo, "nesta fase nada é

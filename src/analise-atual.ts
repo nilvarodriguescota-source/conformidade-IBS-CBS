@@ -8,6 +8,8 @@
  *     aguardando/            XMLs adicionados e ainda não processados (Adicionar XMLs)
  *     xmls/                  XMLs já processados (Processar análise move os que aguardam para cá)
  *     respostas.json         respostas SIM/NÃO dadas nesta análise
+ *     atividade.json         declaração feita nesta análise: a empresa atende consumo no local (bar, restaurante,
+ *                            lanchonete). Prevalece sobre o barOuRestaurante de empresa.json; some com a nova análise.
  *     empresa-analise.json   gerado: configuração da empresa + só as respostas desta análise (motor)
  *     empresa-config.json    gerado: configuração da empresa sem respostas (explicações e alertas)
  *
@@ -23,7 +25,7 @@ import type { RespostaValidacao } from "./tipos.js";
 
 export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "alertas.json"];
 
-export interface PastasAnalise { raiz: string; aguardando: string; xmls: string; respostas: string; empresaAnalise: string; empresaConfig: string }
+export interface PastasAnalise { raiz: string; aguardando: string; xmls: string; respostas: string; atividade: string; empresaAnalise: string; empresaConfig: string }
 
 export function pastasDaAnalise(raiz: string): PastasAnalise {
   return {
@@ -31,6 +33,7 @@ export function pastasDaAnalise(raiz: string): PastasAnalise {
     aguardando: join(raiz, "aguardando"),
     xmls: join(raiz, "xmls"),
     respostas: join(raiz, "respostas.json"),
+    atividade: join(raiz, "atividade.json"),
     empresaAnalise: join(raiz, "empresa-analise.json"),
     empresaConfig: join(raiz, "empresa-config.json"),
   };
@@ -97,11 +100,31 @@ export function registrarResposta(raiz: string, r: RespostaValidacao): RespostaV
   return respostas;
 }
 
-/** Gera as duas configurações da análise a partir de empresa.json (sem as validações dele). */
+/** Declaração de atividade feita nesta análise (vazia quando não há). */
+export function lerAtividade(raiz: string): { barOuRestaurante?: boolean } {
+  const p = pastasDaAnalise(raiz);
+  if (!existsSync(p.atividade)) return {};
+  const a = JSON.parse(readFileSync(p.atividade, "utf8")) as { barOuRestaurante?: unknown };
+  return typeof a.barOuRestaurante === "boolean" ? { barOuRestaurante: a.barOuRestaurante } : {};
+}
+
+/** Grava a declaração: a empresa atende (ou não) consumo no local. Vale só para esta análise. */
+export function gravarAtividade(raiz: string, a: { barOuRestaurante: boolean }): void {
+  mkdirSync(raiz, { recursive: true });
+  writeFileSync(pastasDaAnalise(raiz).atividade, JSON.stringify({ barOuRestaurante: a.barOuRestaurante }, null, 2), "utf8");
+}
+
+/** Configuração da empresa usada nesta análise: empresa.json (sem as validações dele) + declaração de atividade da análise. */
+export function configuracaoDaEmpresa(raiz: string, arquivoEmpresa: string): Record<string, unknown> {
+  const { validacoes: _ignoradas, ...config } = JSON.parse(readFileSync(arquivoEmpresa, "utf8")) as Record<string, unknown> & { validacoes?: unknown };
+  return { ...config, ...lerAtividade(raiz) };
+}
+
+/** Gera as duas configurações da análise a partir de empresa.json (sem as validações dele) e da declaração de atividade. */
 export function prepararConfiguracoes(raiz: string, arquivoEmpresa: string): { empresaAnalise: string; empresaConfig: string } {
   const p = pastasDaAnalise(raiz);
   mkdirSync(raiz, { recursive: true });
-  const { validacoes: _ignoradas, ...config } = JSON.parse(readFileSync(arquivoEmpresa, "utf8")) as Record<string, unknown> & { validacoes?: unknown };
+  const config = configuracaoDaEmpresa(raiz, arquivoEmpresa);
   writeFileSync(p.empresaConfig, JSON.stringify({ ...config, validacoes: [] }, null, 2), "utf8");
   writeFileSync(p.empresaAnalise, JSON.stringify({ ...config, validacoes: lerRespostas(raiz) }, null, 2), "utf8");
   return { empresaAnalise: p.empresaAnalise, empresaConfig: p.empresaConfig };

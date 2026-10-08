@@ -157,6 +157,8 @@ select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer
 .aliquota-descricao{font-size:13px;line-height:1.55;color:var(--texto-2)}
 #beneficioAtividadeConteudo .aliquota-descricao{padding:5px 0}
 #beneficioAtividadeConteudo>.selo{margin:0 0 10px}
+.atividade-declaracao{display:grid;gap:6px;margin:10px 0 12px}
+.atividade-declaracao button{justify-self:start}
 
 /* ---------- Indicadores ---------- */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
@@ -919,10 +921,12 @@ async function carregarRelatorioFinal(){
      });
    }
 
-   explicacao.textContent='Sem validação: produtos que o sistema identificou como pendentes de enquadramento, sem aguardar a validação do contador. Quando houver mais de uma possibilidade fiscal, o relatório preserva a necessidade de validação.';
+   explicacao.textContent='Sem validação: produtos pendentes de enquadramento. A regra candidata aparece só como referência: nenhum cadastro deve ser alterado antes da validação em Pendências. Regras que o NCM encontra, mas que não se aplicam à descrição do produto, ficam de fora.';
 
    const linhas=[...mapa.values()].map(p=>{
-     const regras=(p.regrasDetalhe||[]).filter(r=>r);
+     // Regra rejeitada pelo motor para este produto (descrição legal não atendida) não é candidata a nada
+     const rejeitadas=new Set((p.regrasNaoAplicaveis||[]).map(x=>x.regraId));
+     const regras=(p.regrasDetalhe||[]).filter(r=>r&&!rejeitadas.has(r.id));
 
      const csts=[...new Set(regras.map(r=>r.cst).filter(Boolean))];
      const classes=[...new Set(regras.map(r=>r.cClassTrib).filter(Boolean))];
@@ -941,9 +945,14 @@ async function carregarRelatorioFinal(){
          : 'Não determinada';
 
      const determinado=csts.length===1&&classes.length===1;
-     const instrucao=determinado
-       ? instrucaoRelatorioFinal(cst,cClassTrib,reducao,false)
-       : 'Validar o enquadramento entre as regras candidatas antes de alterar o cadastro do produto.';
+     const red=reducao&&reducao!=='Não determinada'?' — '+reducao+' IBS/CBS':'';
+     const instrucao=!regras.length
+       ? (rejeitadas.size
+         ? 'Validar em Pendências antes de alterar o cadastro: a regra encontrada pelo NCM não se aplica à descrição do produto.'
+         : 'Validar em Pendências antes de alterar o cadastro: o enquadramento depende do que o produto é.')
+       : determinado
+         ? 'Validar em Pendências antes de alterar o cadastro (regra candidata: CST '+cst+' e cClassTrib '+cClassTrib+red+').'
+         : 'Validar o enquadramento entre as regras candidatas antes de alterar o cadastro do produto.';
 
      return [p.cProd,p.produto,p.ncm||'',cClassTrib,cst,reducao,instrucao];
    });
@@ -1517,24 +1526,19 @@ if(situacao){
     const tabelaNcm=document.getElementById('tabelaNcm');
 
     if(tabelaNcm){
-      const grupos={
-        CORRETO:[],
-        INCORRETO_ECONOMIA:[],
-        INCORRETO_RISCO:[],
-        REQUER_VALIDACAO:[]
+      // Mesma divisão dos outros gráficos: correto com recálculo de impostos é correto; incorreto é só o NCM a ajustar
+      const situacaoNcm=function(v){
+        const estado=String(v.estado||'').toUpperCase();
+        if(estado==='CORRETO'||ehRecalculo(v)) return 'CORRETO';
+        if(estado==='INCORRETO_NCM') return 'INCORRETO';
+        if(estado==='REQUER_VALIDACAO'||estado.indexOf('INCORRETO')===0) return 'REQUER_VALIDACAO';
+        return null;
       };
+      const grupos={CORRETO:[],INCORRETO:[],REQUER_VALIDACAO:[]};
 
       vereditos.forEach(function(v){
-        const estado=String(v.estado||'').toUpperCase();
-
-        if(estado==='CORRETO'){
-          grupos.CORRETO.push(v);
-        }else if(estado.indexOf('INCORRETO')===0){
-          if(!grupos[estado]) grupos[estado]=[];
-          grupos[estado].push(v);
-        }else if(estado==='REQUER_VALIDACAO'){
-          grupos.REQUER_VALIDACAO.push(v);
-        }
+        const s=situacaoNcm(v);
+        if(s) grupos[s].push(v);
       });
 
       function ncmDistintos(lista){
@@ -1544,9 +1548,7 @@ if(situacao){
       }
 
       const ncmCorretos=ncmDistintos(grupos.CORRETO);
-      const ncmIncorretos=ncmDistintos(
-        (grupos.INCORRETO_ECONOMIA||[]).concat(grupos.INCORRETO_RISCO||[])
-      );
+      const ncmIncorretos=ncmDistintos(grupos.INCORRETO);
       const ncmPendentes=ncmDistintos(grupos.REQUER_VALIDACAO);
 
       function cartaoNcm(titulo,quantidade,classe){
@@ -1601,7 +1603,7 @@ if(situacao){
             return '<div class="card" style="margin:0">'+
               '<strong>NCM '+esc(v.ncm||'-')+'</strong>'+
               '<div class="small">'+esc(v.produto||'-')+'</div>'+
-              '<div class="small">Situação: <strong>'+esc(v.estado||'-')+'</strong></div>'+
+              '<div class="small">Situação: <strong>'+esc(ROTULO_ESTADO[v.estado]||v.estado||'-')+'</strong></div>'+
               '<div class="small">Base: '+formatarNumero(v.baseCalculo||v.base||0)+'</div>'+
               '</div>';
           }).join('')+
@@ -1642,17 +1644,7 @@ if(situacao){
           String(campoPesquisaNcm.value||'').toLowerCase().trim() : '';
 
         let lista=vereditos.filter(function(v){
-          const estado=String(v.estado||'').toUpperCase();
-
-          let pertence=true;
-
-          if(filtro==='CORRETO'){
-            pertence=estado==='CORRETO';
-          }else if(filtro==='INCORRETO'){
-            pertence=estado.indexOf('INCORRETO')===0;
-          }else if(filtro==='REQUER_VALIDACAO'){
-            pertence=estado==='REQUER_VALIDACAO';
-          }
+          const pertence=filtro==='TODOS'||situacaoNcm(v)===filtro;
 
           if(!pertence) return false;
 
@@ -2585,7 +2577,14 @@ function beneficioAtividadeHtml(d){
  const f=d.fonte||{};
  return '<div class="selo '+(CLASSE_BENEFICIO_ATIVIDADE[d.classificacao]||'selo-aviso')+'">'+esc(d.rotulo)+'</div>'+
   linha('Atividade',d.atividade.descricao)+
-  linha('Atividade confirmada no cadastro da empresa',d.atividade.declaradaNoCadastro?'sim':'não')+
+  linha('Atividade confirmada (bar, restaurante ou lanchonete)',d.atividade.declaradaNoCadastro?'sim':'não')+
+  '<div class="atividade-declaracao">'+
+   (d.atividade.declaradaNoCadastro
+    ?'<button type="button" class="secondary" data-atividade="false">A empresa não atende consumo no local</button>'+
+     '<div class="small">Confirmado: cada produto vendido tem a pergunta "preparado e servido no local ou mercadoria" em Pendências.</div>'
+    :'<button type="button" class="secondary" data-atividade="true">A empresa atende consumo no local (bar, restaurante, lanchonete)</button>'+
+     '<div class="small">Ao confirmar, cada produto vendido recebe a pergunta "preparado e servido no local ou mercadoria" em Pendências, inclusive os que não têm redução no NCM. Vale só para esta análise.</div>')+
+  '</div>'+
   (b?linha('Benefício',b.descricao+' Atividade da lei: '+b.atividadeDaLei+'.')+
    linha('Percentual de redução',pctAtividade(b.percentualReducao))+
    linha('Alíquota geral',b.aliquotaGeral==null?'sem alíquota vigente':pctAtividade(b.aliquotaGeral)+' ('+b.aliquotas.map(a=>a.tributo+' '+pctAtividade(a.aliquota)).join(' + ')+', em '+b.dataAliquotas+')')+
@@ -2600,6 +2599,21 @@ function beneficioAtividadeHtml(d){
    '<div class="small aud-nota">Esta verificação é só da atividade da empresa. A tributação de cada produto/NCM continua sendo a do motor, mostrada nas demais telas, e não é alterada aqui.</div>'+
   '</details>';
 }
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('[data-atividade]');
+ if(!b) return;
+ b.disabled=true;
+ try{
+   const r=await fetch('/api/atividade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({barOuRestaurante:b.dataset.atividade==='true'})});
+   const d=await r.json();
+   if(!r.ok){alert(d.erro||'Não foi possível gravar a atividade da empresa.');b.disabled=false;return;}
+   await carregarBeneficioAtividade();
+   await recarregarTudo();
+ }catch(erro){
+   alert('Não foi possível gravar a atividade da empresa.');
+   b.disabled=false;
+ }
+});
 async function carregarBeneficioAtividade(){
  const alvo=document.getElementById('beneficioAtividadeConteudo');
  if(!alvo) return;
