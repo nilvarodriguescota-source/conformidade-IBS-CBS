@@ -24,8 +24,6 @@ export const catalogoRecursos = {
   consulta_ncm: { nome: "Consulta tributária por NCM", detalhe: "Consulta preventiva, sem precisar de XML" },
   relatorio_csv: { nome: "Relatório final em CSV", detalhe: "O que ajustar em cada produto" },
   relatorio_excel_pdf: { nome: "Relatório final em Excel e PDF", detalhe: "Pronto para enviar à equipe ou ao cliente" },
-  suporte_prioritario: { nome: "Suporte prioritário", detalhe: "Atendimento com prioridade na fila" },
-  onboarding: { nome: "Onboarding assistido", detalhe: "Acompanhamento na primeira análise" },
 } as const;
 
 export type RecursoId = keyof typeof catalogoRecursos;
@@ -65,6 +63,11 @@ export interface ConfiguracaoPlanos {
   planos: Plano[];
 }
 
+/** Todos os planos liberam todos os recursos; o que muda entre eles é o volume (XMLs por mês e empresas). */
+const RECURSOS = Object.keys(catalogoRecursos) as RecursoId[];
+const TODOS_OS_RECURSOS =
+  "Tudo incluído: análise das suas vendas, validação guiada das pendências, consulta por NCM e o relatório do que ajustar em CSV, Excel e PDF.";
+
 export const configuracaoPlanos: ConfiguracaoPlanos = {
   moeda: "BRL",
   valoresIlustrativos: true,
@@ -73,60 +76,54 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
   /** Texto do selo do ciclo anual. */
   vantagemAnual: "2 meses grátis",
   /** Condições exibidas abaixo dos planos (EXEMPLO: confirmar com o negócio). */
-  condicoes: ["Sem fidelidade no plano mensal", "Troque de plano quando precisar", "Nada para instalar"],
+  condicoes: ["Todos os recursos e relatórios em todos os planos", "Sem fidelidade no plano mensal", "Troque de plano quando precisar", "Nada para instalar"],
   cicloPadrao: "mensal",
 
   planos: [
     {
       id: "essencial",
       nome: "Essencial",
-      descricao: "Para analisar as vendas da sua empresa e ajustar o cadastro por conta própria, com o relatório final em CSV.",
+      descricao: "Para empresas com até 2.000 XMLs de venda por mês.",
       precoMensal: 149,
       precoAnual: 1490,
       destaque: false,
-      resumo: "Análise completa das suas vendas: o que está certo, o que recalcular, o que validar e o que ajustar no cadastro, com o relatório final em CSV.",
+      resumo: TODOS_OS_RECURSOS,
       limites: [
         { rotulo: "Empresa (CNPJ)", valor: "1" },
         { rotulo: "XMLs por mês", valor: "até 2.000" },
       ],
-      recursos: ["analise_xml", "conferencia", "dashboard", "resultados", "pendencias", "consulta_ncm", "relatorio_csv"],
+      recursos: [...RECURSOS],
       gateway: { idPrecoMensal: null, idPrecoAnual: null },
     },
     {
       id: "profissional",
       nome: "Profissional",
-      descricao: "Para levar o resultado ao contador ou à equipe: relatório final em Excel e PDF, mais suporte prioritário.",
+      descricao: "Para empresas com até 5.000 XMLs de venda por mês.",
       precoMensal: 297,
       precoAnual: 2970,
       destaque: true,
       seloDestaque: "Nossa recomendação",
+      resumo: TODOS_OS_RECURSOS,
       limites: [
         { rotulo: "Empresas (CNPJ)", valor: "até 3" },
-        { rotulo: "XMLs por mês", valor: "até 10.000" },
+        { rotulo: "XMLs por mês", valor: "até 5.000" },
       ],
-      chamadaRecursos: "Tudo do Essencial, mais:",
-      recursos: [
-        "analise_xml", "conferencia", "dashboard", "resultados", "pendencias", "consulta_ncm", "relatorio_csv",
-        "relatorio_excel_pdf", "suporte_prioritario",
-      ],
+      recursos: [...RECURSOS],
       gateway: { idPrecoMensal: null, idPrecoAnual: null },
     },
     {
       id: "premium",
       nome: "Premium",
-      descricao: "Para redes, grupos e escritórios com várias empresas. Inclui acompanhamento na primeira análise.",
+      descricao: "Para operações maiores, redes e grupos, com até 10.000 XMLs de venda por mês.",
       precoMensal: 597,
       precoAnual: 5970,
       destaque: false,
+      resumo: TODOS_OS_RECURSOS,
       limites: [
         { rotulo: "Empresas (CNPJ)", valor: "até 10" },
-        { rotulo: "XMLs por mês", valor: "sem limite mensal" },
+        { rotulo: "XMLs por mês", valor: "até 10.000" },
       ],
-      chamadaRecursos: "Tudo do Profissional, mais:",
-      recursos: [
-        "analise_xml", "conferencia", "dashboard", "resultados", "pendencias", "consulta_ncm", "relatorio_csv",
-        "relatorio_excel_pdf", "suporte_prioritario", "onboarding",
-      ],
+      recursos: [...RECURSOS],
       gateway: { idPrecoMensal: null, idPrecoAnual: null },
     },
   ],
