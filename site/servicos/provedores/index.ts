@@ -8,15 +8,16 @@ import { integracoes } from "../../config/integracoes.js";
 import type { ProvedorAutenticacao, ProvedorPagamento } from "../tipos.js";
 import { autenticacaoDemonstracao, pagamentoDemonstracao } from "./demonstracao.js";
 import { autenticacaoPendente, pagamentoPendente } from "./pendente.js";
+import { autenticacaoSupabase, pagamentoKiwify } from "./supabase-kiwify.js";
 
 const autenticacao: Record<string, ProvedorAutenticacao> = {
   demonstracao: autenticacaoDemonstracao,
-  // "nome-do-provedor": autenticacaoReal,
+  supabase: autenticacaoSupabase,
 };
 
 const pagamento: Record<string, ProvedorPagamento> = {
   demonstracao: pagamentoDemonstracao,
-  // "nome-do-gateway": pagamentoReal,
+  kiwify: pagamentoKiwify,
 };
 
 /** Em produção, o modo demonstração nunca é usado, mesmo que esteja configurado por engano. */

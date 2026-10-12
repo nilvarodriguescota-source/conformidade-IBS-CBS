@@ -25,6 +25,10 @@
       <h1>Bem-vindo de volta</h1>
       <p class="auth-sub">Entre com seu e-mail e senha para acessar sua conta e o sistema.</p>
 
+      <div class="alerta alerta-sucesso" role="status" data-compra-ok hidden>
+        <svg class="i" aria-hidden="true"><use href="#i-check-circulo"/></svg>
+        <span><strong>Compra recebida, obrigado!</strong> Assim que o pagamento for confirmado, enviamos um convite para o e-mail usado na compra. É só abrir o e-mail, criar sua senha e pronto. Se preferir, peça abaixo um link de acesso.</span>
+      </div>
       <div class="alerta alerta-erro" role="alert" data-erro hidden></div>
 
       <form class="auth-form" data-form-entrar novalidate>
@@ -41,6 +45,13 @@
         </div>
         <button class="btn btn-verde btn-grande btn-bloco" type="submit">Entrar <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></button>
       </form>
+
+      <div data-link-acesso hidden>
+        <div class="auth-separador"><span>ou sem senha</span></div>
+        <div class="alerta" role="status" data-retorno-link hidden></div>
+        <button class="btn btn-contorno btn-grande btn-bloco" type="button" data-enviar-link><svg class="i i-sm" aria-hidden="true"><use href="#i-email"/></svg>Receber link de acesso por e-mail</button>
+        <p class="auth-rodape">Use o mesmo e-mail da compra. O link entra direto na sua conta.</p>
+      </div>
 
       <div class="auth-separador"><span>novo por aqui?</span></div>
       <a class="btn btn-contorno btn-grande btn-bloco" href="index.html#planos">Conhecer os planos</a>

@@ -6,8 +6,10 @@
  * `valoresIlustrativos` for true, a página mostra um aviso discreto dizendo isso.
  * Ao definir os valores reais, troque os números e passe a flag para false.
  *
- * `gateway` guarda os identificadores do plano no gateway de pagamento (ex.: o id do
- * preço recorrente). Ficam null até o gateway ser escolhido e configurado.
+ * `kiwify` guarda os links de checkout de cada plano na Kiwify (um para o ciclo mensal e outro
+ * para o anual), no formato https://pay.kiwify.com.br/XXXXXXX. Os botões "Assinar" levam
+ * direto para eles e o webhook usa o código do link para saber qual plano foi comprado.
+ * Plano sem link no ciclo escolhido mostra "integração pendente" no checkout.
  */
 import type { CicloCobranca } from "../servicos/tipos.js";
 
@@ -49,7 +51,8 @@ export interface Plano {
   resumo?: string;
   /** Texto curto antes da lista de recursos, ex.: "Tudo do Essencial, mais:". */
   chamadaRecursos?: string;
-  gateway: { idPrecoMensal: string | null; idPrecoAnual: string | null };
+  /** Links do checkout da Kiwify (null = ainda não criado). */
+  kiwify: { linkMensal: string | null; linkAnual: string | null };
 }
 
 export interface ConfiguracaoPlanos {
@@ -93,7 +96,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
         { rotulo: "XMLs por mês", valor: "até 2.000" },
       ],
       recursos: [...RECURSOS],
-      gateway: { idPrecoMensal: null, idPrecoAnual: null },
+      kiwify: { linkMensal: null, linkAnual: null },
     },
     {
       id: "profissional",
@@ -109,7 +112,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
         { rotulo: "XMLs por mês", valor: "até 5.000" },
       ],
       recursos: [...RECURSOS],
-      gateway: { idPrecoMensal: null, idPrecoAnual: null },
+      kiwify: { linkMensal: null, linkAnual: null },
     },
     {
       id: "premium",
@@ -124,7 +127,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
         { rotulo: "XMLs por mês", valor: "até 10.000" },
       ],
       recursos: [...RECURSOS],
-      gateway: { idPrecoMensal: null, idPrecoAnual: null },
+      kiwify: { linkMensal: null, linkAnual: null },
     },
   ],
 };
@@ -140,6 +143,11 @@ export function planoDestaque(): Plano {
 /** Valor cobrado por ciclo (mensal: preço do mês; anual: total do ano). */
 export function valorDoCiclo(plano: Plano, ciclo: CicloCobranca): number | null {
   return ciclo === "anual" ? plano.precoAnual : plano.precoMensal;
+}
+
+/** Link de compra na Kiwify do plano no ciclo pedido (null quando ainda não configurado). */
+export function linkKiwify(plano: Plano, ciclo: CicloCobranca): string | null {
+  return (ciclo === "anual" ? plano.kiwify.linkAnual : plano.kiwify.linkMensal) || null;
 }
 
 /** Equivalente mensal, usado para mostrar "R$ X/mês" também no ciclo anual. */

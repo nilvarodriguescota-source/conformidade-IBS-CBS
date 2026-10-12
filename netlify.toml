@@ -1,9 +1,13 @@
 # Publicação automática: o Netlify roda o build e publica a pasta public/.
-# O sistema roda inteiro no navegador (Web Worker); não há funções de servidor.
+# O sistema roda inteiro no navegador (Web Worker). No servidor ficam só o webhook da Kiwify
+# (netlify/functions) e a proteção do sistema (netlify/edge-functions); ver docs/kiwify-supabase/.
 # A raiz (index.html) é o site comercial; o sistema fica em sistema.html.
 [build]
   command = "npm run build"
   publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "22"
@@ -36,6 +40,11 @@
 [[redirects]]
   from = "/recuperar-senha"
   to = "/recuperar-senha.html"
+  status = 200
+
+[[redirects]]
+  from = "/definir-senha"
+  to = "/definir-senha.html"
   status = 200
 
 [[redirects]]
