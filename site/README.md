@@ -16,8 +16,9 @@ Visitante → index.html (landing) → Planos → cadastro.html → checkout.htm
 | --- | --- | --- |
 | `/` | `html/index.html` + `paginas/inicio.ts` | Página de venda: problema, risco, solução, demonstração, o que você descobre, diferenciais, público, exemplo de análise, planos, quem está por trás, FAQ |
 | `/entrar` | `html/entrar.html` + `paginas/entrar.ts` | Login (volta para `?voltar=` ou para a área do cliente) |
-| `/cadastro` | `html/cadastro.html` + `paginas/cadastro.ts` | Escolha do plano e criação da conta |
+| `/cadastro` | `html/cadastro.html` + `paginas/cadastro.ts` | Escolha do plano e criação da conta (em produção, redireciona para o checkout da Kiwify) |
 | `/recuperar-senha` | `html/recuperar-senha.html` + `paginas/recuperar-senha.ts` | Pedido do e-mail de redefinição |
+| `/definir-senha` | `html/definir-senha.html` + `paginas/definir-senha.ts` | Destino do convite pós-compra e do link de redefinição: cria a senha e entra |
 | `/checkout` | `html/checkout.html` + `paginas/checkout.ts` | Resumo, forma de pagamento e "conta liberada" |
 | `/conta` | `html/conta.html` + `paginas/conta.ts` | Área do cliente: início, sistema, assinatura, perfil, configurações |
 | `/sistema` | gerado por `src/pagina.ts` | O sistema de XML, sem mudanças |
@@ -72,54 +73,54 @@ npm run site:tipos   # checagem de tipos do código do site
 - **Cores e fontes:** `estilos/tokens.css` (mesma paleta do sistema).
 - **Textos:** direto nos arquivos de `html/`.
 
-## Modo demonstração
+## Modo demonstração e produção
 
-Nenhum serviço de login ou pagamento foi fornecido. Por isso `config/integracoes.ts`
-vem com `modo: "demonstracao"`:
+O modo sai do build (`config/integracoes.ts`):
 
-- contas, assinaturas e "pagamentos" ficam só no `localStorage` do navegador de quem testa;
-- nada é cobrado, nenhum e-mail é enviado; a recuperação de senha diz isso;
-- todas as telas de conta mostram a faixa "Modo demonstração";
-- o checkout não tem campos de cartão: com um gateway real, o pagamento acontece na página
-  hospedada pelo gateway.
+- **Sem** `SUPABASE_URL` e `SUPABASE_ANON_KEY` no ambiente → **demonstração**: contas, assinaturas e
+  "pagamentos" ficam só no `localStorage` de quem testa, nada é cobrado, nenhum e-mail é enviado e as
+  telas mostram a faixa "Modo demonstração". Não é segurança: serve para ver o fluxo.
+- **Com** as variáveis → **produção**: login pelo Supabase, compra pela Kiwify, acesso liberado pelo
+  webhook. Configuração completa em `docs/kiwify-supabase/PASSO-A-PASSO.md`.
 
-Não é segurança: serve para ver e validar o fluxo completo.
+## Produção: Kiwify + Supabase
 
-## Pontos de integração
+```
+Assinar (landing) → checkout da Kiwify → compra aprovada
+  → POST /api/kiwify (netlify/functions/kiwify-webhook.mts)
+      grava assinaturas/pagamentos no Supabase e convida o comprador por e-mail
+  → convite → definir-senha.html → conta.html → sistema.html (netlify/edge-functions/proteger-sistema.ts)
+```
 
-### 1. Autenticação
-Implementar `ProvedorAutenticacao` (`servicos/tipos.ts`) em `servicos/provedores/`,
-registrar em `provedores/index.ts` e trocar `integracoes.autenticacao.provedor`.
-O provedor escolhido cuida de senha, sessão e e-mail de redefinição.
+| Peça | Arquivo |
+| --- | --- |
+| Links de checkout por plano e ciclo | `config/planos.ts` (`kiwify.linkMensal` / `linkAnual`); `rotas.cadastro()` leva direto a eles |
+| Login, link de acesso por e-mail, senha | `servicos/provedores/supabase-kiwify.ts` (biblioteca carregada sob demanda) |
+| Leitura da assinatura e do histórico | mesmo arquivo; o banco só devolve a linha do e-mail logado (RLS) |
+| Regras do webhook (assinatura, plano, efeito de cada evento) | `netlify/lib/kiwify.ts`, testadas em `test/kiwify-webhook.test.ts` |
+| Tabelas e políticas | `sql/supabase.sql` |
+| Proteção do sistema | `netlify/edge-functions/proteger-sistema.ts`, que lê o cookie `se_acesso` gravado pelo site |
 
-### 2. Gateway de pagamento e assinatura
-Implementar `ProvedorPagamento`:
-- `iniciarCheckout` cria a sessão de pagamento no gateway, usando
-  `plano.gateway.idPrecoMensal`/`idPrecoAnual`, e devolve `{ tipo: "redirecionar", url }`;
-- a **liberação da conta vem do webhook do gateway no servidor**, que grava a assinatura
-  (`status: "ativa"`, `fimPeriodo`). O navegador nunca ativa assinatura em produção;
-- `trocarPlano`, `cancelarAssinatura` e `historicoPagamentos` chamam o servidor/gateway.
+Na Kiwify, a troca de plano, o cancelamento e a exclusão da conta são feitos pelo suporte ou pela própria
+Kiwify; as telas dizem isso em vez de simular. O navegador nunca ativa assinatura: só o webhook grava.
 
-### 3. Banco de dados
-Guardar `Usuario`, `Assinatura` e `Pagamento` com os campos de `servicos/tipos.ts`.
+A regra de acesso (`servicos/acesso.ts`) está repetida na função de borda. Mudou uma, mude a outra.
 
-### 4. Controle de acesso
-`servicos/acesso.ts` define a regra (assinatura ativa, em atraso ou cancelada ainda no
-período pago libera o sistema). Hoje ela roda no navegador e decide o que a área do
-cliente mostra. **Para proteger de fato o sistema**, o servidor precisa aplicar a mesma
-regra antes de entregar `sistema.html` (por exemplo, uma função de borda no Netlify ou o
-middleware do provedor de login). Sem isso, quem souber o endereço abre `sistema.html`.
-
-### 5. Limites por plano dentro do sistema de XML
+### Limites por plano dentro do sistema de XML
 `config/planos.ts` lista os recursos de cada plano e `podeUsar()` responde se o plano
-libera um recurso. O sistema de XML ainda não limita nada por plano; quando passar a
-limitar, deve consultar essa regra no servidor.
+libera um recurso. O sistema de XML ainda não limita nada por plano (nem o volume de XMLs);
+quando passar a limitar, deve consultar essa regra no servidor.
 
-### 6. Sistema de XML
+### Sistema de XML
 A área do cliente abre `sistema.html` num iframe da mesma origem. Os atalhos ("Relatório
 Final", "Consulta por NCM"...) só clicam no botão da aba do sistema; os ids das telas
 estão em `MODULOS`, em `paginas/conta.ts`. A análise continua salva no navegador
 (IndexedDB), como antes.
+
+### Outro provedor
+Para trocar Supabase ou Kiwify por outro serviço: implementar `ProvedorAutenticacao` /
+`ProvedorPagamento` (`servicos/tipos.ts`) em `servicos/provedores/`, registrar em
+`provedores/index.ts` e escolher o nome em `config/integracoes.ts`.
 
 ## Textos que dependem do funcionamento atual
 

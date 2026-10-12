@@ -32,6 +32,12 @@ export async function construirSite({ raiz, pub }) {
     legalComments: "none",
     logLevel: "warning",
     chunkNames: "comum-[hash]",
+    // Login real (Supabase) quando as variáveis existem no build do Netlify; sem elas, modo demonstração.
+    // Só valores públicos: a chave secreta (SUPABASE_SERVICE_ROLE_KEY) fica no servidor, no webhook.
+    define: {
+      __SUPABASE_URL__: JSON.stringify((process.env.SUPABASE_URL ?? "").trim().replace(/\/+$/, "")),
+      __SUPABASE_ANON_KEY__: JSON.stringify((process.env.SUPABASE_ANON_KEY ?? "").trim()),
+    },
   });
 
   // Estilos (cada página importa tokens, base e componentes)

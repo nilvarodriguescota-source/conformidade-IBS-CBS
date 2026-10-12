@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criar senha · Conformidade IBS/CBS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B140F">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="stylesheet" href="site/css/autenticacao.css">
+<script type="module" src="site/js/definir-senha.js"></script>
+</head>
+<body class="pagina-auth">
+<!-- @parte icones -->
+<div class="auth">
+  <!-- @parte painel-marca -->
+  <main class="auth-principal" id="conteudo">
+    <div class="auth-topo">
+      <a class="auth-voltar" href="entrar.html"><svg class="i i-sm" aria-hidden="true"><use href="#i-seta-esq"/></svg>Ir para o login</a>
+    </div>
+
+    <div class="auth-caixa" data-revelar>
+      <span class="auth-icone-grande" aria-hidden="true"><svg class="i i-lg"><use href="#i-cadeado"/></svg></span>
+      <h1 data-titulo>Crie sua senha</h1>
+      <p class="auth-sub" data-sub>Verificando o link...</p>
+
+      <div class="alerta" role="status" data-retorno hidden></div>
+
+      <form class="auth-form" data-form-senha novalidate hidden>
+        <div class="campo">
+          <label for="senha">Nova senha</label>
+          <div class="entrada">
+            <input id="senha" name="senha" type="password" autocomplete="new-password" placeholder="Mínimo de 8 caracteres" minlength="8" required>
+            <button type="button" class="ver-senha" aria-label="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-olho"/></svg></button>
+          </div>
+          <div class="forca-senha" data-forca aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <span class="ajuda" data-forca-texto>Use letras, números e um símbolo para uma senha forte.</span>
+        </div>
+        <div class="campo">
+          <label for="confirmar">Repita a senha</label>
+          <div class="entrada">
+            <input id="confirmar" name="confirmar" type="password" autocomplete="new-password" required>
+            <button type="button" class="ver-senha" aria-label="Mostrar senha"><svg class="i" aria-hidden="true"><use href="#i-olho"/></svg></button>
+          </div>
+        </div>
+        <button class="btn btn-verde btn-grande btn-bloco" type="submit">Salvar senha e entrar <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></button>
+      </form>
+
+      <p class="auth-rodape" data-pular hidden><a href="conta.html">Criar depois e ir para minha conta</a></p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

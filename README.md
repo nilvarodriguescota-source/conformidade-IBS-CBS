@@ -17,8 +17,12 @@ A raiz do site é a página comercial (landing, planos, login, cadastro, checkou
 do cliente) e o sistema fica em `/sistema.html`, sem nenhuma mudança. Arquitetura,
 modo demonstração e pontos de integração (login, pagamento, assinatura): `site/README.md`.
 
+Venda e login: a assinatura é vendida pela Kiwify e o login fica no Supabase; o webhook
+libera o acesso e convida o comprador por e-mail. Configuração passo a passo:
+`docs/kiwify-supabase/PASSO-A-PASSO.md`. Sem as variáveis do Supabase, o site fica em modo demonstração.
+
 Na versão do Netlify o sistema roda inteiro no navegador (Web Worker), com o mesmo
-código do servidor: não há servidor nem banco de dados. A análise (XMLs,
+código do servidor: a análise não passa por servidor nem banco de dados. A análise (XMLs,
 respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e continua
 lá ao reabrir a página; outro computador ou navegador começa com a análise vazia.
 
@@ -28,7 +32,7 @@ lá ao reabrir a página; outro computador ou navegador começa com a análise v
 npm install
 npm start                    # compila e abre o sistema em http://localhost:3000
 npm run site                 # site completo (página comercial + sistema) em http://localhost:4173
-npm test                     # 123 testes
+npm test                     # testes do motor, do sistema e do webhook da Kiwify
 node dist/src/cli.js --xml ./xmls --empresa ./empresa.json --saida ./saida
 ```
 

@@ -103,6 +103,10 @@ export interface ProvedorAutenticacao {
   sair(): Promise<void>;
   /** Pede o e-mail de redefinição. Não revela se o e-mail existe. */
   solicitarRedefinicaoSenha(email: string): Promise<void>;
+  /** Login sem senha: manda por e-mail um link que já entra na conta e abre `voltar`. Não revela se o e-mail existe. Opcional. */
+  enviarLinkDeAcesso?(email: string, voltar: string): Promise<void>;
+  /** Grava a senha de quem chegou pelo convite ou pelo link de redefinição (já logado pelo link). Opcional. */
+  definirSenha?(novaSenha: string): Promise<void>;
   atualizarPerfil(dados: DadosPerfil): Promise<Usuario>;
   alterarSenha(senhaAtual: string, novaSenha: string): Promise<void>;
   excluirConta(): Promise<void>;
