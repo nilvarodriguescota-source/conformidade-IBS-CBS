@@ -62,7 +62,7 @@ function enderecoDoSite(pagina: string): string {
   return new URL(pagina, location.href).href;
 }
 
-const contato = [produto.contato.emailSuporte, produto.contato.whatsapp ? `WhatsApp (${produto.contato.whatsapp.slice(2, 4)}) ${produto.contato.whatsapp.slice(4)}` : null]
+const contato = [produto.contato.emailSuporte]
   .filter(Boolean)
   .join(" ou ");
 

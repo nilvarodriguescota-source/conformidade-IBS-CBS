@@ -88,17 +88,9 @@ export function revelarAoRolar(raiz: ParentNode = document): void {
   alvos.forEach((el) => obs.observe(el));
 }
 
-/** "5548991040611" → "(48) 99104-0611" (aceita com ou sem o 55). */
-export function formatarTelefone(numeros: string): string {
-  const d = numeros.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
-  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return numeros;
-}
-
 /**
  * Preenche contatos e dados da empresa a partir de config/produto.ts (ou "a definir").
- * data-contato="email|whatsapp|instagram|horario"; com data-icone, o link leva o ícone;
+ * data-contato="email|instagram|horario"; com data-icone, o link leva o ícone;
  * data-maiuscula começa o horário com maiúscula.
  */
 export function preencherDadosComerciais(): void {
@@ -111,13 +103,6 @@ export function preencherDadosComerciais(): void {
       el.innerHTML = contato.emailSuporte
         ? link(`mailto:${contato.emailSuporte}`, contato.emailSuporte, "email", el, false)
         : `<span class="a-definir">e-mail de suporte</span>`;
-    } else if (tipo === "whatsapp") {
-      // Sem WhatsApp configurado, o contato some (o atendimento é por e-mail).
-      if (contato.whatsapp) {
-        el.innerHTML = link(`https://wa.me/${contato.whatsapp.replace(/\D/g, "")}`, `WhatsApp ${formatarTelefone(contato.whatsapp)}`, "whatsapp", el);
-      } else {
-        el.remove();
-      }
     } else if (tipo === "instagram") {
       el.innerHTML = contato.instagram
         ? link(`https://www.instagram.com/${contato.instagram}/`, `@${contato.instagram}`, "instagram", el)
