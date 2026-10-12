@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Conformidade IBS/CBS · Seu cadastro conferido pelas suas vendas</title>
-<meta name="description" content="Envie seus XMLs de venda e descubra quais produtos estão com o IBS/CBS diferente da regra, onde a redução pode ter ficado de fora e o que ajustar no cadastro.">
+<title>Conformidade IBS/CBS · Descubra quais produtos saem com imposto errado</title>
+<meta name="description" content="Envie os arquivos XML das suas notas de venda e descubra quais produtos estão com o imposto novo (IBS/CBS) errado, o que corrigir no cadastro de cada um e por quê.">
 <meta name="theme-color" content="#0B140F">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Conformidade IBS/CBS · Sabores Estratégicos">
-<meta property="og:description" content="Um erro no cadastro se repete em todas as vendas daquele produto. Descubra, pelas suas próprias vendas, quais produtos precisam de atenção.">
+<meta property="og:description" content="Um código errado no cadastro do produto se repete em toda venda. Descubra, pelas suas próprias notas, quais produtos precisam de correção.">
 <link rel="icon" type="image/png" href="marca/icone.png">
 <link rel="preload" href="site/fontes/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="site/fontes/cormorant-garamond-latin-600-italic.woff2" as="font" type="font/woff2" crossorigin>
@@ -34,19 +34,19 @@
     <div class="hero-texto">
       <a class="hero-selo" href="#risco" data-revelar>
         <em>Reforma Tributária</em><span class="sr"> · </span>
-        <span class="hero-selo-texto">IBS e CBS já começaram a sair nas notas</span>
+        <span class="hero-selo-texto">IBS e CBS, os impostos novos, já estão nas notas</span>
         <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-d"/></svg>
       </a>
-      <h1 data-revelar style="--atraso:.08s">Seu cadastro pode estar colocando <em>imposto a mais nas suas notas.</em></h1>
-      <p class="hero-sub" data-revelar style="--atraso:.16s">Envie seus XMLs de venda e descubra quais produtos estão com o IBS/CBS diferente da regra, onde uma redução prevista em lei pode ter ficado de fora e o que ajustar no cadastro de cada um.</p>
+      <h1 data-revelar style="--atraso:.08s">Descubra quais produtos estão saindo <em>com o imposto errado nas suas notas.</em></h1>
+      <p class="hero-sub" data-revelar style="--atraso:.16s">Se um produto está cadastrado com o código errado, o erro se repete em toda venda: o imposto sai maior ou menor do que a lei manda. Envie os arquivos das suas notas de venda e receba a lista do que corrigir em cada produto.</p>
       <div class="hero-ctas" data-revelar style="--atraso:.24s">
-        <a class="btn btn-ouro btn-grande" href="#planos">Analisar meus XMLs <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
-        <a class="btn btn-fantasma btn-grande" href="entrar.html" data-link-entrar>Entrar</a>
+        <a class="btn btn-ouro btn-grande" href="#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+        <a class="btn btn-fantasma btn-grande" href="#exemplo">Ver um exemplo</a>
       </div>
       <ul class="hero-provas" data-revelar style="--atraso:.32s">
-        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>NF-e e NFC-e</li>
-        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Até 10.000 XMLs por envio</li>
-        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>XMLs processados no seu navegador</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Notas NF-e e NFC-e</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Até 10.000 notas por envio</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Seus arquivos ficam no seu computador</li>
         <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Nada para instalar</li>
       </ul>
     </div>
@@ -88,9 +88,9 @@
               </div>
             </div>
             <div class="lista-itens">
-              <div class="item"><span class="item-icone ok"><svg class="i i-sm"><use href="#i-check"/></svg></span><div><b>PÃO DE FORMA 500G</b><small>NCM 1905.90.10 · enquadramento confirmado na validação</small></div><span class="chip chip-ok">Correto</span></div>
-              <div class="item"><span class="item-icone pend"><svg class="i i-sm"><use href="#i-relogio"/></svg></span><div><b>PASTEL FRANGO 20 UND</b><small>NCM 1902.20.00 · redução possível, aguardando validação</small></div><span class="chip chip-pend">Precisa validar</span></div>
-              <div class="item"><span class="item-icone eco"><svg class="i i-sm"><use href="#i-moedas"/></svg></span><div><b>QUEIJO MUÇARELA KG</b><small>NCM 0406.10.10 · alíquota zero confirmada, nota sem o benefício</small></div><span class="chip chip-eco">C/ recal impostos</span></div>
+              <div class="item"><span class="item-icone ok"><svg class="i i-sm"><use href="#i-check"/></svg></span><div><b>PÃO DE FORMA 500G</b><small>NCM 1905.90.10 · código certo, é só manter</small></div><span class="chip chip-ok">Correto</span></div>
+              <div class="item"><span class="item-icone pend"><svg class="i i-sm"><use href="#i-relogio"/></svg></span><div><b>PASTEL FRANGO 20 UND</b><small>NCM 1902.20.00 · pode ter desconto, falta sua resposta</small></div><span class="chip chip-pend">Precisa validar</span></div>
+              <div class="item"><span class="item-icone eco"><svg class="i i-sm"><use href="#i-moedas"/></svg></span><div><b>QUEIJO MUÇARELA KG</b><small>NCM 0406.10.10 · a lei dá imposto zero, a nota cobrou cheio</small></div><span class="chip chip-eco">C/ recal impostos</span></div>
             </div>
           </div>
         </div>
@@ -98,9 +98,9 @@
         <div class="flutuante f-processando" data-camada="3">
           <span class="flutuante-icone"><svg class="i"><use href="#i-upload"/></svg></span>
           <div class="flutuante-texto">
-            <b>Processando XMLs</b>
+            <b>Lendo suas notas</b>
             <div class="progresso"><i></i></div>
-            <small><span data-contar="1250">1.250</span> XMLs · NF-e e NFC-e · exemplo</small>
+            <small><span data-contar="1250">1.250</span> notas · NF-e e NFC-e · exemplo</small>
           </div>
         </div>
 
@@ -108,17 +108,17 @@
           <small>Exemplo de análise</small>
           <b>R$ 486<span>,30</span></b>
           <svg class="faisca" viewBox="0 0 120 34" preserveAspectRatio="none"><path d="M0 30 L15 26 L30 28 L45 20 L60 22 L75 13 L90 15 L105 6 L120 4"/></svg>
-          <small class="fraco">economia potencial identificada</small>
+          <small class="fraco">de imposto calculado a mais</small>
         </div>
 
         <div class="flutuante f-regra" data-camada="4">
           <span class="flutuante-icone ok"><svg class="i"><use href="#i-check"/></svg></span>
-          <div class="flutuante-texto"><b>Enquadramento confirmado na validação</b><small>Pão de forma · LC 214/2025, Anexo VII, item 12</small></div>
+          <div class="flutuante-texto"><b>Regra da lei confirmada</b><small>Pão de forma · LC 214/2025, Anexo VII, item 12</small></div>
         </div>
 
         <div class="flutuante f-relatorio" data-camada="2">
           <svg class="i"><use href="#i-relatorio"/></svg>
-          <b>Relatório do que ajustar</b>
+          <b>Lista do que corrigir</b>
           <span class="formatos"><i>PDF</i><i>Excel</i><i>CSV</i></span>
         </div>
       </div>
@@ -139,27 +139,61 @@
     <div class="problema-grade">
       <div class="cabeca-secao" data-revelar>
         <h2 class="titulo-secao">Um erro cadastrado uma vez <em>se repete em todas as vendas.</em></h2>
-        <p class="lead">Se um produto está cadastrado com o CST ou o cClassTrib de IBS/CBS errado, o problema não fica em uma nota só: <span class="grifo">vai junto em cada venda daquele produto,</span> até alguém corrigir o cadastro. Um item vendido 40 vezes por dia leva o mesmo código para cerca de 1.200 notas por mês.</p>
+        <p class="lead">Pense numa receita de pão: se ela pede sal demais, todo pão sai salgado até alguém corrigir a receita. Com o imposto é igual. Cada produto tem no cadastro dois códigos que dizem à nota quanto cobrar de IBS e CBS. Se um deles está errado, <span class="grifo">o erro vai junto em cada venda daquele produto,</span> até alguém corrigir. Um produto vendido 40 vezes por dia leva o mesmo erro para cerca de 1.200 notas por mês.</p>
       </div>
       <div class="dores">
         <article class="dor eco" data-revelar style="--atraso:.05s">
           <span class="dor-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-moedas"/></svg></span>
-          <div><h3>Redução que ficou de fora</h3><p>A lei prevê alíquota zero ou reduzida para o produto, mas ele sai na nota com tributação integral. É imposto calculado a mais, venda após venda.</p></div>
+          <div><h3>Desconto da lei que ficou de fora</h3><p>A lei dá imposto zero ou com desconto para o produto, mas ele sai na nota com o imposto cheio. Resultado: o imposto sai maior do que deveria, venda após venda.</p></div>
         </article>
         <article class="dor risco" data-revelar style="--atraso:.12s">
           <span class="dor-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-alerta"/></svg></span>
-          <div><h3>Redução que não se aplica</h3><p>O inverso também acontece: o produto sai com uma redução que não vale para ele. O imposto fica menor do que deveria, e a diferença se repete a cada venda.</p></div>
+          <div><h3>Desconto que não vale para o produto</h3><p>O contrário também acontece: o produto sai com um desconto que a lei não dá para ele. O imposto fica menor do que deveria, e a diferença vira um valor a pagar que cresce a cada venda.</p></div>
         </article>
         <article class="dor" data-revelar style="--atraso:.19s">
           <span class="dor-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-relogio"/></svg></span>
-          <div><h3>Revisão no escuro</h3><p>Conferir o cadastro inteiro em planilha, NCM por NCM, é trabalho lento e depende de quem conhece a lei de cor.</p></div>
+          <div><h3>Conferir tudo na mão</h3><p>Revisar o cadastro inteiro numa planilha, produto por produto, demora e depende de alguém que saiba a lei de cor.</p></div>
         </article>
       </div>
     </div>
-    <p class="risco-nota" data-revelar>Em 2026 as alíquotas de IBS e CBS ainda são de teste (CBS 0,9% e IBS 0,1%). Em 2027 a CBS passa a ser cobrada no lugar do PIS/Cofins, com alíquota muito maior e ainda não fixada, e o mesmo código errado passa a pesar em cada venda. É a hora de acertar o cadastro, enquanto a conta ainda é pequena.</p>
+    <p class="risco-nota" data-revelar><b>Por que corrigir agora?</b> Em 2026 o IBS e a CBS ainda estão em teste, com alíquotas pequenas (CBS 0,9% e IBS 0,1%), então o erro custa pouco. Em 2027 a CBS passa a ser cobrada de verdade, no lugar do PIS e da Cofins, com uma alíquota bem maior (ainda não definida), e o mesmo código errado passa a pesar em cada venda. Corrigir agora é como consertar um vazamento enquanto ele ainda é uma gota.</p>
     <div class="chamada" data-revelar>
-      <p>Quais dos seus produtos estão assim? <b>Seus XMLs de venda respondem.</b></p>
-      <a class="btn btn-verde btn-grande" href="#planos">Descobrir nos meus XMLs <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+      <p>Quais dos seus produtos estão assim? <b>Suas notas de venda respondem.</b></p>
+      <a class="btn btn-verde btn-grande" href="#planos">Descobrir nas minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2b. AS PALAVRAS QUE APARECEM NA PÁGINA =================
+     Seção nova. Usa exatamente o mesmo visual da seção "Para quem é".
+     Para remover, apague daqui até o fim desta <section>. -->
+<section class="secao para-quem" id="palavras">
+  <div class="container">
+    <div class="cabeca-secao" data-revelar>
+      <h2 class="titulo-secao">Quatro palavras <em>e você entende tudo.</em></h2>
+      <p class="lead">IBS e CBS são os dois impostos novos da Reforma Tributária. Aos poucos, eles tomam o lugar de PIS, Cofins, ICMS e ISS. Para entender o resto da página, só faltam estas quatro palavras:</p>
+    </div>
+    <div class="publicos">
+      <article class="publico" data-revelar>
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-xml"/></svg></span>
+        <h3>XML</h3>
+        <p><b>É a nota fiscal em forma de arquivo.</b> Toda nota que você emite gera um. O sistema que emite suas notas guarda esses arquivos, e o seu contador costuma recebê-los todo mês. É só pedir a ele.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.06s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lista"/></svg></span>
+        <h3>Cadastro</h3>
+        <p><b>É a receita que toda venda segue.</b> A ficha de cada produto no seu sistema, com nome, preço e códigos. Toda nota copia as informações dessa ficha.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.12s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lupa"/></svg></span>
+        <h3>NCM</h3>
+        <p><b>É o RG do produto.</b> Um código de 8 números que diz o que ele é. É por ele que se encontra a regra da lei para aquele produto.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.18s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-calculadora"/></svg></span>
+        <h3>CST e cClassTrib</h3>
+        <p><b>É a instrução de quanto imposto cobrar.</b> São os dois códigos que dizem à nota se o IBS e a CBS vão cheios, com desconto ou zerados. Quando esta página fala em "os dois códigos", são eles. É isso que a análise confere.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -169,50 +203,50 @@
   <div class="container">
     <div class="como-cabeca cabeca-secao" data-revelar>
       <h2 class="titulo-secao">Comece pelo que você vende, <em>não pelo cadastro inteiro.</em></h2>
-      <p class="lead">Sua empresa pode ter 10 mil produtos cadastrados, mas só uma parte deles aparece nas vendas. Seus XMLs de venda mostram quais são, e a análise começa por eles.</p>
+      <p class="lead">Sua empresa pode ter 10 mil produtos cadastrados, mas só uma parte deles é vendida de verdade. As suas notas de venda mostram quais são, e a análise confere só esses. Veja como funciona:</p>
     </div>
 
     <ol class="passos">
       <li class="passo" data-revelar style="--atraso:.04s">
         <span class="passo-num">01</span>
         <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-upload"/></svg></span>
-        <h3>Você envia os XMLs</h3>
-        <p>Arraste os .xml ou .zip das suas NF-e e NFC-e de venda. Até 10.000 arquivos por envio, e dá para somar vários envios.</p>
+        <h3>Você envia as notas</h3>
+        <p>Arraste os arquivos XML das suas notas de venda (NF-e e NFC-e), soltos ou num .zip. Cabem até 10.000 por envio, e dá para enviar mais de uma vez.</p>
       </li>
       <li class="passo" data-revelar style="--atraso:.1s">
         <span class="passo-num">02</span>
         <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lupa"/></svg></span>
-        <h3>Cada item é conferido</h3>
-        <p>O CST e o cClassTrib de cada produto vendido são comparados com a regra do NCM, na data da nota.</p>
+        <h3>A análise confere cada produto</h3>
+        <p>Ela compara os dois códigos de cada produto vendido com o que a lei manda para aquele produto, na data da venda.</p>
       </li>
       <li class="passo" data-revelar style="--atraso:.16s">
         <span class="passo-num">03</span>
         <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-check-circulo"/></svg></span>
-        <h3>As diferenças aparecem</h3>
-        <p>O que está correto, o que teve o imposto recalculado (economia ou valor a pagar) e o que depende da sua confirmação.</p>
+        <h3>Cada produto ganha um resultado</h3>
+        <p>Está certo, precisa trocar o código (e você vê quanto imposto saiu a mais ou a menos) ou depende de uma resposta sua.</p>
       </li>
       <li class="passo" data-revelar style="--atraso:.22s">
         <span class="passo-num">04</span>
         <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-mao"/></svg></span>
-        <h3>Você responde só às perguntas pendentes</h3>
-        <p>Uma pergunta por produto, "O que é este produto?", e cada opção mostra o resultado antes do clique.</p>
+        <h3>Você responde só o que faltar</h3>
+        <p>Quando a lei dá desconto para o NCM do produto, aparece uma pergunta: "O que é este produto?". O desconto só entra na conta depois da sua resposta, e cada opção mostra o resultado antes de você clicar.</p>
       </li>
       <li class="passo" data-revelar style="--atraso:.28s">
         <span class="passo-num">05</span>
         <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-relatorio"/></svg></span>
-        <h3>Você recebe o que ajustar</h3>
-        <p>Por produto: o CST e o cClassTrib a usar, a instrução e a norma, em CSV, Excel ou PDF, conforme o plano.</p>
+        <h3>Você recebe a lista do que corrigir</h3>
+        <p>Produto por produto: os códigos certos, o que fazer e o trecho da lei que explica. Em CSV, Excel e PDF.</p>
       </li>
     </ol>
 
     <div class="comparativo" data-revelar>
       <div class="comparativo-lado antes">
-        <p class="comparativo-titulo"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>No escuro</p>
+        <p class="comparativo-titulo"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>Do jeito antigo</p>
         <ul>
-          <li>Revisar o cadastro inteiro, inclusive o que não vende</li>
-          <li>Redução aplicada só pelo NCM, sem conferir o que o produto é</li>
-          <li>Devoluções e canceladas misturadas às vendas</li>
-          <li>Planilhas paralelas e respostas que se perdem</li>
+          <li>Revisar o cadastro inteiro, até o que nunca vende</li>
+          <li>Dar desconto só olhando o NCM, sem ver o que o produto é</li>
+          <li>Devoluções e notas canceladas misturadas com as vendas</li>
+          <li>Planilhas soltas e respostas que se perdem</li>
           <li>"Acho que está certo"</li>
         </ul>
       </div>
@@ -220,17 +254,17 @@
       <div class="comparativo-lado depois">
         <p class="comparativo-titulo"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Pelas suas vendas</p>
         <ul>
-          <li>Só os produtos que saíram nas notas, com um resultado por produto</li>
-          <li>Nenhuma redução presumida: o que depende do produto vai para a sua validação</li>
-          <li>Devoluções, canceladas e repetidas fora do cálculo, com o motivo</li>
-          <li>Um painel, com as respostas guardadas junto da análise</li>
-          <li>Regra, motivo e fundamento de cada resultado</li>
+          <li>Só os produtos que você vendeu, com um resultado para cada</li>
+          <li>Nenhum desconto no chute: se depende do produto, você confirma</li>
+          <li>Devoluções, canceladas e notas repetidas ficam de fora, com o motivo</li>
+          <li>Tudo num painel, com as suas respostas salvas</li>
+          <li>"Está certo, e aqui está a lei que mostra"</li>
         </ul>
       </div>
     </div>
     <div class="solucao-fecho" data-revelar>
-      <p>Antes: milhares de linhas para revisar. <b>Depois: a lista dos produtos que precisam de atenção, e o porquê.</b></p>
-      <a class="btn btn-verde btn-grande" href="#planos">Analisar meus XMLs <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+      <p>Antes: milhares de linhas para revisar. <b>Depois: só a lista do que precisa de atenção, e o porquê.</b></p>
+      <a class="btn btn-verde btn-grande" href="#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
     </div>
   </div>
 </section>
@@ -240,29 +274,29 @@
   <div class="container">
     <div class="demo" data-demo>
       <div class="cabeca-secao demo-cabeca" data-revelar>
-        <h2 class="titulo-secao">Veja uma análise <em>do XML ao relatório.</em></h2>
-        <p class="lead">Quatro telas de uma análise de demonstração, com dados ilustrativos: o painel, a pergunta que resolve as pendências, o relatório do que ajustar e a consulta de um NCM.</p>
+        <h2 class="titulo-secao">Veja uma análise <em>do arquivo ao relatório.</em></h2>
+        <p class="lead">Quatro telas de uma análise de demonstração, com dados de exemplo: o painel com o resumo, a pergunta que tira as dúvidas, a lista do que corrigir e a consulta de um NCM.</p>
       </div>
 
       <div class="demo-abas" role="group" aria-label="Telas da demonstração" data-revelar="esquerda">
         <button type="button" aria-pressed="true" data-demo-aba="visao">
           <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-painel"/></svg></span>
-          <span><b>Dashboard</b><small>A situação da empresa, a economia potencial e os resultados em um painel.</small></span>
+          <span><b>Dashboard</b><small>O resumo da empresa: quanto está certo, quanto imposto saiu a mais e o que falta.</small></span>
           <i class="demo-tempo" aria-hidden="true"></i>
         </button>
         <button type="button" aria-pressed="false" data-demo-aba="pendencias">
           <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-mao"/></svg></span>
-          <span><b>Pendências</b><small>Uma pergunta por produto, com o resultado de cada resposta antes do clique.</small></span>
+          <span><b>Pendências</b><small>Uma pergunta por produto. Cada resposta mostra o resultado antes do clique.</small></span>
           <i class="demo-tempo" aria-hidden="true"></i>
         </button>
         <button type="button" aria-pressed="false" data-demo-aba="relatorio">
           <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-relatorio"/></svg></span>
-          <span><b>Relatório final</b><small>O CST e o cClassTrib a usar em cada produto, com a instrução para o cadastro.</small></span>
+          <span><b>Relatório final</b><small>Os códigos certos de cada produto e o que mudar no cadastro.</small></span>
           <i class="demo-tempo" aria-hidden="true"></i>
         </button>
         <button type="button" aria-pressed="false" data-demo-aba="ncm">
           <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-lupa"/></svg></span>
-          <span><b>Consulta por NCM</b><small>Vai cadastrar um produto novo? Consulte o NCM antes, sem precisar de XML.</small></span>
+          <span><b>Consulta por NCM</b><small>Vai cadastrar um produto novo? Descubra os códigos certos antes, sem precisar de nota.</small></span>
           <i class="demo-tempo" aria-hidden="true"></i>
         </button>
       </div>
@@ -278,12 +312,12 @@
               <div class="dt-cartao destaque-atencao">
                 <small>Situação da empresa</small>
                 <b>84% <span class="dt-selo">Atenção</span></b>
-                <p>Códigos de produto com CST e cClassTrib corretos.</p>
+                <p>Produtos com os dois códigos certos.</p>
               </div>
               <div class="dt-cartao destaque-ouro">
                 <small>Economia potencial</small>
                 <b>R$ 486,30</b>
-                <p>Imposto calculado a mais, menos o valor a pagar.</p>
+                <p>Imposto calculado a mais, menos o calculado a menos.</p>
               </div>
             </div>
             <div class="dt-dupla">
@@ -330,7 +364,7 @@
               <div class="dt-rel-cab"><span>Produto</span><span>NCM</span><span>cClassTrib</span><span>CST</span><span>Instrução</span></div>
               <div class="dt-rel-linha"><span><b>QUEIJO MUÇARELA KG</b></span><span>0406.10.10</span><span class="destaque">200003</span><span class="destaque">200</span><span>Alterar o cadastro do produto para o CST 200 e cClassTrib 200003</span></div>
               <div class="dt-rel-linha"><span><b>PASTEL FRANGO 20 UND</b> <span class="chip chip-ok sem-ponto">validado</span></span><span>1902.20.00</span><span class="destaque">200034</span><span class="destaque">200</span><span>Alterar o cadastro do produto para o CST 200 e cClassTrib 200034</span></div>
-              <div class="dt-rel-linha"><span><b>PÃO DE FORMA 500G</b></span><span>1905.90.10</span><span>200034</span><span>200</span><span>Cadastro correto: manter</span></div>
+              <div class="dt-rel-linha"><span><b>PÃO DE FORMA 500G</b> <span class="chip chip-ok sem-ponto">validado</span></span><span>1905.90.10</span><span>200034</span><span>200</span><span>Cadastro correto: manter</span></div>
               <div class="dt-rel-linha"><span><b>REFRIGERANTE LATA</b></span><span>2202.10.00</span><span>000001</span><span>000</span><span>Cadastro correto: manter</span></div>
             </div>
           </div>
@@ -366,27 +400,27 @@
   <div class="container">
     <div class="cabeca-secao" data-revelar>
       <h2 class="titulo-secao">O que você descobre <em>nas suas próprias vendas.</em></h2>
-      <p class="lead">Cada produto que saiu nas suas notas recebe um resultado e o que fazer com ele.</p>
+      <p class="lead">Cada produto que saiu nas suas notas recebe um resultado e uma instrução do que fazer.</p>
     </div>
 
     <div class="bento">
       <article class="bento-card largo economia" data-revelar>
         <div class="bento-texto">
-          <h3>Onde há imposto calculado a mais ou a menos</h3>
-          <p>Quando a nota usou outro código, o imposto é recalculado. A redução prevista e não usada vira "Economia". A redução usada sem regra que a sustente, ou a nota sem o grupo IBS/CBS quando ele já era exigido, vira "Valor a pagar". O painel mostra o saldo e as duas parcelas.</p>
+          <h3>Onde há imposto a mais ou a menos</h3>
+          <p>Quando a nota usou o código errado, a análise refaz a conta do imposto com o código certo. Se ficou de fora um desconto que a lei dava, a diferença aparece como "Economia". Se foi usado um desconto que a lei não dá para aquele produto, ou se a nota saiu sem os campos do IBS/CBS quando eles já eram obrigatórios, aparece como "Valor a pagar". O painel mostra as duas partes e o saldo.</p>
         </div>
-        <div class="bento-visual valor-economia" aria-hidden="true"><small>Exemplo · economia potencial</small><b>R$ 486,30</b><span class="chip chip-eco">318 itens com recálculo de impostos</span></div>
+        <div class="bento-visual valor-economia" aria-hidden="true"><small>Exemplo · economia potencial</small><b>R$ 486,30</b><span class="chip chip-eco">318 itens com o imposto recalculado</span></div>
       </article>
 
       <article class="bento-card" data-revelar style="--atraso:.06s">
         <h3>O que está certo e o que não está</h3>
-        <p>Cada produto vendido recebe um destes resultados: correto, correto com recálculo de impostos, precisa validar ou ajustar NCM. O que está certo fica marcado: é só manter.</p>
-        <div class="estados-visual" aria-hidden="true"><span class="chip chip-ok">Correto</span><span class="chip chip-eco">C/ recal impostos</span><span class="chip chip-pend">Precisa validar</span><span class="chip chip-risco">Ajustar NCM</span></div>
+        <p>Cada produto recebe um destes resultados: <b>Correto</b> (é só manter), <b>C/ recal impostos</b> (a regra é conhecida, mas a nota usou outro código: o relatório diz qual usar), <b>Precisa validar</b> (depende de uma resposta sua) ou <b>Ajustar NCM</b> (você indicou que o NCM está errado). Notas que saíram sem os campos do IBS/CBS também aparecem: antes de 03/08/2026 viram <b>Não obrigatório</b> e ficam fora da conta, porque os campos ainda não eram exigidos; depois dessa data, recebem os códigos a cadastrar e o valor a pagar.</p>
+        <div class="estados-visual" aria-hidden="true"><span class="chip chip-ok">Correto</span><span class="chip chip-eco">C/ recal impostos</span><span class="chip chip-pend">Precisa validar</span><span class="chip chip-risco">Ajustar NCM</span><span class="chip chip-neutro">Não obrigatório</span></div>
       </article>
 
       <article class="bento-card" data-revelar>
         <h3>O que mudar no cadastro</h3>
-        <p>O CST e o cClassTrib a usar em cada produto, com a instrução e a norma. O que ainda não foi validado aparece numa visão à parte, só como candidato: confirme em Pendências antes de alterar o cadastro.</p>
+        <p>Os dois códigos certos de cada produto, com a instrução do que fazer e a lei. O que ainda depende de resposta aparece separado, só como sugestão: responda em Pendências antes de mudar o cadastro.</p>
         <div class="regra-visual" aria-hidden="true">
           <span class="regra-linha"><b>CST a utilizar</b>200</span>
           <span class="regra-linha"><b>cClassTrib a utilizar</b>200003</span>
@@ -394,8 +428,8 @@
       </article>
 
       <article class="bento-card" data-revelar style="--atraso:.06s">
-        <h3>O que depende da sua confirmação</h3>
-        <p>Quando a regra depende do que o produto é, ele vai para Pendências, onde os produtos de maior valor aparecem primeiro. Sem resposta, a estimativa dele fica fora da soma.</p>
+        <h3>O que depende da sua resposta</h3>
+        <p>Quando a lei dá desconto para o NCM, o produto vai para Pendências até você confirmar o que ele é. Os produtos que mais vendem, em valor, aparecem primeiro. Enquanto você não responde, o valor dele fica fora da conta.</p>
         <div class="arte-pendencias" aria-hidden="true">
           <b>O que é este produto?</b>
           <span class="opcao marcada">Massa alimentícia · Anexo VII</span>
@@ -405,7 +439,7 @@
 
       <article class="bento-card" data-revelar style="--atraso:.12s">
         <h3>O porquê de cada resultado</h3>
-        <p>Motivo, regra, anexo, item e fundamento, com links para a LC 214/2025 e para a tabela oficial. Para você conferir com o seu contador.</p>
+        <p>O motivo de cada resultado e o trecho da lei da Reforma (LC 214/2025) que o explica, com link para a lei e para a tabela oficial de códigos do governo. Para você conferir com o seu contador.</p>
         <ol class="trilha-visual" aria-hidden="true"><li>Regra encontrada</li><li>Motivo do resultado</li><li>Norma</li></ol>
       </article>
     </div>
@@ -421,33 +455,33 @@
   <div class="container">
     <div class="cabeca-secao centro" data-revelar>
       <h2 class="titulo-secao">Quando falta informação, <em>a análise pergunta em vez de chutar.</em></h2>
-      <p class="lead">Em tributação, uma resposta errada com cara de certa custa mais caro do que uma pendência. Por isso a análise só decide o que a regra permite decidir e mostra de onde veio cada resultado.</p>
+      <p class="lead">Em imposto, uma resposta errada com cara de certa sai mais cara do que uma dúvida. Por isso a análise só decide o que a lei deixa decidir, e mostra de onde veio cada resultado.</p>
     </div>
 
     <div class="argumentos">
       <article class="argumento" data-revelar>
         <span class="argumento-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-escudo"/></svg></span>
-        <h3>Nenhuma redução presumida</h3>
-        <p>Se o NCM admite redução e é o produto que decide, ele fica pendente até você responder. Sem alíquota publicada para o período, o valor fica em branco em vez de estimado.</p>
+        <h3>Nenhum desconto no chute</h3>
+        <p>Se a lei dá desconto para o NCM, ele só entra na conta depois que você confirma o que o produto é. Se a alíquota do período ainda não foi publicada, o valor fica em branco, em vez de inventado.</p>
       </article>
       <article class="argumento" data-revelar style="--atraso:.06s">
         <span class="argumento-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lupa"/></svg></span>
-        <h3>O NCM encontra a regra, mas não decide sozinho</h3>
-        <p>O pão francês tem alíquota zero, mas o NCM dele também é usado por outros produtos. Num bolo vendido com esse mesmo NCM, a regra aparece como não aplicável e a alíquota zero não entra em nenhum valor.</p>
-        <span class="chip chip-risco sem-ponto argumento-chip" aria-hidden="true">BOLO BANDEJA · não aplicável ao produto</span>
+        <h3>O NCM ajuda, mas não decide sozinho</h3>
+        <p>O pão francês tem imposto zero, mas o NCM dele também é usado por outros produtos. Se um bolo for vendido com esse mesmo NCM, a análise percebe pelo nome do produto na nota, não dá o imposto zero para ele e pergunta a você o que o produto é. Nenhum desconto entra na conta antes da sua resposta.</p>
+        <span class="chip chip-risco sem-ponto argumento-chip" aria-hidden="true">BOLO BANDEJA · imposto zero não aplicado</span>
       </article>
       <article class="argumento" data-revelar style="--atraso:.12s">
         <span class="argumento-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-moedas"/></svg></span>
         <h3>Os dois lados da conta</h3>
-        <p>A análise não procura só economia. Sem regra que a sustente, a redução não é aceita: você vê a tributação integral indicada e o valor a pagar.</p>
+        <p>A análise não procura só economia. Se a nota usou um desconto que a lei não dá para o produto, você vê o imposto cheio e o valor a pagar. Se a resposta depende do produto, ela pergunta antes de fazer a conta.</p>
       </article>
     </div>
 
     <article class="bento-card largo privacidade no-escuro" data-revelar>
       <div class="bento-texto">
-        <h3>Seus XMLs não saem do navegador</h3>
-        <p>A análise acontece no seu próprio navegador e fica salva nele. Os arquivos não são enviados para nenhum servidor, e a página não tem rastreadores nem contadores de visitas. Mais controle, mais privacidade.</p>
-        <p class="privacidade-ressalva">Não há cópia na nuvem: outro computador começa com a análise vazia, e limpar os dados do navegador apaga a análise. Suas notas e seu sistema de emissão ficam como estão.</p>
+        <h3>Seus arquivos não saem do seu computador</h3>
+        <p>A análise acontece dentro do seu navegador e fica salva nele. Os arquivos não são enviados para nenhum servidor, e a página não tem rastreadores nem contadores de visitas.</p>
+        <p class="privacidade-ressalva">Um cuidado: não existe cópia na nuvem. Em outro computador a análise começa vazia, e limpar os dados do navegador apaga a análise. Suas notas e o sistema que emite suas notas continuam como estão.</p>
       </div>
       <div class="bento-visual cofre" aria-hidden="true">
         <div class="cofre-janela"><svg class="i"><use href="#i-navegador"/></svg><span>Seu navegador</span></div>
@@ -456,7 +490,7 @@
       </div>
     </article>
     <div class="chamada" data-revelar>
-      <p>Sem chute, sem instalar nada <b>e sem seus XMLs saírem do navegador.</b></p>
+      <p>Sem chute, sem instalar nada <b>e sem seus arquivos saírem do computador.</b></p>
       <a class="btn btn-verde btn-grande" href="#planos">Começar minha análise <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
     </div>
   </div>
@@ -467,35 +501,35 @@
   <div class="container">
     <div class="cabeca-secao" data-revelar>
       <h2 class="titulo-secao">Feito para o setor de alimentação, <em>do balcão à indústria.</em></h2>
-      <p class="lead">Padarias, confeitarias, restaurantes, bares, lanchonetes, indústrias de alimentos e distribuidoras: muitos produtos, NCMs parecidos e reduções que dependem do que cada item é.</p>
+      <p class="lead">Padarias, confeitarias, restaurantes, bares, lanchonetes, indústrias de alimentos e distribuidoras têm muitos produtos, NCMs parecidos e descontos que dependem do que cada item é. É aí que os erros aparecem.</p>
     </div>
     <div class="publicos">
       <article class="publico" data-revelar>
         <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-pao"/></svg></span>
         <h3>Padarias e confeitarias</h3>
-        <p>Pão francês, pão de forma e bolo têm NCMs próximos, às vezes o mesmo, e tratamentos diferentes na lei. Veja onde a regra do NCM serve para o produto e onde não serve.</p>
+        <p>Pão francês, pão de forma e bolo têm NCMs parecidos, às vezes iguais, mas a lei trata cada um de um jeito. Veja onde a regra do NCM vale para o produto e onde não vale.</p>
       </article>
       <article class="publico" data-revelar style="--atraso:.06s">
         <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-talheres"/></svg></span>
         <h3>Restaurantes, bares e lanchonetes</h3>
-        <p>Declare na análise que a empresa atende consumo no local e cada produto vendido recebe a pergunta: preparado e servido no local (regime de bares e restaurantes) ou mercadoria. O CNAE das notas indica se a atividade pode se encaixar no regime.</p>
+        <p>Informe na análise que você vende para consumo no local, e cada produto recebe a pergunta: foi preparado e servido aqui ou vendido como mercadoria? O que é preparado e servido no local tem regra própria, com desconto de 40% no imposto.</p>
       </article>
       <article class="publico" data-revelar style="--atraso:.12s">
         <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-caminhao"/></svg></span>
         <h3>Indústrias de alimentos e distribuidoras</h3>
-        <p>Muitas NF-e de uma vez: até 10.000 arquivos por envio, vários envios na mesma análise e um resultado por produto, não por nota.</p>
+        <p>Muitas notas de uma vez: até 10.000 arquivos por envio, vários envios na mesma análise e uma pergunta por produto, não por nota.</p>
       </article>
       <article class="publico secundario" data-revelar style="--atraso:.18s">
         <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-calculadora"/></svg></span>
         <h3>Contadores e consultores</h3>
-        <p>Também serve para quem entrega um diagnóstico ao cliente, com a regra e a norma em cada resultado. Uma empresa por análise.</p>
+        <p>Também serve para quem entrega um diagnóstico ao cliente, com o motivo e a lei em cada resultado. Uma empresa por análise.</p>
       </article>
     </div>
     <div class="chamada" data-revelar>
       <p>Reconheceu a sua empresa aqui? <b>Confira o cadastro antes de 2027.</b></p>
       <a class="btn btn-verde btn-grande" href="#planos">Ver os planos <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
     </div>
-    <p class="para-quem-nota" data-revelar>Empresa do Simples Nacional? Antes de contratar, <a href="#faq-simples">veja a resposta sobre o Simples nas Dúvidas</a>.</p>
+    <p class="para-quem-nota" data-revelar>Empresa do Simples Nacional? Antes de contratar, <a href="#faq-simples">leia a resposta sobre o Simples nas Dúvidas</a>.</p>
   </div>
 </section>
 
@@ -504,7 +538,7 @@
   <div class="container">
     <div class="cabeca-secao exemplo-cabeca" data-revelar>
       <h2 class="titulo-secao">Antes de contratar, <em>veja um resultado por inteiro.</em></h2>
-      <p class="lead">Estamos em pré-lançamento. Enquanto os primeiros resultados de clientes não chegam, veja uma análise de demonstração: o que cada número quer dizer e o que você faz com ele.</p>
+      <p class="lead">Estamos em pré-lançamento, então ainda não temos resultados de clientes para mostrar. Em vez disso, abrimos aqui uma análise de demonstração inteira: o que cada número quer dizer e o que você faz com ele.</p>
     </div>
 
     <div class="exemplo-folha" data-revelar>
@@ -513,28 +547,28 @@
         <div class="exemplo-valor">
           <small>Economia potencial</small>
           <b>R$ 486,30</b>
-          <p>Saldo do recálculo: o imposto calculado a mais (redução prevista e não usada) menos o valor a pagar (redução sem regra que a sustente ou nota sem o grupo IBS/CBS quando ele já era exigido). Calculado com as alíquotas de teste de 2026 (CBS 0,9% e IBS 0,1%), por isso o valor é pequeno; o que pesa é o código errado, que se repete nas próximas notas. Serve para orientar o ajuste; não é restituição nem crédito.</p>
+          <p>É o saldo da conta refeita: o imposto que saiu a mais (desconto da lei que ficou de fora) menos o que saiu a menos (desconto usado sem a lei dar, ou nota sem os campos do IBS/CBS quando eles já eram obrigatórios). O valor é pequeno porque 2026 é ano de teste, com alíquotas de 0,9% (CBS) e 0,1% (IBS). O que pesa é o código errado, que continua nas próximas notas. <b>Não é dinheiro devolvido nem crédito:</b> serve para mostrar onde ajustar.</p>
         </div>
         <dl class="exemplo-numeros">
-          <div class="neutro"><dt>Itens avaliados</dt><dd><b>3.482</b>Cada linha de produto das notas de venda que entraram na conta.</dd></div>
-          <div class="ok"><dt>Corretos</dt><dd><b>2.917</b>O código bate com a regra. O que fazer: manter o cadastro.</dd></div>
-          <div class="eco"><dt>Corretos c/ recal impostos</dt><dd><b>318</b>A regra certa já é conhecida, mas a nota usou outro código ou saiu sem o grupo IBS/CBS. O relatório diz para qual CST e cClassTrib alterar.</dd></div>
-          <div class="pend"><dt>Precisam validar</dt><dd><b>247</b>A resposta depende do que o produto é. Em Pendências, viram uma pergunta por produto.</dd></div>
+          <div class="neutro"><dt>Itens avaliados</dt><dd><b>3.482</b>Cada produto de cada nota de venda conta como um item.</dd></div>
+          <div class="ok"><dt>Corretos</dt><dd><b>2.917</b>O código bate com a lei. O que fazer: nada, é só manter.</dd></div>
+          <div class="eco"><dt>Corretos c/ recal impostos</dt><dd><b>318</b>A regra certa já é conhecida, mas a nota usou outro código ou saiu sem os campos do IBS/CBS. O que fazer: trocar os dois códigos no cadastro, como o relatório indica.</dd></div>
+          <div class="pend"><dt>Precisam validar</dt><dd><b>247</b>Depende do que o produto é. O que fazer: responder uma pergunta por produto em Pendências.</dd></div>
         </dl>
       </div>
       <div class="exemplo-caso">
         <p class="exemplo-caso-titulo"><b>Um produto, do começo ao fim</b><span>QUEIJO MUÇARELA KG · NCM 0406.10.10</span></p>
         <ol class="exemplo-trilha">
-          <li><small>Na nota</small><b>CST 000 · cClassTrib 000001</b><span>Tributação integral</span></li>
-          <li><small>Na validação</small><b>Alíquota zero</b><span>Anexo I, item 21 · confirmado</span></li>
-          <li><small>Instrução</small><b>CST 200 · cClassTrib 200003</b><span>"Alterar o cadastro do produto para o CST 200 e cClassTrib 200003."</span></li>
+          <li><small>Como saiu na nota</small><b>CST 000 · cClassTrib 000001</b><span>Imposto cheio</span></li>
+          <li><small>O que a lei diz</small><b>Imposto zero</b><span>Cesta básica (Anexo I, item 21) · confirmado</span></li>
+          <li><small>O que você faz</small><b>CST 200 · cClassTrib 200003</b><span>Troque estes códigos no cadastro do produto. As próximas notas já saem certas.</span></li>
         </ol>
-        <div class="exemplo-selos"><span class="chip chip-ok">Enquadramento confirmado na validação humana</span><span class="chip chip-ok">Regra conferida com a fonte oficial</span></div>
+        <div class="exemplo-selos"><span class="chip chip-ok">Validado por uma pessoa</span><span class="chip chip-ok">Regra conferida com a fonte oficial</span></div>
       </div>
-      <p class="exemplo-nota">Números ilustrativos de uma análise de demonstração; não são resultado de cliente. Nem todo XML enviado entra na conta: notas de entrada, devoluções, canceladas (quando o XML do cancelamento vai junto) e repetidas ficam fora, com o motivo.</p>
+      <p class="exemplo-nota">Números de uma análise de demonstração, não de cliente. Nem todo arquivo enviado entra na conta: notas de entrada, devoluções, notas que o arquivo mostra como não autorizadas, canceladas (quando o XML do cancelamento vai junto), repetidas e arquivos que não são nota ficam de fora, com o motivo.</p>
     </div>
     <div class="exemplo-cta" data-revelar>
-      <a class="btn btn-verde btn-grande" href="#planos">Analisar meus XMLs <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+      <a class="btn btn-verde btn-grande" href="#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
     </div>
   </div>
 </section>
@@ -544,8 +578,8 @@
   <div class="planos-fundo" aria-hidden="true"></div>
   <div class="container">
     <div class="cabeca-secao centro" data-revelar>
-      <h2 class="titulo-secao">Escolha o plano <em>e analise seus XMLs.</em></h2>
-      <p class="lead">Todos os planos têm todos os recursos, com o relatório em CSV, Excel e PDF. Escolha pelo volume: quantos XMLs de venda por mês e quantas empresas.</p>
+      <h2 class="titulo-secao">Escolha o plano <em>e confira suas notas.</em></h2>
+      <p class="lead">Todos os planos têm todos os recursos e o relatório em CSV, Excel e PDF. A única diferença é o tamanho: quantas notas de venda por mês e quantas empresas você pode analisar.</p>
       <p class="planos-aviso" data-valores-ilustrativos hidden></p>
       <div class="segmentado ciclo" role="group" aria-label="Período de cobrança" data-ciclo>
         <button type="button" data-valor="mensal" aria-pressed="true">Mensal</button>
@@ -570,12 +604,12 @@
     </div>
 
     <div class="contratar" data-revelar>
-      <h3>Como contratar</h3>
+      <h3>Como contratar, em 4 passos</h3>
       <ol>
-        <li><b>Escolha o plano</b><span>Compare o que cada um entrega.</span></li>
-        <li><b>Crie sua conta</b><span>Nome, e-mail e uma senha.</span></li>
-        <li><b>Confirme a assinatura</b><span><span data-so-demonstracao>No pré-lançamento, em modo demonstração: nada é cobrado.</span><span data-so-producao hidden>Pagamento no ambiente seguro do meio de pagamento.</span></span></li>
-        <li><b>Abra o sistema</b><span>Na área do cliente, clique em "Abrir sistema" e envie seus XMLs.</span></li>
+        <li><b>Escolha o plano</b><span>Veja qual combina com o tamanho da sua empresa.</span></li>
+        <li><b>Crie sua conta</b><span>Só nome, e-mail e uma senha.</span></li>
+        <li><b>Confirme a assinatura</b><span><span data-so-demonstracao>No pré-lançamento, nada é cobrado: a assinatura funciona em modo demonstração.</span><span data-so-producao hidden>Pagamento no ambiente seguro do meio de pagamento.</span></span></li>
+        <li><b>Abra o sistema</b><span>Na área do cliente, clique em "Abrir sistema" e envie suas notas.</span></li>
       </ol>
     </div>
   </div>
@@ -598,7 +632,6 @@
           <ul></ul>
         </div>
         <div class="quem-contatos">
-          <span data-contato="whatsapp" data-icone></span>
           <span data-contato="email" data-icone></span>
           <span data-contato="instagram" data-icone></span>
           <span data-responsavel-link="linkedin" data-icone></span>
@@ -628,11 +661,11 @@
     <div class="faq-lado" data-revelar>
       <h2 class="titulo-secao">Tudo o que você precisa <em>saber antes.</em></h2>
       <div class="faq-suporte">
-        <span class="faq-suporte-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-whatsapp"/></svg></span>
+        <span class="faq-suporte-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-email"/></svg></span>
         <div>
           <b>Ainda com dúvida?</b>
           <p>Fale com a gente em <span data-contato="horario"></span>:</p>
-          <div class="faq-contatos"><span data-contato="whatsapp" data-icone></span><span data-contato="email" data-icone></span><span data-contato="instagram" data-icone></span></div>
+          <div class="faq-contatos"><span data-contato="email" data-icone></span><span data-contato="instagram" data-icone></span></div>
         </div>
       </div>
       <a class="btn btn-verde btn-grande btn-bloco faq-cta" href="#planos">Tirou a dúvida? Escolha seu plano <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
@@ -640,51 +673,51 @@
     <div class="faq-lista" data-revelar style="--atraso:.08s">
       <details class="pergunta" open>
         <summary>Como funciona a análise?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Você envia os XMLs das suas notas de venda (NF-e e NFC-e). Cada item é conferido: o CST e o cClassTrib de IBS/CBS da nota são comparados com a regra aplicável ao NCM, na data da venda. Você vê o resultado no painel, responde só às perguntas sobre o que o produto é e recebe o relatório do que ajustar no cadastro. Tudo funciona no navegador, sem nada para instalar.</p></div></div>
+        <div class="resposta"><div><p>Você envia os arquivos XML das suas notas de venda (NF-e e NFC-e). A análise confere os dois códigos do IBS e da CBS de cada produto e compara com a regra da lei para aquele produto, na data da venda. Você vê o resultado no painel, responde só às perguntas sobre o que o produto é e recebe o relatório do que corrigir no cadastro. Tudo funciona no navegador, sem nada para instalar.</p></div></div>
       </details>
       <details class="pergunta">
-        <summary>Preciso analisar todos os meus produtos? E se eu tiver 10 mil cadastrados?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Não, e essa é a ideia. A análise começa pelos produtos que saíram nas notas enviadas, cada um uma vez, com todas as vendas agrupadas. Se você tem 10 mil itens cadastrados e mil deles giram, são esses mil que aparecem. O cadastro do seu sistema de emissão não é lido, então o produto que não vendeu no período fica de fora. Para incluí-lo, envie um período maior ou use a Consulta por NCM, que funciona sem XML.</p></div></div>
+        <summary>Preciso conferir todos os meus produtos? E se eu tiver 10 mil cadastrados?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Não, e essa é a ideia. A análise olha só os produtos que aparecem nas notas enviadas, e a pergunta sobre cada um é feita uma vez só, valendo para todas as vendas dele. Se você tem 10 mil produtos cadastrados e mil vendem, são esses mil que aparecem. A análise não lê o cadastro do sistema que emite suas notas, então o produto que não vendeu no período fica de fora. Para incluí-lo, envie notas de um período maior ou use a Consulta por NCM, que funciona sem XML.</p></div></div>
       </details>
       <details class="pergunta">
-        <summary>A análise garante que a minha tributação está correta?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Nenhuma ferramenta garante isso sozinha, e a análise não promete. Ela cruza seus XMLs com as regras da base, decide o que a regra permite decidir e separa para a sua validação só o que depende do produto. Assim você não confere item a item: revisa só o que ficou pendente, e cada resultado vem com a evidência (o motivo, a regra e se ela já foi conferida com a fonte oficial) para você e o seu contador revisarem. Cobre só IBS e CBS e não substitui a avaliação de um profissional.</p></div></div>
+        <summary>A análise garante que o meu imposto está certo?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Nenhuma ferramenta garante isso sozinha, e a análise não promete. Ela cruza suas notas com as regras da lei, decide só o que a lei deixa claro e separa para você o que depende do produto. Assim você não confere item por item: revisa só o que ficou pendente. Cada resultado mostra o motivo, a regra e se ela já foi conferida com a tabela oficial do governo, para você e o seu contador revisarem. A análise cobre só o IBS e a CBS e não substitui a avaliação de um profissional.</p></div></div>
       </details>
       <details class="pergunta">
-        <summary>A economia potencial é dinheiro que volta para o caixa?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Não. Não é restituição nem crédito. É um recálculo: a base de cada item multiplicada pelas alíquotas de referência do período e pela redução da regra. Ele mostra quanto imposto foi calculado a mais (economia) ou a menos (valor a pagar). Em 2026 as alíquotas ainda são de teste (CBS 0,9% e IBS 0,1%), então os valores tendem a ser pequenos; a partir de 2027, com a CBS no lugar do PIS/Cofins, deixam de ser. O que pesa é o código errado, que segue para as próximas notas. Sem alíquota publicada para o período, o valor fica em branco.</p></div></div>
+        <summary>A economia que aparece é dinheiro que volta para o caixa?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Não. Não é devolução nem crédito. É uma conta refeita: a análise calcula de novo o imposto de cada produto, com as alíquotas do período e o desconto que a lei dá, e mostra quanto saiu a mais (economia) ou a menos (valor a pagar). Em 2026 as alíquotas ainda são de teste (CBS 0,9% e IBS 0,1%), então os valores costumam ser pequenos. A partir de 2027, com a CBS no lugar do PIS e da Cofins, deixam de ser. O que pesa é o código errado, que continua nas próximas notas. Se a alíquota do período ainda não foi publicada, o valor fica em branco.</p></div></div>
       </details>
       <details class="pergunta">
         <summary>Quais notas entram na análise?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>XMLs de NF-e (modelo 55) e NFC-e (modelo 65), soltos ou dentro de .zip, inclusive com subpastas. Cabem até 10.000 arquivos por envio (um .zip conta como um), e dá para somar vários envios antes de processar. Entram as notas de saída autorizadas. Ficam fora, com o motivo exibido: notas de entrada, devoluções, notas não autorizadas, canceladas (quando o XML do evento de cancelamento está junto) e XMLs repetidos. Saídas que não são venda, como bonificação e remessa, continuam na análise.</p></div></div>
+        <div class="resposta"><div><p>Arquivos XML de NF-e (a nota fiscal comum) e de NFC-e (a nota do cupom, no balcão), soltos ou dentro de um .zip, mesmo com pastas dentro. Cabem até 10.000 arquivos por envio (um .zip conta como um arquivo), e você pode fazer vários envios antes de processar. Entram as notas de saída. Ficam de fora, com o motivo na tela: notas de entrada, devoluções, notas que o próprio arquivo mostra como não autorizadas, canceladas (quando o XML do cancelamento vai junto), a mesma nota enviada duas vezes e arquivos que não são nota. Saídas que não são venda, como bonificação e remessa, continuam na análise, com um aviso.</p><p>Notas emitidas antes de 03/08/2026 sem os campos do IBS/CBS aparecem como "Não obrigatório" e não entram na conta, porque esses campos ainda não eram exigidos.</p></div></div>
       </details>
       <details class="pergunta">
         <summary>O que exatamente é conferido?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>O CST e o cClassTrib de IBS e CBS de cada item, pelas regras da LC 214/2025 que estão na base: alíquota zero, redução de 60%, o regime de bares e restaurantes (art. 275) e a regra geral. O produto cujo NCM não tem regra de redução na base é conferido pela regra geral; se a empresa for declarada bar, restaurante ou lanchonete na análise, cada produto recebe antes a pergunta sobre consumo no local. ICMS, ST, DIFAL, PIS/Cofins, IPI, CEST e CSOSN ficam fora. Os valores destacados na nota não são conferidos. O NCM também não é validado: se você indicar que ele está errado, o produto é marcado para ajuste.</p></div></div>
+        <div class="resposta"><div><p>Os dois códigos do IBS e da CBS de cada produto (o CST e o cClassTrib), pelas regras da lei da Reforma (LC 214/2025): imposto zero, desconto de 60%, desconto de 40% para o que bares e restaurantes preparam e servem no local, e a regra geral, sem desconto. Se a lei não prevê desconto para o NCM do produto, vale a regra geral. Se você informar que a empresa é bar, restaurante ou lanchonete, cada produto recebe antes a pergunta sobre consumo no local.</p><p>Ficam de fora os outros impostos (ICMS, ST, DIFAL, PIS/Cofins, IPI) e os códigos CEST e CSOSN. A análise também não confere o valor de imposto escrito na nota, só os códigos, nem o NCM: se você indicar que ele está errado, o produto vai para a lista de ajuste.</p></div></div>
       </details>
       <details class="pergunta">
-        <summary>E se eu não souber a resposta de uma pendência?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Deixe sem resposta: o produto continua pendente e nenhum benefício é aplicado a ele. Cada opção mostra o resultado antes do clique. Quando você responde, a resposta vale para todas as vendas daquele produto no mesmo NCM, fica guardada na análise e pode ser revista depois. Na dúvida, leve a pergunta ao seu contador.</p></div></div>
+        <summary>E se eu não souber responder uma pendência?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Deixe sem resposta. O produto continua pendente e nenhum desconto é aplicado a ele. Cada opção mostra o resultado antes do clique. Quando você responde, a resposta vale para todas as vendas daquele produto com o mesmo NCM, fica salva na análise e pode ser mudada depois. Na dúvida, leve a pergunta ao seu contador.</p></div></div>
       </details>
       <details class="pergunta" id="faq-simples">
         <summary>Funciona para empresa do Simples Nacional?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Fale com a gente antes de contratar. Hoje a análise segue o calendário do regime normal, em que o grupo IBS/CBS passou a ser exigido em 03/08/2026, e não lê o regime da empresa na nota. Para o Simples, o calendário começa em 01/01/2027. Por isso, notas sem o grupo IBS/CBS emitidas entre essas datas apareceriam com um valor a pagar que não vale para a sua empresa.</p></div></div>
+        <div class="resposta"><div><p>Fale com a gente antes de contratar. Hoje a análise segue o calendário das empresas fora do Simples, para as quais os campos do IBS/CBS passaram a ser obrigatórios na nota em 03/08/2026, e ela não identifica sozinha que a empresa é do Simples. Para o Simples, essa obrigação só começa em 01/01/2027. Por isso, notas sem esses campos emitidas entre essas duas datas apareceriam como se os campos já fossem obrigatórios, o que não vale para a sua empresa.</p></div></div>
       </details>
       <details class="pergunta">
-        <summary>Meus XMLs ficam seguros?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Seus XMLs são processados no próprio navegador e a análise fica salva nele: os arquivos não são enviados para um servidor. A página não tem rastreadores nem contadores de visitas, e do próprio site só são baixados os arquivos da base de regras. Por outro lado, não há cópia na nuvem: limpar os dados do navegador apaga a análise, e outro computador ou navegador começa vazio.</p></div></div>
+        <summary>Meus arquivos ficam seguros?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Sim. Os arquivos são lidos dentro do seu próprio navegador e a análise fica salva nele: nada é enviado para um servidor. A página não tem rastreadores nem contadores de visitas, e do site o sistema só baixa as regras da lei e as ferramentas que montam os gráficos, o Excel e o PDF. O outro lado: não existe cópia na nuvem. Limpar os dados do navegador apaga a análise, e outro computador ou navegador começa vazio.</p></div></div>
       </details>
       <details class="pergunta">
-        <summary>A análise altera minhas notas ou o cadastro no meu sistema de emissão?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Não. A análise só lê os XMLs e diz o que ajustar. Não há integração com o seu sistema de emissão: as mudanças no cadastro dos produtos são feitas por você ou por quem cuida dele.</p></div></div>
+        <summary>A análise muda minhas notas ou o cadastro do meu sistema?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Não. A análise só lê os arquivos e diz o que corrigir. Ela não se conecta ao sistema que emite suas notas: as mudanças no cadastro dos produtos são feitas por você ou por quem cuida dele.</p></div></div>
       </details>
       <details class="pergunta">
         <summary>Posso analisar mais de uma empresa?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Sim, uma de cada vez, dentro do número de empresas do seu plano. O navegador guarda uma análise por vez, sem separar empresas: termine uma, exporte o relatório e use "Nova análise (limpar dados)" para começar a próxima. Essa opção apaga a análise atual, por isso exporte antes.</p></div></div>
+        <div class="resposta"><div><p>Sim, uma de cada vez, até o número de empresas do seu plano. O navegador guarda uma análise por vez. Termine uma, exporte o relatório e clique em "Nova análise (limpar dados)" para começar a próxima. Atenção: essa opção apaga a análise atual, então exporte antes.</p></div></div>
       </details>
       <details class="pergunta">
         <summary>Como faço para contratar?<span class="pergunta-icone" aria-hidden="true"></span></summary>
-        <div class="resposta"><div><p>Escolha um plano, crie sua conta e confirme a assinatura. <span data-so-demonstracao>Estamos em pré-lançamento e, por enquanto, a contratação funciona em modo demonstração: nada é cobrado, e a conta fica guardada só no navegador em que foi criada. </span>Depois, clique em "Entrar", no topo da página. Na área do cliente, o botão "Abrir sistema" leva direto à análise, e em "Minha assinatura" você troca de plano quando precisar.</p></div></div>
+        <div class="resposta"><div><p>Escolha um plano, crie sua conta e confirme a assinatura. <span data-so-demonstracao>Estamos em pré-lançamento: por enquanto, a contratação funciona em modo demonstração, nada é cobrado e a conta fica guardada só no navegador em que foi criada. </span>Depois, clique em "Entrar", no topo da página. Na área do cliente, o botão "Abrir sistema" leva direto à análise, e em "Minha assinatura" você troca de plano quando precisar.</p></div></div>
       </details>
     </div>
   </div>
@@ -700,12 +733,12 @@
       </div>
       <div class="cta-conteudo">
         <h2 class="titulo-secao">Corrija o cadastro uma vez. <em>Acerte todas as próximas vendas.</em></h2>
-        <p class="lead">Em 2027 a CBS entra no lugar do PIS/Cofins e o código errado passa a pesar de verdade. Envie hoje seus XMLs de venda e saiba quais produtos ajustar, com o motivo de cada um.</p>
+        <p class="lead">Em 2027 a CBS entra no lugar do PIS e da Cofins, e o código errado passa a pesar de verdade. Envie hoje suas notas de venda e descubra quais produtos corrigir, com o motivo de cada um.</p>
         <div class="cta-botoes">
-          <a class="btn btn-ouro btn-grande" href="#planos">Quero conferir meus XMLs <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+          <a class="btn btn-ouro btn-grande" href="#planos">Quero conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
           <a class="btn btn-fantasma btn-grande" href="entrar.html" data-link-entrar>Já tenho conta</a>
         </div>
-        <p class="cta-nota"><span data-so-demonstracao>Pré-lançamento: nesta fase nada é cobrado. </span>Prefere conversar antes? <span data-contato="whatsapp"></span></p>
+        <p class="cta-nota"><span data-so-demonstracao>Pré-lançamento: nesta fase nada é cobrado. </span>Prefere conversar antes? Escreva para <span data-contato="email"></span></p>
       </div>
     </div>
   </div>
@@ -715,6 +748,6 @@
 
 <!-- @parte rodape-site -->
 
-<a class="cta-movel" href="#planos" data-cta-movel>Analisar meus XMLs <svg class="i i-sm i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+<a class="cta-movel" href="#planos" data-cta-movel>Conferir minhas notas <svg class="i i-sm i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
 </body>
 </html>

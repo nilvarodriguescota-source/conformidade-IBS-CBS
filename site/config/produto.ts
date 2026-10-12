@@ -17,8 +17,6 @@ export const produto = {
   contato: {
     /** E-mail de suporte exibido no rodapé, no FAQ e na área do cliente. */
     emailSuporte: "saboresestrategicosconsultoria@gmail.com" as string | null,
-    /** WhatsApp, só números com DDI e DDD (o site formata para exibir). */
-    whatsapp: "5548991040611" as string | null,
     /** Instagram, sem o @. */
     instagram: "nilva.consultoria" as string | null,
     /** Entra no meio de frases ("Fale com a gente em horário comercial") e sozinho no rodapé. */
