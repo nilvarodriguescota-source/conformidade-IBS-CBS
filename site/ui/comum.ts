@@ -112,9 +112,12 @@ export function preencherDadosComerciais(): void {
         ? link(`mailto:${contato.emailSuporte}`, contato.emailSuporte, "email", el, false)
         : `<span class="a-definir">e-mail de suporte</span>`;
     } else if (tipo === "whatsapp") {
-      el.innerHTML = contato.whatsapp
-        ? link(`https://wa.me/${contato.whatsapp.replace(/\D/g, "")}`, `WhatsApp ${formatarTelefone(contato.whatsapp)}`, "whatsapp", el)
-        : `<span class="a-definir">WhatsApp</span>`;
+      // Sem WhatsApp configurado, o contato some (o atendimento é por e-mail).
+      if (contato.whatsapp) {
+        el.innerHTML = link(`https://wa.me/${contato.whatsapp.replace(/\D/g, "")}`, `WhatsApp ${formatarTelefone(contato.whatsapp)}`, "whatsapp", el);
+      } else {
+        el.remove();
+      }
     } else if (tipo === "instagram") {
       el.innerHTML = contato.instagram
         ? link(`https://www.instagram.com/${contato.instagram}/`, `@${contato.instagram}`, "instagram", el)
