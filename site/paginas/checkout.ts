@@ -1,19 +1,16 @@
 /**
  * Checkout: confirma o plano e inicia o pagamento pelo provedor configurado.
  * Com um gateway real, o provedor devolve a URL da página de pagamento hospedada e a
- * liberação da conta chega pelo webhook no servidor. No modo demonstração, a assinatura
- * é ativada localmente, sem cobrança, e a tela avisa isso.
+ * liberação da conta chega pelo webhook no servidor.
  */
-import { emDemonstracao, integracoes } from "../config/integracoes.js";
 import { configuracaoPlanos, planoPorId, valorDoCiclo, type Plano } from "../config/planos.js";
 import { carregarConta, pagamento, type EstadoConta } from "../servicos/conta.js";
 import { cicloDaUrl, parametro, rotas } from "../servicos/rotas.js";
 import type { Assinatura, CicloCobranca, FormaPagamento } from "../servicos/tipos.js";
-import { $, $$, aguardar, esc, faixaDemonstracao, formatarData, formatarMoeda, icone, iniciarPagina, mensagemDeErro, segmentado } from "../ui/comum.js";
+import { $, $$, aguardar, esc, formatarData, formatarMoeda, icone, iniciarPagina, mensagemDeErro, segmentado } from "../ui/comum.js";
 import { marcarEtapas, mostrarAlerta } from "../ui/formularios.js";
 
 iniciarPagina();
-faixaDemonstracao();
 marcarEtapas("pagamento");
 
 const FORMAS: Record<FormaPagamento, { nome: string; detalhe: string; icone: string }> = {
@@ -24,7 +21,9 @@ const FORMAS: Record<FormaPagamento, { nome: string; detalhe: string; icone: str
 
 let plano: Plano;
 let ciclo: CicloCobranca;
-let forma: FormaPagamento = integracoes.pagamento.formas[0] ?? "cartao";
+/** Formas exibidas antes de seguir para a Kiwify (a página dela mostra as opções de verdade). */
+const FORMAS_ACEITAS: FormaPagamento[] = ["cartao", "pix", "boleto"];
+let forma: FormaPagamento = FORMAS_ACEITAS[0]!;
 let conta: EstadoConta;
 
 function proximaRenovacao(c: CicloCobranca): string {
@@ -36,7 +35,7 @@ function proximaRenovacao(c: CicloCobranca): string {
 
 function desenharFormas(): void {
   const el = $("[data-formas]")!;
-  el.innerHTML = integracoes.pagamento.formas
+  el.innerHTML = FORMAS_ACEITAS
     .map((f) => {
       const info = FORMAS[f];
       return `<button type="button" class="forma" role="radio" aria-checked="${f === forma}" data-forma="${f}">
@@ -106,9 +105,7 @@ function avaliarAssinaturaAtual(): void {
   botao.innerHTML =
     a?.status === "ativa"
       ? `Confirmar troca de plano ${icone("seta", "i-seta")}`
-      : emDemonstracao()
-        ? `Confirmar assinatura ${icone("seta", "i-seta")}`
-        : `Ir para o pagamento seguro ${icone("cadeado")}`;
+      : `Ir para o pagamento seguro ${icone("cadeado")}`;
 }
 
 function mostrarSucesso(a: Assinatura, trocou: boolean): void {
@@ -170,7 +167,6 @@ async function iniciar(): Promise<void> {
   ciclo = cicloUrl ?? conta.assinatura?.ciclo ?? configuracaoPlanos.cicloPadrao;
 
   $("[data-saudacao]")!.textContent = `${conta.sessao.usuario.nome.split(" ")[0]}, revise o plano e escolha como prefere pagar.`;
-  $("[data-demo-checkout]")!.hidden = !emDemonstracao();
   const vantagem = $("[data-vantagem-anual]");
   if (vantagem) vantagem.textContent = configuracaoPlanos.vantagemAnual;
 

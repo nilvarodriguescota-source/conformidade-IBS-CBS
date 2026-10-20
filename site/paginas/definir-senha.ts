@@ -4,11 +4,10 @@
  */
 import { autenticacao } from "../servicos/conta.js";
 import { rotas } from "../servicos/rotas.js";
-import { $, aguardar, alternarSenhas, faixaDemonstracao, icone, iniciarPagina, mensagemDeErro } from "../ui/comum.js";
+import { $, aguardar, alternarSenhas, icone, iniciarPagina, mensagemDeErro } from "../ui/comum.js";
 import { erroNoCampo, limparErros, medidorDeSenha, mostrarAlerta } from "../ui/formularios.js";
 
 iniciarPagina();
-faixaDemonstracao();
 alternarSenhas();
 
 const form = $<HTMLFormElement>("[data-form-senha]")!;

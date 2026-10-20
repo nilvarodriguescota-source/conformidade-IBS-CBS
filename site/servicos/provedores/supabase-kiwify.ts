@@ -3,7 +3,7 @@
  *
  * Como funciona (estilo streaming):
  *  1. o cliente compra na página da Kiwify (os botões "Assinar" levam direto para ela);
- *  2. a Kiwify avisa o webhook (netlify/functions/kiwify-webhook.mts), que grava a assinatura
+ *  2. a Kiwify avisa o webhook (função kiwify-webhook no Supabase, código em webhook/), que grava a assinatura
  *     no Supabase e cria o login do comprador, mandando o convite por e-mail;
  *  3. o cliente abre o convite, cria a senha (definir-senha.html) e entra direto na área do cliente.
  *     Depois disso entra com e-mail e senha ou pede um link de acesso por e-mail.
@@ -25,23 +25,11 @@ import {
   type ProvedorAutenticacao,
   type ProvedorPagamento,
   type ResultadoCheckout,
+  type ResultadoUsoXmls,
   type StatusAssinatura,
   type Usuario,
+  type UsoXmls,
 } from "../tipos.js";
-
-/**
- * Cópia do token de acesso num cookie, para a função de borda (netlify/edge-functions/proteger-sistema.ts)
- * conferir a assinatura antes de entregar o sistema. O token já fica no localStorage; o cookie não
- * amplia a exposição, só deixa o servidor enxergá-lo.
- */
-const COOKIE_ACESSO = "se_acesso";
-
-function gravarCookieDeAcesso(sessao: Session | null): void {
-  const seguro = location.protocol === "https:" ? "; Secure" : "";
-  document.cookie = sessao
-    ? `${COOKIE_ACESSO}=${encodeURIComponent(sessao.access_token)}; Path=/; Max-Age=${Math.max(60, (sessao.expires_at ?? 0) - Math.floor(Date.now() / 1000))}; SameSite=Lax${seguro}`
-    : `${COOKIE_ACESSO}=; Path=/; Max-Age=0; SameSite=Lax${seguro}`;
-}
 
 let cliente: Promise<SupabaseClient> | null = null;
 
@@ -51,7 +39,6 @@ function sb(): Promise<SupabaseClient> {
     const c = createClient(configSupabase.url, configSupabase.chavePublica, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "implicit" },
     });
-    c.auth.onAuthStateChange((_evento, sessao) => gravarCookieDeAcesso(sessao));
     return c;
   });
   return cliente;
@@ -107,7 +94,6 @@ export const autenticacaoSupabase: ProvedorAutenticacao = {
 
   async sessaoAtual() {
     const { data } = await (await sb()).auth.getSession();
-    gravarCookieDeAcesso(data.session);
     if (!data.session) return null;
     return { usuario: paraUsuario(data.session.user), iniciadaEm: data.session.user.last_sign_in_at ?? new Date().toISOString() };
   },
@@ -119,7 +105,6 @@ export const autenticacaoSupabase: ProvedorAutenticacao = {
   async entrar(email: string, senha: string) {
     const { data, error } = await (await sb()).auth.signInWithPassword({ email: email.trim().toLowerCase(), password: senha });
     if (error || !data.session) throw traduzirErro(error);
-    gravarCookieDeAcesso(data.session);
     return { usuario: paraUsuario(data.session.user), iniciadaEm: new Date().toISOString() };
   },
 
@@ -136,7 +121,6 @@ export const autenticacaoSupabase: ProvedorAutenticacao = {
 
   async sair() {
     await (await sb()).auth.signOut();
-    gravarCookieDeAcesso(null);
   },
 
   async solicitarRedefinicaoSenha(email: string) {
@@ -263,5 +247,21 @@ export const pagamentoKiwify: ProvedorPagamento = {
     const { data, error } = await (await sb()).from("pagamentos").select("*").eq("email", usuario.email).order("data", { ascending: false }).limit(50);
     if (error || !data) return [];
     return (data as LinhaPagamento[]).map((p) => ({ id: p.id, data: p.data, descricao: p.descricao, valor: Number(p.valor), status: p.status, urlComprovante: p.url_comprovante }));
+  },
+
+  async usoDeXmlsDoMes(): Promise<UsoXmls | null> {
+    const { data, error } = await (await sb()).rpc("uso_xmls_do_mes");
+    if (error || !data) return null;
+    const uso = data as { mes: string; usados: number | null; limite: number | null };
+    return { mes: uso.mes, usados: Number(uso.usados ?? 0), limite: uso.limite == null ? null : Number(uso.limite) };
+  },
+
+  /** A conta é feita no banco (função registrar_uso_xmls), não aqui: o navegador só manda os códigos. */
+  async registrarUsoDeXmls(notas: string[]): Promise<ResultadoUsoXmls> {
+    await sessaoObrigatoria();
+    const { data, error } = await (await sb()).rpc("registrar_uso_xmls", { documentos: notas });
+    if (error || !data) throw new ErroServico("Não foi possível conferir o limite de XMLs do seu plano agora. Confira sua internet e tente de novo.", "consulta_uso");
+    const r = data as Partial<ResultadoUsoXmls>;
+    return { permitido: r.permitido === true, motivo: r.motivo, mes: r.mes ?? "", usados: Number(r.usados ?? 0), novos: Number(r.novos ?? 0), limite: r.limite == null ? null : Number(r.limite) };
   },
 };

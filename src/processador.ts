@@ -1,4 +1,5 @@
-﻿import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync } from "node:fs";
+﻿import { existsSync, readFileSync, writeFileSync, readdirSync, statSync, mkdirSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join, extname } from "node:path";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";
@@ -6,6 +7,7 @@ import { tmpdir } from "node:os";
 import { lerXml, selecionarVendas, type ResultadoLeitura } from "./parser.js";
 import { classificarDocumentos } from "./motor.js";
 import { bloqueiosParaBase, chavesBloqueadas } from "./bloqueios.js";
+import { sha256DeArquivo } from "./arquivos.js";
 import { calcularIndicadores, filaDeValidacao } from "./indicadores.js";
 import type { BaseNormativa, Empresa, NaturezaItem, RespostaValidacao } from "./tipos.js";
 
@@ -27,6 +29,21 @@ function listarXmls(pasta: string): string[] {
   }
 
   return achados;
+}
+
+/**
+ * Código anônimo de cada nota de venda que a análise vai conferir (as mesmas que processarXMLs
+ * analisa: sem entradas, devoluções, canceladas e repetidas). É o que conta para o limite de XMLs
+ * por mês do plano. Só o código sai do navegador: SHA-256 da chave de acesso (ou do arquivo, se a
+ * nota não tiver chave), que não permite reconstruir a nota.
+ */
+export function codigosDasNotas(pastas: string[]): string[] {
+  const arquivos = pastas.filter((p) => existsSync(p)).flatMap(listarXmls);
+  const leituras = arquivos.map((arquivo) => lerXml(readFileSync(arquivo, "utf8"), arquivo));
+  const codigos = selecionarVendas(leituras).documentos.map((d) =>
+    createHash("sha256").update(`conformidade-ibs-cbs:${d.chave ?? `arquivo:${sha256DeArquivo(d.arquivo)}`}`).digest("hex"),
+  );
+  return [...new Set(codigos)];
 }
 
 /** De onde vem a diferença entre XMLs lidos e documentos analisados. */

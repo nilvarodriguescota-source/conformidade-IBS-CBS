@@ -1,11 +1,7 @@
 /**
- * Provedores usados quando o site está em modo "producao" mas a integração real
- * ainda não foi implementada. Não simulam nada: cada ação avisa que a integração
- * está pendente, e a sessão é sempre vazia (ninguém entra sem um login real).
- *
- * PONTO DE IMPLEMENTAÇÃO: crie, ao lado deste arquivo, um módulo que implemente
- * ProvedorAutenticacao (login) e outro para ProvedorPagamento (gateway), seguindo
- * os contratos de ../tipos.ts, e registre-os em ./index.ts.
+ * Provedores usados enquanto o Supabase não estiver configurado (config/integracoes.ts).
+ * Não simulam nada: cada ação avisa que a integração está pendente, e a sessão é sempre
+ * vazia (ninguém entra sem um login real).
  */
 import { IntegracaoPendente, type ProvedorAutenticacao, type ProvedorPagamento } from "../tipos.js";
 
@@ -32,4 +28,6 @@ export const pagamentoPendente: ProvedorPagamento = {
   trocarPlano: pagamento,
   cancelarAssinatura: pagamento,
   historicoPagamentos: async () => [],
+  usoDeXmlsDoMes: async () => null,
+  registrarUsoDeXmls: pagamento,
 };

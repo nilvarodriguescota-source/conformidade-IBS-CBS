@@ -24,6 +24,7 @@
     <nav class="app-nav">
       <a href="#inicio" data-ir="inicio"><svg class="i" aria-hidden="true"><use href="#i-casa"/></svg>Início</a>
       <a href="#sistema" data-ir="sistema"><svg class="i" aria-hidden="true"><use href="#i-xml"/></svg>Sistema<span class="app-nav-selo" data-selo-sistema hidden><svg class="i i-sm" aria-hidden="true"><use href="#i-cadeado"/></svg></span></a>
+      <a href="#treinamento" data-ir="treinamento"><svg class="i" aria-hidden="true"><use href="#i-aula"/></svg>Treinamento</a>
       <a href="#assinatura" data-ir="assinatura"><svg class="i" aria-hidden="true"><use href="#i-coroa"/></svg>Minha assinatura</a>
       <a href="#perfil" data-ir="perfil"><svg class="i" aria-hidden="true"><use href="#i-usuario"/></svg>Perfil</a>
       <a href="#configuracoes" data-ir="configuracoes"><svg class="i" aria-hidden="true"><use href="#i-engrenagem"/></svg>Configurações</a>
@@ -84,6 +85,10 @@
             <span class="cartao-rotulo">Plano atual</span>
             <b data-status-plano>—</b>
             <small data-status-plano-preco></small>
+            <div class="uso-xmls" data-uso-xmls hidden>
+              <div class="uso-barra" role="progressbar" aria-label="XMLs analisados neste mês" aria-valuemin="0" data-uso-barra><i></i></div>
+              <small data-uso-texto></small>
+            </div>
             <a class="cartao-link" href="#assinatura" data-ir="assinatura">Gerenciar plano <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-d"/></svg></a>
           </article>
           <article class="cartao cartao-status">
@@ -114,6 +119,7 @@
               <li><span>2</span><div><b>Responda as pendências</b><small>Para os produtos que dependem da composição, escolha a descrição que corresponde ao produto.</small></div></li>
               <li><span>3</span><div><b>Exporte o relatório final</b><small>Veja o cClassTrib e o CST a usar em cada produto e ajuste o cadastro no seu sistema de emissão.</small></div></li>
             </ol>
+            <a class="cartao-link" href="#treinamento" data-ir="treinamento"><svg class="i i-sm" aria-hidden="true"><use href="#i-play"/></svg>Assista ao treinamento em vídeo</a>
           </article>
           <article class="cartao">
             <h3 class="cartao-titulo">Recursos do seu plano</h3>
@@ -146,6 +152,36 @@
           <h2 data-bloqueio-titulo>Acesso bloqueado</h2>
           <p data-bloqueio-texto></p>
           <div data-bloqueio-acao></div>
+        </div>
+      </section>
+
+      <!-- ===== Treinamento ===== -->
+      <section class="painel" data-painel="treinamento" aria-labelledby="titulo-treinamento" hidden>
+        <div class="treino-cabeca">
+          <div>
+            <p class="eyebrow">Treinamento</p>
+            <h2 id="titulo-treinamento" data-treino-titulo-pagina>Treinamento em vídeo</h2>
+            <p data-treino-descricao></p>
+          </div>
+          <a class="btn btn-contorno btn-pequeno" href="#" target="_blank" rel="noopener" data-treino-playlist hidden><svg class="i i-sm" aria-hidden="true"><use href="#i-externo"/></svg>Abrir no YouTube</a>
+        </div>
+        <div class="treino">
+          <div class="treino-palco">
+            <div class="treino-video" data-treino-video></div>
+            <div class="treino-info">
+              <span class="cartao-rotulo" data-treino-numero></span>
+              <h3 data-treino-aula-titulo></h3>
+              <p class="texto-suave" data-treino-aula-descricao hidden></p>
+              <div class="treino-navegar">
+                <button type="button" class="btn btn-contorno btn-pequeno" data-treino-anterior><svg class="i i-sm" aria-hidden="true"><use href="#i-seta-esq"/></svg>Aula anterior</button>
+                <button type="button" class="btn btn-verde btn-pequeno" data-treino-proxima>Próxima aula<svg class="i i-sm" aria-hidden="true"><use href="#i-seta"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <aside class="treino-lateral" aria-label="Aulas">
+            <div class="treino-lateral-cabeca"><b>Aulas</b><small data-treino-progresso></small></div>
+            <ol class="treino-lista" data-treino-lista></ol>
+          </aside>
         </div>
       </section>
 
@@ -186,7 +222,7 @@
           <article class="cartao">
             <h3 class="cartao-titulo">Pagamento</h3>
             <p class="texto-suave" data-pagamento-texto></p>
-            <div class="nota-integracao"><svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg><span>Cartão, segunda via e notas fiscais ficam no ambiente do meio de pagamento, que será conectado aqui.</span></div>
+            <div class="nota-integracao"><svg class="i i-sm" aria-hidden="true"><use href="#i-info"/></svg><span>Cartão, segunda via e cancelamento ficam na Kiwify: use o link do e-mail de compra que ela enviou.</span></div>
           </article>
         </div>
 
@@ -261,6 +297,7 @@
   <nav class="app-abas" aria-label="Menu da conta">
     <a href="#inicio" data-ir="inicio"><svg class="i" aria-hidden="true"><use href="#i-casa"/></svg><span>Início</span></a>
     <a href="#sistema" data-ir="sistema"><svg class="i" aria-hidden="true"><use href="#i-xml"/></svg><span>Sistema</span></a>
+    <a href="#treinamento" data-ir="treinamento"><svg class="i" aria-hidden="true"><use href="#i-aula"/></svg><span>Aulas</span></a>
     <a href="#assinatura" data-ir="assinatura"><svg class="i" aria-hidden="true"><use href="#i-coroa"/></svg><span>Plano</span></a>
     <a href="#perfil" data-ir="perfil"><svg class="i" aria-hidden="true"><use href="#i-usuario"/></svg><span>Perfil</span></a>
     <a href="#configuracoes" data-ir="configuracoes"><svg class="i" aria-hidden="true"><use href="#i-engrenagem"/></svg><span>Ajustes</span></a>

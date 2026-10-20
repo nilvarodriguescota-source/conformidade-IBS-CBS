@@ -1,13 +1,10 @@
-# Publicação automática: o Netlify roda o build e publica a pasta public/.
-# O sistema roda inteiro no navegador (Web Worker). No servidor ficam só o webhook da Kiwify
-# (netlify/functions) e a proteção do sistema (netlify/edge-functions); ver docs/kiwify-supabase/.
+# Prévia no Netlify: roda o build e publica a pasta public/. O site oficial fica na Hostinger
+# (.github/workflows/hostinger.yml e site/hospedagem/.htaccess, que faz o mesmo que este arquivo).
+# O sistema roda inteiro no navegador (Web Worker); o webhook da Kiwify é uma função do Supabase.
 # A raiz (index.html) é o site comercial; o sistema fica em sistema.html.
 [build]
   command = "npm run build"
   publish = "public"
-
-[functions]
-  node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "22"

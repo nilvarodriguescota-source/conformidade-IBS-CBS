@@ -1,8 +1,7 @@
 /**
  * Endereços do site. As páginas são arquivos .html na raiz do site publicado, ao lado
- * do sistema (sistema.html), para funcionar igual no Netlify e em qualquer servidor estático.
+ * do sistema (sistema.html), para funcionar em qualquer servidor estático (Hostinger, Netlify...).
  */
-import { compraPelaKiwify } from "../config/integracoes.js";
 import { configuracaoPlanos, linkKiwify, planoDestaque, planoPorId } from "../config/planos.js";
 import { produto } from "../config/produto.js";
 import type { CicloCobranca } from "./tipos.js";
@@ -23,9 +22,9 @@ export const rotas = {
   termos: "termos.html",
   privacidade: "privacidade.html",
   entrar: (voltar?: string) => comParametros("entrar.html", { voltar }),
-  /** Com a Kiwify, "assinar" leva direto ao checkout dela (a conta nasce da compra); sem link configurado, cai no cadastro. */
+  /** "Assinar" leva direto ao checkout da Kiwify (a conta nasce da compra); sem link configurado, cai no cadastro. */
   cadastro: (plano?: string | null, ciclo?: CicloCobranca | null) =>
-    (compraPelaKiwify() && linkKiwify(planoPorId(plano) ?? planoDestaque(), ciclo ?? configuracaoPlanos.cicloPadrao)) ||
+    linkKiwify(planoPorId(plano) ?? planoDestaque(), ciclo ?? configuracaoPlanos.cicloPadrao) ||
     comParametros("cadastro.html", { plano, ciclo }),
   checkout: (plano?: string | null, ciclo?: CicloCobranca | null) => comParametros("checkout.html", { plano, ciclo }),
   contaSecao: (secao: string) => `conta.html#${secao}`,

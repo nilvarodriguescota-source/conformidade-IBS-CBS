@@ -6,8 +6,8 @@ publicado em `sistema.html` (antes era `index.html`). A raiz do site agora é a 
 comercial.
 
 ```
-Visitante → index.html (landing) → Planos → cadastro.html → checkout.html
-         → conta liberada → conta.html (área do cliente) → sistema (sistema.html)
+Visitante → index.html (landing) → Planos → "Assinar" → checkout da Kiwify
+         → e-mail de convite → definir-senha.html → conta.html (área do cliente) → sistema (sistema.html)
 ```
 
 ## Páginas
@@ -20,8 +20,8 @@ Visitante → index.html (landing) → Planos → cadastro.html → checkout.htm
 | `/recuperar-senha` | `html/recuperar-senha.html` + `paginas/recuperar-senha.ts` | Pedido do e-mail de redefinição |
 | `/definir-senha` | `html/definir-senha.html` + `paginas/definir-senha.ts` | Destino do convite pós-compra e do link de redefinição: cria a senha e entra |
 | `/checkout` | `html/checkout.html` + `paginas/checkout.ts` | Resumo, forma de pagamento e "conta liberada" |
-| `/conta` | `html/conta.html` + `paginas/conta.ts` | Área do cliente: início, sistema, assinatura, perfil, configurações |
-| `/sistema` | gerado por `src/pagina.ts` | O sistema de XML, sem mudanças |
+| `/conta` | `html/conta.html` + `paginas/conta.ts` | Área do cliente: início, sistema, treinamento, assinatura, perfil, configurações |
+| `/sistema` | gerado por `src/pagina.ts` | O sistema de XML; `web/navegador.ts` só deixa abrir com assinatura liberada e confere o limite de XMLs |
 | `/termos`, `/privacidade` | `html/termos.html`, `html/privacidade.html` | Estrutura dos documentos legais (texto a redigir) |
 
 ## Estrutura
@@ -30,15 +30,18 @@ Visitante → index.html (landing) → Planos → cadastro.html → checkout.htm
 site/
   config/          ← o que o negócio edita
     produto.ts       nome, contatos, razão social (null = "a definir" na tela)
-    planos.ts        planos, preços, limites, recursos, ids do gateway
-    integracoes.ts   modo (demonstracao | producao) e provedores
+    planos.ts        planos, preços, XMLs por mês, recursos, links da Kiwify
+    integracoes.ts   endereço e chave pública do Supabase, endereço do site
+    treinamento.ts   aulas em vídeo (links do YouTube) da aba Treinamento
   servicos/        ← regras de conta, sem nada de tela
     tipos.ts         contratos: Usuario, Assinatura, ProvedorAutenticacao, ProvedorPagamento
     conta.ts         fachada usada pelas telas (carregarConta)
     acesso.ts        quem pode abrir o sistema e quais recursos o plano libera
+    sistema.ts       acesso ao sistema e limite de XMLs (usado por web/navegador.ts)
     rotas.ts         endereços e proteção contra redirecionamento externo
-    provedores/      demonstracao.ts, pendente.ts e o registro (index.ts)
-  ui/              ← utilitários de interface (cabeçalho, formulários, máscaras)
+    provedores/      supabase-kiwify.ts, pendente.ts (sem Supabase configurado) e o registro (index.ts)
+  ui/              ← utilitários de interface (cabeçalho, formulários, máscaras, treinamento)
+  hospedagem/      ← .htaccess da Hostinger (copiado para public/)
   paginas/         ← um script por página
   estilos/         ← tokens.css (cores e fontes), base, componentes e um CSS por página
   html/            ← páginas; html/partes/ tem cabeçalho, rodapé, ícones e painéis comuns
@@ -51,7 +54,7 @@ que continua gerando o sistema). As partes comuns entram no HTML com `<!-- @part
 ## Comandos
 
 ```bash
-npm run build        # gera public/ (sistema + site), igual ao Netlify
+npm run build        # gera public/ (sistema + site) e a função do webhook (supabase/functions/)
 npm run site         # build + servidor local em http://localhost:4173
 npm run site:tipos   # checagem de tipos do código do site
 ```
@@ -60,9 +63,10 @@ npm run site:tipos   # checagem de tipos do código do site
 
 ## Editar sem programar
 
-- **Preços, limites e recursos:** `config/planos.ts`. Enquanto `valoresIlustrativos`
-  for `true`, a página mostra o aviso de pré-lançamento (`textoValoresIlustrativos`) acima
-  dos planos e no resumo do checkout. Os números atuais são exemplos.
+- **Preços, limites e recursos:** `config/planos.ts`. `xmlsPorMes` é o limite de XMLs de venda
+  por mês de cada plano (o webhook grava na assinatura; depois de mudar, publique de novo a função
+  do Supabase). `valoresIlustrativos: true` volta a mostrar o aviso de pré-lançamento acima dos planos.
+- **Aulas em vídeo:** `config/treinamento.ts` (links do YouTube, título opcional).
 - **Contatos e dados da empresa:** `config/produto.ts`. Campos `null` aparecem com o selo
   "A DEFINIR" (classe `.a-definir`).
 - **Quem está por trás:** `config/produto.ts`, em `responsavel` (nome, especialidade,
@@ -73,23 +77,17 @@ npm run site:tipos   # checagem de tipos do código do site
 - **Cores e fontes:** `estilos/tokens.css` (mesma paleta do sistema).
 - **Textos:** direto nos arquivos de `html/`.
 
-## Modo demonstração e produção
+## Produção: Kiwify + Supabase + Hostinger
 
-O modo sai do build (`config/integracoes.ts`):
-
-- **Sem** `SUPABASE_URL` e `SUPABASE_ANON_KEY` no ambiente → **demonstração**: contas, assinaturas e
-  "pagamentos" ficam só no `localStorage` de quem testa, nada é cobrado, nenhum e-mail é enviado e as
-  telas mostram a faixa "Modo demonstração". Não é segurança: serve para ver o fluxo.
-- **Com** as variáveis → **produção**: login pelo Supabase, compra pela Kiwify, acesso liberado pelo
-  webhook. Configuração completa em `docs/kiwify-supabase/PASSO-A-PASSO.md`.
-
-## Produção: Kiwify + Supabase
+O site é estático (Hostinger). Não há modo demonstração: sem o endereço e a chave pública do Supabase
+em `config/integracoes.ts`, as telas de conta avisam que a integração está pendente.
+Configuração completa em `docs/kiwify-supabase/PASSO-A-PASSO.md`.
 
 ```
 Assinar (landing) → checkout da Kiwify → compra aprovada
-  → POST /api/kiwify (netlify/functions/kiwify-webhook.mts)
-      grava assinaturas/pagamentos no Supabase e convida o comprador por e-mail
-  → convite → definir-senha.html → conta.html → sistema.html (netlify/edge-functions/proteger-sistema.ts)
+  → POST https://PROJETO.supabase.co/functions/v1/kiwify-webhook (webhook/processar.ts)
+      grava assinaturas (com o limite de XMLs do plano) e pagamentos, e convida o comprador por e-mail
+  → convite → definir-senha.html → conta.html → sistema.html (web/navegador.ts confere a assinatura)
 ```
 
 | Peça | Arquivo |
@@ -97,19 +95,29 @@ Assinar (landing) → checkout da Kiwify → compra aprovada
 | Links de checkout por plano e ciclo | `config/planos.ts` (`kiwify.linkMensal` / `linkAnual`); `rotas.cadastro()` leva direto a eles |
 | Login, link de acesso por e-mail, senha | `servicos/provedores/supabase-kiwify.ts` (biblioteca carregada sob demanda) |
 | Leitura da assinatura e do histórico | mesmo arquivo; o banco só devolve a linha do e-mail logado (RLS) |
-| Regras do webhook (assinatura, plano, efeito de cada evento) | `netlify/lib/kiwify.ts`, testadas em `test/kiwify-webhook.test.ts` |
-| Tabelas e políticas | `sql/supabase.sql` |
-| Proteção do sistema | `netlify/edge-functions/proteger-sistema.ts`, que lê o cookie `se_acesso` gravado pelo site |
+| Webhook (regras de cada evento e gravação no Supabase) | `../webhook/kiwify.ts` e `../webhook/processar.ts`, testados em `test/kiwify-webhook*.test.ts`; o build junta tudo em `../supabase/functions/kiwify-webhook/index.ts` |
+| Tabelas, políticas e contagem de XMLs | `sql/supabase.sql` |
+| Quem abre o sistema e limite de XMLs | `servicos/sistema.ts`, chamado por `web/navegador.ts` |
 
 Na Kiwify, a troca de plano, o cancelamento e a exclusão da conta são feitos pelo suporte ou pela própria
 Kiwify; as telas dizem isso em vez de simular. O navegador nunca ativa assinatura: só o webhook grava.
 
-A regra de acesso (`servicos/acesso.ts`) está repetida na função de borda. Mudou uma, mude a outra.
+A regra de acesso (`servicos/acesso.ts`) está repetida no banco (`registrar_uso_xmls`). Mudou uma, mude a outra.
 
-### Limites por plano dentro do sistema de XML
-`config/planos.ts` lista os recursos de cada plano e `podeUsar()` responde se o plano
-libera um recurso. O sistema de XML ainda não limita nada por plano (nem o volume de XMLs);
-quando passar a limitar, deve consultar essa regra no servidor.
+### Limite de XMLs por mês
+Ao clicar em "Processar análise", `web/navegador.ts` pede ao sistema a lista das notas de venda da
+análise (`GET /api/notas-da-analise`: SHA-256 da chave de acesso de cada nota, sem entradas,
+devoluções, canceladas e repetidas) e manda essa lista para a função `registrar_uso_xmls` do banco.
+O banco conta as notas novas do mês (horário de Brasília); se passarem de `limite_xmls_mes` da
+assinatura, nada é registrado e a análise é recusada com a mensagem de `servicos/sistema.ts`. A mesma
+nota no mesmo mês não conta duas vezes. A área do cliente mostra "X de Y XMLs usados neste mês"
+(`uso_xmls_do_mes`). A versão de computador (`npm start`) não tem login e não limita nada.
+
+### Treinamento
+A aba "Treinamento" da área do cliente (`ui/treinamento.ts`) lista as aulas de `config/treinamento.ts`.
+O player do YouTube (youtube-nocookie.com) só carrega quando a pessoa clica em assistir; as aulas
+abertas ficam marcadas no navegador. Sem título na configuração, a tela tenta buscar o título no
+YouTube e, se não conseguir, mostra "Aula N".
 
 ### Sistema de XML
 A área do cliente abre `sistema.html` num iframe da mesma origem. Os atalhos ("Relatório
@@ -125,9 +133,9 @@ Para trocar Supabase ou Kiwify por outro serviço: implementar `ProvedorAutentic
 ## Textos que dependem do funcionamento atual
 
 O FAQ, o cartão "Seus XMLs não saem do navegador" e o hero dizem que os XMLs são
-processados e salvos no navegador, sem scripts de terceiros. Isso é verdade na versão atual
-(Netlify). Se o processamento passar para um servidor, revise esses textos e a página de
-privacidade.
+processados e salvos no navegador, sem scripts de terceiros. Isso continua verdade: para o
+banco vai só o código anônimo de cada nota, para contar o limite do plano. Se o processamento
+passar para um servidor, revise esses textos e a página de privacidade.
 
 Outros textos da página de venda repetem o comportamento do sistema e precisam acompanhar
 qualquer mudança nele:
@@ -144,9 +152,6 @@ qualquer mudança nele:
   restaurante na análise (`POST /api/atividade`, `src/analise-atual.ts`).
 - **Alíquotas de teste de 2026** (seção do risco e FAQ da economia potencial): CBS 0,9% e
   IBS 0,1%, de `src/parametros.ts`.
-- **Modo demonstração:** elementos com `data-so-demonstracao` (por exemplo, "nesta fase nada é
-  cobrado") só aparecem enquanto `integracoes.modo` for `"demonstracao"`; os com
-  `data-so-producao`, o contrário.
 
 ## Fontes
 

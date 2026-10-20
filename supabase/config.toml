@@ -1,0 +1,5 @@
+# Usado só por quem publicar pela linha de comando (`supabase functions deploy kiwify-webhook`).
+# Pelo painel, desligue "Verify JWT" na própria função: a Kiwify não manda o login do Supabase,
+# a origem é conferida pelo token do webhook.
+[functions.kiwify-webhook]
+verify_jwt = false

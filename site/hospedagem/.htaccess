@@ -1,0 +1,38 @@
+# Hostinger (Apache/LiteSpeed). Copiado para a raiz do site pelo build (public/.htaccess).
+# Faz o mesmo que o netlify.toml: endereços sem ".html" e cabeçalhos de segurança.
+# O HTTPS se liga no painel da Hostinger (Segurança → SSL → Forçar HTTPS), não aqui.
+
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # /app (endereço antigo da área do cliente) → /conta
+  RewriteRule ^app/?$ /conta.html [R=301,L]
+
+  # /entrar → entrar.html, /conta → conta.html, /sistema → sistema.html...
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^([a-z0-9-]+)/?$ /$1.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "same-origin"
+  # Login e área do cliente não podem ser embutidos por outros sites (a área do cliente embute o sistema, mesma origem)
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Páginas, scripts e dados sempre conferidos com o servidor: depois de publicar uma versão nova,
+  # ninguém fica preso na antiga (a conferência é rápida: só baixa de novo o que mudou)
+  <FilesMatch "\.(html|js|css|json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType font/woff2 .woff2
+  AddType image/webp .webp
+</IfModule>
