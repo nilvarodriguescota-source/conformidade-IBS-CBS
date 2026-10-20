@@ -1,11 +1,10 @@
 /**
- * Área do cliente: início, sistema, assinatura, perfil e configurações.
+ * Área do cliente: início, sistema, treinamento, assinatura, perfil e configurações.
  *
  * O sistema de XML é aberto como está (sistema.html), dentro de um iframe da mesma
  * origem; nada nele é alterado. Os atalhos só clicam no botão da aba correspondente,
  * como o usuário faria.
  */
-import { emDemonstracao } from "../config/integracoes.js";
 import { catalogoRecursos, configuracaoPlanos, equivalenteMensal, valorDoCiclo, type Plano, type RecursoId } from "../config/planos.js";
 import { situacaoDeAcesso } from "../servicos/acesso.js";
 import { autenticacao, carregarConta, pagamento, type EstadoConta } from "../servicos/conta.js";
@@ -18,7 +17,6 @@ import {
   alternarSenhas,
   avisar,
   esc,
-  faixaDemonstracao,
   formatarData,
   formatarMoeda,
   icone,
@@ -27,10 +25,12 @@ import {
   segmentado,
 } from "../ui/comum.js";
 import { aplicarMascaras, cnpjValido, erroNoCampo, limparErros, medidorDeSenha, mostrarAlerta } from "../ui/formularios.js";
+import { abrirAula, iniciarTreinamento } from "../ui/treinamento.js";
 
 const SECOES = {
   inicio: "Início",
   sistema: "Sistema",
+  treinamento: "Treinamento",
   assinatura: "Minha assinatura",
   perfil: "Perfil",
   configuracoes: "Configurações",
@@ -178,6 +178,29 @@ function preencherInicio(): void {
   ).join("");
 
   $("[data-recursos-plano]")!.innerHTML = listaRecursos(conta.plano);
+  void preencherUso();
+}
+
+/** XMLs analisados no mês contra o limite do plano (contados no banco a cada "Processar análise"). */
+async function preencherUso(): Promise<void> {
+  const caixa = $("[data-uso-xmls]")!;
+  const uso = conta.acesso.liberado ? await pagamento.usoDeXmlsDoMes().catch(() => null) : null;
+  caixa.hidden = !uso;
+  if (!uso) return;
+  const milhar = (n: number) => n.toLocaleString("pt-BR");
+  const barra = $("[data-uso-barra]", caixa)!;
+  const texto = $("[data-uso-texto]", caixa)!;
+  if (uso.limite == null) {
+    barra.hidden = true;
+    texto.textContent = `${milhar(uso.usados)} XMLs analisados neste mês · sem limite`;
+    return;
+  }
+  const parte = uso.limite > 0 ? Math.min(1, uso.usados / uso.limite) : 1;
+  barra.style.setProperty("--uso", `${Math.round(parte * 100)}%`);
+  barra.setAttribute("aria-valuemax", String(uso.limite));
+  barra.setAttribute("aria-valuenow", String(uso.usados));
+  caixa.classList.toggle("cheio", uso.usados >= uso.limite);
+  texto.textContent = `${milhar(uso.usados)} de ${milhar(uso.limite)} XMLs usados neste mês`;
 }
 
 function listaRecursos(plano: Plano | undefined): string {
@@ -229,9 +252,7 @@ function preencherAssinatura(): void {
   $("[data-recursos-assinatura]")!.innerHTML = listaRecursos(p);
   $("[data-pagamento-texto]")!.textContent = !a
     ? "Nenhuma forma de pagamento cadastrada."
-    : emDemonstracao()
-      ? `Forma escolhida: ${a.formaPagamento ? FORMAS[a.formaPagamento] : "—"}. Modo demonstração: nenhuma cobrança real é feita.`
-      : `Forma escolhida: ${a.formaPagamento ? FORMAS[a.formaPagamento] : "—"}. A cobrança é feita automaticamente pelo meio de pagamento.`;
+    : `Forma escolhida: ${a.formaPagamento ? FORMAS[a.formaPagamento] : "—"}. A cobrança é feita automaticamente pelo meio de pagamento.`;
   preencherHistorico();
 }
 
@@ -377,7 +398,12 @@ function roteador(): void {
   document.title = `${SECOES[secao]} · Conformidade IBS/CBS`;
   fecharMenuUsuario();
   if (secao === "sistema") abrirSistema(sub ?? null);
-  else scrollTo({ top: 0 });
+  else {
+    if (secao === "treinamento") abrirAula(sub ?? null);
+    // O uso muda a cada análise processada no sistema: atualiza ao voltar para o início
+    if (secao === "inicio" && conta) void preencherUso();
+    scrollTo({ top: 0 });
+  }
 }
 
 /* ---------------- Ações ---------------- */
@@ -507,7 +533,6 @@ function iniciarAcoes(): void {
 
 async function iniciar(): Promise<void> {
   iniciarPagina();
-  faixaDemonstracao();
   alternarSenhas();
   aplicarMascaras();
   conta = await carregarConta();
@@ -517,6 +542,7 @@ async function iniciar(): Promise<void> {
   }
   document.body.classList.remove("carregando-conta");
   iniciarAcoes();
+  iniciarTreinamento();
   preencher();
   roteador();
   addEventListener("hashchange", roteador);

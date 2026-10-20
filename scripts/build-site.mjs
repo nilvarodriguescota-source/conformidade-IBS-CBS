@@ -14,6 +14,15 @@ function montarHtml(arquivo, partes) {
   });
 }
 
+/**
+ * Valores públicos do Supabase e do site. Ficam em site/config/integracoes.ts; as variáveis de
+ * ambiente, se existirem no build, têm prioridade. A chave secreta nunca passa por aqui.
+ */
+export function definicoesPublicas() {
+  const v = (nome) => JSON.stringify((process.env[nome] ?? "").trim().replace(/\/+$/, ""));
+  return { __SUPABASE_URL__: v("SUPABASE_URL"), __SUPABASE_ANON_KEY__: v("SUPABASE_ANON_KEY"), __SITE_URL__: v("SITE_URL") };
+}
+
 export async function construirSite({ raiz, pub }) {
   const site = join(raiz, "site");
   const saida = join(pub, "site");
@@ -32,12 +41,7 @@ export async function construirSite({ raiz, pub }) {
     legalComments: "none",
     logLevel: "warning",
     chunkNames: "comum-[hash]",
-    // Login real (Supabase) quando as variáveis existem no build do Netlify; sem elas, modo demonstração.
-    // Só valores públicos: a chave secreta (SUPABASE_SERVICE_ROLE_KEY) fica no servidor, no webhook.
-    define: {
-      __SUPABASE_URL__: JSON.stringify((process.env.SUPABASE_URL ?? "").trim().replace(/\/+$/, "")),
-      __SUPABASE_ANON_KEY__: JSON.stringify((process.env.SUPABASE_ANON_KEY ?? "").trim()),
-    },
+    define: definicoesPublicas(),
   });
 
   // Estilos (cada página importa tokens, base e componentes)
@@ -58,6 +62,9 @@ export async function construirSite({ raiz, pub }) {
   // Fontes da identidade (Cormorant Garamond servida localmente, como no sistema). Saem de
   // scripts/ajustar_fonte_site.py: a mesma fonte do @fontsource com o circunflexo mais baixo.
   cpSync(join(site, "fontes"), join(saida, "fontes"), { recursive: true });
+
+  // Configuração da hospedagem (Hostinger: endereços sem .html e cabeçalhos)
+  cpSync(join(site, "hospedagem", ".htaccess"), join(pub, ".htaccess"));
 
   // Páginas HTML
   const dirHtml = join(site, "html");

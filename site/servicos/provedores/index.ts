@@ -1,30 +1,11 @@
 /**
- * Registro dos provedores disponíveis. O nome escolhido em config/integracoes.ts
- * decide qual implementação as telas usam.
- *
- * Para adicionar um provedor real: importe-o aqui e inclua-o no mapa correspondente.
+ * Provedores em uso: login pelo Supabase e assinatura vendida pela Kiwify.
+ * Enquanto o endereço e a chave pública do Supabase não forem preenchidos em config/integracoes.ts,
+ * as telas usam os provedores "pendente", que avisam que a integração falta em vez de simular.
  */
-import { integracoes } from "../../config/integracoes.js";
-import type { ProvedorAutenticacao, ProvedorPagamento } from "../tipos.js";
-import { autenticacaoDemonstracao, pagamentoDemonstracao } from "./demonstracao.js";
+import { supabaseConfigurado } from "../../config/integracoes.js";
 import { autenticacaoPendente, pagamentoPendente } from "./pendente.js";
 import { autenticacaoSupabase, pagamentoKiwify } from "./supabase-kiwify.js";
 
-const autenticacao: Record<string, ProvedorAutenticacao> = {
-  demonstracao: autenticacaoDemonstracao,
-  supabase: autenticacaoSupabase,
-};
-
-const pagamento: Record<string, ProvedorPagamento> = {
-  demonstracao: pagamentoDemonstracao,
-  kiwify: pagamentoKiwify,
-};
-
-/** Em produção, o modo demonstração nunca é usado, mesmo que esteja configurado por engano. */
-function escolher<T>(mapa: Record<string, T>, nome: string, pendente: T): T {
-  if (integracoes.modo === "producao" && nome === "demonstracao") return pendente;
-  return mapa[nome] ?? pendente;
-}
-
-export const provedorAutenticacao = escolher(autenticacao, integracoes.autenticacao.provedor, autenticacaoPendente);
-export const provedorPagamento = escolher(pagamento, integracoes.pagamento.provedor, pagamentoPendente);
+export const provedorAutenticacao = supabaseConfigurado() ? autenticacaoSupabase : autenticacaoPendente;
+export const provedorPagamento = supabaseConfigurado() ? pagamentoKiwify : pagamentoPendente;

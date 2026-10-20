@@ -6,22 +6,25 @@ humana, separa economia de risco e guarda a trilha de cada resultado.
 
 Escopo: só IBS e CBS. ICMS, ST, DIFAL, PIS/Cofins, IPI, CEST e CSOSN ficam fora.
 
-## Publicar no Netlify
+## Publicar (Hostinger)
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/nilvarodriguescota-source/conformidade-IBS-CBS)
+O site oficial fica na Hostinger. A cada push na branch principal, o GitHub Actions
+(`.github/workflows/hostinger.yml`) roda os testes, gera `public/` e grava o resultado na branch
+`hostinger`, que a Hostinger puxa pelo recurso Git do hPanel. O `.htaccess` (de
+`site/hospedagem/`) dá os endereços sem `.html` e os cabeçalhos de segurança.
 
-O `netlify.toml` já traz tudo: o Netlify roda `npm run build` e publica a pasta
-`public/`. Depois de ligado ao repositório, cada push publica sozinho.
+O Netlify continua servindo de prévia: o `netlify.toml` roda `npm run build` e publica `public/`.
 
 A raiz do site é a página comercial (landing, planos, login, cadastro, checkout e área
-do cliente) e o sistema fica em `/sistema.html`, sem nenhuma mudança. Arquitetura,
-modo demonstração e pontos de integração (login, pagamento, assinatura): `site/README.md`.
+do cliente) e o sistema fica em `/sistema.html`, sem nenhuma mudança. Arquitetura e
+pontos de integração (login, pagamento, assinatura, treinamento): `site/README.md`.
 
-Venda e login: a assinatura é vendida pela Kiwify e o login fica no Supabase; o webhook
-libera o acesso e convida o comprador por e-mail. Configuração passo a passo:
-`docs/kiwify-supabase/PASSO-A-PASSO.md`. Sem as variáveis do Supabase, o site fica em modo demonstração.
+Venda e login: a assinatura é vendida pela Kiwify e o login fica no Supabase; o webhook (uma
+função do Supabase, código em `webhook/`) libera o acesso e convida o comprador por e-mail. Cada
+plano tem um limite de XMLs de venda por mês, contado no banco. Configuração passo a passo:
+`docs/kiwify-supabase/PASSO-A-PASSO.md`.
 
-Na versão do Netlify o sistema roda inteiro no navegador (Web Worker), com o mesmo
+Na versão publicada o sistema roda inteiro no navegador (Web Worker), com o mesmo
 código do servidor: a análise não passa por servidor nem banco de dados. A análise (XMLs,
 respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e continua
 lá ao reabrir a página; outro computador ou navegador começa com a análise vazia.
@@ -36,8 +39,9 @@ npm test                     # testes do motor, do sistema e do webhook da Kiwif
 node dist/src/cli.js --xml ./xmls --empresa ./empresa.json --saida ./saida
 ```
 
-`npm run build` gera `dist/` (servidor e CLI) e `public/` (site do Netlify e as
-bibliotecas de gráfico, Excel e PDF, servidas localmente, sem CDN).
+`npm run build` gera `dist/` (servidor e CLI), `public/` (o site publicado e as
+bibliotecas de gráfico, Excel e PDF, servidas localmente, sem CDN) e
+`supabase/functions/kiwify-webhook/index.ts` (a função do webhook, num arquivo só).
 
 `empresa.json`:
 
@@ -103,7 +107,7 @@ período, os campos de economia e exposição voltam nulos e o motivo diz por qu
 | `src/arquivos.ts` | Hash e cabeçalho de arquivos grandes sem carregá-los inteiros (explicacoes.json passa de 500 MB) |
 | `web/` | Versão do navegador: sistema de arquivos em memória, worker, gerador de .xlsx |
 | `web/marca/` | Imagens da marca Sabores Estratégicos usadas na tela, na impressão e no PDF; a logo original fica em `origem/` e as demais saem de `scripts/gerar_marca.py` |
-| `scripts/build-web.mjs` | Gera `public/` para o Netlify (o sistema vai para `sistema.html`) |
+| `scripts/build-web.mjs` | Gera `public/`, o site publicado (o sistema vai para `sistema.html`) |
 | `site/` | Site comercial e área do cliente; `scripts/build-site.mjs` monta em `public/` (ver `site/README.md`) |
 | `docs/etapa10/` | Auditoria da planilha V4.1 frente ao sistema e às fontes oficiais (diagnóstico, mapa linha a linha, proposta D5, natureza dos produtos) |
 | `test/fixtures/empresa-teste.json` | Dados fixos dos testes (o `empresa.json` da raiz é configuração e pode mudar) |

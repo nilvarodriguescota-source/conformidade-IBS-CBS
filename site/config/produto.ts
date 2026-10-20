@@ -35,7 +35,7 @@ export const produto = {
    * local e links) somem quando vazios. Preencha só com fatos que possam ser confirmados.
    */
   responsavel: {
-    nome: "Nilva Rodrigues Cota" as string | null,
+    nome: "Nilva Rodrigues" as string | null,
     /** Especialidade em uma linha. */
     especialidade: "Consultora em gestão e negócios para o setor de alimentação: administração, finanças, gestão tributária e processos de padarias, cafeterias, indústrias de alimentos e distribuidoras." as string | null,
     /** Experiência em até duas frases. Os "+20 anos" estão em `destaque`; se ele sair, volte com eles para cá. */

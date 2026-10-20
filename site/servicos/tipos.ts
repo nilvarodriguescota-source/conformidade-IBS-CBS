@@ -1,8 +1,8 @@
 /**
  * Contratos da camada de serviços do site (contas, assinaturas e pagamentos).
  *
- * As telas só conversam com estas interfaces. Trocar o modo demonstração por um
- * provedor real é implementar estes contratos; nenhuma tela precisa mudar.
+ * As telas só conversam com estas interfaces. Trocar Supabase ou Kiwify por outro serviço
+ * é implementar estes contratos; nenhuma tela precisa mudar.
  */
 
 export type CicloCobranca = "mensal" | "anual";
@@ -47,7 +47,7 @@ export interface Assinatura {
   fimPeriodo: string | null;
   canceladaEm: string | null;
   formaPagamento: FormaPagamento | null;
-  /** Quem registrou: "demonstracao" ou o nome do gateway. */
+  /** Quem registrou: "kiwify" ou "manual" (liberado pelo painel do Supabase). */
   origem: string;
 }
 
@@ -59,6 +59,23 @@ export interface Pagamento {
   status: "pago" | "pendente" | "falhou" | "estornado";
   /** Link do comprovante/fatura no gateway, quando houver. */
   urlComprovante: string | null;
+}
+
+/** XMLs de venda analisados no mês (horário de Brasília) e limite do plano (null = sem limite). */
+export interface UsoXmls {
+  /** "AAAA-MM" */
+  mes: string;
+  usados: number;
+  limite: number | null;
+}
+
+/** Resposta do banco ao pedido de registrar as notas de uma análise. */
+export interface ResultadoUsoXmls extends UsoXmls {
+  permitido: boolean;
+  /** Por que foi recusado: limite do plano, sem login, sem assinatura liberada ou lista inválida. */
+  motivo?: "limite" | "sem_sessao" | "sem_assinatura" | "lista_invalida";
+  /** Notas desta análise que ainda não tinham sido contadas no mês. */
+  novos: number;
 }
 
 export interface DadosCadastro {
@@ -89,7 +106,7 @@ export interface PedidoCheckout {
  *  - "redirecionar": o gateway hospeda a página de pagamento (forma recomendada:
  *    nenhum dado de cartão passa pelo site). A liberação da conta chega depois,
  *    pelo webhook do gateway no servidor.
- *  - "confirmado": a assinatura já está ativa (só o modo demonstração faz isso).
+ *  - "confirmado": a assinatura já está ativa (provedor que confirma na hora; a Kiwify não faz isso).
  */
 export type ResultadoCheckout =
   | { tipo: "redirecionar"; url: string }
@@ -121,6 +138,13 @@ export interface ProvedorPagamento {
   trocarPlano(usuario: Usuario, planoId: string, ciclo: CicloCobranca): Promise<Assinatura>;
   cancelarAssinatura(usuario: Usuario): Promise<Assinatura>;
   historicoPagamentos(usuario: Usuario): Promise<Pagamento[]>;
+  /** Uso de XMLs no mês e limite do plano de quem está logado (null sem login ou sem assinatura). */
+  usoDeXmlsDoMes(): Promise<UsoXmls | null>;
+  /**
+   * Conta as notas de uma análise no mês (códigos anônimos; a mesma nota não conta duas vezes).
+   * Se passarem do limite do plano, nada é registrado e o resultado vem com permitido = false.
+   */
+  registrarUsoDeXmls(notas: string[]): Promise<ResultadoUsoXmls>;
 }
 
 /** Erro de regra de negócio, com mensagem pronta para a tela. */

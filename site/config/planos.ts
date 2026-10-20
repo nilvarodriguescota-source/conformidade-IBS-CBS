@@ -2,9 +2,8 @@
  * Planos de assinatura. É o único lugar para mudar nomes, preços, limites e recursos:
  * a landing, o cadastro, o checkout e a área do cliente leem daqui.
  *
- * ATENÇÃO: preços, limites e condições abaixo são EXEMPLOS. Enquanto
- * `valoresIlustrativos` for true, a página mostra um aviso discreto dizendo isso.
- * Ao definir os valores reais, troque os números e passe a flag para false.
+ * Se mudar um preço aqui, mude também na Kiwify (o webhook usa o valor como último recurso para
+ * reconhecer o plano). `valoresIlustrativos: true` volta a mostrar o aviso de "valores de referência".
  *
  * `kiwify` guarda os links de checkout de cada plano na Kiwify (um para o ciclo mensal e outro
  * para o anual), no formato https://pay.kiwify.com.br/XXXXXXX. Os botões "Assinar" levam
@@ -45,6 +44,13 @@ export interface Plano {
   precoAnual: number | null;
   destaque: boolean;
   seloDestaque?: string;
+  /**
+   * XMLs de venda diferentes que o cliente pode analisar por mês (null = sem limite).
+   * O webhook grava este número na assinatura e o banco recusa a análise que passar dele
+   * (sql/supabase.sql, função registrar_uso_xmls).
+   */
+  xmlsPorMes: number | null;
+  /** Linhas de limite exibidas nos cartões e na comparação (geradas a partir de xmlsPorMes). */
   limites: LimitePlano[];
   recursos: RecursoId[];
   /** Resumo em linguagem de resultado, mostrado no cartão no lugar da lista de recursos (a lista completa fica na comparação). */
@@ -66,15 +72,24 @@ export interface ConfiguracaoPlanos {
   planos: Plano[];
 }
 
-/** Todos os planos liberam todos os recursos; o que muda entre eles é o volume (XMLs por mês e empresas). */
+/** Todos os planos liberam todos os recursos; o que muda entre eles é o volume de XMLs por mês. */
 const RECURSOS = Object.keys(catalogoRecursos) as RecursoId[];
 const TODOS_OS_RECURSOS =
   "Tudo incluído: análise das suas vendas, validação guiada das pendências, consulta por NCM e o relatório do que ajustar em CSV, Excel e PDF.";
 
+/** 10000 → "10.000" (sem depender do idioma instalado no build). */
+function milhar(n: number): string {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function comLimites(plano: Omit<Plano, "limites">): Plano {
+  return { ...plano, limites: [{ rotulo: "XMLs por mês", valor: plano.xmlsPorMes == null ? "sem limite" : `até ${milhar(plano.xmlsPorMes)}` }] };
+}
+
 export const configuracaoPlanos: ConfiguracaoPlanos = {
   moeda: "BRL",
-  valoresIlustrativos: true,
-  /** Aviso de pré-lançamento (landing, acima dos planos, e resumo do checkout). Em modo demonstração, a landing acrescenta que nada é cobrado. */
+  valoresIlustrativos: false,
+  /** Aviso de pré-lançamento (landing, acima dos planos, e resumo do checkout). Só aparece com valoresIlustrativos = true. */
   textoValoresIlustrativos: "Pré-lançamento: valores, limites e condições são de referência e podem mudar até a abertura das assinaturas.",
   /** Texto do selo do ciclo anual. */
   vantagemAnual: "2 meses grátis",
@@ -87,16 +102,13 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
       id: "essencial",
       nome: "Essencial",
       descricao: "Para empresas com até 2.000 XMLs de venda por mês.",
-      precoMensal: 149,
-      precoAnual: 1490,
+      precoMensal: 197,
+      precoAnual: 1970,
       destaque: false,
       resumo: TODOS_OS_RECURSOS,
-      limites: [
-        { rotulo: "Empresa (CNPJ)", valor: "1" },
-        { rotulo: "XMLs por mês", valor: "até 2.000" },
-      ],
+      xmlsPorMes: 2000,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null },
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/yZqmSdG", linkAnual: "https://pay.kiwify.com.br/gHU2E3i" },
     },
     {
       id: "profissional",
@@ -107,12 +119,9 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
       destaque: true,
       seloDestaque: "Nossa recomendação",
       resumo: TODOS_OS_RECURSOS,
-      limites: [
-        { rotulo: "Empresas (CNPJ)", valor: "até 3" },
-        { rotulo: "XMLs por mês", valor: "até 5.000" },
-      ],
+      xmlsPorMes: 5000,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null },
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/sjLGxAc", linkAnual: "https://pay.kiwify.com.br/YyiXHr1" },
     },
     {
       id: "premium",
@@ -122,14 +131,11 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
       precoAnual: 5970,
       destaque: false,
       resumo: TODOS_OS_RECURSOS,
-      limites: [
-        { rotulo: "Empresas (CNPJ)", valor: "até 10" },
-        { rotulo: "XMLs por mês", valor: "até 10.000" },
-      ],
+      xmlsPorMes: 10000,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null },
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/6zThe1r", linkAnual: "https://pay.kiwify.com.br/VhmSs7K" },
     },
-  ],
+  ].map(comLimites),
 };
 
 export function planoPorId(id: string | null | undefined): Plano | undefined {

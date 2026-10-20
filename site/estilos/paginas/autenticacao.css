@@ -114,7 +114,6 @@ body{background:var(--papel)}
 .pagamento-seguro-icone{display:grid;flex:none;place-items:center;width:52px;height:52px;border-radius:16px;background:var(--ok-fundo);color:var(--ok)}
 .pagamento-seguro b{display:block;margin-bottom:4px;color:var(--verde-900)}
 .pagamento-seguro p{margin:0;font-size:14px;color:var(--texto-2)}
-.demo-checkout{margin-top:16px}
 
 .resumo{position:sticky;top:24px}
 .resumo-cartao{position:relative;padding:28px;border-radius:var(--r-xl);background:var(--grad-noite);color:var(--noite-texto);box-shadow:var(--sombra-3);overflow:hidden}

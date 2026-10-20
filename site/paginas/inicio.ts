@@ -7,7 +7,6 @@ import {
   type Plano,
   type RecursoId,
 } from "../config/planos.js";
-import { emDemonstracao } from "../config/integracoes.js";
 import { produto } from "../config/produto.js";
 import { rotas } from "../servicos/rotas.js";
 import type { CicloCobranca } from "../servicos/tipos.js";
@@ -63,7 +62,7 @@ function tabelaComparativa(): string {
   const colunas = (conteudo: (p: Plano) => string) =>
     planos.map((p) => `<td class="${p.destaque ? "destaque" : ""}">${conteudo(p)}</td>`).join("");
   const limites = referencia.limites
-    .map((l, i) => `<tr><td>${esc(l.rotulo.replace(/^Empresa \(/, "Empresas ("))}</td>${colunas((p) => esc(p.limites[i]?.valor ?? "—"))}</tr>`)
+    .map((l, i) => `<tr><td>${esc(l.rotulo)}</td>${colunas((p) => esc(p.limites[i]?.valor ?? "—"))}</tr>`)
     .join("");
   const usados = (Object.keys(catalogoRecursos) as RecursoId[]).filter((id) => planos.some((p) => p.recursos.includes(id)));
   const recursos = usados
@@ -94,8 +93,7 @@ function iniciarPlanos(): void {
   if (condicoes) condicoes.innerHTML = configuracaoPlanos.condicoes.map((c) => `<li>${icone("check-circulo", "i-sm")}${esc(c)}</li>`).join("");
   const aviso = $("[data-valores-ilustrativos]");
   if (aviso && configuracaoPlanos.valoresIlustrativos) {
-    const semCobranca = emDemonstracao() ? " Nesta fase nada é cobrado: cadastro e assinatura funcionam em modo demonstração." : "";
-    aviso.innerHTML = `${icone("info")}<span>${esc(configuracaoPlanos.textoValoresIlustrativos + semCobranca)}</span>`;
+    aviso.innerHTML = `${icone("info")}<span>${esc(configuracaoPlanos.textoValoresIlustrativos)}</span>`;
     aviso.hidden = false;
   }
 
@@ -317,14 +315,7 @@ function iniciarFaq(): void {
   abrirPeloHash();
 }
 
-/* ---------------- Textos que dependem do modo e dados da responsável ---------------- */
-
-/** data-so-demonstracao: só enquanto contas e pagamentos forem simulados; data-so-producao: o contrário. */
-function textosDoModo(): void {
-  const demo = emDemonstracao();
-  for (const el of $$("[data-so-demonstracao]")) el.hidden = !demo;
-  for (const el of $$("[data-so-producao]")) el.hidden = demo;
-}
+/* ---------------- Dados da responsável ---------------- */
 
 /** Seção "Quem está por trás": lê config/produto.ts (responsavel); campo null vira "a definir". */
 function preencherResponsavel(): void {
@@ -395,7 +386,6 @@ function iniciarCtaMovel(): void {
 iniciarPagina();
 iniciarTopo();
 iniciarPlanos();
-textosDoModo();
 preencherResponsavel();
 iniciarParalaxe();
 iniciarContadores();

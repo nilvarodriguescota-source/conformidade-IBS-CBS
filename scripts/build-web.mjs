@@ -1,4 +1,4 @@
-// Gera public/: o site estático do Netlify (sistema rodando no navegador) e as
+// Gera public/: o site estático (Hostinger ou Netlify; sistema rodando no navegador) e as
 // bibliotecas de public/vendor, usadas também pelo servidor local. Rodar depois do tsc.
 import { build } from "esbuild";
 import { cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -38,7 +38,9 @@ await build({
   inject: [join(shims, "globais.ts")],
   define: { "process.env.NODE_ENV": '"production"' },
 });
-await build({ ...comum, entryPoints: [join(raiz, "web", "navegador.ts")], outfile: join(pub, "navegador.js"), format: "iife" });
+// navegador.js também confere a assinatura e o limite de XMLs (Supabase), por isso leva os valores públicos do site
+const { definicoesPublicas } = await import(pathToFileURL(join(raiz, "scripts", "build-site.mjs")).href);
+await build({ ...comum, entryPoints: [join(raiz, "web", "navegador.ts")], outfile: join(pub, "navegador.js"), format: "iife", define: definicoesPublicas() });
 await build({ ...comum, entryPoints: [join(raiz, "web", "xlsx-mini.ts")], outfile: join(pub, "vendor", "xlsx-mini.js"), format: "iife" });
 
 for (const [origem, nome] of [
@@ -77,5 +79,9 @@ writeFileSync(join(pub, "sistema.html"), paginaHtml('<script src="navegador.js">
 // Site comercial: landing (index.html), login, cadastro, checkout e área do cliente
 const { construirSite } = await import(pathToFileURL(join(raiz, "scripts", "build-site.mjs")).href);
 await construirSite({ raiz, pub });
+
+// Função do webhook da Kiwify para o Supabase (um arquivo só, em supabase/functions/kiwify-webhook/)
+const { construirWebhook } = await import(pathToFileURL(join(raiz, "scripts", "build-webhook.mjs")).href);
+await construirWebhook();
 
 console.log("public/ gerado.");

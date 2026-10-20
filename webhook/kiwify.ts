@@ -1,5 +1,6 @@
 /**
  * Regras do webhook da Kiwify, sem acesso a rede nem a banco (testáveis isoladamente).
+ * Quem chama é webhook/processar.ts, que roda como função do Supabase (supabase/functions/kiwify-webhook).
  *
  * A Kiwify manda um JSON por evento de venda ou assinatura e assina o corpo com HMAC-SHA1
  * (chave = token do webhook), no parâmetro `?signature=` do endereço.
@@ -10,9 +11,10 @@
  *   Commissions{charge_amount (centavos), product_base_price}.
  * O payload completo de cada evento fica gravado em kiwify_eventos para conferência.
  */
+import { Buffer } from "node:buffer";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { configuracaoPlanos, type Plano } from "../../site/config/planos.js";
-import type { CicloCobranca, FormaPagamento, StatusAssinatura } from "../../site/servicos/tipos.js";
+import { configuracaoPlanos, type Plano } from "../site/config/planos.js";
+import type { CicloCobranca, FormaPagamento, StatusAssinatura } from "../site/servicos/tipos.js";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type PayloadKiwify = Record<string, any>;
@@ -182,6 +184,8 @@ export interface AlteracaoAssinatura {
   email: string;
   plano_id?: string;
   ciclo?: CicloCobranca;
+  /** XMLs por mês do plano comprado (null = sem limite); só muda quando o plano é identificado. */
+  limite_xmls_mes?: number | null;
   status: StatusAssinatura;
   inicio_periodo?: string | null;
   fim_periodo?: string | null;
@@ -223,6 +227,7 @@ export function alteracaoDaAssinatura(
   if (identificado) {
     base.plano_id = identificado.plano.id;
     base.ciclo = identificado.ciclo;
+    base.limite_xmls_mes = identificado.plano.xmlsPorMes;
   }
   const forma = formaDePagamento(p);
   if (forma) base.forma_pagamento = forma;

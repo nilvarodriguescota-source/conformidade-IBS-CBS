@@ -2,9 +2,9 @@
  * Controle de acesso: decide, a partir da sessão e da assinatura, se o cliente pode
  * abrir o sistema e quais recursos o plano dele libera.
  *
- * Hoje esta decisão roda no navegador e serve para a experiência (o que mostrar,
- * para onde mandar). Proteção de verdade exige que o servidor faça a mesma
- * verificação antes de entregar o sistema: ver "Controle de acesso" em site/README.md.
+ * Roda no navegador: decide o que mostrar e para onde mandar, e é usada por web/navegador.ts para
+ * só abrir o sistema com acesso liberado. A mesma regra está no banco (sql/supabase.sql,
+ * registrar_uso_xmls), que é quem decide se uma análise pode ser contada.
  */
 import { catalogoRecursos, planoPorId, type Plano, type RecursoId } from "../config/planos.js";
 import type { Assinatura, Sessao } from "./tipos.js";
@@ -92,8 +92,8 @@ export function recursosLiberados(sessao: Sessao | null, assinatura: Assinatura 
 }
 
 /**
- * PONTO DE INTEGRAÇÃO com o sistema de XML: hoje o sistema não limita recursos por
- * plano. Quando passar a limitar, ele deve consultar esta mesma regra (no servidor).
+ * Todos os planos liberam todos os recursos (o que muda é o volume de XMLs por mês, contado no
+ * banco). Se um plano passar a liberar menos, o sistema de XML deve consultar esta regra.
  */
 export function podeUsar(recurso: RecursoId, sessao: Sessao | null, assinatura: Assinatura | null): boolean {
   return recursosLiberados(sessao, assinatura).has(recurso);

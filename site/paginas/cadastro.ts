@@ -1,10 +1,9 @@
 /** Cadastro: escolhe o plano, cria a conta e segue para o pagamento. */
-import { compraPelaKiwify } from "../config/integracoes.js";
 import { configuracaoPlanos, equivalenteMensal, linkKiwify, planoDestaque, planoPorId, type Plano } from "../config/planos.js";
 import { autenticacao, pagamento } from "../servicos/conta.js";
 import { cicloDaUrl, parametro, rotas } from "../servicos/rotas.js";
 import type { CicloCobranca } from "../servicos/tipos.js";
-import { $, $$, aguardar, alternarSenhas, esc, faixaDemonstracao, formatarMoeda, icone, iniciarPagina, mensagemDeErro, segmentado } from "../ui/comum.js";
+import { $, $$, aguardar, alternarSenhas, esc, formatarMoeda, icone, iniciarPagina, mensagemDeErro, segmentado } from "../ui/comum.js";
 import {
   aplicarMascaras,
   cnpjValido,
@@ -17,7 +16,6 @@ import {
 } from "../ui/formularios.js";
 
 iniciarPagina();
-faixaDemonstracao();
 alternarSenhas();
 aplicarMascaras();
 marcarEtapas("conta");
@@ -26,7 +24,7 @@ let plano: Plano = planoPorId(parametro("plano")) ?? planoDestaque();
 let ciclo: CicloCobranca = cicloDaUrl() ?? configuracaoPlanos.cicloPadrao;
 
 // Com a Kiwify a conta nasce da compra: links antigos para o cadastro seguem direto para o checkout dela
-const compraKiwify = compraPelaKiwify() ? linkKiwify(plano, ciclo) : null;
+const compraKiwify = linkKiwify(plano, ciclo);
 if (compraKiwify) location.replace(compraKiwify);
 
 const opcoes = $("[data-opcoes-plano]")!;

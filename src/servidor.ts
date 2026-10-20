@@ -5,9 +5,10 @@ import path from "path";
 import multer from "multer";
 import { lerAlertasParaExibicao } from "./alertas-exibicao.js";
 import {
-  adicionarXmls, configuracaoDaEmpresa, gravarAtividade, incorporarAguardando, lerRespostas, novaAnalise, processarAnaliseAtual,
+  adicionarXmls, configuracaoDaEmpresa, gravarAtividade, incorporarAguardando, lerRespostas, novaAnalise, pastasDaAnalise, processarAnaliseAtual,
   quantidadeAguardando, quantidadeDeXmls, registrarResposta,
 } from "./analise-atual.js";
+import { codigosDasNotas } from "./processador.js";
 import { diferencasDeVereditos } from "./lote-explicativo.js";
 import { lerCabecalhoJson } from "./arquivos.js";
 import { paginaHtml } from "./pagina.js";
@@ -255,6 +256,20 @@ app.post("/api/importar", upload.array("arquivos", LIMITE_XMLS_POR_ENVIO), (req,
       erro: "Não foi possível adicionar os XMLs.",
       detalhe: erro instanceof Error ? erro.message : String(erro)
     });
+  }
+});
+
+/**
+ * Códigos anônimos das notas de venda que "Processar análise" vai conferir (já processadas e
+ * aguardando). A versão web manda esses códigos ao banco para contar o limite de XMLs do plano.
+ */
+app.get("/api/notas-da-analise", (_req, res) => {
+  try {
+    const p = pastasDaAnalise(pastaAnalise);
+    res.json({ notas: codigosDasNotas([p.xmls, p.aguardando]) });
+  } catch (erro) {
+    console.error("Erro ao listar as notas da análise:", erro);
+    res.status(500).json({ erro: "Não foi possível ler as notas da análise.", detalhe: erro instanceof Error ? erro.message : String(erro) });
   }
 });
 

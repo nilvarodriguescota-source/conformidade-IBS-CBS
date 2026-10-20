@@ -1,11 +1,10 @@
 /** Recuperação de senha: pede ao provedor de autenticação o e-mail de redefinição. */
 import { autenticacao } from "../servicos/conta.js";
 import { ErroServico } from "../servicos/tipos.js";
-import { $, aguardar, faixaDemonstracao, iniciarPagina, mensagemDeErro } from "../ui/comum.js";
+import { $, aguardar, iniciarPagina, mensagemDeErro } from "../ui/comum.js";
 import { emailValido, erroNoCampo, mostrarAlerta } from "../ui/formularios.js";
 
 iniciarPagina();
-faixaDemonstracao();
 
 const form = $<HTMLFormElement>("[data-form-recuperar]")!;
 const retorno = $("[data-retorno]");
@@ -27,7 +26,7 @@ form.addEventListener("submit", async (e) => {
     mostrarAlerta(retorno, "Se houver uma conta com este e-mail, você vai receber um link para criar uma nova senha em alguns minutos. Confira também a caixa de spam.", "sucesso");
     form.hidden = true;
   } catch (err) {
-    const aviso = err instanceof ErroServico && (err.codigo === "indisponivel_demonstracao" || err.codigo === "integracao_pendente");
+    const aviso = err instanceof ErroServico && (err.codigo === "integracao_pendente");
     mostrarAlerta(retorno, mensagemDeErro(err), aviso ? "aviso" : "erro");
   } finally {
     aguardar(botao, false);

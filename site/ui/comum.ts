@@ -1,5 +1,4 @@
 /** Utilitários de interface usados por todas as páginas do site. */
-import { emDemonstracao } from "../config/integracoes.js";
 import { configuracaoPlanos } from "../config/planos.js";
 import { produto } from "../config/produto.js";
 import { rotas } from "../servicos/rotas.js";
@@ -124,20 +123,6 @@ export function preencherDadosComerciais(): void {
   for (const el of $$("[data-links-planos]")) {
     el.innerHTML = configuracaoPlanos.planos.map((p) => `<a href="${esc(rotas.cadastro(p.id))}">${esc(p.nome)}</a>`).join("");
   }
-}
-
-/** Faixa "modo demonstração" no topo das telas de conta, enquanto não houver integração real. */
-export function faixaDemonstracao(texto = "Contas e pagamentos são simulados neste navegador: nada é cobrado e nenhum e-mail é enviado."): void {
-  if (!emDemonstracao() || $(".faixa-demo")) return;
-  const faixa = document.createElement("div");
-  faixa.className = "faixa-demo";
-  faixa.setAttribute("role", "note");
-  faixa.innerHTML = `${icone("info")}<span><b>Modo demonstração</b> · ${esc(texto)}</span>`;
-  document.body.prepend(faixa);
-  // Telas com menu fixo descontam a altura da faixa (var --faixa no CSS)
-  const medir = () => document.documentElement.style.setProperty("--faixa", `${faixa.offsetHeight}px`);
-  new ResizeObserver(medir).observe(faixa);
-  medir();
 }
 
 /** Seletor segmentado com indicador deslizante. Devolve uma função para reposicionar. */

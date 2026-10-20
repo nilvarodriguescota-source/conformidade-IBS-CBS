@@ -1,48 +1,40 @@
 /**
- * Integrações externas do site: autenticação (Supabase) e pagamento (Kiwify).
+ * Integrações externas do site: login e banco (Supabase) e pagamento (Kiwify).
  *
- * O modo é decidido no build, pelas variáveis de ambiente do Netlify:
- *   - com SUPABASE_URL e SUPABASE_ANON_KEY definidas → "producao": login pelo Supabase,
- *     compra pela Kiwify e acesso liberado pelo webhook (netlify/functions/kiwify-webhook.mts);
- *   - sem elas → "demonstracao": contas e assinaturas ficam só no navegador de quem testa,
- *     nada é cobrado e todas as telas avisam isso.
- * Passo a passo da configuração: docs/kiwify-supabase/PASSO-A-PASSO.md.
+ * Os três valores abaixo são públicos (vão para o navegador de qualquer forma) e por isso ficam
+ * no código: o site é publicado como arquivos estáticos (Hostinger), sem variáveis de ambiente.
+ * Se as variáveis SUPABASE_URL, SUPABASE_ANON_KEY e SITE_URL existirem no build, elas têm prioridade.
+ *
+ * A chave secreta do Supabase e o token da Kiwify NUNCA entram aqui: ficam só nos segredos da
+ * função do webhook, dentro do Supabase (docs/kiwify-supabase/PASSO-A-PASSO.md).
  */
-export type ModoIntegracao = "demonstracao" | "producao";
+
+/** Endereço do projeto no Supabase, ex.: "https://abcdefgh.supabase.co". */
+const SUPABASE_URL = "https://diydqdrycltsghqilryv.supabase.co";
+/** Chave pública do Supabase (publishable "sb_publishable_..." ou "anon public"). */
+const SUPABASE_ANON_KEY = "sb_publishable_N1oTvKcEBdO1GozFF1H5IA_ArVaJbdT";
+/** Endereço do site publicado, sem barra no fim, ex.: "https://conformidadeibscbs.com.br". */
+const SITE_URL = "https://saboresestrategicos.com.br";
 
 /** Substituídos no build por scripts/build-site.mjs (texto vazio quando a variável não existe). */
 declare const __SUPABASE_URL__: string;
 declare const __SUPABASE_ANON_KEY__: string;
+declare const __SITE_URL__: string;
 
-/** Endereço e chave pública do Supabase. A chave pública (anon/publishable) pode ir para o navegador: o banco é protegido por RLS. */
+const limpar = (v: string) => v.trim().replace(/\/+$/, "");
+
+/** A chave pública (anon/publishable) pode ir para o navegador: o banco é protegido por RLS. */
 export const supabase = {
-  url: __SUPABASE_URL__,
-  chavePublica: __SUPABASE_ANON_KEY__,
+  url: limpar(__SUPABASE_URL__ || SUPABASE_URL),
+  chavePublica: (__SUPABASE_ANON_KEY__ || SUPABASE_ANON_KEY).trim(),
 };
 
-const modo: ModoIntegracao = supabase.url && supabase.chavePublica ? "producao" : "demonstracao";
-
-export const integracoes = {
-  modo,
-
-  autenticacao: {
-    /** "demonstracao" | "supabase" */
-    provedor: modo === "producao" ? "supabase" : "demonstracao",
-  },
-
-  pagamento: {
-    /** "demonstracao" | "kiwify" */
-    provedor: modo === "producao" ? "kiwify" : "demonstracao",
-    /** Formas de pagamento exibidas no checkout de demonstração (na Kiwify, a própria página de pagamento mostra as opções). */
-    formas: ["cartao", "pix", "boleto"] as Array<"cartao" | "pix" | "boleto">,
-  },
+export const site = {
+  /** Vazio = usa o endereço em que a página está aberta. */
+  endereco: limpar(__SITE_URL__ || SITE_URL),
 };
 
-export function emDemonstracao(): boolean {
-  return integracoes.modo === "demonstracao";
-}
-
-/** A compra acontece na página da Kiwify (a conta nasce da compra, não do formulário de cadastro). */
-export function compraPelaKiwify(): boolean {
-  return integracoes.pagamento.provedor === "kiwify";
+/** false enquanto o endereço ou a chave pública do Supabase não forem preenchidos: as telas de conta avisam. */
+export function supabaseConfigurado(): boolean {
+  return Boolean(supabase.url && supabase.chavePublica);
 }
