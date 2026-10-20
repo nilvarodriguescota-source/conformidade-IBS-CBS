@@ -1,0 +1,304 @@
+{
+ "versao": "etapa6-proposta-1",
+ "estado": "Proposta para revisão. Nada foi aplicado ao motor, às regras ou à base.",
+ "principio": "Uma inferência nunca é apresentada como fato legal. Toda frase mostrada ao usuário declara a sua camada.",
+ "camadas": [
+  {
+   "id": "FONTE_DIZ",
+   "definicao": "Trecho ou valor literal de uma fonte registrada, com arquivo, SHA-256, localização e data de consulta.",
+   "comoApresentar": "Citar a fonte, a natureza da fonte e o trecho: 'A LC 214/2025, Anexo VI, item 25, lista: Cloreto crômico, 2827.39.93'.",
+   "origemNaBase": "vinculacoes.*.fatos (Etapa 5); original.valores (Etapa 3) para a planilha"
+  },
+  {
+   "id": "SISTEMA_INFERE",
+   "definicao": "Conclusão obtida por comparação ou regra de leitura aplicada pelo sistema sobre fatos: cobertura de NCM por prefixo, 6 = VI, 60% = 0,6, enquadramento no art. 544, VI por exclusão, item diferente do da regra.",
+   "comoApresentar": "Sempre com o verbo do sistema: 'O sistema comparou…', 'O sistema identificou…'. Nunca como 'a lei diz'.",
+   "origemNaBase": "vinculacoes.*.dadoExtraido, comparacao e interpretacao"
+  },
+  {
+   "id": "HUMANO_CONFIRMOU",
+   "definicao": "Resposta registrada por pessoa identificada, com data, justificativa e escopo (produto ou adquirente). Registro com autor 'Sistema' ou sem autor não é confirmação humana.",
+   "comoApresentar": "'Confirmado por <autor> em <data>: <justificativa>'.",
+   "origemNaBase": "empresa.json validacoes (hoje sem justificativa obrigatória e com chave ncm + cProd + regraId)"
+  },
+  {
+   "id": "SISTEMA_PODE_DECIDIR",
+   "definicao": "Permissão dada por esta matriz para o sistema emitir uma decisão sem nova intervenção humana. É uma regra de governança, não uma afirmação sobre a lei.",
+   "comoApresentar": "'Decisão automática permitida pela matriz de decisão, situação N.'",
+   "origemNaBase": "esta matriz"
+  }
+ ],
+ "naturezaDasFontes": {
+  "F1": "Norma: LC 214/2025, texto do Planalto. Único que pode sustentar 'a lei diz'.",
+  "F2": "Tabela operacional oficial do portal da Conformidade Fácil (SVRS). Oficial, mas não é norma: diz como o fisco parametrizou o documento fiscal.",
+  "PLANILHA": "Base interna da planilha V4.1. Não oficial. Serve de origem das regras atuais e de comparação."
+ },
+ "niveisDeEnquadramento": {
+  "normativo": "Regra ↔ norma: a NCM, o código e o item da regra correspondem ao que as fontes oficiais dizem. Pode ser confirmado por fontes.",
+  "doProduto": "Item da nota ↔ regra: o produto vendido atende à descrição e às condições da norma. Só é confirmado por humano, porque o XML não informa composição, destinação nem natureza do adquirente."
+ },
+ "status": [
+  {
+   "id": "NORMA_CONFIRMADA",
+   "categoria": "D) enquadramento confirmado (nível normativo)",
+   "definicao": "NCM consta do anexo na F1 e na lista do código na F2; um único item do anexo cobre a NCM; esse item é o da regra; a descrição da F2 coincide com a da F1.",
+   "criterio": "vinculacoes.regras[].comparacao.resultado = 'concorda'",
+   "mapeamentoAutomatico": true,
+   "vereditoAutomatico": "Não antes da validação do produto; sim depois de HUMANO_CONFIRMOU para a chave correta.",
+   "exigeValidacaoHumana": "Sim, do produto (descrição e condição da norma).",
+   "bloqueia": "Não."
+  },
+  {
+   "id": "NORMA_POSSIVEL_MULTIPLOS_ITENS",
+   "categoria": "C) enquadramento possível / E) ambíguo",
+   "definicao": "NCM confirmada nas duas fontes para o código, mas coberta por mais de um item do anexo; o item depende da composição do produto. O item da regra está entre os possíveis.",
+   "criterio": "comparacao.resultado = 'item_entre_varios'",
+   "mapeamentoAutomatico": "Parcial: código e anexo sim; item não (apresentar a lista de itens possíveis).",
+   "vereditoAutomatico": "Não antes da escolha do item e da validação do produto.",
+   "exigeValidacaoHumana": "Sim: escolha do item e validação do produto.",
+   "bloqueia": "Bloqueia a escolha automática do item."
+  },
+  {
+   "id": "CONFLITO_PLANILHA_FONTE",
+   "categoria": "F) conflito entre fontes (planilha × oficiais)",
+   "definicao": "F1 e F2 concordam entre si sobre o item da NCM, e a planilha traz outro item.",
+   "criterio": "comparacao.resultado = 'item_divergente'",
+   "mapeamentoAutomatico": "Parcial: código e anexo sim (NCM está na lista oficial do código); item não.",
+   "vereditoAutomatico": "Não.",
+   "exigeValidacaoHumana": "Sim: resolução da divergência (registro com autor, data e justificativa) e validação do produto.",
+   "bloqueia": "Bloqueia o uso do item da planilha como fundamento até a resolução."
+  },
+  {
+   "id": "CONFLITO_ENTRE_FONTES",
+   "categoria": "F) conflito entre fontes (F1 × F2)",
+   "definicao": "A lei e a tabela do SVRS divergem sobre a presença da NCM no código.",
+   "criterio": "comparacao.resultado em 'ncm_so_na_F1' ou 'ncm_so_na_F2'",
+   "mapeamentoAutomatico": false,
+   "vereditoAutomatico": "Não, em nenhum sentido (nem benefício, nem risco).",
+   "exigeValidacaoHumana": "Sim: decisão de especialista registrada como resolução de divergência.",
+   "bloqueia": "Sim: bloqueia o enquadramento automático e o cálculo de economia ou exposição."
+  },
+  {
+   "id": "SEM_EVIDENCIA_OFICIAL",
+   "categoria": "Regra existente sem evidência oficial auditada",
+   "definicao": "Regra de código fora do escopo auditado (os 10 códigos além de 200033 e 200043). A única origem é a planilha.",
+   "criterio": "cClassTrib fora de vinculacoes.escopo",
+   "mapeamentoAutomatico": "Como hoje, mas com nível de evidência 'planilha' declarado.",
+   "vereditoAutomatico": "Decisão D3 pendente. Proposta: manter o comportamento atual e mostrar 'baseado em dado não confirmado oficialmente'.",
+   "exigeValidacaoHumana": "Sim, do produto (como hoje).",
+   "bloqueia": "Não, para não regredir; depende de D3."
+  },
+  {
+   "id": "LACUNA_FONTE_SEM_REGRA",
+   "categoria": "G) ausência de regra",
+   "definicao": "NCM listada pela fonte oficial para o código, sem regra correspondente na base. Não é regra; é registro de lacuna.",
+   "criterio": "vinculacoes.ncmsOficiaisSemRegra",
+   "mapeamentoAutomatico": false,
+   "vereditoAutomatico": "Não: nem conceder o benefício, nem apontar risco por 'benefício sem regra'.",
+   "exigeValidacaoHumana": "Sim: decisão D5 (incluir ou não como regra de origem oficial).",
+   "bloqueia": "Sim: bloqueia a criação automática de regra e o veredito INCORRETO_RISCO automático para essa NCM com esse código."
+  }
+ ],
+ "sinalizadores": [
+  { "id": "FUNDAMENTO_DIVERGENTE", "definicao": "Dispositivo citado na regra difere do indicado por F1 e F2 (200043: art. 140 × art. 142, I).", "criterio": "vinculacoes.codigo C-*-fundamentoLegal com status 'conflito'", "efeito": "Alerta de texto; não bloqueia; mostrar o fundamento oficial com fonte." },
+  { "id": "FUNDAMENTO_A_REVISAR", "definicao": "Dispositivo citado na regra coincide em parte com o oficial (200033: arts. 133 e 134 × art. 133, § 1º).", "criterio": "vinculacoes.codigo C-*-fundamentoLegal com status 'ambiguo'", "efeito": "Alerta de texto; não bloqueia." },
+  { "id": "VIGENCIA_AMBIGUA", "definicao": "As fontes trazem datas diferentes para atributos diferentes (efeitos da lei, código na tabela, lista de NCMs).", "criterio": "vinculacoes.codigo C-*-vigenciaInicio com status 'ambiguo'", "efeito": "Documento de 2026-01-01 em diante: as três datas já passaram (SISTEMA_INFERE), sem bloqueio. Documento entre 2025-05-05 e 2025-12-31: bloqueia a decisão automática. Antes de 2025-05-05: fora de vigência em todas as fontes." },
+  { "id": "DEPENDE_COMPOSICAO_PRODUTO", "definicao": "Mais de um item do anexo cobre a NCM.", "criterio": "dadoExtraido.itensF1QueCobremONcm com mais de um item", "efeito": "Exige escolha humana do item." },
+  { "id": "CONDICAO_NAO_VERIFICAVEL_NO_XML", "definicao": "A norma condiciona o benefício a algo que o XML não informa. 200033: destinação às pessoas com erros inatos do metabolismo (art. 133, § 1º). 200043: fornecimento à administração pública direta, autarquias e fundações públicas (art. 142, I).", "criterio": "código em 200033 ou 200043 (fato: trecho do art. 133, § 1º ou do art. 142, I em vinculacoes.codigo)", "efeito": "Veredito só depois de HUMANO_CONFIRMOU; para 200043 a chave é o adquirente, não o produto." },
+  { "id": "NCM_EM_OUTROS_CODIGOS", "definicao": "A mesma NCM também tem regra de outro cClassTrib na base.", "criterio": "outra regra com a mesma ncm e cClassTrib diferente", "efeito": "O motor já trata como REQUER_VALIDACAO com as opções; manter e mostrar a evidência de cada opção." },
+  { "id": "REGRAID_DUPLICADO", "definicao": "Duas regras com o mesmo id (23080000-200038-IX-23.06, linhas 776 e 777).", "criterio": "id repetido em regras", "efeito": "Bloqueia a reutilização de validação humana por regraId para essas regras até existir chave estável." }
+ ],
+ "situacoes": [
+  {
+   "n": 1, "titulo": "NCM + item único + evidência coincidente",
+   "condicaoEntrada": "Regra com status NORMA_CONFIRMADA.",
+   "evidenciaNecessaria": "Fato F1 (linha do anexo) e fato F2 (entrada da lista) para a NCM, com o mesmo item e a mesma descrição.",
+   "fontes": "F1 (norma) e F2 (tabela operacional).",
+   "grauEvidencia": "Forte: duas fontes oficiais independentes coincidem entre si e com a regra.",
+   "decisaoAutomatica": "Mapeamento normativo: sim. Veredito do produto: só depois de HUMANO_CONFIRMOU.",
+   "validacaoHumana": "Sim, do produto e da condição da norma.",
+   "bloqueio": "Não.",
+   "justificativaUsuario": "FONTE_DIZ: 'LC 214/2025, Anexo VI, item 25: Cloreto crômico, 2827.39.93; o SVRS lista 28273993 no 200033 como Cloreto crômico.' SISTEMA_INFERE: 'O item da regra coincide com as duas fontes.' Pendente: 'Confirme que o produto é Cloreto crômico e se destina a pessoas com erros inatos do metabolismo.'",
+   "rastreabilidade": "Id do registro de vinculação, fatos com arquivo, hash e localização, linha da planilha, regraId e índice."
+  },
+  {
+   "n": 2, "titulo": "NCM em múltiplos itens",
+   "condicaoEntrada": "Regra com status NORMA_POSSIVEL_MULTIPLOS_ITENS.",
+   "evidenciaNecessaria": "Todos os fatos F1 dos itens que cobrem a NCM e todas as entradas F2 da NCM.",
+   "fontes": "F1 e F2.",
+   "grauEvidencia": "Forte para a presença da NCM no código; insuficiente para o item.",
+   "decisaoAutomatica": "Código e anexo: sim. Item: não.",
+   "validacaoHumana": "Sim: escolher o item pela composição do produto.",
+   "bloqueio": "Bloqueia a escolha automática do item.",
+   "justificativaUsuario": "FONTE_DIZ: 'A NCM 2106.90.90 aparece nos itens 39 a 46 do Anexo VI.' SISTEMA_INFERE: 'A NCM não determina o item.' Pendente: 'Indique qual fórmula é o produto.'",
+   "rastreabilidade": "Lista de itens candidatos com os fatos de cada um; item escolhido e quem escolheu."
+  },
+  {
+   "n": 3, "titulo": "NCM encontrada na fonte, sem regra",
+   "condicaoEntrada": "NCM em vinculacoes.ncmsOficiaisSemRegra e documento com essa NCM.",
+   "evidenciaNecessaria": "Fato F2 (entrada da lista) e, quando houver, fato F1 (item do anexo que cobre a NCM).",
+   "fontes": "F1 e F2.",
+   "grauEvidencia": "Presença oficial comprovada; ausência de regra na base.",
+   "decisaoAutomatica": "Não.",
+   "validacaoHumana": "Sim: decisão D5.",
+   "bloqueio": "Sim: não criar regra e não apontar INCORRETO_RISCO por 'benefício sem regra' para essa NCM com esse código.",
+   "justificativaUsuario": "FONTE_DIZ: 'O SVRS lista 87091100 no 200043 (item 2.1 do Anexo XI, código 8709).' SISTEMA_INFERE: 'A base não tem regra para esta NCM neste código.' Pendente: 'Decidir se a regra deve ser incluída.'",
+   "rastreabilidade": "Id S-<código>-<ncm>, fatos e regras de outros códigos com a mesma NCM."
+  },
+  {
+   "n": 4, "titulo": "Regra existente sem evidência oficial",
+   "condicaoEntrada": "Regra com status SEM_EVIDENCIA_OFICIAL.",
+   "evidenciaNecessaria": "Só a linha da planilha (original).",
+   "fontes": "PLANILHA.",
+   "grauEvidencia": "Fraco: fonte interna não oficial.",
+   "decisaoAutomatica": "Decisão D3 pendente; proposta: comportamento atual, com o nível de evidência declarado.",
+   "validacaoHumana": "Sim, do produto (como hoje).",
+   "bloqueio": "Não (depende de D3).",
+   "justificativaUsuario": "FONTE_DIZ (não oficial): 'A planilha V4.1, linha N, enquadra esta NCM no código X.' Aviso: 'Não confirmado em fonte oficial.'",
+   "rastreabilidade": "Linha da planilha e hash do snapshot."
+  },
+  {
+   "n": 5, "titulo": "Conflito planilha × fonte oficial",
+   "condicaoEntrada": "Regra com status CONFLITO_PLANILHA_FONTE.",
+   "evidenciaNecessaria": "Fatos F1 e F2 do item oficial e valor da planilha (original.valores).",
+   "fontes": "F1, F2 e PLANILHA.",
+   "grauEvidencia": "Forte para o item oficial (duas fontes concordam); a planilha diverge.",
+   "decisaoAutomatica": "Código e anexo: sim. Item: não.",
+   "validacaoHumana": "Sim: resolução registrada da divergência.",
+   "bloqueio": "Bloqueia o item da planilha como fundamento até a resolução.",
+   "justificativaUsuario": "FONTE_DIZ: 'LC 214 e SVRS associam 2827.20.10 ao item 26 (Cloreto de cálcio).' FONTE_DIZ (não oficial): 'A planilha registra o item 66 (Lisina).' SISTEMA_INFERE: 'Os itens divergem.'",
+   "rastreabilidade": "Os três valores com as suas fontes; futura divergência com status e resolução."
+  },
+  {
+   "n": 6, "titulo": "Conflito F1 × F2",
+   "condicaoEntrada": "Regra com status CONFLITO_ENTRE_FONTES.",
+   "evidenciaNecessaria": "Fato da fonte que lista e registro da ausência na outra.",
+   "fontes": "F1 e F2.",
+   "grauEvidencia": "Contraditório.",
+   "decisaoAutomatica": "Não, em nenhum sentido.",
+   "validacaoHumana": "Sim: especialista; próxima evidência sugerida: Portal Nacional da NF-e.",
+   "bloqueio": "Sim.",
+   "justificativaUsuario": "FONTE_DIZ: 'A LC 214, Anexo VI, item 54, lista Frutose, 1702.50.00.' FONTE_DIZ: 'O SVRS não lista 17025000 no 200033.' SISTEMA_INFERE: 'As fontes oficiais divergem; nenhuma prevalece automaticamente.'",
+   "rastreabilidade": "Os dois fatos e a futura resolução."
+  },
+  {
+   "n": 7, "titulo": "Divergência de vigência",
+   "condicaoEntrada": "Sinalizador VIGENCIA_AMBIGUA e data do documento.",
+   "evidenciaNecessaria": "Art. 544, VI (F1); DthIniVig do código e da lista (F2).",
+   "fontes": "F1 e F2.",
+   "grauEvidencia": "Datas comprovadas; o significado de cada uma é SISTEMA_INFERE.",
+   "decisaoAutomatica": "Sim para documento de 2026-01-01 em diante; não entre 2025-05-05 e 2025-12-31.",
+   "validacaoHumana": "Só no intervalo ambíguo.",
+   "bloqueio": "Sim no intervalo 2025-05-05 a 2025-12-31.",
+   "justificativaUsuario": "FONTE_DIZ: 'Art. 544, VI: efeitos a partir de 1º/1/2026 para os demais dispositivos.' SISTEMA_INFERE: 'Os arts. 133 e 142 não constam dos incisos I a V.'",
+   "rastreabilidade": "As três datas com as suas fontes; nenhuma escolhida no dado."
+  },
+  {
+   "n": 8, "titulo": "Fundamento legal divergente",
+   "condicaoEntrada": "Sinalizador FUNDAMENTO_DIVERGENTE ou FUNDAMENTO_A_REVISAR.",
+   "evidenciaNecessaria": "Parágrafo vigente do artigo oficial (F1) e TexUrlLegislacao (F2).",
+   "fontes": "F1 e F2.",
+   "grauEvidencia": "Forte para o dispositivo oficial.",
+   "decisaoAutomatica": "Sim para mostrar o fundamento oficial ao lado do da regra; não para substituir.",
+   "validacaoHumana": "Não para o veredito; sim para corrigir a base (Etapa 7).",
+   "bloqueio": "Não.",
+   "justificativaUsuario": "FONTE_DIZ: 'LC 214, art. 142, I.' Aviso: 'A base cita o art. 140, que trata de comunicação institucional.'",
+   "rastreabilidade": "Fatos do art. oficial e do art. citado; valor da regra."
+  },
+  {
+   "n": 9, "titulo": "Fonte oficial sem correspondência na planilha",
+   "condicaoEntrada": "Informação oficial para a qual a regra não tem campo: redução de IBS e CBS separadas, IndNfce, datas de vigência do código, condição literal.",
+   "evidenciaNecessaria": "Fato F1 ou F2 correspondente.",
+   "fontes": "F1 e F2.",
+   "grauEvidencia": "Comprovado na fonte; sem contraparte na planilha.",
+   "decisaoAutomatica": "Só para parte verificável no XML (ex.: 200043 em NFC-e contra IndNfce = false), e o estado depende da decisão D4.",
+   "validacaoHumana": "Para o que o XML não comprova.",
+   "bloqueio": "Não por si só.",
+   "justificativaUsuario": "FONTE_DIZ: 'O SVRS indica que o 200043 não é habilitado para NFC-e (IndNfce = false).'",
+   "rastreabilidade": "Fato F2 com localização do campo."
+  },
+  {
+   "n": 10, "titulo": "Informação que depende da composição ou descrição do produto",
+   "condicaoEntrada": "Sinalizador DEPENDE_COMPOSICAO_PRODUTO ou CONDICAO_NAO_VERIFICAVEL_NO_XML.",
+   "evidenciaNecessaria": "Descrição legal do item (F1) e condição da norma (F1).",
+   "fontes": "F1.",
+   "grauEvidencia": "Norma clara; aplicação ao produto não verificável automaticamente.",
+   "decisaoAutomatica": "Não.",
+   "validacaoHumana": "Sim.",
+   "bloqueio": "Bloqueia veredito automático até a validação.",
+   "justificativaUsuario": "FONTE_DIZ: trecho literal da condição. Pendente: pergunta objetiva ao usuário.",
+   "rastreabilidade": "Trecho da condição e resposta humana com escopo."
+  },
+  {
+   "n": 11, "titulo": "Validação humana existente",
+   "condicaoEntrada": "Resposta SIM ou NÃO para a chave do item, com autor humano identificado.",
+   "evidenciaNecessaria": "Registro com autor, data, justificativa, escopo e as fontes vigentes na data da resposta.",
+   "fontes": "HUMANO_CONFIRMOU sobre FONTE_DIZ.",
+   "grauEvidencia": "Decisivo para aquela chave.",
+   "decisaoAutomatica": "Sim para a mesma chave, enquanto as fontes e a regra não mudarem.",
+   "validacaoHumana": "Já feita.",
+   "bloqueio": "Não. Deixa de valer (volta à situação 12) se: autor 'Sistema' ou ausente; chave por regraId duplicado; chave por produto quando a condição é do adquirente (200043); hash das fontes mudou desde a resposta.",
+   "justificativaUsuario": "HUMANO_CONFIRMOU: 'Confirmado por <autor> em <data>: <justificativa>.'",
+   "rastreabilidade": "Registro completo da validação e fontes usadas."
+  },
+  {
+   "n": 12, "titulo": "Ausência de validação humana",
+   "condicaoEntrada": "Nenhuma validação válida para a chave.",
+   "evidenciaNecessaria": "—",
+   "fontes": "—",
+   "grauEvidencia": "—",
+   "decisaoAutomatica": "Não para o veredito; economia e exposição ficam nulas com o motivo.",
+   "validacaoHumana": "Sim.",
+   "bloqueio": "Bloqueia o veredito até a resposta.",
+   "justificativaUsuario": "'Pendente de validação: <pergunta objetiva>.'",
+   "rastreabilidade": "Item na fila de validação com o valor em jogo."
+  },
+  {
+   "n": 13, "titulo": "regraId duplicado",
+   "condicaoEntrada": "Sinalizador REGRAID_DUPLICADO.",
+   "evidenciaNecessaria": "Linha da planilha de cada regra (original.linha).",
+   "fontes": "PLANILHA.",
+   "grauEvidencia": "Defeito de identificação.",
+   "decisaoAutomatica": "Não para aplicar validação por regraId.",
+   "validacaoHumana": "Sim, com chave estável (por linha) quando existir.",
+   "bloqueio": "Sim: bloqueia reutilizar a validação dessas regras até existir chave estável.",
+   "justificativaUsuario": "'Duas regras têm o mesmo identificador; a validação não pode ser atribuída com segurança.'",
+   "rastreabilidade": "As duas linhas da planilha."
+  },
+  {
+   "n": 14, "titulo": "Projeção normativa ainda não confirmada",
+   "condicaoEntrada": "(a) alíquota do tipo 'projecao' (ex.: CBS 2027) ou (b) propostaFutura de uma vinculação ainda não aplicada.",
+   "evidenciaNecessaria": "Parâmetro com fonte declarada como estimativa; registro de vinculação.",
+   "fontes": "parametros.ts; vinculacoes.",
+   "grauEvidencia": "Não oficial (a) ou não aprovado (b).",
+   "decisaoAutomatica": "(a) só com aceitarProjecao, rotulado como projeção; (b) nunca usado pelo motor.",
+   "validacaoHumana": "(a) opt-in explícito; (b) aprovação da etapa correspondente.",
+   "bloqueio": "Sim para tratar qualquer um dos dois como fato.",
+   "justificativaUsuario": "'Valor calculado com alíquota projetada, não oficial: <fonte da estimativa>.'",
+   "rastreabilidade": "Tipo do parâmetro e fonte; id da proposta."
+  }
+ ],
+ "camposFuturos": [
+  { "entidade": "regra", "campo": "chaveEstavel", "finalidade": "Identificador único (ex.: linha da planilha ou hash), para substituir regraId como chave de validação." },
+  { "entidade": "regra", "campo": "statusDecisao", "finalidade": "Um dos status desta matriz." },
+  { "entidade": "regra", "campo": "sinalizadores", "finalidade": "Lista de sinalizadores desta matriz." },
+  { "entidade": "regra", "campo": "evidencias", "finalidade": "Ids dos registros de vinculacoes que sustentam a regra." },
+  { "entidade": "regra", "campo": "oficial.itensPossiveis / oficial.itemConfirmado", "finalidade": "Itens do anexo segundo F1 e F2, separados do item da planilha." },
+  { "entidade": "regra", "campo": "oficial.reducaoIBS / oficial.reducaoCBS", "finalidade": "Redução por tributo, com fonte." },
+  { "entidade": "regra", "campo": "oficial.fundamentoLegal", "finalidade": "Dispositivo oficial, sem substituir fundamentoLegal." },
+  { "entidade": "regra", "campo": "oficial.vigencias[]", "finalidade": "Datas por atributo (efeitos da lei, código, lista), cada uma com fonte." },
+  { "entidade": "condicao", "campo": "id, natureza, textoLiteral, fonte, verificavelPeloXml, chaveDeValidacao (produto | adquirente)", "finalidade": "Condições da norma referenciadas pelas regras." },
+  { "entidade": "divergencia", "campo": "id, tipo, valores por fonte, impacto, status, resolucao {autor, data, justificativa}", "finalidade": "Conflitos registrados e resolvidos sem alterar os dados de origem." },
+  { "entidade": "validacao", "campo": "chave (produto ou adquirente), escopo, autor humano, data, justificativa, evidencia, hashDasFontesNaData", "finalidade": "Distinguir HUMANO_CONFIRMOU de registro automático e invalidar respostas quando as fontes mudarem." },
+  { "entidade": "documento", "campo": "destinatario (tipo de pessoa, CNPJ, natureza jurídica quando disponível)", "finalidade": "Chave de validação por adquirente no 200043." },
+  { "entidade": "veredito", "campo": "camadas {fonteDiz[], sistemaInfere[], humanoConfirmou[]}, decisaoAutomatica, situacaoDaMatriz, bloqueio {motivo}, nivelEvidencia, fontesUsadas, divergenciasAplicaveis", "finalidade": "Explicar ao usuário cada decisão separando fato, inferência e confirmação." }
+ ],
+ "decisoesPendentes": [
+  { "id": "D2", "tema": "Combinação dos tipos de adquirente do 200043 ('e' na lei, 'ou' na planilha)." },
+  { "id": "D3", "tema": "Política para regras cujo vínculo NCM × item com a fonte oficial não está CONFIRMADO na auditoria oficial (definição aprovada na Etapa 5.3; antes: regras sem evidência oficial, 1.242). Regras bloqueadas na Fase 2 já têm política e não entram na D3. Continua pendente." },
+  { "id": "D4", "tema": "Estado para a inconsistência verificável (200043 em NFC-e)." },
+  { "id": "D5", "tema": "Incluir ou não as NCMs oficiais sem regra como regras de origem oficial." },
+  { "id": "D6", "tema": "Validações com autor 'Sistema' no empresa.json: tratar como não confirmadas por humano?" },
+  { "id": "D7", "tema": "Formato da chave estável que substituirá regraId." }
+ ]
+}
