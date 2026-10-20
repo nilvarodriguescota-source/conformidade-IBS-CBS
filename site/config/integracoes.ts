@@ -10,11 +10,11 @@
  */
 
 /** Endereço do projeto no Supabase, ex.: "https://abcdefgh.supabase.co". */
-const SUPABASE_URL = "";
+const SUPABASE_URL = "https://diydqdrycltsghqilryv.supabase.co";
 /** Chave pública do Supabase (publishable "sb_publishable_..." ou "anon public"). */
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_ANON_KEY = "sb_publishable_N1oTvKcEBdO1GozFF1H5IA_ArVaJbdT";
 /** Endereço do site publicado, sem barra no fim, ex.: "https://conformidadeibscbs.com.br". */
-const SITE_URL = "";
+const SITE_URL = "https://saboresestrategicos.com.br";
 
 /** Substituídos no build por scripts/build-site.mjs (texto vazio quando a variável não existe). */
 declare const __SUPABASE_URL__: string;

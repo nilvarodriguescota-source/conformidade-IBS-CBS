@@ -108,7 +108,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
       resumo: TODOS_OS_RECURSOS,
       xmlsPorMes: 2000,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null },
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/yZqmSdG", linkAnual: "https://pay.kiwify.com.br/gHU2E3i" },
     },
     {
       id: "profissional",
@@ -121,7 +121,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
       resumo: TODOS_OS_RECURSOS,
       xmlsPorMes: 5000,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null },
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/sjLGxAc", linkAnual: "https://pay.kiwify.com.br/YyiXHr1" },
     },
     {
       id: "premium",
@@ -133,7 +133,7 @@ export const configuracaoPlanos: ConfiguracaoPlanos = {
       resumo: TODOS_OS_RECURSOS,
       xmlsPorMes: 10000,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null },
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/6zThe1r", linkAnual: "https://pay.kiwify.com.br/VhmSs7K" },
     },
   ].map(comLimites),
 };

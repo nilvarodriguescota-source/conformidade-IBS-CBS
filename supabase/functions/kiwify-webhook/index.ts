@@ -3,9 +3,9 @@
 // (Edge Functions), com "Verify JWT" desligado. Passo a passo: docs/kiwify-supabase/PASSO-A-PASSO.md
 // @ts-nocheck
 // site/config/integracoes.ts
-var SUPABASE_URL = "";
-var SUPABASE_ANON_KEY = "";
-var SITE_URL = "";
+var SUPABASE_URL = "https://diydqdrycltsghqilryv.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_N1oTvKcEBdO1GozFF1H5IA_ArVaJbdT";
+var SITE_URL = "https://saboresestrategicos.com.br";
 var limpar = (v) => v.trim().replace(/\/+$/, "");
 var supabase = {
   url: limpar(SUPABASE_URL),
@@ -56,7 +56,7 @@ var configuracaoPlanos = {
       resumo: TODOS_OS_RECURSOS,
       xmlsPorMes: 2e3,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null }
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/yZqmSdG", linkAnual: "https://pay.kiwify.com.br/gHU2E3i" }
     },
     {
       id: "profissional",
@@ -69,7 +69,7 @@ var configuracaoPlanos = {
       resumo: TODOS_OS_RECURSOS,
       xmlsPorMes: 5e3,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null }
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/sjLGxAc", linkAnual: "https://pay.kiwify.com.br/YyiXHr1" }
     },
     {
       id: "premium",
@@ -81,7 +81,7 @@ var configuracaoPlanos = {
       resumo: TODOS_OS_RECURSOS,
       xmlsPorMes: 1e4,
       recursos: [...RECURSOS],
-      kiwify: { linkMensal: null, linkAnual: null }
+      kiwify: { linkMensal: "https://pay.kiwify.com.br/6zThe1r", linkAnual: "https://pay.kiwify.com.br/VhmSs7K" }
     }
   ].map(comLimites)
 };

@@ -63,6 +63,17 @@ test("plano: pelo código do link, depois pelo nome, depois pelo valor", () => {
   assert.deepEqual([porValor?.plano.id, porValor?.ciclo, porValor?.criterio], ["essencial", "anual", "valor"]);
 
   assert.equal(identificarPlano(compra({ Subscription: {}, Product: { product_name: "Outro" }, Commissions: { charge_amount: 1 } })), null);
+
+  // Links reais (site/config/planos.ts): a Kiwify manda o código do link, com ou sem o endereço
+  const reais: Array<[string, string, string]> = [
+    ["yZqmSdG", "essencial", "mensal"], ["gHU2E3i", "essencial", "anual"],
+    ["sjLGxAc", "profissional", "mensal"], ["YyiXHr1", "profissional", "anual"],
+    ["6zThe1r", "premium", "mensal"], ["https://pay.kiwify.com.br/VhmSs7K", "premium", "anual"],
+  ];
+  for (const [link, plano, ciclo] of reais) {
+    const r = identificarPlano(compra({ checkout_link: link, Subscription: {}, Product: { product_name: "Conformidade IBS/CBS" } }));
+    assert.deepEqual([r?.plano.id, r?.ciclo, r?.criterio], [plano, ciclo, "link"], link);
+  }
 });
 
 test("cliente: e-mail normalizado; sem e-mail não há cliente", () => {

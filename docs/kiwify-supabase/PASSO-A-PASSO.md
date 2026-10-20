@@ -29,19 +29,18 @@ Tempo estimado: 1 hora. Custo: o plano gratuito do Supabase atende o começo.
 
 ---
 
-## O que você vai me mandar (e o que NÃO mandar)
+## O que já está pronto e o que falta
 
-| # | O quê | Onde pegar | Para quem |
-| --- | --- | --- | --- |
-| 1 | Endereço do Supabase (`https://xxxx.supabase.co`) | Etapa 1.3 | Me mande: vai em `site/config/integracoes.ts` |
-| 2 | Chave pública do Supabase (`sb_publishable_...` ou *anon public*) | Etapa 1.3 | Me mande: vai em `site/config/integracoes.ts` |
-| 3 | Endereço do site (ex.: `https://seudominio.com.br`) | Hostinger | Me mande: vai em `site/config/integracoes.ts` |
-| 4 | Links de checkout dos 6 planos | Etapa 3.1 | Me mande: vão em `site/config/planos.ts` |
-| 5 | Token do webhook da Kiwify | Etapa 3.2 | **Ninguém.** Cole só nos segredos da função (etapa 2.3) |
-| 6 | Chave secreta do Supabase (`sb_secret_...` ou *service_role*) | Etapa 1.3 | **Ninguém.** Você nem precisa copiar: a função já recebe sozinha |
+**Pronto no código:** endereço e chave pública do Supabase, domínio `saboresestrategicos.com.br` e os
+6 links da Kiwify.
 
-Os itens 1 a 4 são públicos (aparecem no navegador de qualquer visitante). Os itens 5 e 6 são
-senhas do sistema.
+**Falta fazer nos painéis** (este guia): rodar o SQL e configurar o login no Supabase (etapa 1),
+criar a função do webhook (etapa 2), criar o webhook na Kiwify e guardar o token (etapas 3.2 e 2.3),
+ligar a Hostinger (etapa 5) e fazer uma compra de teste (etapa 6).
+
+**Não mande para ninguém:** o token do webhook da Kiwify e a chave secreta do Supabase
+(`sb_secret_...` / *service_role*). O token vai só nos segredos da função; a chave secreta você
+nem precisa copiar.
 
 ---
 
@@ -67,9 +66,9 @@ senhas do sistema.
 
 ### 1.4 Endereços do site
 **Authentication** → **URL Configuration**:
-- **Site URL**: o endereço do site, ex.: `https://seudominio.com.br`.
-- **Redirect URLs** → **Add URL**: `https://seudominio.com.br/**` (com os dois asteriscos).
-  Se usar a prévia do Netlify, adicione também `https://seusite.netlify.app/**`.
+- **Site URL**: o endereço do site, ex.: `https://saboresestrategicos.com.br`.
+- **Redirect URLs** → **Add URL**: `https://saboresestrategicos.com.br/**` (com os dois asteriscos).
+  Adicione também `https://www.saboresestrategicos.com.br/**`. Se usar a prévia do Netlify, adicione o endereço dela do mesmo jeito.
 
 ### 1.5 Só quem comprou pode ter conta
 **Authentication** → **Sign In / Providers**:
@@ -157,8 +156,8 @@ Depois da etapa 3.2 (quando a Kiwify mostrar o token): **Edge Functions** → **
 `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` o Supabase já entrega à função. Não precisa criar.
 
 ### 2.4 Endereço da função
-É ele que vai na Kiwify: `https://SEU-PROJETO.supabase.co/functions/v1/kiwify-webhook`
-(troque `SEU-PROJETO` pelo código do item 1).
+É ele que vai na Kiwify: `https://diydqdrycltsghqilryv.supabase.co/functions/v1/kiwify-webhook`
+(já com o código do seu projeto).
 
 > **Quando o código mudar** (por exemplo, preço ou plano novo): repita a etapa 2.1, colando o arquivo
 > novo por cima e clicando em **Deploy** de novo. Eu aviso quando for preciso.
@@ -167,21 +166,28 @@ Depois da etapa 3.2 (quando a Kiwify mostrar o token): **Edge Functions** → **
 
 ## Etapa 3 · Kiwify (pagamento)
 
-### 3.1 Criar os planos de assinatura
-1. Kiwify → **Produtos** → **Criar produto** → tipo **Assinatura** (cobrança recorrente).
-2. Crie um produto por plano do site, **com o nome do plano no título**:
-   - `Conformidade IBS/CBS · Essencial`: plano **Mensal** R$ 197 e plano **Anual** R$ 1.970
-   - `Conformidade IBS/CBS · Profissional`: Mensal R$ 297 e Anual R$ 2.970
-   - `Conformidade IBS/CBS · Premium`: Mensal R$ 597 e Anual R$ 5.970
+### 3.1 Produto e links (feito)
+Um produto de assinatura com um link de checkout por plano. Os links já estão no site
+(`site/config/planos.ts`) e o webhook reconhece o plano pelo código do link:
 
-   (Os valores são os de `site/config/planos.ts`. Se mudar preço, me avise para atualizar o site também.)
-3. Em **Área de membros / Entrega**, **não** use a área de membros da Kiwify: a entrega é o nosso site.
-   Se pedir um link de acesso, use `https://seudominio.com.br/entrar`.
-4. Em cada produto, em **Configurações → Checkout → Página de obrigado** (ou "Redirecionar após a
-   compra"), coloque `https://seudominio.com.br/entrar.html?compra=ok`. O cliente volta para o site
-   e vê "Compra recebida, obrigado!".
-5. Copie o **link de checkout** de cada plano (formato `https://pay.kiwify.com.br/AbC123x`) → **item 4**.
-   Me mande indicando qual é qual (Essencial mensal, Essencial anual...).
+| Plano | Link | Valor | Cobrança |
+| --- | --- | --- | --- |
+| Essencial | `pay.kiwify.com.br/yZqmSdG` | R$ 197 | mensal |
+| Essencial ANUAL | `pay.kiwify.com.br/gHU2E3i` | R$ 1.970 | anual |
+| Profissional | `pay.kiwify.com.br/sjLGxAc` | R$ 297 | mensal |
+| Profissional ANUAL | `pay.kiwify.com.br/YyiXHr1` | R$ 2.970 | anual |
+| Premium | `pay.kiwify.com.br/6zThe1r` | R$ 597 | mensal |
+| Premium ANUAL | `pay.kiwify.com.br/VhmSs7K` | R$ 5.970 | anual |
+
+Confira na Kiwify:
+1. Os links **ANUAL** cobram **uma vez por ano** (recorrência anual) e os outros **todo mês**.
+2. **Área de membros / Entrega**: **não** use a área de membros da Kiwify; a entrega é o nosso site.
+   Se pedir um link de acesso, use `https://saboresestrategicos.com.br/entrar`.
+3. **Configurações → Checkout → Página de obrigado** (ou "Redirecionar após a compra"):
+   `https://saboresestrategicos.com.br/entrar.html?compra=ok`. O cliente volta para o site e vê
+   "Compra recebida, obrigado!".
+
+Mudou um link ou um preço? Me avise: o site e a função do Supabase precisam ser atualizados juntos.
 
 ### 3.2 Criar o webhook
 1. Kiwify → **Apps** → **Webhooks** → **Criar webhook**.
@@ -195,18 +201,10 @@ Depois da etapa 3.2 (quando a Kiwify mostrar o token): **Edge Functions** → **
 
 ---
 
-## Etapa 4 · Colocar os dados no site
+## Etapa 4 · Dados no site (feito)
 
-Me mande os itens 1 a 4. Eu coloco em `site/config/integracoes.ts` e `site/config/planos.ts` e
-publico. Se preferir fazer por conta própria, os campos estão no começo de cada arquivo, entre aspas:
-
-```ts
-const SUPABASE_URL = "https://abcdefgh.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_...";
-const SITE_URL = "https://seudominio.com.br";
-```
-
-Enquanto esses três campos estiverem vazios, as telas de login avisam que a integração está pendente.
+Já estão em `site/config/integracoes.ts`: endereço do Supabase (`https://diydqdrycltsghqilryv.supabase.co`),
+chave pública e o endereço do site (`https://saboresestrategicos.com.br`).
 
 ---
 
@@ -255,7 +253,7 @@ ative "mostrar arquivos ocultos" para conferir).
 2. Em até 1 minuto deve chegar o e-mail **"Seu acesso ao Conformidade IBS/CBS está liberado"**.
 3. Clique, crie a senha: você cai em **Minha conta**, com o plano, a assinatura ativa e
    "0 de 2.000 XMLs usados neste mês".
-4. Abra uma janela anônima e tente `https://seudominio.com.br/sistema`: deve mandar para o login.
+4. Abra uma janela anônima e tente `https://saboresestrategicos.com.br/sistema`: deve mandar para o login.
 5. Na Kiwify, reembolse a compra de teste: o acesso deve ser encerrado.
 
 **Se algo não funcionar**, olhe nesta ordem:
