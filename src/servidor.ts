@@ -5,7 +5,7 @@ import path from "path";
 import multer from "multer";
 import { lerAlertasParaExibicao } from "./alertas-exibicao.js";
 import {
-  adicionarXmls, configuracaoDaEmpresa, gravarAtividade, incorporarAguardando, lerRespostas, novaAnalise, pastasDaAnalise, processarAnaliseAtual,
+  adicionarXmls, ARQUIVOS_DE_SAIDA, configuracaoDaEmpresa, gravarAtividade, incorporarAguardando, lerRespostas, novaAnalise, pastasDaAnalise, processarAnaliseAtual,
   quantidadeAguardando, quantidadeDeXmls, registrarResposta,
 } from "./analise-atual.js";
 import { codigosDasNotas } from "./processador.js";
@@ -163,6 +163,13 @@ app.get("/api/analise", (_req, res) => {
 app.post("/api/nova-analise", (_req, res) => {
   try {
     novaAnalise(pastaAnalise, pastaSaida);
+    // Nada da análise anterior fica na memória
+    cacheReducoes = null;
+    cacheCnaes = null;
+    // Só confirma depois de conferir que não sobrou XML nem resultado
+    const sobras = quantidadeDeXmls(pastaAnalise) + quantidadeAguardando(pastaAnalise)
+      + ARQUIVOS_DE_SAIDA.filter((f) => fs.existsSync(path.join(pastaSaida, f))).length;
+    if (sobras > 0) throw new Error(`${sobras} arquivo(s) da análise anterior não foram apagados`);
     res.json({ sucesso: true });
   } catch (erro) {
     console.error("Erro ao iniciar nova análise:", erro);
@@ -358,15 +365,22 @@ function reducoesDaAnalise(vereditos: Veredito[]): ReducoesDaAnalise {
   let valor: ReducoesDaAnalise;
 
   try {
-    const indice = JSON.parse(fs.readFileSync(arqIndice, "utf8")) as {
-      documento: string;
-      nItem: string | number;
-      ncm: string;
-      cProd: string;
-      produto: string;
-      estado: string;
-      exibicao: ExibicaoDoItem;
-    }[];
+    // Formato atual: cada exibição diferente gravada uma vez e os itens apontando para ela pela posição.
+    // Análises salvas por versões anteriores trazem a lista com a exibição repetida em cada item.
+    type ItemDoIndice = { documento: string; nItem: string | number; ncm: string; cProd: string; produto: string; estado: string };
+    const lido = JSON.parse(fs.readFileSync(arqIndice, "utf8")) as
+      | (ItemDoIndice & { exibicao: ExibicaoDoItem })[]
+      | { formato: 2; exibicoes: ExibicaoDoItem[]; itens: (ItemDoIndice & { exibicao: number })[] };
+    // Nos dois formatos, itens com a mesma exibição compartilham o mesmo objeto na memória
+    const unicas = new Map<string, ExibicaoDoItem>();
+    const unica = (e: ExibicaoDoItem) => {
+      const texto = JSON.stringify(e);
+      if (!unicas.has(texto)) unicas.set(texto, e);
+      return unicas.get(texto)!;
+    };
+    const indice = Array.isArray(lido)
+      ? lido.map((x) => ({ ...x, exibicao: unica(x.exibicao) }))
+      : lido.itens.map((x) => ({ ...x, exibicao: lido.exibicoes[x.exibicao]! }));
 
     const porItem = new Map(
       indice.map((x) => [`${x.documento}|${x.nItem}`, x.exibicao])
@@ -396,24 +410,53 @@ function reducoesDaAnalise(vereditos: Veredito[]): ReducoesDaAnalise {
 }
 
 /** Enquadramento pendente: não mostra como "prevista" a regra que esta análise já respondeu NÃO para o item. */
-function semRegrasNegadas(r: ReducaoDoItem | null, v: Veredito, respostas: RespostaValidacao[]): ReducaoDoItem | null {
-  if (!r || r.situacao !== "prevista") return r;
-  const negadas = new Set(respostas
+function regrasNegadas(v: Veredito, respostas: RespostaValidacao[]): Set<string> {
+  return new Set(respostas
     .filter((x) => x.resposta === "NAO" && x.ncm === v.ncm && (x.cProd === v.cProd || x.cProd === v.produto))
     .map((x) => x.regraId));
+}
+function semRegrasNegadas(r: ReducaoDoItem | null, v: Veredito, respostas: RespostaValidacao[]): ReducaoDoItem | null {
+  if (!r || r.situacao !== "prevista") return r;
+  const negadas = regrasNegadas(v, respostas);
   return { ...r, opcoes: r.opcoes.filter((o) => !negadas.has(o.regraId)) };
 }
 
-app.get("/api/resultados", (_req, res) => {
+/**
+ * Resultados por item. A tela pede com ?compacto=1: as exibições iguais (redução, conferência com as fontes,
+ * lacunas, bloqueios) vão uma vez só em `exibicoes` e cada item leva a posição da sua em `exibicao`; a tela
+ * junta as duas partes. Sem isso a resposta repete o mesmo texto em cada item e passa de 300 MB com 10.000 notas.
+ * Sem o parâmetro, a resposta é a lista completa de sempre.
+ */
+app.get("/api/resultados", (req, res) => {
   try {
     const vereditos = lerJson(path.join(pastaSaida, "vereditos.json"), []) as Veredito[];
     const reducoes = reducoesDaAnalise(vereditos);
     const respostas = lerRespostas(pastaAnalise);
-    res.json(vereditos.map((v) => {
-      if (!reducoes.disponivel) return { ...v, reducaoExibicao: null, reducaoIndisponivel: reducoes.motivo, auditoriaExibicao: null, lacunasDeCobertura: [], bloqueiosExibicao: {} };
+    const exibicaoDoItem = (v: Veredito) => {
+      if (!reducoes.disponivel) return { reducaoExibicao: null, reducaoIndisponivel: reducoes.motivo, auditoriaExibicao: null, lacunasDeCobertura: [], bloqueiosExibicao: {} };
       const e = reducoes.porItem.get(`${v.documento}|${v.nItem}`);
-      return { ...v, reducaoExibicao: semRegrasNegadas(e?.reducao ?? null, v, respostas), auditoriaExibicao: e?.auditoria ?? {}, lacunasDeCobertura: e?.lacunas ?? [], bloqueiosExibicao: e?.bloqueios ?? {} };
-    }));
+      return { reducaoExibicao: semRegrasNegadas(e?.reducao ?? null, v, respostas), auditoriaExibicao: e?.auditoria ?? {}, lacunasDeCobertura: e?.lacunas ?? [], bloqueiosExibicao: e?.bloqueios ?? {} };
+    };
+    if (req.query?.compacto !== "1") {
+      res.json(vereditos.map((v) => ({ ...v, ...exibicaoDoItem(v) })));
+      return;
+    }
+    // Mesma exibição do índice + mesmas regras já respondidas NÃO = mesma exibição na tela
+    const exibicoes: unknown[] = [];
+    const posicoes = new Map<unknown, Map<string, number>>();
+    const itens = vereditos.map((v) => {
+      const e = reducoes.disponivel ? reducoes.porItem.get(`${v.documento}|${v.nItem}`) : undefined;
+      const negadas = e?.reducao?.situacao === "prevista" ? [...regrasNegadas(v, respostas)].sort().join("|") : "";
+      let doIndice = posicoes.get(e);
+      if (!doIndice) posicoes.set(e, (doIndice = new Map()));
+      let posicao = doIndice.get(negadas);
+      if (posicao === undefined) {
+        posicao = exibicoes.push(exibicaoDoItem(v)) - 1;
+        doIndice.set(negadas, posicao);
+      }
+      return { ...v, exibicao: posicao };
+    });
+    res.json({ compacto: true, exibicoes, vereditos: itens });
   } catch (erro) {
     res.status(500).json({
       erro: "Não foi possível carregar os resultados."

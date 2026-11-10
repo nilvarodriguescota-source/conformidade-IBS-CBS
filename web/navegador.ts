@@ -41,17 +41,56 @@ destinoSemAcesso()
 
 /* ---------------- Ponte com o Web Worker ---------------- */
 
-const worker = new Worker(new URL("worker.js", document.baseURI));
-const pendentes = new Map<number, (r: Response) => void>();
+interface Pendente { caminho: string; desde: number; responder: (r: Response) => void }
+
+const pendentes = new Map<number, Pendente>();
 let proximo = 1;
+let worker = criarWorker(false);
 
-worker.onmessage = (e: MessageEvent<{ id: number; status: number; corpo: string; tipo: string }>) => {
-  const { id, status, corpo, tipo } = e.data;
-  pendentes.get(id)?.(new Response(corpo, { status, headers: { "Content-Type": tipo } }));
-  pendentes.delete(id);
-};
+function json(status: number, corpo: Record<string, unknown>): Response {
+  return new Response(JSON.stringify(corpo), { status, headers: { "Content-Type": "application/json; charset=utf-8" } });
+}
 
-worker.onerror = (e) => console.error("Erro no processamento local:", e.message);
+/** Responde a todos os pedidos que estavam esperando o worker (que foi encerrado ou falhou). */
+function responderPendentes(resposta: () => Response): void {
+  const esperando = [...pendentes.values()];
+  pendentes.clear();
+  for (const p of esperando) p.responder(resposta());
+}
+
+/** `limpar`: o worker começa apagando o que está guardado no navegador, sem ler a análise anterior. */
+function criarWorker(limpar: boolean): Worker {
+  const w = new Worker(new URL("worker.js" + (limpar ? "#limpar" : ""), document.baseURI));
+  w.onmessage = (e: MessageEvent<{ id: number; status: number; corpo: string; tipo: string }>) => {
+    if (w !== worker) return;
+    const { id, status, corpo, tipo } = e.data;
+    pendentes.get(id)?.responder(new Response(corpo, { status, headers: { "Content-Type": tipo } }));
+    pendentes.delete(id);
+  };
+  // Falha do worker (por exemplo, falta de memória): quem esperava recebe o erro, em vez de ficar carregando
+  // para sempre, e o próximo pedido usa um worker novo, com a análise que está guardada no navegador.
+  w.onerror = (e) => {
+    console.error("Erro no processamento local:", e.message);
+    if (w !== worker) return;
+    w.terminate();
+    worker = criarWorker(false);
+    responderPendentes(() => json(500, {
+      erro: "O processamento no navegador foi interrompido por um erro.",
+      detalhe: "O processamento no navegador foi interrompido por um erro" + (e.message ? ` (${e.message})` : "") + ". Tente de novo; se continuar, clique em \"Nova análise\" e envie os XMLs novamente.",
+    }));
+  };
+  return w;
+}
+
+/**
+ * Nova análise com o worker ocupado (processando, ou sem responder): encerra o worker, o que interrompe o
+ * processamento e libera a memória dele, avisa quem esperava e abre um worker novo, que começa do zero.
+ */
+function interromperProcessamento(): void {
+  worker.terminate();
+  worker = criarWorker(true);
+  responderPendentes(() => json(409, { erro: "Processamento interrompido pela nova análise.", interrompido: true }));
+}
 
 // Pede ao navegador para não apagar a análise salva quando faltar espaço
 navigator.storage?.persist?.().catch(() => undefined);
@@ -87,13 +126,9 @@ async function lerCorpo(corpo: BodyInit | null | undefined) {
 function pedirAoWorker(metodo: string, caminho: string, query: Record<string, string>, corpo: unknown, arquivos: ArquivoEnviado[]): Promise<Response> {
   const id = proximo++;
   return new Promise<Response>((resolve) => {
-    pendentes.set(id, resolve);
+    pendentes.set(id, { caminho, desde: Date.now(), responder: resolve });
     worker.postMessage({ id, metodo, caminho, query, corpo, arquivos }, arquivos.map((a) => a.dados));
   });
-}
-
-function json(status: number, corpo: Record<string, unknown>): Response {
-  return new Response(JSON.stringify(corpo), { status, headers: { "Content-Type": "application/json; charset=utf-8" } });
 }
 
 /** Limite do plano: conta as notas da análise no mês antes de processar. Devolve a recusa, ou null para seguir. */
@@ -109,14 +144,47 @@ async function recusaPorLimite(): Promise<Response | null> {
   }
 }
 
+/** Pedidos que podem demorar: uma nova análise pedida durante um deles interrompe o worker. */
+const CAMINHOS_DEMORADOS = new Set(["/api/importar", "/api/processar", "/api/validar", "/api/atividade", "/api/notas-da-analise"]);
+/** Muda a cada nova análise que interrompe o worker; pedidos demorados de antes dela são descartados. */
+let geracao = 0;
+/** Uma leitura da tela leva poucos segundos mesmo com 10.000 notas; mais que isso, o worker travou. */
+const ESPERA_MAXIMA_DE_LEITURA_MS = 30000;
+let operacoesEmPreparo = 0;
+
 window.fetch = async (entrada: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const url = new URL(entrada instanceof Request ? entrada.url : String(entrada), location.href);
   if (url.origin !== location.origin || !url.pathname.startsWith("/api/")) return fetchOriginal(entrada, init);
   const metodo = (init?.method ?? (entrada instanceof Request ? entrada.method : "GET")).toUpperCase();
-  const { corpo, arquivos } = await lerCorpo(init?.body);
-  if (metodo === "POST" && url.pathname === "/api/processar") {
-    const recusa = await recusaPorLimite();
-    if (recusa) return recusa;
+  if (metodo === "POST" && url.pathname === "/api/nova-analise") {
+    // Pedidos de leitura da tela terminam sozinhos; envio de XMLs e processamento são interrompidos,
+    // assim como um worker que deixou de responder (leitura esperando há muito tempo)
+    const agora = Date.now();
+    if ([...pendentes.values()].some((p) => CAMINHOS_DEMORADOS.has(p.caminho) || agora - p.desde > ESPERA_MAXIMA_DE_LEITURA_MS) || operacoesEmPreparo > 0) {
+      geracao++;
+      interromperProcessamento();
+    }
+    return pedirAoWorker(metodo, url.pathname, {}, undefined, []);
   }
+  if (!CAMINHOS_DEMORADOS.has(url.pathname)) {
+    const { corpo, arquivos } = await lerCorpo(init?.body);
+    return pedirAoWorker(metodo, url.pathname, Object.fromEntries(url.searchParams), corpo, arquivos);
+  }
+  // Envio de XMLs, processamento e validação: se uma nova análise começar enquanto o pedido é preparado
+  // (leitura dos arquivos, conferência do limite do plano), ele não chega ao worker novo.
+  const minhaGeracao = geracao;
+  const interrompido = () => json(409, { erro: "Processamento interrompido pela nova análise.", interrompido: true });
+  operacoesEmPreparo++;
+  let corpo: unknown, arquivos: ArquivoEnviado[];
+  try {
+    ({ corpo, arquivos } = await lerCorpo(init?.body));
+    if (metodo === "POST" && url.pathname === "/api/processar" && minhaGeracao === geracao) {
+      const recusa = await recusaPorLimite();
+      if (recusa) return minhaGeracao === geracao ? recusa : interrompido();
+    }
+  } finally {
+    operacoesEmPreparo--;
+  }
+  if (minhaGeracao !== geracao) return interrompido();
   return pedirAoWorker(metodo, url.pathname, Object.fromEntries(url.searchParams), corpo, arquivos);
 };
