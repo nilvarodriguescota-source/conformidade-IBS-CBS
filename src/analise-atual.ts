@@ -12,6 +12,10 @@
  *                            lanchonete). Prevalece sobre o barOuRestaurante de empresa.json; some com a nova análise.
  *     empresa-analise.json   gerado: configuração da empresa + só as respostas desta análise (motor)
  *     empresa-config.json    gerado: configuração da empresa sem respostas (explicações e alertas)
+ *     versoes.json           versão das respostas e versão com que os resultados foram gerados: com
+ *                            respostas mais novas que os resultados, a tela atualiza antes de mostrar
+ *     pendencias-respondidas.json  pendência de cada produto respondido, como estava ao responder: o
+ *                            produto continua visível (e a escolha alterável) depois de sair da fila
  *
  * empresa.json continua sendo só a configuração da empresa: as "validacoes" que existirem
  * nele não são lidas por aqui. O motor e o processador não mudam; muda só a origem das
@@ -25,7 +29,10 @@ import type { RespostaValidacao } from "./tipos.js";
 
 export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "reducoes-exibicao.json", "alertas.json"];
 
-export interface PastasAnalise { raiz: string; aguardando: string; xmls: string; respostas: string; atividade: string; empresaAnalise: string; empresaConfig: string }
+export interface PastasAnalise {
+  raiz: string; aguardando: string; xmls: string; respostas: string; atividade: string; empresaAnalise: string; empresaConfig: string;
+  versoes: string; respondidas: string;
+}
 
 export function pastasDaAnalise(raiz: string): PastasAnalise {
   return {
@@ -36,6 +43,8 @@ export function pastasDaAnalise(raiz: string): PastasAnalise {
     atividade: join(raiz, "atividade.json"),
     empresaAnalise: join(raiz, "empresa-analise.json"),
     empresaConfig: join(raiz, "empresa-config.json"),
+    versoes: join(raiz, "versoes.json"),
+    respondidas: join(raiz, "pendencias-respondidas.json"),
   };
 }
 
@@ -92,12 +101,66 @@ export function lerRespostas(raiz: string): RespostaValidacao[] {
 
 /** Registra (ou substitui) a resposta desta análise para NCM + cProd + regra. */
 export function registrarResposta(raiz: string, r: RespostaValidacao): RespostaValidacao[] {
+  return registrarRespostas(raiz, [r]);
+}
+
+/**
+ * Registra várias respostas de uma vez (a mesma escolha para todas as regras candidatas de um produto), numa
+ * gravação só: ou todas entram, ou nenhuma. Cada uma substitui a anterior de NCM + cProd + regra.
+ */
+export function registrarRespostas(raiz: string, novas: RespostaValidacao[]): RespostaValidacao[] {
   const p = pastasDaAnalise(raiz);
   mkdirSync(raiz, { recursive: true });
-  const respostas = lerRespostas(raiz).filter((x) => !(x.ncm === r.ncm && x.cProd === r.cProd && x.regraId === r.regraId));
-  respostas.push(r);
+  const chave = (x: RespostaValidacao) => `${x.ncm}|${x.cProd}|${x.regraId}`;
+  const substituidas = new Set(novas.map(chave));
+  const respostas = lerRespostas(raiz).filter((x) => !substituidas.has(chave(x)));
+  respostas.push(...novas);
   writeFileSync(p.respostas, JSON.stringify(respostas, null, 2), "utf8");
+  const v = lerVersoes(raiz);
+  gravarVersoes(raiz, { ...v, respostas: v.respostas + 1 });
   return respostas;
+}
+
+/* ---------- Versões: respostas × resultados ---------- */
+
+interface Versoes { respostas: number; processada: number }
+
+function lerVersoes(raiz: string): Versoes {
+  const p = pastasDaAnalise(raiz);
+  if (!existsSync(p.versoes)) return { respostas: 0, processada: 0 };
+  const v = JSON.parse(readFileSync(p.versoes, "utf8")) as Partial<Versoes>;
+  return { respostas: Number(v.respostas) || 0, processada: Number(v.processada) || 0 };
+}
+
+function gravarVersoes(raiz: string, v: Versoes): void {
+  writeFileSync(pastasDaAnalise(raiz).versoes, JSON.stringify(v), "utf8");
+}
+
+/** Há respostas registradas depois do último processamento: os resultados ainda não as consideram. */
+export function resultadosDesatualizados(raiz: string): boolean {
+  if (quantidadeDeXmls(raiz) === 0) return false;
+  const v = lerVersoes(raiz);
+  return v.respostas > v.processada;
+}
+
+/* ---------- Pendências já respondidas ---------- */
+
+/** Pendência de um produto como estava quando foi respondida, mais o que a tela mostrava dela. */
+export interface PendenciaRespondida<P = unknown, E = unknown> { pendencia: P; exibicao: E | null; respondidaEm: string }
+
+export function lerPendenciasRespondidas<P, E>(raiz: string): Record<string, PendenciaRespondida<P, E>> {
+  const p = pastasDaAnalise(raiz);
+  if (!existsSync(p.respondidas)) return {};
+  return JSON.parse(readFileSync(p.respondidas, "utf8")) as Record<string, PendenciaRespondida<P, E>>;
+}
+
+/** Guarda a pendência do produto na primeira resposta (as seguintes não mudam o que a pendência era). */
+export function guardarPendenciaRespondida(raiz: string, chave: string, registro: PendenciaRespondida): void {
+  const todas = lerPendenciasRespondidas(raiz);
+  if (todas[chave]) return;
+  todas[chave] = registro;
+  mkdirSync(raiz, { recursive: true });
+  writeFileSync(pastasDaAnalise(raiz).respondidas, JSON.stringify(todas), "utf8");
 }
 
 /** Declaração de atividade feita nesta análise (vazia quando não há). */
@@ -151,6 +214,8 @@ export function processarAnaliseAtual(o: {
     for (const f of ARQUIVOS_DE_SAIDA) rmSync(join(o.pastaSaida, f), { force: true });
     return { xmls: 0, documentos: 0, descartados: 0, pendencias: 0, indicadores: {}, alertas: { disponivel: false, motivo: "análise sem XMLs" } };
   }
+  // Versão das respostas que este processamento considera (lidas logo abaixo, em prepararConfiguracoes)
+  const versoes = lerVersoes(o.raiz);
   const { empresaAnalise, empresaConfig } = prepararConfiguracoes(o.raiz, o.arquivoEmpresa);
   // Cada XML é lido e interpretado uma vez só, para os resultados e para as explicações
   const lidos = lerXmlsDaPasta(p.xmls);
@@ -166,5 +231,6 @@ export function processarAnaliseAtual(o: {
   } catch (erro) {
     alertas = { disponivel: false, motivo: erro instanceof Error ? erro.message : String(erro) };
   }
+  gravarVersoes(o.raiz, { ...versoes, processada: versoes.respostas });
   return { xmls: r.xmls, documentos: r.documentos, descartados: r.descartados, pendencias: r.fila.length, indicadores: r.indicadores, alertas };
 }

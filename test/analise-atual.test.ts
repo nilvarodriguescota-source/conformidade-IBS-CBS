@@ -6,7 +6,8 @@ import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import {
-  adicionarXmls, incorporarAguardando, lerRespostas, novaAnalise, processarAnaliseAtual, quantidadeAguardando, quantidadeDeXmls, registrarResposta,
+  adicionarXmls, guardarPendenciaRespondida, incorporarAguardando, lerPendenciasRespondidas, lerRespostas, novaAnalise, processarAnaliseAtual,
+  quantidadeAguardando, quantidadeDeXmls, registrarResposta, registrarRespostas, resultadosDesatualizados,
 } from "../src/analise-atual.js";
 import type { Veredito } from "../src/tipos.js";
 
@@ -171,5 +172,49 @@ test("análise vazia não deixa resultados", () => {
   const r = a.processar();
   assert.equal(r.xmls, 0);
   assert.equal(existsSync(join(a.saida, "vereditos.json")), false);
+  rmSync(a.dir, { recursive: true, force: true });
+});
+
+test("validação só grava: resultados ficam desatualizados até o reprocessamento, que usa todas as respostas", () => {
+  const a = ambiente();
+  novaAnalise(a.raiz, a.saida);
+  adicionarXmls(a.raiz, [a.enviar("n1.xml", nfe(chave(1), "A1", "PAO FRANCES"))]);
+  a.processar();
+  assert.equal(resultadosDesatualizados(a.raiz), false);
+  const regras = a.fila()[0]!.regras;
+  const base = { ncm: "19059090", cProd: "A1", autor: "Sistema", data: "2026-11-11" };
+  registrarRespostas(a.raiz, regras.map((regraId) => ({ ...base, regraId, resposta: "NAO" as const, escolha: "MERCADORIA_SEM_BENEFICIO" as const })));
+  // A resposta está gravada, mas os resultados ainda são os de antes
+  assert.equal(resultadosDesatualizados(a.raiz), true);
+  assert.equal(a.vereditos()[0]!.estado, "REQUER_VALIDACAO");
+  a.reprocessar();
+  assert.equal(resultadosDesatualizados(a.raiz), false);
+  assert.notEqual(a.vereditos()[0]!.estado, "REQUER_VALIDACAO");
+  assert.equal(a.fila().length, 0);
+  rmSync(a.dir, { recursive: true, force: true });
+});
+
+test("registrarRespostas: nova escolha substitui a anterior de cada regra, sem duplicar", () => {
+  const a = ambiente();
+  novaAnalise(a.raiz, a.saida);
+  const base = { ncm: "19059090", cProd: "A1", autor: "Sistema", data: "2026-11-11" };
+  registrarRespostas(a.raiz, [{ ...base, regraId: "R1", resposta: "NAO", escolha: "CONSUMO_NO_LOCAL" }, { ...base, regraId: "R2", resposta: "NAO", escolha: "CONSUMO_NO_LOCAL" }]);
+  registrarRespostas(a.raiz, [{ ...base, regraId: "R1", resposta: "SIM" }]);
+  registrarRespostas(a.raiz, [{ ...base, regraId: "R1", resposta: "NAO", escolha: "MERCADORIA_SEM_BENEFICIO" }, { ...base, regraId: "R2", resposta: "NAO", escolha: "MERCADORIA_SEM_BENEFICIO" }]);
+  const rs = lerRespostas(a.raiz);
+  assert.equal(rs.length, 2);
+  assert.deepEqual(rs.map((r) => `${r.regraId}:${r.resposta}:${r.escolha}`).sort(), ["R1:NAO:MERCADORIA_SEM_BENEFICIO", "R2:NAO:MERCADORIA_SEM_BENEFICIO"]);
+  rmSync(a.dir, { recursive: true, force: true });
+});
+
+test("pendência respondida fica guardada na análise (a primeira) e some com a nova análise", () => {
+  const a = ambiente();
+  novaAnalise(a.raiz, a.saida);
+  guardarPendenciaRespondida(a.raiz, "19059090|A1", { pendencia: { cProd: "A1", itens: 3 }, exibicao: null, respondidaEm: "x" });
+  guardarPendenciaRespondida(a.raiz, "19059090|A1", { pendencia: { cProd: "A1", itens: 9 }, exibicao: null, respondidaEm: "y" });
+  assert.deepEqual(lerPendenciasRespondidas(a.raiz)["19059090|A1"]!.pendencia, { cProd: "A1", itens: 3 });
+  novaAnalise(a.raiz, a.saida);
+  assert.deepEqual(lerPendenciasRespondidas(a.raiz), {});
+  assert.equal(resultadosDesatualizados(a.raiz), false);
   rmSync(a.dir, { recursive: true, force: true });
 });

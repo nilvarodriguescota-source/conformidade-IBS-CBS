@@ -29,13 +29,19 @@ código do servidor: a análise não passa por servidor nem banco de dados. A an
 respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e continua
 lá ao reabrir a página; outro computador ou navegador começa com a análise vazia.
 
-Capacidade: até 10.000 XMLs por envio. "Nova análise (limpar dados)" interrompe um processamento
+Capacidade: até 10.000 XMLs por envio. Validação em Pendências: cada escolha é marcada na hora e gravada em seguida, sem reprocessar
+a análise. Os resultados são refeitos uma vez, com todas as escolhas, ao abrir Análise, Dashboard,
+Resultados ou o Relatório Final (ou pelo botão "Atualizar resultados agora"). Produtos já validados
+continuam em Pendências, em "Validados nesta análise", com a escolha marcada e alterável.
+
+"Nova análise (limpar dados)" interrompe um processamento
 em andamento, apaga tudo o que está na memória e no IndexedDB e só avisa depois de conferir que
 ficou vazio. Testes de volume (precisam de `npm run build` antes):
 
 ```bash
 node scripts/teste_volume_navegador.mjs   # site publicado num Chromium (precisa do Playwright): 1.400 a 10.000 XMLs, limpeza e interrupção
 node scripts/teste_10000_xml.mjs          # servidor local: 10.000 XMLs num envio
+node scripts/teste_validacao_relatorios.mjs  # site publicado num Chromium: escolhas em Pendências e as 4 modalidades do Relatório Final (1.400 e 10.000 XMLs)
 ```
 
 ## Como rodar no computador

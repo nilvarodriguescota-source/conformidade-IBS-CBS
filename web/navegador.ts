@@ -105,7 +105,7 @@ function interromperProcessamento(): void {
 const SEM_RESPOSTA_MAXIMO_MS = 3 * 60 * 1000;
 /** Processar e reprocessar (validação, atividade) 10.000 notas leva perto de 1 minuto; a margem é larga. */
 const SEM_RESPOSTA_PROCESSANDO_MS = 20 * 60 * 1000;
-const PROCESSAMENTOS = new Set(["/api/processar", "/api/validar", "/api/atividade"]);
+const PROCESSAMENTOS = new Set(["/api/processar", "/api/atualizar-resultados", "/api/atividade"]);
 setInterval(() => {
   if (!pendentes.size) {
     ultimaAtividade = Date.now();
@@ -201,7 +201,7 @@ async function recusaPorLimite(): Promise<Response | null> {
 }
 
 /** Pedidos que podem demorar: uma nova análise pedida durante um deles interrompe o worker. */
-const CAMINHOS_DEMORADOS = new Set(["/api/importar", "/api/processar", "/api/validar", "/api/atividade", "/api/notas-da-analise"]);
+const CAMINHOS_DEMORADOS = new Set(["/api/importar", "/api/processar", "/api/validar", "/api/atualizar-resultados", "/api/atividade", "/api/notas-da-analise"]);
 /** Muda a cada nova análise que interrompe o worker; pedidos demorados de antes dela são descartados. */
 let geracao = 0;
 /** Uma leitura da tela leva poucos segundos mesmo com 10.000 notas; mais que isso, o worker travou. */
