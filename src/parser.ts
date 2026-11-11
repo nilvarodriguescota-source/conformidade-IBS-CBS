@@ -114,6 +114,7 @@ export function lerXml(conteudo: string, arquivo: string): ResultadoLeitura {
     const gIbsMun = gIbsCbs ? descendente(gIbsCbs, "gIBSMun") : undefined;
     const gCbs = gIbsCbs ? descendente(gIbsCbs, "gCBS") : undefined;
     const gRed = gIbsCbs ? descendente(gIbsCbs, "gRed") : undefined;
+    const grupoIS = det["imposto"] ? (det["imposto"] as No)["IS"] as No | undefined : undefined;
 
     return {
       nItem: Number(texto(det["@nItem"]) ?? i + 1),
@@ -135,6 +136,14 @@ export function lerXml(conteudo: string, arquivo: string): ResultadoLeitura {
         ibsMun: gIbsMun ? numero(descendente(gIbsMun, "pIBSMun")) ?? undefined : undefined,
         reducao: gRed ? numero(descendente(gRed, "pRedAliq")) ?? undefined : undefined,
       },
+      unidade: texto(prod["uCom"]),
+      impostoSeletivo: grupoIS ? {
+        cst: codigo(grupoIS["CSTIS"], 3),
+        cClassTrib: codigo(grupoIS["cClassTribIS"], 6),
+        base: numero(grupoIS["vBCIS"]),
+        aliquota: numero(grupoIS["pIS"]),
+        valor: numero(grupoIS["vIS"]),
+      } : null,
     } satisfies ItemDocumento;
   });
 

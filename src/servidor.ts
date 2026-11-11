@@ -18,6 +18,8 @@ import { consultarNcm, type ContextoConsultaNcm } from "./consulta-ncm.js";
 import { carregarContexto } from "./explicador.js";
 import { chavesBloqueadas } from "./bloqueios.js";
 import { avaliarBeneficioAtividade, cnaesDosXmls, type TextoLegalAtividade } from "./beneficio-atividade.js";
+import { aplicarEscolhaIS, carregarBaseIS, ESCOLHAS_IS, type BaseIS, type EscolhaIS, type ProdutoIS } from "./imposto-seletivo.js";
+import { lerRespostasIS, registrarRespostaIS } from "./analise-atual.js";
 
 const app = express();
 const PORTA = Number(process.env.PORT) || 3000;
@@ -717,6 +719,70 @@ app.post("/api/atividade", (req, res) => {
   } catch (erro) {
     console.error("Erro ao gravar a atividade da empresa:", erro);
     res.status(500).json({ erro: "Não foi possível gravar a atividade da empresa." });
+  }
+});
+
+/* ---------------- Imposto Seletivo (separado do IBS/CBS) ---------------- */
+
+const arquivoBaseIS = path.join(process.cwd(), "data", "imposto-seletivo.json");
+let cacheBaseIS: { chave: string; base: BaseIS } | null = null;
+function baseIS(): BaseIS {
+  const st = fs.statSync(arquivoBaseIS);
+  const chave = `${st.mtimeMs}:${st.size}`;
+  if (cacheBaseIS?.chave !== chave) cacheBaseIS = { chave, base: carregarBaseIS(arquivoBaseIS) };
+  return cacheBaseIS.base;
+}
+
+/**
+ * Enquadramento do Imposto Seletivo por produto: a sugestão do sistema (gerada no processamento) com a escolha do
+ * usuário desta análise. Inclui a base normativa resumida (vigência, fontes, alíquotas e situação de conferência).
+ */
+app.get("/api/imposto-seletivo", (_req, res) => {
+  const inicio = Date.now();
+  try {
+    const base = baseIS();
+    const gerado = lerJson(path.join(pastaSaida, "imposto-seletivo.json"), null) as { disponivel: boolean; motivo?: string; versaoBase?: string; produtos: ProdutoIS[] } | null;
+    const respostas = lerRespostasIS(pastaAnalise);
+    const produtos = (gerado?.produtos ?? []).map((p) => aplicarEscolhaIS(p, respostas[p.chave] ?? null, base));
+    registrar("imposto-seletivo", inicio, { produtos: produtos.length });
+    res.json({
+      disponivel: gerado?.disponivel ?? false,
+      motivo: gerado ? gerado.motivo ?? null : "análise ainda não processada",
+      baseDesatualizada: !!gerado?.versaoBase && gerado.versaoBase !== base.versao,
+      base: {
+        versao: base.versao, historico: base.historico, fontes: base.fontes, vigencia: base.vigencia, aliquotas: base.aliquotas,
+        categorias: base.categorias.map((c) => ({ id: c.id, nome: c.nome, codigos: c.codigos, fundamento: c.fundamento })),
+      },
+      produtos,
+    });
+  } catch (erro) {
+    console.error("Erro no Imposto Seletivo:", erro);
+    res.status(500).json({ erro: "Não foi possível carregar o Imposto Seletivo.", detalhe: erro instanceof Error ? erro.message : String(erro) });
+  }
+});
+
+/** Escolha do usuário para o IS de um produto. Grava só a escolha (não reprocessa e não altera IBS/CBS). */
+app.post("/api/imposto-seletivo/validar", (req, res) => {
+  const inicio = Date.now();
+  try {
+    const { ncm, cProd, escolha, autor } = req.body ?? {};
+    if (typeof cProd !== "string" || !cProd || (ncm !== null && typeof ncm !== "string") || !ESCOLHAS_IS.includes(escolha)) {
+      res.status(400).json({ erro: "Dados da escolha do Imposto Seletivo inválidos." });
+      return;
+    }
+    const chave = `${ncm ?? ""}|${cProd}`;
+    const gerado = lerJson(path.join(pastaSaida, "imposto-seletivo.json"), null) as { produtos: ProdutoIS[] } | null;
+    const p = gerado?.produtos.find((x) => x.chave === chave);
+    if (!p) {
+      res.status(404).json({ erro: "Produto não encontrado no Imposto Seletivo desta análise. Processe a análise e tente de novo." });
+      return;
+    }
+    const r = registrarRespostaIS(pastaAnalise, chave, escolha as EscolhaIS, autor);
+    registrar("imposto-seletivo-validacao", inicio, { chave, escolha });
+    res.json({ sucesso: true, produto: aplicarEscolhaIS(p, r, baseIS()) });
+  } catch (erro) {
+    console.error("Erro ao gravar a escolha do Imposto Seletivo:", erro);
+    res.status(500).json({ erro: "Não foi possível gravar a escolha do Imposto Seletivo.", detalhe: erro instanceof Error ? erro.message : String(erro) });
   }
 });
 

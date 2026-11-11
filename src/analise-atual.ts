@@ -14,6 +14,7 @@
  *     empresa-config.json    gerado: configuração da empresa sem respostas (explicações e alertas)
  *     versoes.json           versão das respostas e versão com que os resultados foram gerados: com
  *                            respostas mais novas que os resultados, a tela atualiza antes de mostrar
+ *     respostas-is.json      escolhas do Imposto Seletivo desta análise (por NCM + cProd), separadas das de IBS/CBS
  *     pendencias-respondidas.json  pendência de cada produto respondido, como estava ao responder: o
  *                            produto continua visível (e a escolha alterável) depois de sair da fila
  *
@@ -22,16 +23,18 @@
  * validações que recebem.
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync, copyFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { lerXmlsDaPasta, processarXMLs } from "./processador.js";
+import { selecionarVendas } from "./parser.js";
+import { avaliarDocumentosIS, carregarBaseIS, ESCOLHAS_IS, type EscolhaIS, type RespostaIS } from "./imposto-seletivo.js";
 import { gerarLoteExplicativo } from "./lote-explicativo.js";
 import type { RespostaValidacao } from "./tipos.js";
 
-export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "reducoes-exibicao.json", "alertas.json"];
+export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "reducoes-exibicao.json", "alertas.json", "imposto-seletivo.json"];
 
 export interface PastasAnalise {
   raiz: string; aguardando: string; xmls: string; respostas: string; atividade: string; empresaAnalise: string; empresaConfig: string;
-  versoes: string; respondidas: string;
+  versoes: string; respondidas: string; respostasIS: string;
 }
 
 export function pastasDaAnalise(raiz: string): PastasAnalise {
@@ -45,6 +48,7 @@ export function pastasDaAnalise(raiz: string): PastasAnalise {
     empresaConfig: join(raiz, "empresa-config.json"),
     versoes: join(raiz, "versoes.json"),
     respondidas: join(raiz, "pendencias-respondidas.json"),
+    respostasIS: join(raiz, "respostas-is.json"),
   };
 }
 
@@ -143,6 +147,26 @@ export function resultadosDesatualizados(raiz: string): boolean {
   return v.respostas > v.processada;
 }
 
+/* ---------- Imposto Seletivo: escolhas do usuário ---------- */
+
+/** Escolhas do IS desta análise, por chave NCM|cProd. */
+export function lerRespostasIS(raiz: string): Record<string, RespostaIS> {
+  const p = pastasDaAnalise(raiz);
+  if (!existsSync(p.respostasIS)) return {};
+  return JSON.parse(readFileSync(p.respostasIS, "utf8")) as Record<string, RespostaIS>;
+}
+
+/** Grava (ou substitui) a escolha do IS para o produto. Não mexe nas respostas de IBS/CBS nem reprocessa nada. */
+export function registrarRespostaIS(raiz: string, chave: string, escolha: EscolhaIS, autor: string): RespostaIS {
+  if (!ESCOLHAS_IS.includes(escolha)) throw new Error(`Escolha de Imposto Seletivo inválida: ${String(escolha)}`);
+  const todas = lerRespostasIS(raiz);
+  const r: RespostaIS = { escolha, autor: autor || "Sistema", data: new Date().toISOString().slice(0, 10) };
+  todas[chave] = r;
+  mkdirSync(raiz, { recursive: true });
+  writeFileSync(pastasDaAnalise(raiz).respostasIS, JSON.stringify(todas, null, 2), "utf8");
+  return r;
+}
+
 /* ---------- Pendências já respondidas ---------- */
 
 /** Pendência de um produto como estava quando foi respondida, mais o que a tela mostrava dela. */
@@ -193,6 +217,21 @@ export function prepararConfiguracoes(raiz: string, arquivoEmpresa: string): { e
   return { empresaAnalise: p.empresaAnalise, empresaConfig: p.empresaConfig };
 }
 
+/**
+ * Imposto Seletivo dos documentos de venda desta análise (mesma seleção do processador). Módulo separado:
+ * se a base do IS faltar ou falhar, o arquivo registra o motivo e o processamento de IBS/CBS segue igual.
+ */
+function gerarImpostoSeletivo(leituras: Parameters<typeof selecionarVendas>[0], pastaSaida: string, arquivoIS: string): void {
+  const destino = join(pastaSaida, "imposto-seletivo.json");
+  try {
+    const base = carregarBaseIS(arquivoIS);
+    const produtos = avaliarDocumentosIS(base, selecionarVendas(leituras).documentos);
+    writeFileSync(destino, JSON.stringify({ disponivel: true, versaoBase: base.versao, produtos }), "utf8");
+  } catch (erro) {
+    writeFileSync(destino, JSON.stringify({ disponivel: false, motivo: erro instanceof Error ? erro.message : String(erro), produtos: [] }), "utf8");
+  }
+}
+
 export interface ResultadoAnalise {
   xmls: number;
   documentos: number;
@@ -208,6 +247,8 @@ export interface ResultadoAnalise {
  */
 export function processarAnaliseAtual(o: {
   raiz: string; arquivoEmpresa: string; pastaSaida: string; arquivoBase: string; arquivoV2: string; arquivoMatriz: string;
+  /** Base do Imposto Seletivo (padrão: imposto-seletivo.json ao lado da base normativa). */
+  arquivoIS?: string;
 }): ResultadoAnalise {
   const p = pastasDaAnalise(o.raiz);
   if (quantidadeDeXmls(o.raiz) === 0) {
@@ -220,6 +261,7 @@ export function processarAnaliseAtual(o: {
   // Cada XML é lido e interpretado uma vez só, para os resultados e para as explicações
   const lidos = lerXmlsDaPasta(p.xmls);
   const r = processarXMLs(p.xmls, empresaAnalise, o.pastaSaida, o.arquivoBase, lidos);
+  gerarImpostoSeletivo(lidos.leituras, o.pastaSaida, o.arquivoIS ?? join(dirname(o.arquivoBase), "imposto-seletivo.json"));
   let alertas: ResultadoAnalise["alertas"];
   try {
     gerarLoteExplicativo({
