@@ -2675,10 +2675,12 @@ function renderPendenciasIS(){
 }
 /** Alíquota do IS no formato do relatório final (como a alíquota de IBS/CBS). */
 const aliquotaIS=p=>p.aliquota&&p.aliquota.aliquota!=null?pct(p.aliquota.aliquota):'Não determinada';
+/** Alíquotas que dependem de condição do produto (MP 1.399/2026, Anexo IV), ex.: "16% se vinho do porto". */
+const alternativasIS=p=>(p.alternativas||[]).map(x=>(x.aliquota!=null?pct(x.aliquota):'—')+' se '+x.condicao).join('; ');
 function opcoesIS(p){
  const motivo=p.motivos&&p.motivos[0]?p.motivos[0].motivo:'';
  return [
-  {tipo:'INCIDENCIA',resultado:'Incide IS'+(p.aliquota&&p.aliquota.aliquota!=null?' — alíquota '+aliquotaIS(p):''),
+  {tipo:'INCIDENCIA',resultado:'Incide IS'+(p.aliquota&&p.aliquota.aliquota!=null?' — alíquota '+aliquotaIS(p):'')+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':''),
    explicacao:(p.categoria?p.categoria.nome+': ':'')+'o estabelecimento é o fabricante ou o importador do produto (primeiro fornecimento).'},
   {tipo:'NAO_INCIDENCIA',resultado:'Não incide IS',explicacao:p.situacao==='NAO_INCIDENCIA'&&motivo?motivo:'Revenda de mercadoria de terceiros: o IS já foi cobrado do fabricante ou do importador.'},
   {tipo:'VALIDACAO',resultado:'Continua pendente',explicacao:'Necessita de validação fiscal: nenhuma alíquota é atribuída.'},
@@ -2712,7 +2714,7 @@ function cartaoPendenteIS(p){
   '<details class="nao-imprimir"><summary>Detalhes</summary>'+
    (p.motivos||[]).map(m=>'<p class="small">'+esc(m.motivo)+'</p>').join('')+
    '<p class="small"><strong>Fundamento:</strong> '+esc((p.fundamentos||[]).join('; '))+'</p>'+
-   (p.aliquota?'<p class="small"><strong>Alíquota de registro IS:</strong> '+esc(aliquotaIS(p))+' — '+esc(p.aliquota.regraCalculo)+' Vigência: a partir de '+esc(p.aliquota.vigenciaInicio.split('-').reverse().join('/'))+'.'+(p.aliquota.situacao!=='conferida'?' Alíquota pendente de conferência com a '+esc(p.aliquota.dispositivo)+': o valor não é calculado até a conferência.':'')+'</p>':'')+
+   (p.aliquota?'<p class="small"><strong>Alíquota de registro IS:</strong> '+esc(aliquotaIS(p))+' — '+esc(p.aliquota.regraCalculo)+' Vigência: a partir de '+esc(p.aliquota.vigenciaInicio.split('-').reverse().join('/'))+'.'+' Norma: '+esc(p.aliquota.dispositivo)+'.'+(alternativasIS(p)?' Outras alíquotas do código: '+esc(alternativasIS(p))+'.':'')+(p.baseNaVigencia===0?' As vendas desta análise são anteriores a essa vigência: a alíquota não é aplicada a elas.':'')+'</p>':'')+
   '</details>'+
  '</div>';
 }
@@ -2726,7 +2728,7 @@ function linhaRelatorioIS(p){
  }
  const valor=p.valorFinal!=null?p.valorFinal.toFixed(2).replace('.',','):'Não calculado';
  const obs=p.valorFinal!=null?'':' '+p.calculo;
- return [p.cProd,p.produto,p.ncm||'','Incide',aliquotaIS(p),valor,'Destacar o Imposto Seletivo no documento fiscal (grupo IS da NF-e/NFC-e)'+(p.aliquota?' com alíquota de '+aliquotaIS(p):'')+'.'+obs+'\\nNorma: '+norma+(p.aliquota?'; '+p.aliquota.dispositivo:'')];
+ return [p.cProd,p.produto,p.ncm||'','Incide',aliquotaIS(p),valor,'Destacar o Imposto Seletivo no documento fiscal (grupo IS da NF-e/NFC-e)'+(p.aliquota?' com alíquota de '+aliquotaIS(p):'')+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':'')+'.'+obs+'\\nNorma: '+norma+(p.aliquota?'; '+p.aliquota.dispositivo:'')];
 }
 function atualizarCartaoIS(chave){
  const p=isPorChave.get(chave);

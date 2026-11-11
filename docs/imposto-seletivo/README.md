@@ -6,9 +6,9 @@ O IS é tratado como tributo separado do IBS/CBS. Ele tem base própria (`data/i
 
 | Fonte | Situação | Uso |
 |---|---|---|
-| LC 214/2025, texto compilado com a LC 227/2026 (`data/fontes/lc214/lcp214.htm`, SHA-256 `5702cb10…`) | conferida | Incidência (art. 409 e Anexo XVII), incidência única (art. 410), fato gerador (art. 412), não incidência (art. 413), base de cálculo (art. 414), alíquotas em lei ordinária (art. 422), contribuinte (art. 424), importação (art. 434) e início em 2027 (art. 477) |
-| MP 1.399/2026 | **pendente de conferência** | Alíquotas de 2027 e início dos efeitos em 02/02/2027. O planalto.gov.br respondeu "Acesso Negado" ao acesso automatizado e os portais da Câmara e do Congresso não estavam acessíveis, por isso o texto não foi lido |
-| Planilha do cliente `imposto_seletivo.xlsx` (`data/fontes/imposto-seletivo/`, SHA-256 `1e9c2d9e…`) | referência | 5 linhas: categoria, alíquota inicial, fator de conversão e alíquota final. Não traz produtos, NCMs nem descrições |
+| LC 214/2025, texto compilado com a LC 227/2026 (`data/fontes/lc214/lcp214.htm`, SHA-256 `5702cb10…`) | conferida | Incidência (art. 409 e Anexo XVII), incidência única (art. 410), fato gerador (art. 412), não incidência (art. 413), base de cálculo (art. 414), alíquotas em lei ordinária (art. 422), contribuinte (art. 424) e importação (art. 434) |
+| MP 1.399/2026, de 04/11/2026 (`data/fontes/imposto-seletivo/mp1399-2026.txt`, SHA-256 `8dd58c21…`) | **conferida** | Texto fornecido pelo cliente, copiado da página oficial. Usos: alíquotas de 2027 (art. 3º e Anexos IV e V), efeitos a partir de 02/02/2027 (art. 19), regras transitórias até 31/12/2027 (art. 6º), não incidência e alíquota zero de veículos, aeronaves e embarcações (arts. 4º e 5º), importação (art. 8º), concursos de prognósticos (art. 7º) e lei das alíquotas de 2028 (art. 15) |
+| Planilha do cliente `imposto_seletivo.xlsx` (`data/fontes/imposto-seletivo/`, SHA-256 `1e9c2d9e…`) | referência | As 5 linhas conferem com o Anexo IV da MP. A planilha não traz produtos, NCMs nem descrições |
 
 ## Regras do motor, por item vendido
 
@@ -41,37 +41,52 @@ O cálculo depende da modalidade da alíquota; não existe fórmula única.
 | específica | quantidade × valor por unidade |
 | ad valorem + específica | soma das duas parcelas |
 
-- **Bebidas alcoólicas e fumígenos da posição 24.02:** exigem a parcela específica (art. 422, § 1º). Enquanto ela não for cadastrada, o valor fica pendente.
+- **Bebidas alcoólicas e fumígenos:** a lei exige a parcela específica (LC 214, art. 422, § 1º). Até 31/12/2027 ela é zero (MP 1.399/2026, art. 6º, II), exceto para cigarros e cigarrilhas (R$ 3,50 por vintena, que depende da quantidade em vintenas).
 - **Importação:** a base ad valorem é o valor aduaneiro mais o Imposto de Importação (art. 434). Esse caso ainda não aparece nos XMLs analisados.
 
-### Alíquotas de 2027 cadastradas
+### Alíquotas de 2027 (MP 1.399/2026, conferidas)
 
-Todas foram cadastradas a partir da planilha, estão com situação `pendente_conferencia` e valem de 02/02/2027 a 31/12/2027.
+Vigência: de 02/02/2027 (art. 19) a 31/12/2027. A alíquota final é a alíquota inicial × o fator de conversão (art. 3º).
 
-| Categoria | Alíquota inicial | Fator | Alíquota final |
-|---|---|---|---|
-| Bebidas açucaradas (2202.10.00) | conversão a partir do IPI | — | 2,6% |
-| Cervejas de malte (22.03) | 3,9% | 1,07 | 4,2% + parcela específica |
-| Vinhos e fermentados (22.04 e 22.06, regra geral) | 6,5% | 1,23 | 8% + parcela específica |
-| Vermutes (22.05) | 9,75% | 1,23 | 12% + parcela específica |
-| Destilados (22.08, demais) | 19,5% | 1,23 | 24% + parcela específica |
+| Produto (Anexo IV) | NCM | Inicial | Fator | Final | Específica |
+|---|---|---|---|---|---|
+| Bebidas açucaradas | 2202.10.00 (inclusive as sem açúcar) | 2,6% | 1,00 | **2,6%** | — |
+| Cervejas de malte | 22.03 | 3,9% | 1,07 | **4,2%** | zero até 31/12/2027 (art. 6º, II) |
+| Vinhos e fermentados (regra geral) | 22.04 e 22.06 | 6,5% | 1,23 | **8%** | zero até 31/12/2027 |
+| Vinhos da madeira, do porto e de xerez | 2204.21.00, 2204.22.11, 2204.22.19, 2204.29.10 | 13% | 1,23 | **16%** | zero até 31/12/2027 |
+| Fermentados com teor alcoólico acima de 14% | 2206.00.90 | 13% | 1,23 | **16%** | zero até 31/12/2027 |
+| Vermutes e demais da 22.05 | 22.05 | 9,75% | 1,23 | **12%** | zero até 31/12/2027 |
+| Bebidas refrescantes com teor alcoólico abaixo de 8% | 2208.90.00 | 13% | 1,23 | **16%** | zero até 31/12/2027 |
+| Rum e aguardentes de cana (exceto obtidos do melaço) | 2208.40.00 | 16,25% | 1,23 | **20%** | zero até 31/12/2027 |
+| Demais bebidas da 22.08 | 22.08 | 19,5% | 1,23 | **24%** | zero até 31/12/2027 |
+| Cigarros (2402.20.00, exceto Ex 01) e cigarrilhas (Ex 01 do 2402.10.00) | 2402.20.00, 2402.10.00 | 66,7% | 1,00 | **66,7%** | R$ 3,50 por vintena |
+| Demais produtos fumígenos | 24.01 a 24.04 | 30% | 1,25 | **37,5%** | zero até 31/12/2027 |
 
-Não estão na planilha e precisam vir da MP:
-- as parcelas específicas (teor alcoólico × volume);
-- as exceções à "regra geral" e aos "demais";
-- as alíquotas de fumígenos.
+| Produto (Anexo V) | NCM | Inicial | Fator | Final |
+|---|---|---|---|---|
+| Veículos | 87.03 | 6,3% + ajustes (Anexo II) | 1,21 | depende do veículo |
+| Veículos | 8704.21, 8704.31, 8704.41.00, 8704.51.00, 8704.60.00, 8704.90.00 | 3,9% + ajustes (Anexo III) | 1,21 | depende do veículo |
+| Aeronaves | 88.02, exceto 8802.60.00 | 6,5% | 1,04 | **6,8%** |
+| Barcos a motor | 8903.3 | 10% | 1,20 | **12%** |
+| Demais embarcações de recreio ou esporte, a motor | 89.03 | 6,5% | 1,20 | **7,8%** |
+| Bens minerais extraídos | 26.01, 2709.00.10, 2711.11.00, 2711.21.00 | — | — | **zero** até 31/12/2027 (art. 6º, III, a, 3) |
 
-### Como conferir uma alíquota com a MP
+Regras que dependem de dado que o XML não traz. Nesses casos o produto fica em validação e a escolha é do usuário:
 
-1. Leia o dispositivo e o anexo correspondentes no texto oficial da MP 1.399/2026.
-2. Em `data/imposto-seletivo.json`, na alíquota correspondente:
-   - corrija o valor se precisar;
-   - preencha `dispositivo` com o artigo e o anexo;
-   - inclua `especifica` quando houver parcela específica;
-   - mude `situacao` para `conferida`.
-3. Em `fontes.MP1399`, preencha o arquivo e o SHA-256 da cópia salva e mude a situação para `conferida`.
-4. Aumente `versao` e acrescente uma entrada em `historico`.
-5. Rode `npm test` e processe a análise de novo. A aba Imposto Seletivo avisa quando a base mudou depois do último processamento.
+- **Alíquota com condição:** nos códigos com alternativa (por exemplo, 2204.21.00: 8%, ou 16% se for vinho da madeira, do porto ou de xerez), a regra geral é mostrada junto com a alternativa.
+- **Pequenos produtores** (Anexo VI): redução de 40%, 20% ou 10% da alíquota ad valorem das bebidas alcoólicas, conforme o volume de álcool.
+- **Fumígenos:** a base é o valor de referência. Para produto com preço tabelado, é 15% do preço de venda a varejo; sem preço tabelado, é o valor líquido na primeira operação entre partes não relacionadas (art. 6º, I).
+- **Veículos:** a alíquota é calculada com os ajustes de propulsão, eficiência, potência, desempenho e reciclabilidade. Caminhões e veículos de uso das Forças Armadas não têm IS (art. 5º); veículos de PcD/TEA/táxi e versões sustentáveis têm alíquota zero (art. 4º).
+- **Importação:** a alíquota é multiplicada pelo fator de ajuste (1,45 para bebidas; 1,17 para veículos, aeronaves e embarcações) quando a base é o valor aduaneiro mais o Imposto de Importação (art. 8º).
+
+A partir de 01/01/2028 as alíquotas dependem da lei prevista no art. 15 da MP. Até ela ser cadastrada, essas operações ficam em "necessita de validação fiscal".
+
+### Como atualizar a base
+
+1. Leia o dispositivo e o anexo no texto oficial.
+2. Em `data/imposto-seletivo.json`, altere a alíquota ou acrescente outra (com códigos, condição, vigência, dispositivo e `situacao: "conferida"`). Guarde o texto da nova norma em `data/fontes/imposto-seletivo/`, com o SHA-256.
+3. Aumente `versao` e acrescente uma entrada em `historico`.
+4. Rode `npm test` e processe a análise de novo.
 
 ## Na tela
 
@@ -82,7 +97,8 @@ Não estão na planilha e precisam vir da MP:
   - Ao recarregar a página, os produtos respondidos aparecem em "Validados nesta análise", com a escolha marcada e alterável.
   - Produtos fora do Anexo XVII, como energéticos, isotônicos, sucos e águas, não viram pendência, porque não têm IS.
 - **Relatório Final:** os quatro relatórios de IBS/CBS ficam no layout anterior. A modalidade **IMPOSTO SELETIVO** usa o mesmo formato, com 7 colunas: código, descrição, NCM, Imposto Seletivo, alíquota de registro IS, valor do IS e instrução com a norma. Ela traz **só os produtos validados** e exporta em CSV, Excel e PDF.
-- **Formato das alíquotas:** igual ao do relatório de IBS/CBS, por exemplo "2,6%" ou "0% (não incide)". Quando a alíquota ainda depende de conferência com a MP, o valor sai como "Não calculado" e a instrução explica o motivo.
+- **Formato das alíquotas:** igual ao do relatório de IBS/CBS, por exemplo "2,6%", "8%" ou "0% (não incide)".
+- **Valor do IS:** calculado item a item e arredondado ao centavo (como o grupo IS de cada item da nota; o regulamento ainda vai dispor sobre o arredondamento, MP art. 12, § 8º). Ele só é calculado para operações a partir de 02/02/2027. Para vendas anteriores, a alíquota da MP aparece como referência e o valor sai como "Não calculado", com o motivo na instrução.
 
 ## Análise dos produtos da padaria
 
@@ -100,6 +116,8 @@ A planilha anexada não tem a lista de produtos. Por isso a análise usou as ven
 | Águas | 6 | 2201.10.00 | Não incidência: fora do Anexo XVII | igual |
 | Demais produtos | 358 | 47 NCMs | Não incidência: fora do Anexo XVII | igual |
 
+O arquivo traz também a alíquota da MP de cada produto, válida a partir de 02/02/2027.
+
 A padaria vende as bebidas do Anexo XVII como revenda e, por isso, não é contribuinte do IS nessas vendas. O IS é cobrado do fabricante ou do importador.
 
 ### Observações para revisão do NCM (análise complementar)
@@ -110,7 +128,7 @@ Estes casos não mudam a decisão do sistema, que é sempre pelo NCM informado:
 - **Mesmo tipo de produto em NCMs diferentes:**
   - Red Bull está em 2202.10.00 (dentro do Anexo XVII), enquanto Monster está em 2202.99.00 (fora dele);
   - parte dos Del Valle está em 2202.10.00 e parte em 2202.99.00. Os refrescos Kapo também estão em 2202.10.00 e merecem conferência.
-- **Bebidas sem açúcar em 2202.10.00:** Coca-Cola Zero, Guaraná Zero e Pepsi Zero. O código inclui bebidas com edulcorantes; é preciso conferir na MP se há exclusão para bebidas sem açúcar.
+- **Bebidas sem açúcar em 2202.10.00:** Coca-Cola Zero, Guaraná Zero e Pepsi Zero. A MP não exclui bebidas sem açúcar: o Anexo IV vale para todo o código 2202.10.00 (2,6%).
 - **Preparados no local:** chope servido do barril e caipirinhas ou caipiroskas (2208.90.00) saem com CFOP de revenda. Isso só muda se o preparo configurar fabricação; nesse caso entram as exigências de embalagem primária.
 - **Outros NCMs a conferir:**
   - "VINHO GERAL" está em 2204.10.10, subposição de espumantes;

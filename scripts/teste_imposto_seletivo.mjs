@@ -240,7 +240,7 @@ try {
   const lin = (cp) => relIS.linhas.find((l) => l[0] === cp);
   ok(relIS.linhas.length === 2 && relIS.linhas.every((l) => l.length === 7), "relatório IMPOSTO SELETIVO: só os 2 produtos validados, em 7 colunas (formato do relatório final)");
   ok(lin(coca.cProd)[3] === "Não incide" && lin(coca.cProd)[4] === "0% (não incide)" && /Norma:/.test(lin(coca.cProd)[6]), `não incidência: "${lin(coca.cProd).slice(3, 6).join(" | ")}"`);
-  ok(lin(vinho.cProd)[3] === "Incide" && lin(vinho.cProd)[5] === "Não calculado" && /Norma:/.test(lin(vinho.cProd)[6]), `incidência (operação de 2026, sem alíquota na data): "${lin(vinho.cProd).slice(3, 6).join(" | ")}"`);
+  ok(lin(vinho.cProd)[3] === "Incide" && lin(vinho.cProd)[4] === "8%" && lin(vinho.cProd)[5] === "Não calculado" && /anteriores à vigência/.test(lin(vinho.cProd)[6]), `incidência em operação de 2026: alíquota da MP mostrada (8%), valor não calculado (antes de 02/02/2027): "${lin(vinho.cProd).slice(3, 6).join(" | ")}"`);
   ok(!lin(cerveja.cProd), "produto com validação fiscal pendente não aparece no relatório");
   for (const f of ["csv", "excel", "pdf"]) { const d = await exportar(f); if (d.bytes < 500) ok(false, `exportação ${f} vazia`); }
   ok(true, "relatório IMPOSTO SELETIVO: CSV, Excel e PDF exportados");
@@ -257,14 +257,26 @@ try {
   tAba = await abrirPendenciasIS();
   ps = await produtosIS();
   const doAnexo = ps.filter((p) => p.categoria);
-  ok(doAnexo.length > 0 && doAnexo.every((p) => p.situacao === "VALIDACAO" && p.valorFinal == null), `${doAnexo.length} produtos do Anexo XVII vendidos pelo fabricante em 2027: sugestão "necessita de validação fiscal", sem valor`);
-  const acucar = doAnexo.find((p) => p.categoria === "BEBIDAS_ACUCARADAS");
-  ok(/2,6%/.test(await cartaoIS(acucar.chave).innerText()), "card da bebida açucarada mostra a alíquota de 2,6%");
+  const acucaradas = doAnexo.filter((p) => p.categoria === "BEBIDAS_ACUCARADAS");
+  const alcoolicas = doAnexo.filter((p) => p.categoria !== "BEBIDAS_ACUCARADAS");
+  const somaBase = await pagina.evaluate((c) => isPorChave.get(c).base, acucaradas[0].chave);
+  ok(acucaradas.length > 0 && acucaradas.every((p) => p.situacao === "INCIDENCIA" && p.aliquota === 0.026 && p.valorFinal != null), `${acucaradas.length} bebidas açucaradas vendidas pelo fabricante em 2027: incidência sugerida, 2,6% (MP 1.399/2026, Anexo IV) e valor calculado`);
+  ok(Math.abs(acucaradas[0].valorFinal - Math.round(somaBase * 0.026 * 100) / 100) <= 0.01 * (acucaradas[0].valorFinal > 0 ? 50 : 1), `cálculo: ${acucaradas[0].produto} — base R$ ${somaBase.toFixed(2)} × 2,6% = R$ ${acucaradas[0].valorFinal.toFixed(2)}`);
+  ok(alcoolicas.length > 0 && alcoolicas.every((p) => p.situacao === "VALIDACAO"), `${alcoolicas.length} bebidas alcoólicas do fabricante: validação fiscal (embalagem primária, pequeno produtor e alíquotas com condição)`);
+  const vinhoB = alcoolicas.find((p) => p.ncm === "22042100");
+  ok(!vinhoB || /16% se vinho da madeira, do porto ou de xerez/.test((await cartaoIS(vinhoB.chave).innerText())), "vinho 2204.21.00: mostra 8% e a alternativa de 16% (vinho da madeira, do porto ou de xerez)");
+  const acucar = acucaradas[0];
   await escolherIS(acucar.chave, "INCIDENCIA");
+  const cerv = alcoolicas.find((p) => p.categoria === "CERVEJAS");
+  await escolherIS(cerv.chave, "INCIDENCIA");
+  const cervDepois = (await api("/api/imposto-seletivo")).produtos.find((p) => p.chave === cerv.chave);
+  ok(cervDepois.valorFinal != null && Math.abs(cervDepois.valorFinal - Math.round(cervDepois.baseNaVigencia * 0.042 * 100) / 100) < 0.02, `cerveja confirmada pelo usuário: 4,2% × R$ ${cervDepois.baseNaVigencia.toFixed(2)} = R$ ${cervDepois.valorFinal.toFixed(2)} (específica zero até 31/12/2027)`);
   await aba("Relatório Final");
   const relB = await relatorio("is");
   const lb = relB.linhas.find((l) => l[0] === acucar.cProd);
-  ok(relB.linhas.length === 1 && lb[3] === "Incide" && lb[4] === "2,6%" && lb[5] === "Não calculado" && /pendente de conferência/.test(lb[6]), `relatório: "${lb.slice(3, 6).join(" | ")}" — valor não calculado até a conferência da alíquota com a MP`);
+  const lc = relB.linhas.find((l) => l[0] === cerv.cProd);
+  ok(relB.linhas.length === 2 && lb[3] === "Incide" && lb[4] === "2,6%" && lb[5] === acucar.valorFinal.toFixed(2).replace(".", ","), `relatório: "${lb.slice(3, 6).join(" | ")}"`);
+  ok(lc[3] === "Incide" && lc[4] === "4,2%" && lc[5] !== "Não calculado", `relatório: "${lc.slice(3, 6).join(" | ")}"`);
   tabela.push({ cenario: "B. fabricante 2027", processar: seg(tProc), "pendências IS": seg(tAba), "relatório IS": seg(relB.ms), produtos: ps.length, "Anexo XVII": doAnexo.length });
 
   // ---------- C. 10.000 XMLs ----------

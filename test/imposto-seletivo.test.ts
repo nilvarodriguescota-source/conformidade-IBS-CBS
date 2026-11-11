@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { aplicarEscolhaIS, avaliarDocumentosIS, avaliarItemIS, calcularIS, carregarBaseIS, categoriaDoNcm, type BaseIS } from "../src/imposto-seletivo.js";
+import { aliquotasDoNcm, aplicarEscolhaIS, avaliarDocumentosIS, avaliarItemIS, calcularIS, carregarBaseIS, categoriaDoNcm, type BaseIS } from "../src/imposto-seletivo.js";
 import { lerXml, selecionarVendas } from "../src/parser.js";
 import { classificarDocumentos } from "../src/motor.js";
 import type { BaseNormativa, Documento, ItemDocumento } from "../src/tipos.js";
@@ -20,15 +20,56 @@ function item(ncm: string | null, cfop: string, extra: Partial<ItemDocumento> = 
 }
 const EM_2027 = "2027-03-10";
 
-test("base do IS: fontes registradas, alíquotas da planilha pendentes de conferência e histórico", () => {
+/** Cópia da base com as alíquotas voltando a "pendente de conferência" (para testar que não são aplicadas). */
+function basePendente(): BaseIS {
+  const b = JSON.parse(JSON.stringify(base)) as BaseIS;
+  for (const a of b.aliquotas) a.situacao = "pendente_conferencia";
+  return b;
+}
+const em2027 = (ncm: string) => aliquotasDoNcm(base, ncm, "2027-03-10");
+const valores = (ncm: string) => { const r = em2027(ncm); return { geral: r.principal?.aliquota ?? null, alternativas: r.alternativas.map((x) => x.aliquota) }; };
+
+test("base do IS: MP 1.399/2026 conferida, fontes com SHA-256 e histórico", () => {
   assert.equal(base.fontes.LC214!.situacao, "conferida");
-  assert.equal(base.fontes.MP1399!.situacao, "pendente_conferencia");
-  assert.ok(base.historico.length >= 1);
-  assert.ok(base.aliquotas.length === 5 && base.aliquotas.every((a) => a.situacao === "pendente_conferencia" && a.fonte === "PLANILHA_CLIENTE"));
-  const acucar = base.aliquotas.find((a) => a.categoria === "BEBIDAS_ACUCARADAS")!;
-  assert.equal(acucar.aliquota, 0.026);
-  assert.deepEqual(base.aliquotas.map((a) => a.aliquota), [0.026, 0.042, 0.08, 0.12, 0.24]);
-  for (const a of base.aliquotas) { assert.equal(a.vigenciaInicio, "2027-02-02"); assert.equal(a.vigenciaFim, "2027-12-31"); }
+  assert.equal(base.fontes.MP1399!.situacao, "conferida");
+  assert.match(base.fontes.MP1399!.sha256 ?? "", /^[0-9a-f]{64}$/);
+  assert.equal(base.vigencia.inicioAliquotas, "2027-02-02");
+  assert.equal(base.vigencia.situacao, "conferida");
+  assert.ok(base.historico.length >= 2);
+  assert.ok(base.aliquotas.every((a) => a.situacao === "conferida" && a.fonte === "MP1399" && a.vigenciaInicio === "2027-02-02" && a.vigenciaFim === "2027-12-31"));
+});
+
+test("Anexos IV e V da MP 1.399/2026: alíquota inicial × fator de conversão = alíquota final", () => {
+  for (const a of base.aliquotas) {
+    if (a.aliquotaInicial == null || a.fatorConversao == null || a.aliquota == null) continue;
+    assert.ok(Math.abs(a.aliquotaInicial * a.fatorConversao - a.aliquota) < 0.0006, `${a.id}: ${a.aliquotaInicial} × ${a.fatorConversao} ≠ ${a.aliquota}`);
+  }
+  // As 5 linhas da planilha do cliente conferem com o Anexo IV
+  assert.deepEqual(valores("22021000"), { geral: 0.026, alternativas: [] });
+  assert.deepEqual(valores("22030000"), { geral: 0.042, alternativas: [] });
+  assert.deepEqual(valores("22041010"), { geral: 0.08, alternativas: [] });
+  assert.deepEqual(valores("22051000"), { geral: 0.12, alternativas: [] });
+  assert.equal(valores("22082000").geral, 0.24);
+});
+
+test("alíquotas com condição do produto: regra geral e exceções do Anexo IV", () => {
+  assert.deepEqual(valores("22042100"), { geral: 0.08, alternativas: [0.16] }, "vinho da madeira, do porto ou de xerez: 16%");
+  assert.deepEqual(valores("22060090"), { geral: 0.08, alternativas: [0.16] }, "fermentado acima de 14%: 16%");
+  assert.deepEqual(valores("22089000"), { geral: 0.24, alternativas: [0.16] }, "bebida refrescante abaixo de 8%: 16%");
+  assert.deepEqual(valores("22084000"), { geral: 0.24, alternativas: [0.2] }, "aguardente de cana (exceto melaço): 20%");
+  assert.deepEqual(valores("24022000"), { geral: 0.375, alternativas: [0.667] }, "cigarros: 66,7% + R$ 3,50 por vintena");
+  assert.equal(em2027("24022000").alternativas[0]!.especifica?.valor, 3.5);
+  assert.deepEqual(valores("24031100"), { geral: 0.375, alternativas: [] });
+  // Código mais específico vence; exclusão do Anexo
+  assert.equal(valores("89033100").geral, 0.12);
+  assert.equal(valores("89039900").geral, 0.078);
+  assert.equal(valores("88023000").geral, 0.068);
+  assert.equal(valores("88026000").geral, null);
+  assert.equal(valores("26011100").geral, 0, "bens minerais: alíquota zero até 31/12/2027 (art. 6º, III, a, 3)");
+  assert.equal(em2027("87032100").principal?.modalidade, "ajustes_por_veiculo");
+  // Fora da vigência: nenhuma alíquota
+  assert.equal(aliquotasDoNcm(base, "22021000", "2027-02-01").principal, null);
+  assert.equal(aliquotasDoNcm(base, "22021000", "2028-01-01").principal, null);
 });
 
 test("Anexo XVII: bebidas açucaradas só no 2202.10.00; energéticos, isotônicos, sucos e águas ficam fora", () => {
@@ -73,15 +114,15 @@ test("contribuinte: revenda (CFOP de terceiros) não tem IS; CFOP que não indic
 });
 
 test("alíquota pendente de conferência: validação fiscal, sem valor e sem alíquota zero", () => {
-  const a = avaliarItemIS(base, item("22021000", "5101"), EM_2027);
+  const a = avaliarItemIS(basePendente(), item("22021000", "5101"), EM_2027);
   assert.equal(a.situacao, "VALIDACAO");
   assert.equal(a.valor, null);
   assert.equal(a.aliquota?.aliquota, 0.026);
   assert.match(a.motivo, /não conferida/);
 });
 
-test("cálculo ad valorem com alíquota conferida: bebida açucarada do fabricante = valor de venda × 2,6%", () => {
-  const a = avaliarItemIS(baseConferida(), item("22021000", "5101", { valorProduto: 1000, desconto: 50 }), EM_2027);
+test("cálculo ad valorem com a alíquota da MP: bebida açucarada do fabricante = valor de venda × 2,6%", () => {
+  const a = avaliarItemIS(base, item("22021000", "5101", { valorProduto: 1000, desconto: 50 }), EM_2027);
   assert.equal(a.situacao, "INCIDENCIA");
   assert.equal(a.base, 950);
   assert.equal(a.valor, 24.7);
@@ -92,11 +133,20 @@ test("bebidas alcoólicas e fumígenos: exigências próprias, sem fórmula úni
   const cerveja = avaliarItemIS(baseConferida(), item("22030000", "5101"), EM_2027);
   assert.equal(cerveja.situacao, "VALIDACAO");
   assert.match(cerveja.motivo, /embalagem primária/);
-  // Parcela específica (teor alcoólico × volume) exigida pelo art. 422, § 1º, II: sem ela não há valor
+  // Parcela específica reduzida a zero até 31/12/2027 (MP, art. 6º, II): só a ad valorem, sem depender da quantidade
   const cat = base.categorias.find((c) => c.id === "CERVEJAS")!;
-  const aliq = baseConferida().aliquotas.find((x) => x.categoria === "CERVEJAS")!;
-  assert.equal(calcularIS(aliq, cat, 100, 2).valor, null);
+  const aliq = base.aliquotas.find((x) => x.id === "IS-2027-CERVEJAS")!;
+  assert.equal(calcularIS(aliq, cat, 100, null).valor, 4.2);
   assert.equal(calcularIS({ ...aliq, especifica: { valor: 0.5, unidade: "L" } }, cat, 100, 2).valor, 5.2);
+  assert.equal(calcularIS({ ...aliq, especifica: { valor: 0.5, unidade: "L" } }, cat, 100, null).valor, null);
+  assert.equal(calcularIS({ ...aliq, especifica: null }, cat, 100, 2).valor, null);
+  // Cigarros: R$ 3,50 por vintena depende da quantidade em vintenas
+  const cig = em2027("24022000").alternativas[0]!;
+  assert.equal(calcularIS(cig, base.categorias.find((c) => c.id === "FUMIGENOS")!, 100, null).valor, null);
+  // Vinho com alternativa (16% se do porto): o fabricante confirma a condição
+  const vinho = avaliarItemIS(base, item("22042100", "5101"), EM_2027);
+  assert.equal(vinho.situacao, "VALIDACAO");
+  assert.match(vinho.motivo, /16% se vinho da madeira, do porto ou de xerez/);
   // Fumígenos: base é o valor de referência (art. 414, III, c), fora do XML
   const cigarro = avaliarItemIS(baseConferida(), item("24022000", "5101"), EM_2027);
   assert.equal(cigarro.situacao, "VALIDACAO");
@@ -151,7 +201,9 @@ test("escolha do usuário: confirma, troca e pendência; valor só com alíquota
   assert.equal(pend.validacao, "PENDENTE");
   assert.equal(pend.valorFinal, null);
   // Usuário marca incidência: com alíquota pendente, não calcula (e não usa zero)
-  const inc = aplicarEscolhaIS(p!, { escolha: "INCIDENCIA", autor: "u", data: "2026-11-11" }, base);
+  const bp = basePendente();
+  const [pp] = avaliarDocumentosIS(bp, [doc("2027-03-01", [item("22021000", "5102", { valorProduto: 200 })])]);
+  const inc = aplicarEscolhaIS(pp!, { escolha: "INCIDENCIA", autor: "u", data: "2026-11-11" }, bp);
   assert.equal(inc.situacaoFinal, "INCIDENCIA");
   assert.equal(inc.valorFinal, null);
   assert.match(inc.calculo, /pendente de conferência/);
@@ -159,9 +211,13 @@ test("escolha do usuário: confirma, troca e pendência; valor só com alíquota
   const b = baseConferida();
   const [p2] = avaliarDocumentosIS(b, [doc("2027-03-01", [item("22021000", "5102", { valorProduto: 200 })])]);
   assert.equal(aplicarEscolhaIS(p2!, { escolha: "INCIDENCIA", autor: "u", data: "2026-11-11" }, b).valorFinal, 5.2);
-  // Operações de 2026: sem alíquota na data
-  const [p3] = avaliarDocumentosIS(b, [doc("2026-08-01", [item("22021000", "5102")])]);
-  assert.equal(aplicarEscolhaIS(p3!, { escolha: "INCIDENCIA", autor: "u", data: "2026-11-11" }, b).valorFinal, null);
+  // Operações de 2026: a alíquota de 2027 aparece como referência, mas não é aplicada
+  const [p3] = avaliarDocumentosIS(base, [doc("2026-08-01", [item("22021000", "5102")])]);
+  assert.equal(p3!.aliquota?.aliquota, 0.026);
+  assert.equal(p3!.baseNaVigencia, 0);
+  const inc2026 = aplicarEscolhaIS(p3!, { escolha: "INCIDENCIA", autor: "u", data: "2026-11-11" }, base);
+  assert.equal(inc2026.valorFinal, null);
+  assert.match(inc2026.calculo, /anteriores à vigência/);
 });
 
 test("IBS/CBS não mudam com o grupo IS no XML (tributos separados)", () => {
