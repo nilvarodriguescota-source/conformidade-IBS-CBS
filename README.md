@@ -30,8 +30,8 @@ respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e contin
 lá ao reabrir a página; outro computador ou navegador começa com a análise vazia.
 
 Capacidade: até 10.000 XMLs por envio. Imposto Seletivo (IS): tributo separado do IBS/CBS, com base própria (`data/imposto-seletivo.json`), motor
-próprio (`src/imposto-seletivo.ts`), aba "Imposto Seletivo" para a escolha de cada produto e a modalidade
-"IMPOSTO SELETIVO" no Relatório Final (os demais relatórios ganham a coluna IS). Regras, fontes, pendências
+próprio (`src/imposto-seletivo.ts`), validação em Pendências → IMPOSTO SELETIVO (separada da de IBS/CBS e com o
+mesmo funcionamento) e a modalidade "IMPOSTO SELETIVO" no Relatório Final, só com os produtos validados. Regras, fontes, pendências
 de conferência com a MP 1.399/2026 e a análise dos produtos: `docs/imposto-seletivo/README.md`.
 
 Validação em Pendências: cada escolha é marcada na hora e gravada em seguida, sem reprocessar

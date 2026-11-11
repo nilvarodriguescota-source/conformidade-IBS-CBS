@@ -75,16 +75,14 @@ Não estão na planilha e precisam vir da MP:
 
 ## Na tela
 
-- **Aba "Imposto Seletivo":** cada produto tem o campo **IMPOSTO SELETIVO (IS)** com três opções: incidência, não incidência ou necessita de validação fiscal. A escolha é gravada na hora, sem reprocessar a análise, e continua marcada depois de recarregar a página. Se a gravação falhar, a marcação volta à escolha anterior e o card mostra o erro.
-- **Quadro de detalhes:**
-  - com incidência: NCM, descrição, fundamentação legal, alíquota, base de cálculo, regra de cálculo, início da vigência, dispositivo e anexo, e valor;
-  - sem incidência: motivo e fundamento;
-  - nos dois casos: a orientação para as operações a partir de 02/02/2027.
-- **Resultados:** cada produto mostra uma linha com o IS.
-- **Relatório Final:**
-  - a nova modalidade **IMPOSTO SELETIVO** traz produto, NCM, descrição fiscal, incidência, alíquota, base, valor, fundamentação e situação da validação;
-  - os outros quatro relatórios ganharam a coluna **Imposto Seletivo (IS)**;
-  - todos exportam em CSV, Excel e PDF.
+- **Pendências → IMPOSTO SELETIVO:** lista separada da de IBS/CBS, com o mesmo funcionamento.
+  - Cada produto do Anexo XVII aguarda validação, com a sugestão do sistema e a pergunta "Este produto tem incidência de Imposto Seletivo nas vendas desta análise?".
+  - As opções são: incide, não incide, ou necessita de validação fiscal ("não sabe", que deixa o produto pendente).
+  - A escolha é marcada na hora e gravada em seguida. Se a gravação falhar, a marcação volta à escolha anterior e o card mostra o erro.
+  - Ao recarregar a página, os produtos respondidos aparecem em "Validados nesta análise", com a escolha marcada e alterável.
+  - Produtos fora do Anexo XVII, como energéticos, isotônicos, sucos e águas, não viram pendência, porque não têm IS.
+- **Relatório Final:** os quatro relatórios de IBS/CBS ficam no layout anterior. A modalidade **IMPOSTO SELETIVO** usa o mesmo formato, com 7 colunas: código, descrição, NCM, Imposto Seletivo, alíquota de registro IS, valor do IS e instrução com a norma. Ela traz **só os produtos validados** e exporta em CSV, Excel e PDF.
+- **Formato das alíquotas:** igual ao do relatório de IBS/CBS, por exemplo "2,6%" ou "0% (não incide)". Quando a alíquota ainda depende de conferência com a MP, o valor sai como "Não calculado" e a instrução explica o motivo.
 
 ## Análise dos produtos da padaria
 
@@ -131,6 +129,6 @@ Estes casos não mudam a decisão do sistema, que é sempre pelo NCM informado:
   - escolha do usuário;
   - IBS/CBS idênticos com ou sem o grupo IS.
 - **`scripts/teste_imposto_seletivo.mjs`** (Chromium):
-  - XMLs reais da padaria: classificação, escolhas, troca, recarga da página, falha de comunicação, relatórios e exportações;
+  - XMLs reais da padaria: pendências do IS, escolhas, troca, cliques repetidos, recarga da página ("Validados nesta análise"), falha de comunicação, relatório vazio antes da validação e só com os validados depois, layout anterior dos demais relatórios e exportações;
   - as mesmas notas como fabricante em 2027: validação fiscal, sem valor;
   - 10.000 XMLs.
