@@ -45,6 +45,8 @@ interface Pendente { caminho: string; desde: number; responder: (r: Response) =>
 
 const pendentes = new Map<number, Pendente>();
 let proximo = 1;
+/** Última resposta do worker (ou início da espera): base do vigia abaixo. */
+let ultimaAtividade = Date.now();
 let worker = criarWorker(false);
 
 function json(status: number, corpo: Record<string, unknown>): Response {
@@ -61,8 +63,10 @@ function responderPendentes(resposta: () => Response): void {
 /** `limpar`: o worker começa apagando o que está guardado no navegador, sem ler a análise anterior. */
 function criarWorker(limpar: boolean): Worker {
   const w = new Worker(new URL("worker.js" + (limpar ? "#limpar" : ""), document.baseURI));
+  ultimaAtividade = Date.now();
   w.onmessage = (e: MessageEvent<{ id: number; status: number; corpo: string; tipo: string }>) => {
     if (w !== worker) return;
+    ultimaAtividade = Date.now();
     const { id, status, corpo, tipo } = e.data;
     pendentes.get(id)?.responder(new Response(corpo, { status, headers: { "Content-Type": tipo } }));
     pendentes.delete(id);
@@ -92,6 +96,38 @@ function interromperProcessamento(): void {
   responderPendentes(() => json(409, { erro: "Processamento interrompido pela nova análise.", interrompido: true }));
 }
 
+/**
+ * Vigia do worker. Se ele morre sem avisar (o navegador encerra o worker por falta de memória sem disparar
+ * erro) ou trava, os pedidos ficariam esperando para sempre e a tela, em "Carregando...". Se o worker passa
+ * tempo demais sem responder nada, ele é encerrado e recriado (com a análise guardada no navegador) e quem
+ * esperava recebe um erro explicando o que fazer.
+ */
+const SEM_RESPOSTA_MAXIMO_MS = 3 * 60 * 1000;
+/** Processar e reprocessar (validação, atividade) 10.000 notas leva perto de 1 minuto; a margem é larga. */
+const SEM_RESPOSTA_PROCESSANDO_MS = 20 * 60 * 1000;
+const PROCESSAMENTOS = new Set(["/api/processar", "/api/validar", "/api/atividade"]);
+setInterval(() => {
+  if (!pendentes.size) {
+    ultimaAtividade = Date.now();
+    return;
+  }
+  const processando = [...pendentes.values()].some((p) => PROCESSAMENTOS.has(p.caminho));
+  // Os testes automáticos reduzem o tempo de espera (scripts/teste_volume_navegador.mjs)
+  const limiteDeTeste = (globalThis as { __vigiaDoWorkerMs?: number }).__vigiaDoWorkerMs;
+  const limite = limiteDeTeste ?? (processando ? SEM_RESPOSTA_PROCESSANDO_MS : SEM_RESPOSTA_MAXIMO_MS);
+  if (Date.now() - ultimaAtividade < limite) return;
+  const minutos = Math.max(1, Math.round(limite / 60000));
+  console.error(`O processamento no navegador não respondeu em ${minutos} minuto(s); reiniciando.`);
+  worker.terminate();
+  worker = criarWorker(false);
+  responderPendentes(() => json(504, {
+    erro: "O processamento no navegador parou de responder.",
+    detalhe: `O processamento no navegador parou de responder por ${minutos} minuto(s) e foi reiniciado. ` +
+      "Isso costuma acontecer quando falta memória no computador: feche outras abas e programas e tente de novo. " +
+      "Se continuar, clique em \"Nova análise\" e envie os XMLs novamente.",
+  }));
+}, 1000);
+
 // Pede ao navegador para não apagar a análise salva quando faltar espaço
 navigator.storage?.persist?.().catch(() => undefined);
 
@@ -103,14 +139,33 @@ interface ArquivoEnviado {
   dados: ArrayBuffer;
 }
 
+const LEITURAS_SIMULTANEAS = 32;
+
 async function lerCorpo(corpo: BodyInit | null | undefined) {
   const arquivos: ArquivoEnviado[] = [];
   if (corpo instanceof FormData) {
     const campos: Record<string, string> = {};
+    const lidos: Promise<ArquivoEnviado>[] = [];
+    // Leitura em paralelo: lidos um a um, milhares de arquivos levam minutos (cada leitura passa pelo disco
+    // e, no Windows, costuma passar também pelo antivírus)
+    let emLeitura = 0;
+    const fila: (() => void)[] = [];
+    const vaga = () => (emLeitura < LEITURAS_SIMULTANEAS ? Promise.resolve() : new Promise<void>((r) => fila.push(r)));
     for (const [campo, valor] of corpo.entries()) {
-      if (typeof valor === "string") campos[campo] = valor;
-      else arquivos.push({ campo, nome: valor.name, dados: await valor.arrayBuffer() });
+      if (typeof valor === "string") {
+        campos[campo] = valor;
+        continue;
+      }
+      await vaga();
+      emLeitura++;
+      lidos.push(valor.arrayBuffer().then(
+        (dados) => ({ campo, nome: valor.name, dados }),
+      ).finally(() => {
+        emLeitura--;
+        fila.shift()?.();
+      }));
     }
+    arquivos.push(...(await Promise.all(lidos)));
     return { corpo: campos, arquivos };
   }
   if (typeof corpo === "string") {
@@ -126,6 +181,7 @@ async function lerCorpo(corpo: BodyInit | null | undefined) {
 function pedirAoWorker(metodo: string, caminho: string, query: Record<string, string>, corpo: unknown, arquivos: ArquivoEnviado[]): Promise<Response> {
   const id = proximo++;
   return new Promise<Response>((resolve) => {
+    if (!pendentes.size) ultimaAtividade = Date.now();
     pendentes.set(id, { caminho, desde: Date.now(), responder: resolve });
     worker.postMessage({ id, metodo, caminho, query, corpo, arquivos }, arquivos.map((a) => a.dados));
   });

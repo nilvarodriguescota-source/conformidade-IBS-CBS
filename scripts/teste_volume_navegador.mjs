@@ -30,7 +30,7 @@ const { chromium } = require("playwright");
 const RAIZ = resolve(".");
 const PORTA = 4390;
 const MODELOS = Number(process.env.MODELOS ?? 2000);
-const VOLUMES = (process.argv[2] ?? "1400,4000,6000,8000,10000").split(",").map(Number);
+const VOLUMES = (process.argv[2] ?? "1400,4000,6000,8000,9499,10000").split(",").map(Number);
 const LIMITE_MS = Number(process.env.LIMITE_MS ?? 15 * 60 * 1000);
 const SUPABASE = "https://diydqdrycltsghqilryv.supabase.co";
 
@@ -173,8 +173,12 @@ async function rodar(total, repeticao = "") {
   let t = Date.now();
   await pagina.locator("#arquivos").setInputFiles(copias.map((c) => c.caminho));
   await pagina.locator("#btnAdicionar").click();
-  await esperarStatus(/adicionado\(s\) à análise atual/, "carregar XMLs");
+  // A tela mostra o andamento ("Carregando XMLs... N de total") até terminar
+  let andamento = 0;
+  const vigiar = setInterval(async () => { if (/Carregando XMLs\.\.\. [\d.]+ de/.test(await texto("status").catch(() => ""))) andamento++; }, 300);
+  await esperarStatus(/adicionado\(s\) à análise atual/, "carregar XMLs").finally(() => clearInterval(vigiar));
   const tCarga = Date.now() - t;
+  if (total > 1000) ok(andamento > 0, "andamento do carregamento mostrado na tela");
   let analise = await api("/api/analise");
   ok(analise.aguardando === total && analise.processados === 0, `carga: ${analise.aguardando} de ${total} XMLs recebidos (${seg(tCarga)})`);
 
@@ -268,6 +272,27 @@ try {
     ok(d < 30000, `processamento interrompido e dados apagados em ${seg(d)}`);
     rmSync(join(pastaTeste, String(maior)), { recursive: true, force: true });
     await rodar(Math.min(1400, maior), " (depois da interrupção)");
+  }
+
+  // Processamento que deixa de responder: o vigia encerra o worker e a tela mostra o erro, sem ficar
+  // carregando para sempre; depois disso o sistema continua funcionando
+  console.log("\n== processamento que deixa de responder ==");
+  {
+    const copias = gerar(maior);
+    await pagina.locator("#arquivos").setInputFiles(copias.map((c) => c.caminho));
+    await pagina.locator("#btnAdicionar").click();
+    await esperarStatus(/adicionado\(s\) à análise atual/, "carregar XMLs");
+    await pagina.evaluate(() => { globalThis.__vigiaDoWorkerMs = 5000; });
+    await pagina.locator("#btnProcessar").click();
+    const t = Date.now();
+    let s = "";
+    while (Date.now() - t < 60000 && !/^Erro:/.test(s)) { await new Promise((r) => setTimeout(r, 500)); s = await texto("status"); }
+    await pagina.evaluate(() => { delete globalThis.__vigiaDoWorkerMs; });
+    ok(/parou de responder/.test(s), `sem resposta do processamento: a tela mostra o erro em ${seg(Date.now() - t)} ("${s.slice(0, 90)}...")`);
+    ok(await pagina.locator("#btnAdicionar").isEnabled(), "botões liberados depois do erro");
+    rmSync(join(pastaTeste, String(maior)), { recursive: true, force: true });
+    await limpar("depois do vigia");
+    await rodar(Math.min(1400, maior), " (depois do vigia)");
   }
 
   // Limpeza pedida com XMLs só carregados (sem processar) e logo depois de recarregar a página

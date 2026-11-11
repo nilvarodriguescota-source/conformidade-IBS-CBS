@@ -1130,26 +1130,44 @@ async function adicionarXmls(){
    status.textContent='Foram selecionados '+input.files.length.toLocaleString('pt-BR')+' arquivos. O limite máximo é de 10.000 arquivos XML por envio.';
    return;
  }
- const form=new FormData();
- for(const arquivo of input.files) form.append('arquivos',arquivo);
+ // Envio em lotes: cada lote é lido, enviado e gravado separadamente, com o progresso na tela.
+ // Com tudo num pedido só, a tela ficava em "Carregando XMLs..." sem sinal de andamento até o fim
+ // (ou para sempre, se algo falhasse no meio).
+ const arquivos=[...input.files];
+ const total=arquivos.length;
  const botao=document.getElementById('btnAdicionar');
  botao.disabled=true;
- status.textContent='Carregando XMLs...';
+ const milhar=n=>n.toLocaleString('pt-BR');
+ let enviados=0;
+ status.textContent='Carregando XMLs... 0 de '+milhar(total)+' (0%)';
  try{
-   const resposta=await fetch('/api/importar',{method:'POST',body:form});
-   const dados=await resposta.json();
-   // Envio interrompido por "Nova análise": quem atualiza a tela é a limpeza
-   if(dados.interrompido) return;
-   if(!resposta.ok) throw new Error(dados.detalhe||dados.erro||'Erro ao carregar os XMLs.');
-   status.textContent=dados.adicionados+' XML(s) adicionado(s) à análise atual, ainda não processado(s).';
+   for(let inicio=0;inicio<total;inicio+=XMLS_POR_LOTE){
+     const form=new FormData();
+     for(const arquivo of arquivos.slice(inicio,inicio+XMLS_POR_LOTE)) form.append('arquivos',arquivo);
+     const resposta=await fetch('/api/importar',{method:'POST',body:form});
+     const dados=await resposta.json();
+     // Envio interrompido por "Nova análise": quem atualiza a tela é a limpeza
+     if(dados.interrompido) return;
+     if(!resposta.ok){
+       const motivo=dados.detalhe||dados.erro||'Erro ao carregar os XMLs.';
+       throw new Error(enviados?milhar(enviados)+' de '+milhar(total)+' XMLs foram adicionados antes da falha; os demais não. '+motivo+' Envie os arquivos de novo (os já adicionados são substituídos, sem duplicar).':motivo);
+     }
+     enviados+=dados.adicionados;
+     status.textContent='Carregando XMLs... '+milhar(enviados)+' de '+milhar(total)+' ('+Math.floor(enviados*100/total)+'%)';
+   }
+   status.textContent=enviados+' XML(s) adicionado(s) à análise atual, ainda não processado(s).';
    input.value='';
    atualizarSelecaoXml();
    await carregarAnalise();
  }catch(erro){
    status.textContent='Erro: '+erro.message;
+   await carregarAnalise();
+ }finally{
+   botao.disabled=false;
  }
- botao.disabled=false;
 }
+/** XMLs por pedido de "Adicionar XMLs" (o limite por seleção continua 10.000). */
+const XMLS_POR_LOTE=500;
 
 let limpandoAnalise=false;
 async function iniciarNovaAnalise(){

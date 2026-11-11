@@ -41,6 +41,8 @@ export interface OpcoesLoteExplicativo {
   arquivoMatriz?: string;
   limparAntes?: boolean;
   vereditosDeReferencia?: string;
+  /** XMLs de pastaXml já lidos (mesma leitura do processador), para não interpretar tudo de novo. */
+  lidos?: { arquivos: string[]; leituras: ResultadoLeitura[] };
 }
 
 export interface ResultadoLoteExplicativo {
@@ -105,8 +107,8 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
     validacoes?: RespostaValidacao[];
     aceitarProjecao?: boolean;
   };
-  const arquivos = listarXmls(o.pastaXml);
-  const leituras: ResultadoLeitura[] = arquivos.map((a) => lerXml(readFileSync(a, "utf8"), a));
+  const arquivos = o.lidos?.arquivos ?? listarXmls(o.pastaXml);
+  const leituras: ResultadoLeitura[] = o.lidos?.leituras ?? arquivos.map((a) => lerXml(readFileSync(a, "utf8"), a));
   const selecao = selecionarVendas(leituras);
   const vereditos = classificarDocumentos(selecao.documentos, {
     base,
