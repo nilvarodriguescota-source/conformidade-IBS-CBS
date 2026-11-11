@@ -81,11 +81,28 @@ export interface ResultadoProcessamento {
   fila: ReturnType<typeof filaDeValidacao>;
 }
 
+/** XMLs de uma pasta já lidos (arquivo e leitura, na mesma ordem). */
+export interface XmlsLidos {
+  arquivos: string[];
+  leituras: ResultadoLeitura[];
+}
+
+/** Lista e lê os XMLs de uma pasta (subpastas e ZIPs inclusive), como processarXMLs faz. */
+export function lerXmlsDaPasta(pastaXml: string): XmlsLidos {
+  const arquivos = listarXmls(pastaXml);
+  return { arquivos, leituras: arquivos.map((arquivo) => lerXml(readFileSync(arquivo, "utf8"), arquivo)) };
+}
+
+/**
+ * `lidos`: os XMLs da pasta já lidos por lerXmlsDaPasta, para não ler e interpretar tudo de novo quando o
+ * mesmo lote passa por mais de uma etapa (resultados e explicações).
+ */
 export function processarXMLs(
   pastaXml: string,
   arquivoEmpresa: string,
   saida: string,
   arquivoBase = "data/base-normativa.json",
+  lidos?: XmlsLidos,
 ): ResultadoProcessamento {
   const base = JSON.parse(
     readFileSync(arquivoBase, "utf8"),
@@ -99,11 +116,7 @@ export function processarXMLs(
     aceitarProjecao?: boolean;
   };
 
-  const arquivos = listarXmls(pastaXml);
-
-  const leituras: ResultadoLeitura[] = arquivos.map((arquivo) =>
-    lerXml(readFileSync(arquivo, "utf8"), arquivo),
-  );
+  const { arquivos, leituras } = lidos ?? lerXmlsDaPasta(pastaXml);
 
   const selecao = selecionarVendas(leituras);
 

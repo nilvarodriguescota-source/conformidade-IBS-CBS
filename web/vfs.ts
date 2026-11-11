@@ -254,6 +254,24 @@ export function restaurar(p: string, v: Persistido): void {
   relogio = Math.max(relogio, "mtimeMs" in v ? v.mtimeMs : 0);
 }
 
+/**
+ * Apaga tudo o que não veio do site (XMLs, envios, resultados, respostas, temporários) e esquece as
+ * alterações pendentes: quem chama apaga também o que estava guardado no navegador.
+ */
+export function esvaziar(): void {
+  for (const p of [...arquivos.keys()]) if (!estaticos.has(p)) arquivos.delete(p);
+  const mantidas = new Set<string>(["/"]);
+  for (const p of estaticos) for (let d = path.dirname(p); !mantidas.has(d); d = path.dirname(d)) mantidas.add(d);
+  for (const p of [...pastas]) if (!mantidas.has(p)) pastas.delete(p);
+  abertos.clear();
+  sujos.clear();
+}
+
+/** Devolve à lista de alterações os caminhos que não puderam ser gravados, para a próxima tentativa. */
+export function marcarAlterados(caminhos: Iterable<string>): void {
+  for (const p of caminhos) sujos.add(p);
+}
+
 /** Alterações desde a última chamada: valor novo, ou null quando o caminho deixou de existir. */
 export function retirarAlteracoes(): [string, Persistido | null][] {
   const r: [string, Persistido | null][] = [];

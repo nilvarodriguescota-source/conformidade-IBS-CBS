@@ -19,11 +19,11 @@
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync, copyFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { processarXMLs } from "./processador.js";
+import { lerXmlsDaPasta, processarXMLs } from "./processador.js";
 import { gerarLoteExplicativo } from "./lote-explicativo.js";
 import type { RespostaValidacao } from "./tipos.js";
 
-export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "alertas.json"];
+export const ARQUIVOS_DE_SAIDA = ["vereditos.json", "indicadores.json", "fila-validacao.json", "descartados.json", "composicao.json", "explicacoes.json", "reducoes-exibicao.json", "alertas.json"];
 
 export interface PastasAnalise { raiz: string; aguardando: string; xmls: string; respostas: string; atividade: string; empresaAnalise: string; empresaConfig: string }
 
@@ -152,13 +152,15 @@ export function processarAnaliseAtual(o: {
     return { xmls: 0, documentos: 0, descartados: 0, pendencias: 0, indicadores: {}, alertas: { disponivel: false, motivo: "análise sem XMLs" } };
   }
   const { empresaAnalise, empresaConfig } = prepararConfiguracoes(o.raiz, o.arquivoEmpresa);
-  const r = processarXMLs(p.xmls, empresaAnalise, o.pastaSaida, o.arquivoBase);
+  // Cada XML é lido e interpretado uma vez só, para os resultados e para as explicações
+  const lidos = lerXmlsDaPasta(p.xmls);
+  const r = processarXMLs(p.xmls, empresaAnalise, o.pastaSaida, o.arquivoBase, lidos);
   let alertas: ResultadoAnalise["alertas"];
   try {
     gerarLoteExplicativo({
       pastaXml: p.xmls, arquivoEmpresa: empresaAnalise, arquivoEmpresaExplicacao: empresaConfig, saida: o.pastaSaida,
       arquivoBase: o.arquivoBase, arquivoV2: o.arquivoV2, arquivoMatriz: o.arquivoMatriz,
-      limparAntes: true, vereditosDeReferencia: join(o.pastaSaida, "vereditos.json"),
+      limparAntes: true, vereditosDeReferencia: join(o.pastaSaida, "vereditos.json"), lidos,
     });
     alertas = { disponivel: true };
   } catch (erro) {

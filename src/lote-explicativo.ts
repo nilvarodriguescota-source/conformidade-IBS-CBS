@@ -41,6 +41,8 @@ export interface OpcoesLoteExplicativo {
   arquivoMatriz?: string;
   limparAntes?: boolean;
   vereditosDeReferencia?: string;
+  /** XMLs de pastaXml já lidos (mesma leitura do processador), para não interpretar tudo de novo. */
+  lidos?: { arquivos: string[]; leituras: ResultadoLeitura[] };
 }
 
 export interface ResultadoLoteExplicativo {
@@ -95,7 +97,7 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
   const arquivoExplicacoes = join(o.saida, "explicacoes.json");
   const arquivoReducoesExibicao = join(o.saida, "reducoes-exibicao.json");
   const arquivoAlertas = join(o.saida, "alertas.json");
-  const apagar = () => { rmSync(arquivoAlertas, { force: true }); rmSync(arquivoExplicacoes, { force: true }); };
+  const apagar = () => { rmSync(arquivoAlertas, { force: true }); rmSync(arquivoExplicacoes, { force: true }); rmSync(arquivoReducoesExibicao, { force: true }); };
   if (o.limparAntes) apagar();
 
   // Motor: exatamente as mesmas entradas e opções do cli.ts
@@ -105,8 +107,8 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
     validacoes?: RespostaValidacao[];
     aceitarProjecao?: boolean;
   };
-  const arquivos = listarXmls(o.pastaXml);
-  const leituras: ResultadoLeitura[] = arquivos.map((a) => lerXml(readFileSync(a, "utf8"), a));
+  const arquivos = o.lidos?.arquivos ?? listarXmls(o.pastaXml);
+  const leituras: ResultadoLeitura[] = o.lidos?.leituras ?? arquivos.map((a) => lerXml(readFileSync(a, "utf8"), a));
   const selecao = selecionarVendas(leituras);
   const vereditos = classificarDocumentos(selecao.documentos, {
     base,
@@ -145,21 +147,28 @@ export function gerarLoteExplicativo(o: OpcoesLoteExplicativo): ResultadoLoteExp
     avisos: ctx.avisos,
   };
 
-  const indiceReducoes = explicados.map((x) => ({
-    documento: x.documento,
-    nItem: x.nItem,
-    ncm: x.ncm,
-    cProd: x.cProd,
-    produto: x.produto,
-    estado: x.estado,
-    exibicao: {
+  // Índice de exibição por item. Itens do mesmo produto têm a mesma exibição (redução, conferência com as
+  // fontes, lacunas, bloqueios): cada exibição diferente é gravada uma vez e o item guarda só a posição dela.
+  // Com o texto repetido em cada item, o arquivo passava de 100 MB perto de 4.000 notas e não cabia
+  // no armazenamento do navegador.
+  const exibicoes: unknown[] = [];
+  const posicaoDaExibicao = new Map<string, number>();
+  const itensDoIndice = explicados.map((x) => {
+    const exibicao = {
       reducao: x.explicacaoInformativa?.reducaoDoItem ?? null,
       auditoria: Object.fromEntries((x.explicacaoInformativa?.regras ?? []).filter((r) => r.auditoriaOficial).map((r) => [r.regraIdInformado, r.auditoriaOficial!])),
       lacunas: x.explicacaoInformativa?.lacunasDeCobertura ?? [],
       bloqueios: Object.fromEntries((x.explicacaoInformativa?.regras ?? []).filter((r) => r.bloqueio).map((r) => [r.regraIdInformado, r.bloqueio!])),
-    },
-  }));
-  writeFileSync(arquivoReducoesExibicao, JSON.stringify(indiceReducoes), "utf8");
+    };
+    const texto = JSON.stringify(exibicao);
+    let posicao = posicaoDaExibicao.get(texto);
+    if (posicao === undefined) {
+      posicao = exibicoes.push(exibicao) - 1;
+      posicaoDaExibicao.set(texto, posicao);
+    }
+    return { documento: x.documento, nItem: x.nItem, ncm: x.ncm, cProd: x.cProd, produto: x.produto, estado: x.estado, exibicao: posicao };
+  });
+  writeFileSync(arquivoReducoesExibicao, JSON.stringify({ formato: 2, exibicoes, itens: itensDoIndice }), "utf8");
 
   const prefixo = JSON.stringify(cabecalho, null, 1).slice(0, -1) + ',\n  "vereditos": [\n';
   writeFileSync(arquivoExplicacoes, prefixo, "utf8");

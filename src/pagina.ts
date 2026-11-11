@@ -510,7 +510,7 @@ details>summary:hover{color:var(--verde-900)}
 <div class="barra acoes-analise">
 <button class="secondary" id="btnAdicionar" onclick="adicionarXmls()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Adicionar XMLs</button>
 <button class="primary" id="btnProcessar" onclick="processarAnalise()" disabled>▶ Processar análise</button>
-<button class="perigo" onclick="iniciarNovaAnalise()">Nova análise (limpar dados)</button>
+<button class="perigo" id="btnNovaAnalise" onclick="iniciarNovaAnalise()">Nova análise (limpar dados)</button>
 </div>
 <p class="small nota-analise">"Nova análise" apaga XMLs, resultados, pendências e respostas da análise atual.</p>
 <div id="status"></div>
@@ -882,7 +882,7 @@ async function carregarRelatorioFinal(){
  try{
    if(modo==='recal'||modo==='corretos'||modo==='com'){
      if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
-     const resultadosApi=await (await fetch('/api/resultados')).json();
+     const resultadosApi=await buscarResultados();
      let respostas=[];
      if(modo==='com'){ try{ respostas=await (await fetch('/api/respostas')).json(); }catch(e){ respostas=[]; } }
      const validado=new Set((Array.isArray(respostas)?respostas:[]).map(r=>r.ncm+'|'+r.cProd));
@@ -1083,6 +1083,8 @@ async function processarAnalise(){
  try{
    const r=await fetch('/api/processar',{method:'POST'});
    const d=await r.json();
+   // Processamento interrompido por "Nova análise": quem atualiza a tela é a limpeza
+   if(d.interrompido) return;
    if(!r.ok) throw new Error(d.detalhe||d.erro||'Erro no processamento.');
    status.textContent='';
    await recarregarTudo();
@@ -1128,37 +1130,77 @@ async function adicionarXmls(){
    status.textContent='Foram selecionados '+input.files.length.toLocaleString('pt-BR')+' arquivos. O limite máximo é de 10.000 arquivos XML por envio.';
    return;
  }
- const form=new FormData();
- for(const arquivo of input.files) form.append('arquivos',arquivo);
+ // Envio em lotes: cada lote é lido, enviado e gravado separadamente, com o progresso na tela.
+ // Com tudo num pedido só, a tela ficava em "Carregando XMLs..." sem sinal de andamento até o fim
+ // (ou para sempre, se algo falhasse no meio).
+ const arquivos=[...input.files];
+ const total=arquivos.length;
  const botao=document.getElementById('btnAdicionar');
  botao.disabled=true;
- status.textContent='Carregando XMLs...';
+ const milhar=n=>n.toLocaleString('pt-BR');
+ let enviados=0;
+ status.textContent='Carregando XMLs... 0 de '+milhar(total)+' (0%)';
  try{
-   const resposta=await fetch('/api/importar',{method:'POST',body:form});
-   const dados=await resposta.json();
-   if(!resposta.ok) throw new Error(dados.detalhe||dados.erro||'Erro ao carregar os XMLs.');
-   status.textContent=dados.adicionados+' XML(s) adicionado(s) à análise atual, ainda não processado(s).';
+   for(let inicio=0;inicio<total;inicio+=XMLS_POR_LOTE){
+     const form=new FormData();
+     for(const arquivo of arquivos.slice(inicio,inicio+XMLS_POR_LOTE)) form.append('arquivos',arquivo);
+     const resposta=await fetch('/api/importar',{method:'POST',body:form});
+     const dados=await resposta.json();
+     // Envio interrompido por "Nova análise": quem atualiza a tela é a limpeza
+     if(dados.interrompido) return;
+     if(!resposta.ok){
+       const motivo=dados.detalhe||dados.erro||'Erro ao carregar os XMLs.';
+       throw new Error(enviados?milhar(enviados)+' de '+milhar(total)+' XMLs foram adicionados antes da falha; os demais não. '+motivo+' Envie os arquivos de novo (os já adicionados são substituídos, sem duplicar).':motivo);
+     }
+     enviados+=dados.adicionados;
+     status.textContent='Carregando XMLs... '+milhar(enviados)+' de '+milhar(total)+' ('+Math.floor(enviados*100/total)+'%)';
+   }
+   status.textContent=enviados+' XML(s) adicionado(s) à análise atual, ainda não processado(s).';
    input.value='';
    atualizarSelecaoXml();
    await carregarAnalise();
  }catch(erro){
    status.textContent='Erro: '+erro.message;
+   await carregarAnalise();
+ }finally{
+   botao.disabled=false;
  }
- botao.disabled=false;
 }
+/** XMLs por pedido de "Adicionar XMLs" (o limite por seleção continua 10.000). */
+const XMLS_POR_LOTE=500;
 
+let limpandoAnalise=false;
 async function iniciarNovaAnalise(){
+ if(limpandoAnalise) return;
  if(!confirm('Iniciar uma nova análise? XMLs, resultados, pendências e respostas da análise atual serão apagados.')) return;
  const status=document.getElementById('status');
+ const botoes=['btnNovaAnalise','btnAdicionar','btnProcessar'].map(id=>document.getElementById(id));
+ limpandoAnalise=true;
+ botoes.forEach(b=>{ if(b) b.disabled=true; });
+ status.textContent='Limpando os dados da análise atual...';
  try{
+   // Um processamento em andamento é interrompido; a resposta só chega depois de tudo apagado
    const r=await fetch('/api/nova-analise',{method:'POST'});
    const d=await r.json();
-   if(!r.ok) throw new Error(d.erro||'Erro ao iniciar nova análise.');
-   status.textContent='Nova análise iniciada. Adicione os XMLs.';
+   if(!r.ok) throw new Error(d.detalhe||d.erro||'Erro ao iniciar nova análise.');
+   // Confirma que a análise ficou vazia antes de avisar
+   const a=await (await fetch('/api/analise')).json();
+   if(a.processados||a.aguardando||a.processada) throw new Error('a limpeza não foi concluída. Tente de novo.');
+   // Tela de volta ao estado inicial: seleção de arquivos, listas e filtros
+   const input=document.getElementById('arquivos');
+   if(input){ input.value=''; atualizarSelecaoXml(); }
+   resultados=[]; resultadosFiltrados=[]; respostas=[];
+   ['busca','filtroClass','filtroCst'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+   const filtro=document.getElementById('filtroResultado'); if(filtro) filtro.value='';
    await recarregarTudo();
+   await carregarAnalise();
+   status.textContent='Nova análise iniciada. Adicione os XMLs.';
  }catch(erro){
    status.textContent='Erro: '+erro.message;
+   await carregarAnalise();
  }
+ limpandoAnalise=false;
+ botoes.forEach(b=>{ if(b&&b.id!=='btnProcessar') b.disabled=false; });
 }
 
 async function carregarDashboard(){
@@ -1763,10 +1805,21 @@ async function carregarRespostas(){
  try{ respostas=await (await fetch('/api/respostas')).json(); }catch(e){ respostas=[]; }
 }
 
+/**
+ * Resultados por item. O servidor manda cada exibição diferente (redução, conferência com as fontes, lacunas,
+ * bloqueios) uma vez só e, em cada item, a posição da sua; aqui as duas partes são juntadas de novo.
+ */
+async function buscarResultados(){
+ const r=await fetch('/api/resultados?compacto=1');
+ const d=await r.json();
+ if(!r.ok) throw new Error(d.erro||'Não foi possível carregar os resultados.');
+ if(Array.isArray(d)) return d;
+ return d.vereditos.map(v=>{ const x=d.exibicoes[v.exibicao]||{}; delete v.exibicao; return Object.assign(v,x); });
+}
+
 async function carregarResultados(){
  try{
-   const r=await fetch('/api/resultados');
-   resultados=await r.json();
+   resultados=await buscarResultados();
    await carregarRespostas();
    if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
    renderResultados();
