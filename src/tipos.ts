@@ -38,6 +38,10 @@ export interface ItemDocumento {
   aliquotas: { cbs?: number; ibsUF?: number; ibsMun?: number; reducao?: number };
   /** Natureza atribuída ao item; sem atribuição o motor não presume. */
   natureza?: NaturezaItem;
+  /** Unidade comercial (uCom), para alíquotas específicas do Imposto Seletivo. */
+  unidade?: string | null;
+  /** Grupo IS informado no XML (Imposto Seletivo), quando presente. Não é usado pelo motor de IBS/CBS. */
+  impostoSeletivo?: { cst: string | null; cClassTrib: string | null; base: number | null; aliquota: number | null; valor: number | null } | null;
 }
 
 export interface Documento {

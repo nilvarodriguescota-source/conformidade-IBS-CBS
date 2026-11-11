@@ -1,0 +1,225 @@
+{
+  "versao": "2026-11-11.1",
+  "descricao": "Base normativa do Imposto Seletivo (IS). Separada da base do IBS/CBS (data/base-normativa.json): o IS é um tributo distinto, com incidência, cálculo e validação próprios, e nada aqui altera CST, cClassTrib ou créditos de IBS/CBS.",
+  "historico": [
+    {
+      "versao": "2026-11-11.1",
+      "data": "2026-11-11",
+      "alteracao": "Criação da base do IS: incidência pelo Anexo XVII da LC 214/2025; contribuinte (fabricante, importador) por CFOP; vigência das alíquotas de 2027; alíquotas da planilha do cliente cadastradas como pendentes de conferência com a MP 1.399/2026, cujo texto não pôde ser obtido (planalto.gov.br bloqueou o acesso automatizado).",
+      "fontes": ["LC214", "PLANILHA_CLIENTE", "MP1399"]
+    }
+  ],
+  "fontes": {
+    "LC214": {
+      "titulo": "Lei Complementar nº 214, de 16 de janeiro de 2025 (texto compilado, com a LC nº 227/2026)",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm",
+      "arquivo": "data/fontes/lc214/lcp214.htm",
+      "sha256": "5702cb10bfbf21d59cc52db2db2a6e3e719243dbedca97f6f82c652bc289e9e4",
+      "situacao": "conferida"
+    },
+    "MP1399": {
+      "titulo": "Medida Provisória nº 1.399/2026",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2026/mpv/mpv1399.htm",
+      "arquivo": null,
+      "sha256": null,
+      "situacao": "pendente_conferencia",
+      "observacao": "Texto não obtido: o planalto.gov.br respondeu \"Acesso Negado\" ao acesso automatizado e os portais da Câmara e do Congresso não estão acessíveis neste ambiente. Alíquotas, fatores, exceções e datas atribuídos à MP precisam ser conferidos no texto oficial antes de passarem a \"conferida\"."
+    },
+    "PLANILHA_CLIENTE": {
+      "titulo": "Planilha do cliente imposto_seletivo.xlsx (tabela de alíquotas do IS de 2027 por categoria)",
+      "arquivo": "data/fontes/imposto-seletivo/planilha-cliente-imposto-seletivo.xlsx",
+      "sha256": "1e9c2d9e2161956ea829d705931f0a41b8d7b0dbb37b5f71432c27950608da17",
+      "situacao": "referencia",
+      "observacao": "A planilha tem uma aba com 5 linhas (categoria, alíquota inicial, fator de conversão, alíquota final). Não traz produtos, NCMs nem descrições."
+    }
+  },
+  "fundamentos": {
+    "INCIDENCIA": "LC 214/2025, art. 409, § 1º, e Anexo XVII",
+    "EMBALAGEM_PRIMARIA": "LC 214/2025, art. 409, § 2º: produtos fumígenos e bebidas alcoólicas estão sujeitos ao IS quando acondicionados em embalagem primária (em contato direto com o produto e destinada ao consumidor final)",
+    "MONOFASICO": "LC 214/2025, art. 410: o IS incide uma única vez sobre o bem, vedado qualquer aproveitamento ou geração de crédito do imposto",
+    "FATO_GERADOR": "LC 214/2025, art. 412, I e VIII: primeiro fornecimento do bem e importação",
+    "CONTRIBUINTE": "LC 214/2025, art. 424: contribuinte é o fabricante (no primeiro fornecimento), o importador, o arrematante e o produtor-extrativista",
+    "NAO_INCIDENCIA_REDUCAO": "LC 214/2025, art. 413, III: o IS não incide sobre bens e serviços com alíquotas de IBS/CBS reduzidas nos termos do § 1º do art. 9º da EC 132/2023",
+    "BASE_CALCULO": "LC 214/2025, art. 414: valor de venda na comercialização (I); valor de referência na comercialização e importação de produtos fumígenos (III, c); § 1º: com alíquota específica, base em unidade de medida",
+    "ALIQUOTAS": "LC 214/2025, art. 422: alíquotas fixadas em lei ordinária; § 1º: ad valorem cumulada com específica para fumígenos da posição 24.02 e para bebidas alcoólicas (específica pelo teor alcoólico × volume)",
+    "IMPORTACAO": "LC 214/2025, art. 434, §§ 1º a 3º: na importação, alíquotas em lei ordinária e base ad valorem = valor aduaneiro + Imposto de Importação; fumígenos: a maior entre essa base e o valor de referência",
+    "INICIO_COBRANCA": "LC 214/2025, art. 477 (substituição da arrecadação do IPI pela do IS a partir de 2027) e art. 422 (alíquotas em lei ordinária); data de início das alíquotas da MP 1.399/2026: 02/02/2027, conforme informado na solicitação (pendente de conferência no texto da MP)"
+  },
+  "vigencia": {
+    "inicioAliquotas": "2027-02-02",
+    "fimRegimeTransitorio": "2027-12-31",
+    "fonte": "MP1399",
+    "situacao": "pendente_conferencia",
+    "aposFim": "Alíquotas para operações a partir de 01/01/2028 dependem de legislação posterior e não estão cadastradas: essas operações ficam como \"necessita validação fiscal\", sem alíquota."
+  },
+  "categorias": [
+    {
+      "id": "BEBIDAS_ACUCARADAS",
+      "nome": "Bebidas açucaradas",
+      "codigos": ["22021000"],
+      "descricaoLegal": "Bebidas açucaradas (Anexo XVII da LC 214/2025: código 2202.10.00 da NCM/SH). Na TIPI, 2202.10.00 são águas, incluindo as minerais e as gaseificadas, adicionadas de açúcar ou de outros edulcorantes ou aromatizadas.",
+      "fundamento": "LC 214/2025, art. 409, § 1º, V, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false
+    },
+    {
+      "id": "CERVEJAS",
+      "nome": "Bebidas alcoólicas — cervejas de malte",
+      "codigos": ["2203"],
+      "descricaoLegal": "Bebidas alcoólicas da posição 22.03 da NCM/SH (cervejas de malte)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "VINHOS_FERMENTADOS",
+      "nome": "Bebidas alcoólicas — vinhos e demais fermentados",
+      "codigos": ["2204", "2206"],
+      "descricaoLegal": "Bebidas alcoólicas das posições 22.04 (vinhos) e 22.06 (outras bebidas fermentadas) da NCM/SH",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "VERMUTES",
+      "nome": "Bebidas alcoólicas — vermutes",
+      "codigos": ["2205"],
+      "descricaoLegal": "Bebidas alcoólicas da posição 22.05 da NCM/SH (vermutes e outros vinhos aromatizados)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "DESTILADOS",
+      "nome": "Bebidas alcoólicas — destilados",
+      "codigos": ["2208"],
+      "descricaoLegal": "Bebidas alcoólicas da posição 22.08 da NCM/SH (aguardentes, licores e outras bebidas espirituosas)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "FUMIGENOS",
+      "nome": "Produtos fumígenos",
+      "codigos": ["2401", "2402", "2403", "2404"],
+      "descricaoLegal": "Produtos fumígenos das posições 24.01, 24.02, 24.03 e 24.04 da NCM/SH",
+      "fundamento": "LC 214/2025, art. 409, § 1º, III e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true,
+      "baseValorReferencia": true
+    },
+    {
+      "id": "VEICULOS",
+      "nome": "Veículos",
+      "codigos": ["8703", "870421", "870431", "87044100", "87045100", "87046000", "87049000"],
+      "descricaoLegal": "Veículos da posição 87.03 e dos códigos 8704.21, 8704.31, 8704.41.00, 8704.51.00, 8704.60.00 e 8704.90.00, exceto os caminhões, ressalvados os de uso operacional das Forças Armadas ou de Segurança Pública",
+      "fundamento": "LC 214/2025, art. 409, § 1º, I, arts. 419 e 420, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false,
+      "excecoesNoAnexo": true
+    },
+    {
+      "id": "AERONAVES_EMBARCACOES",
+      "nome": "Aeronaves e embarcações",
+      "codigos": ["8802", "8903"],
+      "excluidos": ["88026000"],
+      "descricaoLegal": "Aeronaves da posição 88.02 (exceto 8802.60.00) e embarcações com motor da posição 89.03, ressalvadas as de uso operacional das Forças Armadas ou de Segurança Pública",
+      "fundamento": "LC 214/2025, art. 409, § 1º, II, art. 421, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false,
+      "excecoesNoAnexo": true
+    },
+    {
+      "id": "BENS_MINERAIS",
+      "nome": "Bens minerais",
+      "codigos": ["2601", "27090010", "27111100", "27112100"],
+      "descricaoLegal": "Bens minerais: posição 26.01 e códigos 2709.00.10, 2711.11.00 e 2711.21.00 da NCM/SH (e o carvão mineral)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, VI, art. 422, § 2º (máximo de 0,25%), art. 423, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false,
+      "excecoesNoAnexo": true
+    }
+  ],
+  "cfops": {
+    "fundamento": "Tabela de CFOP (Convênio s/nº de 1970, Ajuste SINIEF 07/01): vendas de produção do estabelecimento × vendas de mercadoria adquirida ou recebida de terceiros. Só o fabricante (primeiro fornecimento) e o importador são contribuintes do IS (LC 214/2025, art. 424).",
+    "producaoPropria": ["5101", "5103", "5105", "5401", "5402", "6101", "6103", "6105", "6401", "6402", "7101"],
+    "revenda": ["5102", "5104", "5106", "5403", "5405", "6102", "6104", "6106", "6403", "6404", "7102"]
+  },
+  "aliquotas": [
+    {
+      "id": "IS-2027-BEBIDAS-ACUCARADAS",
+      "categoria": "BEBIDAS_ACUCARADAS",
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": null,
+      "fatorConversao": null,
+      "aliquota": 0.026,
+      "regraCalculo": "Valor do IS = base de cálculo × 2,6%",
+      "observacao": "Planilha: \"Conversão a partir do IPI\" (alíquota inicial e fator não informados).",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "PLANILHA_CLIENTE",
+      "dispositivo": "MP 1.399/2026 (dispositivo e anexo a conferir)",
+      "situacao": "pendente_conferencia"
+    },
+    {
+      "id": "IS-2027-CERVEJAS",
+      "categoria": "CERVEJAS",
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.039,
+      "fatorConversao": 1.07,
+      "aliquota": 0.042,
+      "regraCalculo": "Valor do IS = base de cálculo × 4,2% (3,9% × fator 1,07), mais a parcela específica (teor alcoólico × volume) exigida pelo art. 422, § 1º, II, da LC 214/2025",
+      "observacao": "A parcela específica não consta da planilha.",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "PLANILHA_CLIENTE",
+      "dispositivo": "MP 1.399/2026 (dispositivo e anexo a conferir)",
+      "situacao": "pendente_conferencia"
+    },
+    {
+      "id": "IS-2027-VINHOS-FERMENTADOS",
+      "categoria": "VINHOS_FERMENTADOS",
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.065,
+      "fatorConversao": 1.23,
+      "aliquota": 0.08,
+      "regraCalculo": "Valor do IS = base de cálculo × 8% (6,5% × fator 1,23), mais a parcela específica (teor alcoólico × volume) exigida pelo art. 422, § 1º, II, da LC 214/2025",
+      "observacao": "Planilha: \"posições 22.04 e 22.06 (regra geral)\" — as exceções à regra geral não constam da planilha. A parcela específica também não.",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "PLANILHA_CLIENTE",
+      "dispositivo": "MP 1.399/2026 (dispositivo e anexo a conferir)",
+      "situacao": "pendente_conferencia"
+    },
+    {
+      "id": "IS-2027-VERMUTES",
+      "categoria": "VERMUTES",
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.0975,
+      "fatorConversao": 1.23,
+      "aliquota": 0.12,
+      "regraCalculo": "Valor do IS = base de cálculo × 12% (9,75% × fator 1,23), mais a parcela específica (teor alcoólico × volume) exigida pelo art. 422, § 1º, II, da LC 214/2025",
+      "observacao": "A parcela específica não consta da planilha.",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "PLANILHA_CLIENTE",
+      "dispositivo": "MP 1.399/2026 (dispositivo e anexo a conferir)",
+      "situacao": "pendente_conferencia"
+    },
+    {
+      "id": "IS-2027-DESTILADOS",
+      "categoria": "DESTILADOS",
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.195,
+      "fatorConversao": 1.23,
+      "aliquota": 0.24,
+      "regraCalculo": "Valor do IS = base de cálculo × 24% (19,5% × fator 1,23), mais a parcela específica (teor alcoólico × volume) exigida pelo art. 422, § 1º, II, da LC 214/2025",
+      "observacao": "Planilha: \"Destilados da posição 22.08 (demais)\" — as categorias que não são \"demais\" não constam da planilha. A parcela específica também não.",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "PLANILHA_CLIENTE",
+      "dispositivo": "MP 1.399/2026 (dispositivo e anexo a conferir)",
+      "situacao": "pendente_conferencia"
+    }
+  ]
+}

@@ -29,7 +29,12 @@ código do servidor: a análise não passa por servidor nem banco de dados. A an
 respostas e resultados) fica salva no navegador de quem usa (IndexedDB) e continua
 lá ao reabrir a página; outro computador ou navegador começa com a análise vazia.
 
-Capacidade: até 10.000 XMLs por envio. Validação em Pendências: cada escolha é marcada na hora e gravada em seguida, sem reprocessar
+Capacidade: até 10.000 XMLs por envio. Imposto Seletivo (IS): tributo separado do IBS/CBS, com base própria (`data/imposto-seletivo.json`), motor
+próprio (`src/imposto-seletivo.ts`), aba "Imposto Seletivo" para a escolha de cada produto e a modalidade
+"IMPOSTO SELETIVO" no Relatório Final (os demais relatórios ganham a coluna IS). Regras, fontes, pendências
+de conferência com a MP 1.399/2026 e a análise dos produtos: `docs/imposto-seletivo/README.md`.
+
+Validação em Pendências: cada escolha é marcada na hora e gravada em seguida, sem reprocessar
 a análise. Os resultados são refeitos uma vez, com todas as escolhas, ao abrir Análise, Dashboard,
 Resultados ou o Relatório Final (ou pelo botão "Atualizar resultados agora"). Produtos já validados
 continuam em Pendências, em "Validados nesta análise", com a escolha marcada e alterável.
@@ -41,6 +46,7 @@ ficou vazio. Testes de volume (precisam de `npm run build` antes):
 ```bash
 node scripts/teste_volume_navegador.mjs   # site publicado num Chromium (precisa do Playwright): 1.400 a 10.000 XMLs, limpeza e interrupção
 node scripts/teste_10000_xml.mjs          # servidor local: 10.000 XMLs num envio
+node scripts/teste_imposto_seletivo.mjs     # site publicado num Chromium: Imposto Seletivo (XMLs reais, fabricante em 2027 e 10.000 XMLs)
 node scripts/teste_validacao_relatorios.mjs  # site publicado num Chromium: escolhas em Pendências e as 4 modalidades do Relatório Final (1.400 e 10.000 XMLs)
 ```
 
