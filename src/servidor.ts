@@ -5,8 +5,8 @@ import path from "path";
 import multer from "multer";
 import { lerAlertasParaExibicao } from "./alertas-exibicao.js";
 import {
-  adicionarXmls, ARQUIVOS_DE_SAIDA, configuracaoDaEmpresa, gravarAtividade, incorporarAguardando, lerRespostas, novaAnalise, pastasDaAnalise, processarAnaliseAtual,
-  quantidadeAguardando, quantidadeDeXmls, registrarResposta,
+  adicionarXmls, ARQUIVOS_DE_SAIDA, configuracaoDaEmpresa, gravarAtividade, guardarPendenciaRespondida, incorporarAguardando, lerPendenciasRespondidas,
+  lerRespostas, novaAnalise, pastasDaAnalise, processarAnaliseAtual, quantidadeAguardando, quantidadeDeXmls, registrarRespostas, resultadosDesatualizados,
 } from "./analise-atual.js";
 import { codigosDasNotas } from "./processador.js";
 import { diferencasDeVereditos } from "./lote-explicativo.js";
@@ -43,6 +43,11 @@ const arquivoBase = path.join(process.cwd(), "data", "base-normativa.json");
 if (!fs.existsSync(pastaAnalise)) {
   novaAnalise(pastaAnalise, pastaSaida);
   console.log("Nova análise iniciada (sem dados de análises anteriores).");
+}
+
+/** Registro técnico (console do servidor; na versão web, console do navegador): etapa, tempo e detalhes. */
+function registrar(etapa: string, inicio: number, detalhes: Record<string, unknown> = {}): void {
+  console.log(`[${new Date().toISOString()}] ${etapa} ${Date.now() - inicio} ms ${JSON.stringify(detalhes)}`);
 }
 
 function processarAnalise() {
@@ -86,10 +91,30 @@ const ESCOLHAS = ["CONSUMO_NO_LOCAL", "MERCADORIA_SEM_BENEFICIO", "NCM_INCORRETO
  */
 const SEM_REGRA_CANDIDATA = "NATUREZA_DO_ITEM";
 
-function detalharRegras(ncm: string, ids: string[]) {
+/**
+ * Regras da base por id + NCM, lidas uma vez e relidas só quando o arquivo muda. Antes a base inteira era
+ * lida e interpretada de novo para cada produto pendente (duas vezes): com 262 pendências, a lista levava 7 s.
+ */
+let indiceDaBase: { chave: string; porIdENcm: Map<string, BaseNormativa["regras"]> } | null = null;
+function regrasPorIdENcm(): Map<string, BaseNormativa["regras"]> {
+  const st = fs.existsSync(arquivoBase) ? fs.statSync(arquivoBase) : null;
+  const chave = st ? `${st.mtimeMs}:${st.size}` : "ausente";
+  if (indiceDaBase?.chave === chave) return indiceDaBase.porIdENcm;
   const base = lerJson(arquivoBase, { regras: [] }) as BaseNormativa;
+  const porIdENcm = new Map<string, BaseNormativa["regras"]>();
+  for (const r of base.regras) {
+    const k = `${r.id}|${r.ncm}`;
+    if (!porIdENcm.has(k)) porIdENcm.set(k, []);
+    porIdENcm.get(k)!.push(r);
+  }
+  indiceDaBase = { chave, porIdENcm };
+  return porIdENcm;
+}
+
+function detalharRegras(ncm: string, ids: string[]) {
+  const indice = regrasPorIdENcm();
   return ids.map((id) => {
-    const achadas = base.regras.filter((r) => r.id === id && r.ncm === ncm);
+    const achadas = indice.get(`${id}|${ncm}`) ?? [];
     const comum = <K extends "cst" | "cClassTrib" | "rotulo" | "anexo" | "item" | "descricaoLegal" | "fundamentoLegal" | "reducao" | "reducaoAliquota" | "descricaoNcmTipi">(k: K) => {
       const valores = [...new Set(achadas.map((r) => (r as any)[k] ?? null))];
       return valores.length === 1 ? valores[0]! : null;
@@ -140,6 +165,8 @@ app.get("/api/analise", (_req, res) => {
     aguardando: quantidadeAguardando(pastaAnalise),
     respostas: lerRespostas(pastaAnalise).length,
     processada,
+    // Respostas registradas depois do último processamento: os resultados ainda não as consideram
+    resultadosDesatualizados: processada && resultadosDesatualizados(pastaAnalise),
     resumo: processada ? {
       xmls: processados,
       documentos: documentos.size,
@@ -183,6 +210,7 @@ app.get("/api/respostas", (_req, res) => {
 });
 
 app.post("/api/validar", (req, res) => {
+  const inicio = Date.now();
   try {
     const { ncm, cProd, regraId, regraIds, resposta, autor, justificativa, escolha } = req.body;
     // Múltipla escolha: a escolha vai junto de NÃO nas regras candidatas (compatível com quem lê só SIM/NÃO)
@@ -208,36 +236,60 @@ app.post("/api/validar", (req, res) => {
       });
     }
 
-    // A resposta pertence só à análise atual; empresa.json não é alterado.
-    for (const id of ids) {
-      const registro: RespostaValidacao = {
-        ncm,
-        cProd,
-        regraId: id,
-        resposta,
-        autor: autor || "Sistema",
-        data: new Date().toISOString().slice(0, 10),
-        ...(justificativa ? { justificativa } : {}),
-        ...(escolha ? { escolha } : {})
-      };
-      registrarResposta(pastaAnalise, registro);
-    }
-    const resultado = processarAnalise();
+    // A resposta pertence só à análise atual; empresa.json não é alterado. Todas as regras do produto numa
+    // gravação só. Os resultados NÃO são reprocessados aqui (com 10.000 XMLs isso levava perto de 1 minuto por
+    // clique): ficam marcados como desatualizados e são refeitos uma vez, em /api/atualizar-resultados.
+    const data = new Date().toISOString().slice(0, 10);
+    const registros: RespostaValidacao[] = ids.map((id) => ({
+      ncm,
+      cProd,
+      regraId: id,
+      resposta,
+      autor: autor || "Sistema",
+      data,
+      ...(justificativa ? { justificativa } : {}),
+      ...(escolha ? { escolha } : {}),
+    }));
+    guardarPendenciaDoProduto(String(ncm), String(cProd));
+    const todas = registrarRespostas(pastaAnalise, registros);
+    const respostasDoProduto = todas.filter((x) => x.ncm === ncm && x.cProd === cProd);
+    registrar("validacao", inicio, { ncm, cProd, resposta, escolha: escolha ?? null, regras: ids.length });
 
     res.json({
       sucesso: true,
       mensagem: "Validação gravada com sucesso.",
-      pendencias: resultado.pendencias
+      respostas: respostasDoProduto,
+      resultadosDesatualizados: resultadosDesatualizados(pastaAnalise),
     });
   } catch (erro) {
     console.error("Erro ao gravar validação:", erro);
     res.status(500).json({
-      erro: "Não foi possível gravar a validação."
+      erro: "Não foi possível gravar a validação.",
+      detalhe: erro instanceof Error ? erro.message : String(erro),
     });
   }
 });
 
-/** Adicionar XMLs: acrescenta os arquivos à análise atual, sem processar (ficam aguardando). */
+/**
+ * Atualizar resultados: reprocessa os XMLs da análise com todas as respostas registradas, uma vez só. A tela chama
+ * antes de mostrar resultados, painel e relatórios quando há respostas mais novas que os resultados.
+ */
+app.post("/api/atualizar-resultados", (_req, res) => {
+  const inicio = Date.now();
+  try {
+    if (!resultadosDesatualizados(pastaAnalise)) {
+      res.json({ sucesso: true, atualizado: false });
+      return;
+    }
+    const resultado = processarAnalise();
+    registrar("atualizar-resultados", inicio, { xmls: resultado.xmls, pendencias: resultado.pendencias, alertas: resultado.alertas.disponivel });
+    res.json({ sucesso: true, atualizado: true, pendencias: resultado.pendencias, alertas: resultado.alertas });
+  } catch (erro) {
+    console.error("Erro ao atualizar os resultados:", erro);
+    res.status(500).json({ erro: "Não foi possível atualizar os resultados com as validações.", detalhe: erro instanceof Error ? erro.message : String(erro) });
+  }
+});
+
 app.post("/api/importar", upload.array("arquivos", LIMITE_XMLS_POR_ENVIO), (req, res) => {
   try {
     const arquivos = (req.files ?? []) as Express.Multer.File[];
@@ -483,13 +535,38 @@ app.get("/api/regras", (_req, res) => {
   res.json(mapa);
 });
 
+type PendenciaDaFila = { ncm: string; cProd: string; produto: string; regras: string[]; itens?: number; base?: number; motivo?: string };
+const chaveDoProduto = (ncm: string, cProd: string) => `${ncm}|${cProd}`;
+const respondeuProduto = (respostas: RespostaValidacao[], p: { ncm: string; cProd: string; produto: string }) =>
+  respostas.some((x) => x.ncm === p.ncm && (x.cProd === p.cProd || x.cProd === p.produto));
+
+/**
+ * Na primeira resposta de um produto, guarda a pendência dele como estava (e o que a tela mostrava): depois do
+ * reprocessamento ele sai da fila, mas continua em Pendências como "validado", com a escolha marcada e alterável.
+ */
+function guardarPendenciaDoProduto(ncm: string, cProd: string): void {
+  const fila = lerJson(arquivoFila, []) as PendenciaDaFila[];
+  const p = fila.find((x) => x.ncm === ncm && (x.cProd === cProd || x.produto === cProd));
+  if (!p) return;
+  const reducoes = reducoesDaAnalise([]);
+  const exibicao = reducoes.disponivel ? reducoes.porPendencia.get(`${p.ncm}|${p.cProd}|${p.produto}`) ?? null : null;
+  guardarPendenciaRespondida(pastaAnalise, chaveDoProduto(p.ncm, p.cProd), { pendencia: p, exibicao, respondidaEm: new Date().toISOString() });
+}
+
+/**
+ * Pendências da análise: os produtos que aguardam validação e, com `respondida: true`, os já respondidos nesta
+ * análise (que continuam na tela com a escolha marcada). Com respostas ainda não processadas, um produto
+ * respondido já conta como respondido, sem esperar o reprocessamento.
+ */
 app.get("/api/fila-validacao", (_req, res) => {
+  const inicio = Date.now();
   try {
-    const dados = lerJson(arquivoFila, []) as { ncm: string; cProd: string; produto: string; regras: string[] }[];
+    const dados = lerJson(arquivoFila, []) as PendenciaDaFila[];
     // Redução e evidência de cada regra candidata: as mesmas que o explicador resolveu (reducaoDoItem.opcoes)
     const vereditos = lerJson(path.join(pastaSaida, "vereditos.json"), []) as Veredito[];
     const reducoes = reducoesDaAnalise(vereditos);
     const respostas = lerRespostas(pastaAnalise);
+    const desatualizada = resultadosDesatualizados(pastaAnalise);
     const consumoNoLocal = empresaDaAnalise().barOuRestaurante;
     // Vendas do produto sem o grupo IBS/CBS no XML (cadastro sem informação tributária), por cProd
     const semInformacao = new Map<string, { total: number; naoObrigatorios: number }>();
@@ -500,18 +577,19 @@ app.get("/api/fila-validacao", (_req, res) => {
       if (v.estado === "NAO_OBRIGATORIO") c.naoObrigatorios += 1;
       semInformacao.set(v.cProd, c);
     }
-    res.json(dados.map((p) => {
-      const doGrupo = reducoes.disponivel ? reducoes.porPendencia.get(`${p.ncm}|${p.cProd}|${p.produto}`) ?? null : null;
+    const detalhar = (p: PendenciaDaFila, doGrupo: ExibicaoDoItem | null, respondida: boolean) => {
+      const regras = detalharRegras(p.ncm, p.regras ?? []);
       return {
         ...p,
-        regrasDetalhe: detalharRegras(p.ncm, p.regras ?? []).map((g) => ({
+        respondida,
+        regrasDetalhe: regras.map((g) => ({
           ...g,
           reducao: doGrupo?.reducao?.opcoes.find((o) => o.regraId === g.id) ?? null,
           auditoria: doGrupo?.auditoria[g.id] ?? null,
         })),
         lacunasDeCobertura: doGrupo?.lacunas ?? [],
         // Pergunta de múltipla escolha: "O que é este produto?", com o resultado de cada opção
-        opcoesValidacao: opcoesDaPergunta(p.ncm, p.produto, detalharRegras(p.ncm, p.regras ?? []).map((g) => ({
+        opcoesValidacao: opcoesDaPergunta(p.ncm, p.produto, regras.map((g) => ({
           id: g.id,
           cst: g.cst,
           cClassTrib: g.cClassTrib,
@@ -528,12 +606,29 @@ app.get("/api/fila-validacao", (_req, res) => {
         itensSemInformacaoTributaria: semInformacao.get(p.cProd)?.total ?? 0,
         itensNaoObrigatoriosSemInformacao: semInformacao.get(p.cProd)?.naoObrigatorios ?? 0,
       };
-    }));
+    };
+    const exibicaoDaFila = (p: PendenciaDaFila) => (reducoes.disponivel ? reducoes.porPendencia.get(`${p.ncm}|${p.cProd}|${p.produto}`) ?? null : null);
+
+    const lista: ReturnType<typeof detalhar>[] = [];
+    const vistos = new Set<string>();
+    for (const p of dados) {
+      vistos.add(chaveDoProduto(p.ncm, p.cProd));
+      lista.push(detalhar(p, exibicaoDaFila(p), desatualizada && respondeuProduto(respostas, p)));
+    }
+    // Respondidos que já saíram da fila (resultados atualizados), como estavam ao responder
+    const guardadas = lerPendenciasRespondidas<PendenciaDaFila, ExibicaoDoItem>(pastaAnalise);
+    for (const [chave, g] of Object.entries(guardadas)) {
+      if (vistos.has(chave) || !respondeuProduto(respostas, g.pendencia)) continue;
+      lista.push(detalhar(g.pendencia, g.exibicao, true));
+    }
+    registrar("fila-validacao", inicio, { pendentes: lista.filter((x) => !x.respondida).length, respondidas: lista.filter((x) => x.respondida).length });
+    res.json(lista);
   } catch (erro) {
     console.error("Erro ao ler fila-validacao.json:", erro);
 
     res.status(500).json({
-      erro: "Não foi possível ler a fila de validação."
+      erro: "Não foi possível ler a fila de validação.",
+      detalhe: erro instanceof Error ? erro.message : String(erro),
     });
   }
 });

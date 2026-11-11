@@ -184,6 +184,13 @@ select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer
 /* ---------- Avisos e selos ---------- */
 .aviso{background:var(--ouro-50);border:1px solid var(--ouro-200);border-left:4px solid var(--ouro-500);color:#584521;padding:12px 16px;border-radius:10px;margin-bottom:14px;font-size:14px}
 .aviso.composicao-xmls{margin-top:16px;margin-bottom:0}
+.aviso-validacoes{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}
+.aviso-validacoes.erro{background:#FBEDEC;border-color:#E9B8B3;border-left-color:#9B2C2C;color:#7A1F1F}
+.estado-validacao{margin-top:10px;font-size:13px;color:var(--verde-700)}
+.estado-validacao.salvando{color:#584521}
+.estado-validacao.erro{color:#9B2C2C;font-weight:600}
+.selo-validado{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--verde-700);color:#FBF8F1;font-size:12px;vertical-align:middle}
+.titulo-validados{margin-top:28px}
 .aviso-info{margin-top:6px;padding:7px 10px;background:var(--info-fundo);border:1px solid var(--info-borda);border-radius:8px;font-size:12px;color:var(--info)}
 .aviso-regra{margin-top:6px;padding:7px 10px;background:var(--risco-fundo);border:1px solid var(--risco-borda);border-radius:8px;font-size:12px;color:#7E271F}
 .selo{display:inline-flex;align-items:center;gap:5px;margin:4px 6px 0 0;padding:2px 10px;border:1px solid transparent;border-radius:999px;font-size:12px;font-weight:600;line-height:1.5}
@@ -486,6 +493,7 @@ details>summary:hover{color:var(--verde-900)}
 <button onclick="abrirTela('relatorio-final',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>Relatório Final</button>
 <button onclick="abrirTela('consulta-ncm',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Consulta Tributária por NCM</button>
 </nav>
+<div class="aviso aviso-validacoes" id="avisoValidacoes" role="status" hidden><span id="textoAvisoValidacoes"></span><button class="secondary" id="btnAtualizarResultados" onclick="atualizarResultadosAgora()">Atualizar resultados agora</button></div>
 
 <main>
 
@@ -796,11 +804,16 @@ function linhaRelatorioRisco(v,itens){
 }
 const ROTULO_ESTADO={CORRETO:'CORRETO',INCORRETO_ECONOMIA:'CORRETOS C/ RECAL IMPOSTOS',INCORRETO_RISCO:'INCORRETO — risco',INCORRETO_NCM:'INCORRETO — AJUSTAR NCM',REQUER_VALIDACAO:'PRECISA VALIDAR',NAO_OBRIGATORIO:'NÃO OBRIGATÓRIO',INDETERMINADO:'INDETERMINADO'};
 
-function abrirTela(id,botao){
+async function abrirTela(id,botao){
  document.querySelectorAll('.tela').forEach(x=>x.classList.remove('active'));
  document.getElementById(id).classList.add('active');
  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
  botao.classList.add('active');
+ // Escolhas feitas em Pendências entram nos resultados antes de mostrá-los (o relatório faz o mesmo)
+ if((id==='importar'||id==='dashboard'||id==='resultados')&&(resultadosDesatualizadosUI||validacoesSalvando())){
+   try{ await garantirResultadosAtualizados(); }catch(e){ /* o aviso no topo mostra o erro */ }
+   if(!document.getElementById(id).classList.contains('active')) return;
+ }
  if(id==='importar') carregarAnalise();
  if(id==='dashboard'){ carregarDashboard(); carregarAlertas(); }
  if(id==='resultados') carregarResultados();
@@ -869,10 +882,28 @@ async function carregarRelatorioFinal(){
  if(tabelaRel) tabelaRel.classList.toggle('relatorio-centralizado',modo==='com'||modo==='recal');
  if(cab) cab.innerHTML='<tr>'+colunasRelatorio().map(c=>'<th>'+escaparRelatorio(c)+'</th>').join('')+'</tr>';
  corpo.innerHTML='<tr><td colspan="'+ncol+'">Carregando relatório...</td></tr>';
+ // A contagem do relatório anterior não fica na tela enquanto este carrega
+ if(contador) contador.textContent='';
+ const t0=Date.now();
+ // As escolhas feitas em Pendências precisam estar nos resultados: atualiza antes de montar o relatório
+ if(resultadosDesatualizadosUI||validacoesSalvando()){
+   corpo.innerHTML='<tr><td colspan="'+ncol+'">Atualizando os resultados com as validações registradas antes de gerar o relatório. Com muitos XMLs isso pode levar cerca de 1 minuto...</td></tr>';
+   try{ await garantirResultadosAtualizados(); }
+   catch(e){
+     console.error('[relatorio] atualização dos resultados falhou',e);
+     if(modo!==modoRelatorioFinal) return;
+     corpo.innerHTML='<tr><td colspan="'+ncol+'">O relatório não foi gerado: não foi possível atualizar os resultados com as validações ('+escaparRelatorio(e.message)+'). Use "Atualizar resultados agora" no aviso acima ou abra o relatório de novo.</td></tr>';
+     contador.textContent='';
+     return;
+   }
+   if(modo!==modoRelatorioFinal) return;
+   corpo.innerHTML='<tr><td colspan="'+ncol+'">Carregando relatório...</td></tr>';
+ }
 
  const renderizar=(linhas,vazio)=>{
    if(modo!==modoRelatorioFinal) return;
    linhasRelatorioFinal=linhas;
+   console.info('[relatorio] '+modo+': '+linhas.length+' produto(s) em '+(Date.now()-t0)+' ms');
    corpo.innerHTML=linhas.length
      ? linhas.map(l=>'<tr>'+l.map(c=>'<td>'+escaparRelatorio(c)+'</td>').join('')+'</tr>').join('')
      : '<tr><td colspan="'+ncol+'">'+vazio+'</td></tr>';
@@ -884,7 +915,11 @@ async function carregarRelatorioFinal(){
      if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
      const resultadosApi=await buscarResultados();
      let respostas=[];
-     if(modo==='com'){ try{ respostas=await (await fetch('/api/respostas')).json(); }catch(e){ respostas=[]; } }
+     if(modo==='com'){
+       const rr=await fetch('/api/respostas');
+       respostas=await rr.json();
+       if(!rr.ok) throw new Error(respostas.detalhe||respostas.erro||'as respostas de validação não puderam ser lidas');
+     }
      const validado=new Set((Array.isArray(respostas)?respostas:[]).map(r=>r.ncm+'|'+r.cProd));
      const incluir=v=>{
        if(modo==='recal') return ehRecalculo(v);
@@ -911,12 +946,15 @@ async function carregarRelatorioFinal(){
      return;
    }
 
-   const fila=await (await fetch('/api/fila-validacao')).json();
+   const respFila=await fetch('/api/fila-validacao');
+   const fila=await respFila.json();
+   if(!respFila.ok) throw new Error(fila.detalhe||fila.erro||'a lista de pendências não pôde ser lida');
    const mapa=new Map();
 
    if(Array.isArray(fila)){
      fila.forEach(p=>{
-       if(!p.cProd) return;
+       // Produto já validado nesta análise não está mais "sem validação"
+       if(!p.cProd||p.respondida) return;
        if(!mapa.has(p.cProd)) mapa.set(p.cProd,p);
      });
    }
@@ -959,9 +997,9 @@ async function carregarRelatorioFinal(){
 
    renderizar(linhas,'Nenhum produto pendente foi encontrado.');
  }catch(e){
-   console.error(e);
+   console.error('[relatorio] '+modo+' falhou',e);
    if(modo!==modoRelatorioFinal) return;
-   corpo.innerHTML='<tr><td colspan="'+ncol+'">Não foi possível carregar o Relatório Final.</td></tr>';
+   corpo.innerHTML='<tr><td colspan="'+ncol+'">Não foi possível carregar o Relatório Final: '+escaparRelatorio(e&&e.message?e.message:String(e))+'. Abra o relatório de novo; se continuar, recarregue a página.</td></tr>';
    contador.textContent='';
  }
 }
@@ -1050,6 +1088,7 @@ async function carregarAnalise(){
      :'';
    ['avisoDashboard','avisoResultados','avisoPendencias'].forEach(id=>{const el=document.getElementById(id);el.textContent=aviso;el.hidden=!aviso;});
    document.getElementById('resumoProcessamento').innerHTML=d.processada?renderResumo(d):'';
+   if(!atualizacaoResultados) marcarResultadosDesatualizados(!!d.resultadosDesatualizados);
  }catch(e){
    document.getElementById('resumoAnalise').textContent='Não foi possível carregar a análise atual.';
  }
@@ -1189,7 +1228,8 @@ async function iniciarNovaAnalise(){
    // Tela de volta ao estado inicial: seleção de arquivos, listas e filtros
    const input=document.getElementById('arquivos');
    if(input){ input.value=''; atualizarSelecaoXml(); }
-   resultados=[]; resultadosFiltrados=[]; respostas=[];
+   resultados=[]; resultadosFiltrados=[]; respostas=[]; pendentes=[]; pendentesFiltradas=[];
+   validacoes.clear(); marcarResultadosDesatualizados(false);
    ['busca','filtroClass','filtroCst'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
    const filtro=document.getElementById('filtroResultado'); if(filtro) filtro.value='';
    await recarregarTudo();
@@ -2346,33 +2386,35 @@ document.addEventListener('toggle',e=>{
  if(c&&!c.dataset.pronto){ const v=resultadosFiltrados[+d.dataset.aud]; if(v){ c.innerHTML=auditoriaDetalhadaResultado(v); c.dataset.pronto='1'; } }
 },true);
 
-document.addEventListener('click',e=>{
- const b=e.target.closest('[data-validar]');
- if(b){
- b.style.setProperty('background','#2C4233','important');
- b.style.setProperty('color','white','important');
-}
-},true);
-document.addEventListener('click',e=>{
- const b=e.target.closest('[data-validar]');
- if(b){
-  b.classList.add('validacao-selecionada');
 
-  requestAnimationFrame(()=>{
-   requestAnimationFrame(()=>{
-    validar(b.dataset.ncm,b.dataset.cprod,b.dataset.regra,b.dataset.validar);
-   });
-  });
- }
-});
-
+let geracaoPendentes=0;
 async function carregarPendentes(){
+ const minha=++geracaoPendentes;
+ const seqAoBuscar=seqValidacao;
+ const t0=Date.now();
+ // Contagem de uma lista anterior não fica na tela enquanto esta carrega
+ document.getElementById('contagemPendencias').textContent='Carregando pendências...';
+ if(!pendentes.length) document.getElementById('listaPendentes').innerHTML='<p>Carregando pendências...</p>';
  try{
    const r=await fetch('/api/fila-validacao');
-   pendentes=await r.json();
+   const lista=await r.json();
+   if(!r.ok) throw new Error(lista.detalhe||lista.erro||'HTTP '+r.status);
+   // Resposta de uma busca mais antiga que outra já mostrada: descartada
+   if(minha!==geracaoPendentes) return;
+   for(const p of lista){
+     const e=validacoes.get(chaveValidacao(p.ncm,p.cProd));
+     if(!e) continue;
+     // Escolha sendo gravada, ou feita depois do início desta busca: vale a da tela, não a do servidor
+     if(e.salvando>0||e.alteradoEm>seqAoBuscar) p.respostasDestaAnalise=e.exibidas.slice();
+     else e.confirmadas=e.exibidas=(p.respostasDestaAnalise||[]).slice();
+   }
+   pendentes=lista;
+   console.info('[pendencias] '+lista.length+' produto(s) em '+(Date.now()-t0)+' ms');
    renderPendentes();
  }catch(e){
-   document.getElementById('listaPendentes').innerHTML='<p>Não foi possível carregar as pendências.</p>';
+   console.error('[pendencias] falhou',e);
+   if(minha!==geracaoPendentes) return;
+   document.getElementById('listaPendentes').innerHTML='<p>Não foi possível carregar as pendências: '+esc(e.message)+'. Abra a aba de novo; se continuar, recarregue a página.</p>';
  }
 }
 
@@ -2540,38 +2582,178 @@ function perguntaMultiplaEscolha(p){
   '<div class="small">Não sabe? Deixe sem resposta: o produto continua pendente.</div>'+
  '</div>';
 }
-document.addEventListener('click',e=>{
- const b=e.target.closest('[data-escolha]');
- if(!b) return;
- b.classList.add('validacao-selecionada');
- b.disabled=true;
- if(b.dataset.escolha==='REGRA') validar(b.dataset.ncm,b.dataset.cprod,b.dataset.regra,'SIM');
- else validarEscolha(b.dataset.ncm,b.dataset.cprod,b.dataset.regras.split(',').filter(Boolean),b.dataset.escolha);
+
+/* ---------------- Validação: escolha imediata, gravação confiável ----------------
+ * Cada clique marca a opção na hora e é gravado em seguida (um pedido por vez para cada produto, na ordem dos
+ * cliques). A gravação NÃO reprocessa a análise: os resultados ficam "desatualizados" e são refeitos uma vez
+ * (atualizarResultados) antes de mostrar Análise, Dashboard, Resultados e Relatório Final, ou pelo botão do aviso.
+ * Se a gravação falhar, a marcação volta para a última escolha gravada e o card mostra o erro.
+ * Uma busca da lista iniciada antes de um clique nunca desfaz esse clique (carregarPendentes).
+ */
+const validacoes=new Map();
+let seqValidacao=0;
+let resultadosDesatualizadosUI=false;
+let atualizacaoResultados=null;
+const chaveValidacao=(ncm,cProd)=>ncm+'|'+cProd;
+function validacoesSalvando(){ for(const e of validacoes.values()) if(e.salvando>0) return true; return false; }
+function respostasDoProduto(ncm,cProd){
+ const p=pendentes.find(x=>x.ncm===ncm&&x.cProd===cProd);
+ if(p) return (p.respostasDestaAnalise||[]).slice();
+ return (respostas||[]).filter(x=>x.ncm===ncm&&x.cProd===cProd);
+}
+/** Mesma regra do servidor (registrarRespostas): cada resposta substitui a anterior da mesma regra. */
+function aplicarRespostas(lista,ncm,cProd,pedido){
+ const ids=new Set(pedido.regraIds);
+ const hoje=new Date().toISOString().slice(0,10);
+ return lista.filter(x=>!ids.has(x.regraId)).concat(pedido.regraIds.map(regraId=>Object.assign({ncm,cProd,regraId,resposta:pedido.resposta,autor:'Sistema',data:hoje},pedido.escolha?{escolha:pedido.escolha}:{})));
+}
+function assinaturaRespostas(lista){
+ const ult=lista.length?lista[lista.length-1]:null;
+ return lista.map(x=>x.regraId+':'+x.resposta+':'+(x.escolha||'')).sort().join('|')+'#'+(ult?ult.regraId+':'+ult.resposta+':'+(ult.escolha||''):'');
+}
+function definirRespostasDoProduto(ncm,cProd,lista){
+ const e=validacoes.get(chaveValidacao(ncm,cProd));
+ if(e) e.exibidas=lista.slice();
+ for(const p of pendentes) if(p.ncm===ncm&&p.cProd===cProd) p.respostasDestaAnalise=lista.slice();
+ respostas=(respostas||[]).filter(x=>!(x.ncm===ncm&&x.cProd===cProd)).concat(lista);
+}
+function estadoValidacaoHtml(p){
+ const e=validacoes.get(chaveValidacao(p.ncm,p.cProd));
+ if(!e||!e.mensagem) return '';
+ const classe=e.erro?' erro':e.salvando>0?' salvando':'';
+ return '<div class="estado-validacao'+classe+'" role="'+(e.erro?'alert':'status')+'">'+esc(e.mensagem)+'</div>';
+}
+/** Redesenha só o card do produto (Pendências) e, se aberta, a lista de Resultados. */
+function atualizarCartaoValidacao(ncm,cProd){
+ const p=pendentes.find(x=>x.ncm===ncm&&x.cProd===cProd);
+ const chave=chaveValidacao(ncm,cProd);
+ if(p) document.querySelectorAll('#listaPendentes .pendente').forEach(el=>{ if(el.dataset.produto===chave) el.outerHTML=cartaoPendente(p); });
+ if(document.getElementById('resultados').classList.contains('active')) renderResultados();
+}
+async function lerRespostaJson(r){
+ const texto=await r.text();
+ try{ return JSON.parse(texto); }catch(e){ return {erro:'resposta inválida do processamento (HTTP '+r.status+')'}; }
+}
+async function enviarValidacao(ncm,cProd,pedido){
+ let r;
+ try{
+   r=await fetch('/api/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({ncm,cProd,autor:'Sistema'},pedido))});
+ }catch(e){
+   throw new Error('sem comunicação com o processamento ('+(e&&e.message?e.message:e)+').');
+ }
+ const d=await lerRespostaJson(r);
+ if(d.interrompido) throw new Error('a análise foi reiniciada por "Nova análise".');
+ if(!r.ok) throw new Error((d.detalhe||d.erro||'erro HTTP '+r.status)+'.');
+ if(!Array.isArray(d.respostas)) throw new Error('o processamento não confirmou a gravação.');
+ return d;
+}
+/** Clique numa opção de validação: marca na hora, grava em seguida e confirma (ou desfaz, com o erro). */
+function escolherValidacao(ncm,cProd,pedido){
+ const chave=chaveValidacao(ncm,cProd);
+ const atuais=respostasDoProduto(ncm,cProd);
+ let e=validacoes.get(chave);
+ if(!e){ e={seq:0,alteradoEm:0,confirmadas:atuais.slice(),exibidas:atuais.slice(),salvando:0,erro:false,mensagem:'',fila:Promise.resolve()}; validacoes.set(chave,e); }
+ const novas=aplicarRespostas(atuais,ncm,cProd,pedido);
+ // Clique repetido na opção que já está marcada e gravada: nada a fazer (sem pedido duplicado)
+ if(!e.erro&&e.salvando===0&&assinaturaRespostas(novas)===assinaturaRespostas(atuais)&&assinaturaRespostas(atuais)===assinaturaRespostas(e.confirmadas)) return;
+ const seq=++seqValidacao;
+ e.seq=seq; e.alteradoEm=seq; e.salvando++; e.erro=false; e.mensagem='Gravando a escolha...';
+ definirRespostasDoProduto(ncm,cProd,novas);
+ atualizarCartaoValidacao(ncm,cProd);
+ const t0=Date.now();
+ e.fila=e.fila.then(()=>enviarValidacao(ncm,cProd,pedido)).then(d=>{
+   e.confirmadas=d.respostas.slice();
+   console.info('[validacao] gravada '+chave+' '+JSON.stringify(pedido)+' em '+(Date.now()-t0)+' ms');
+   if(e.seq===seq){ definirRespostasDoProduto(ncm,cProd,d.respostas); e.mensagem='Escolha gravada.'+(d.resultadosDesatualizados?' Os resultados e relatórios serão atualizados com ela.':''); }
+   marcarResultadosDesatualizados(!!d.resultadosDesatualizados||resultadosDesatualizadosUI);
+ },erro=>{
+   console.error('[validacao] falhou '+chave+' '+JSON.stringify(pedido),erro);
+   if(e.seq===seq){
+     definirRespostasDoProduto(ncm,cProd,e.confirmadas);
+     e.erro=true;
+     e.mensagem='A escolha NÃO foi gravada: '+erro.message+' A marcação voltou para a última escolha gravada. Clique de novo para tentar.';
+   }
+ }).finally(()=>{ e.salvando--; atualizarCartaoValidacao(ncm,cProd); });
+}
+document.addEventListener('click',ev=>{
+ const b=ev.target.closest('[data-escolha],[data-validar],[data-validar-lote]');
+ if(!b||b.disabled) return;
+ const ncm=b.dataset.ncm, cProd=b.dataset.cprod;
+ let pedido;
+ if(b.dataset.escolha!==undefined){
+   pedido=b.dataset.escolha==='REGRA'
+     ?{regraIds:[b.dataset.regra],resposta:'SIM'}
+     :{regraIds:(b.dataset.regras||'').split(',').filter(Boolean),resposta:'NAO',escolha:b.dataset.escolha};
+   // Produto sem regra candidata (só a natureza do item em aberto): o servidor grava a escolha com este identificador
+   if(!pedido.regraIds.length) pedido.regraIds=['NATUREZA_DO_ITEM'];
+ }else if(b.dataset.validar!==undefined){
+   pedido={regraIds:[b.dataset.regra],resposta:b.dataset.validar};
+ }else{
+   pedido={regraIds:(b.dataset.regras||'').split(',').filter(Boolean),resposta:'NAO'};
+ }
+ if(!pedido.regraIds.length&&!pedido.escolha) return;
+ escolherValidacao(ncm,cProd,pedido);
 });
-async function validarEscolha(ncm,cProd,regraIds,escolha){
- const r=await fetch('/api/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm,cProd,regraIds,resposta:'NAO',escolha,autor:'Sistema'})});
- const d=await r.json();
- if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
- await recarregarTudo();
+
+/* ---------------- Resultados desatualizados ---------------- */
+function marcarResultadosDesatualizados(sim){
+ resultadosDesatualizadosUI=!!sim;
+ if(!atualizacaoResultados) mostrarAvisoValidacoes(resultadosDesatualizadosUI?'Há validações registradas que ainda não estão nos resultados. Elas entram automaticamente ao abrir Análise, Dashboard, Resultados ou o Relatório Final.':'',false,true);
+}
+function mostrarAvisoValidacoes(texto,erro,botao){
+ const el=document.getElementById('avisoValidacoes');
+ if(!el) return;
+ document.getElementById('textoAvisoValidacoes').textContent=texto;
+ el.classList.toggle('erro',!!erro);
+ el.hidden=!texto;
+ const b=document.getElementById('btnAtualizarResultados');
+ b.hidden=!botao; b.disabled=!!atualizacaoResultados;
+}
+/** Reprocessa uma vez com todas as validações registradas (espera as gravações em andamento). Pedidos simultâneos usam a mesma atualização. */
+function garantirResultadosAtualizados(){
+ if(atualizacaoResultados) return atualizacaoResultados;
+ atualizacaoResultados=(async()=>{
+   await Promise.allSettled([...validacoes.values()].map(e=>e.fila));
+   const t0=Date.now();
+   mostrarAvisoValidacoes('Atualizando os resultados com as validações registradas. Com muitos XMLs isso pode levar cerca de 1 minuto; as escolhas já estão gravadas.',false,false);
+   let r;
+   try{ r=await fetch('/api/atualizar-resultados',{method:'POST'}); }
+   catch(e){ throw new Error('sem comunicação com o processamento ('+(e&&e.message?e.message:e)+')'); }
+   const d=await lerRespostaJson(r);
+   if(d.interrompido) throw new Error('a análise foi reiniciada por "Nova análise"');
+   if(!r.ok) throw new Error(d.detalhe||d.erro||'erro HTTP '+r.status);
+   console.info('[resultados] '+(d.atualizado?'atualizados com as validações':'já estavam atualizados')+' em '+(Date.now()-t0)+' ms');
+   resultadosDesatualizadosUI=false;
+   return !!d.atualizado;
+ })();
+ atualizacaoResultados.then(()=>{
+   atualizacaoResultados=null;
+   mostrarAvisoValidacoes('',false,false);
+ },e=>{
+   atualizacaoResultados=null;
+   console.error('[resultados] atualização falhou',e);
+   mostrarAvisoValidacoes('Os resultados não foram atualizados com as validações: '+e.message+'. As escolhas continuam gravadas. Tente de novo.',true,true);
+ });
+ return atualizacaoResultados;
+}
+async function atualizarResultadosAgora(){
+ try{
+   await garantirResultadosAtualizados();
+   carregarAnalise();
+   if(document.getElementById('pendentes').classList.contains('active')) carregarPendentes();
+   if(document.getElementById('resultados').classList.contains('active')) carregarResultados();
+   if(document.getElementById('dashboard').classList.contains('active')){ carregarDashboard(); carregarAlertas(); }
+   if(document.getElementById('relatorio-final').classList.contains('active')) carregarRelatorioFinal();
+ }catch(e){ /* o aviso mostra o erro */ }
 }
 
-function renderPendentes(){
- const produto=(document.getElementById('buscaPendenteProduto').value||'').toLowerCase().trim();
- const cProd=(document.getElementById('buscaPendenteCprod').value||'').toLowerCase().trim();
- const ncm=(document.getElementById('buscaPendenteNcm').value||'').toLowerCase().trim();
- pendentesFiltradas=pendentes.filter(p=>
-   (!produto||(p.produto||'').toLowerCase().includes(produto)) &&
-   (!cProd||(p.cProd||'').toLowerCase().includes(cProd)) &&
-   (!ncm||(p.ncm||'').toLowerCase().includes(ncm))
- );
- document.getElementById('contagemPendencias').textContent=pendentesFiltradas.length+' pendência(s)';
- document.getElementById('listaPendentes').innerHTML=pendentesFiltradas.length
-  ?pendentesFiltradas.map(p=>{
+/** Card de um produto em Pendências (também usado para atualizar só esse card depois de uma escolha). */
+function cartaoPendente(p){
     const regras=p.regrasDetalhe||(p.regras||[]).map(id=>({id}));
-    return '<div class="pendente">'+
+    return '<div class="pendente" data-produto="'+esc(chaveValidacao(p.ncm,p.cProd))+'">'+
      '<div class="pend-topo">'+
       '<div><span class="rotulo">Validação do benefício</span>'+
-       '<span class="rotulo">Produto</span><strong>'+esc(p.produto)+'</strong>'+
+       '<span class="rotulo">Produto</span><strong>'+esc(p.produto)+'</strong>'+((p.respostasDestaAnalise||[]).length?'<span class="selo-validado">Validado nesta análise</span>':'')+
        '<div class="small">cProd '+esc(p.cProd)+' · '+p.itens+' item(ns) · base '+formatarNumero(p.base)+'</div></div>'+
       '<div class="pend-ncm"><span class="rotulo">NCM</span><span class="valor">'+esc(p.ncm)+'</span></div>'+
      '</div>'+
@@ -2581,6 +2763,7 @@ function renderPendentes(){
       ?selosDoProduto(p)+enquadramentosAgrupados(p,regras)
       :regras.map((g,i)=>blocoRegraCandidata(g,p,i,regras.length)).join(''))+
      perguntaMultiplaEscolha(p)+
+     estadoValidacaoHtml(p)+
      (p.regrasBloqueadasDetalhe||[]).map(blocoBloqueio).join('')+
      '<details class="nao-imprimir"><summary>Detalhes</summary>'+
       '<p class="small">'+esc(reformularMotivo(p.motivo))+'</p>'+
@@ -2588,37 +2771,27 @@ function renderPendentes(){
       (alertasUI.porCartaoHtml[p.ncm+'|'+p.cProd+'|'+p.produto]||'')+
      '</details>'+
     '</div>';
-  }).join('')
-  :'<p>Nenhuma pendência na análise atual.</p>';
+}
+function renderPendentes(){
+ const produto=(document.getElementById('buscaPendenteProduto').value||'').toLowerCase().trim();
+ const cProd=(document.getElementById('buscaPendenteCprod').value||'').toLowerCase().trim();
+ const ncm=(document.getElementById('buscaPendenteNcm').value||'').toLowerCase().trim();
+ pendentesFiltradas=pendentes.filter(p=>
+   (!produto||(p.produto||'').toLowerCase().includes(produto)) &&
+   (!cProd||(p.cProd||'').toLowerCase().includes(cProd)) &&
+   (!ncm||(p.ncm||'').toLowerCase().includes(ncm))
+ );
+ const aguardando=pendentesFiltradas.filter(p=>!p.respondida), validados=pendentesFiltradas.filter(p=>p.respondida);
+ document.getElementById('contagemPendencias').textContent=aguardando.length+' pendência(s)'+(validados.length?' · '+validados.length+' validado(s) nesta análise':'');
+ document.getElementById('listaPendentes').innerHTML=
+  (aguardando.length?aguardando.map(cartaoPendente).join(''):'<p>Nenhuma pendência na análise atual.</p>')+
+  (validados.length?'<h3 class="titulo-validados">Validados nesta análise ('+validados.length+')</h3><p class="small">A escolha de cada produto continua marcada e pode ser alterada: clique em outra opção.</p>'+validados.map(cartaoPendente).join(''):'');
 }
 
 ['buscaPendenteProduto','buscaPendenteCprod','buscaPendenteNcm'].forEach(id=>{
  document.getElementById(id).addEventListener('input',renderPendentes);
 });
 
-document.addEventListener('click',e=>{
- const b=e.target.closest('[data-validar-lote]');
- if(!b) return;
- b.classList.add('validacao-selecionada');
- b.disabled=true;
- validarLote(b.dataset.ncm,b.dataset.cprod,b.dataset.regras.split(','),'NAO');
-});
-async function validarLote(ncm,cProd,regraIds,resposta){
- const r=await fetch('/api/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm,cProd,regraIds,resposta,autor:'Sistema'})});
- const d=await r.json();
- if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
- await recarregarTudo();
-}
-async function validar(ncm,cProd,regraId,resposta){
- const r=await fetch('/api/validar',{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({ncm,cProd,regraId,resposta,autor:'Sistema'})
- });
- const d=await r.json();
- if(!r.ok){alert(d.erro||'Erro ao validar.');return;}
- await recarregarTudo();
-}
 
 /* ---------- Benefício ou redução de alíquota por atividade (aba Análise; independe do produto/NCM) ---------- */
 const CLASSE_BENEFICIO_ATIVIDADE={CONFIRMADO:'selo-oficial',REQUER_VALIDACAO:'selo-pendente',NENHUM:'selo-aviso'};
