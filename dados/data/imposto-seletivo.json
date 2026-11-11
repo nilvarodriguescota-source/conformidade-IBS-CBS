@@ -1,0 +1,644 @@
+{
+  "versao": "2026-11-11.2",
+  "descricao": "Base normativa do Imposto Seletivo (IS). Separada da base do IBS/CBS (data/base-normativa.json): o IS é um tributo distinto, com incidência, cálculo e validação próprios, e nada aqui altera CST, cClassTrib ou créditos de IBS/CBS.",
+  "historico": [
+    {
+      "versao": "2026-11-11.1",
+      "data": "2026-11-11",
+      "alteracao": "Criação da base do IS: incidência pelo Anexo XVII da LC 214/2025; contribuinte (fabricante, importador) por CFOP; vigência das alíquotas de 2027; alíquotas da planilha do cliente cadastradas como pendentes de conferência com a MP 1.399/2026, cujo texto não pôde ser obtido (planalto.gov.br bloqueou o acesso automatizado).",
+      "fontes": [
+        "LC214",
+        "PLANILHA_CLIENTE",
+        "MP1399"
+      ]
+    },
+    {
+      "versao": "2026-11-11.2",
+      "data": "2026-11-11",
+      "alteracao": "Alíquotas conferidas com o texto da MP 1.399/2026 (fornecido pelo cliente): Anexo IV (bebidas açucaradas, bebidas alcoólicas e fumígenos, inclusive as exceções de 16%, 20% e 66,7% + R$ 3,50) e Anexo V (aeronaves e embarcações; veículos dependem dos ajustes dos Anexos I a III). Início dos efeitos em 02/02/2027 conferido (art. 19). Parcela específica de bebidas alcoólicas e fumígenos reduzida a zero até 31/12/2027 (art. 6º, II), exceto cigarros e cigarrilhas. Bens minerais com alíquota zero até 31/12/2027 (art. 6º, III, a, 3). As 5 alíquotas da planilha do cliente conferem com o Anexo IV.",
+      "fontes": [
+        "MP1399",
+        "LC214"
+      ]
+    }
+  ],
+  "fontes": {
+    "LC214": {
+      "titulo": "Lei Complementar nº 214, de 16 de janeiro de 2025 (texto compilado, com a LC nº 227/2026)",
+      "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm",
+      "arquivo": "data/fontes/lc214/lcp214.htm",
+      "sha256": "5702cb10bfbf21d59cc52db2db2a6e3e719243dbedca97f6f82c652bc289e9e4",
+      "situacao": "conferida"
+    },
+    "MP1399": {
+      "titulo": "Medida Provisória nº 1.399, de 4 de novembro de 2026 (DOU de 4.11.2026, edição extra)",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2026/mpv/mpv1399.htm",
+      "arquivo": "data/fontes/imposto-seletivo/mp1399-2026.txt",
+      "sha256": "8dd58c214b1ca3f6421fb4dc79f0b204c973a12a3ae15578bd0044091887826e",
+      "situacao": "conferida",
+      "observacao": "Texto fornecido pelo cliente em 11/11/2026, copiado da página oficial; o arquivo guarda os dispositivos e anexos usados pela base."
+    },
+    "PLANILHA_CLIENTE": {
+      "titulo": "Planilha do cliente imposto_seletivo.xlsx (tabela de alíquotas do IS de 2027 por categoria)",
+      "arquivo": "data/fontes/imposto-seletivo/planilha-cliente-imposto-seletivo.xlsx",
+      "sha256": "1e9c2d9e2161956ea829d705931f0a41b8d7b0dbb37b5f71432c27950608da17",
+      "situacao": "referencia",
+      "observacao": "A planilha tem uma aba com 5 linhas (categoria, alíquota inicial, fator de conversão, alíquota final). Não traz produtos, NCMs nem descrições. As 5 alíquotas conferem com o Anexo IV da MP 1.399/2026."
+    }
+  },
+  "fundamentos": {
+    "INCIDENCIA": "LC 214/2025, art. 409, § 1º, e Anexo XVII",
+    "EMBALAGEM_PRIMARIA": "LC 214/2025, art. 409, § 2º: produtos fumígenos e bebidas alcoólicas estão sujeitos ao IS quando acondicionados em embalagem primária (em contato direto com o produto e destinada ao consumidor final)",
+    "MONOFASICO": "LC 214/2025, art. 410: o IS incide uma única vez sobre o bem, vedado qualquer aproveitamento ou geração de crédito do imposto",
+    "FATO_GERADOR": "LC 214/2025, art. 412, I e VIII: primeiro fornecimento do bem e importação",
+    "CONTRIBUINTE": "LC 214/2025, art. 424: contribuinte é o fabricante (no primeiro fornecimento), o importador, o arrematante e o produtor-extrativista",
+    "NAO_INCIDENCIA_REDUCAO": "LC 214/2025, art. 413, III: o IS não incide sobre bens e serviços com alíquotas de IBS/CBS reduzidas nos termos do § 1º do art. 9º da EC 132/2023",
+    "BASE_CALCULO": "LC 214/2025, art. 414: valor de venda na comercialização (I); valor de referência na comercialização e importação de produtos fumígenos (III, c); § 1º: com alíquota específica, base em unidade de medida",
+    "ALIQUOTAS": "MP 1.399/2026, art. 3º (alíquota inicial × fator de conversão dos Anexos IV e V); LC 214/2025, art. 422",
+    "IMPORTACAO": "LC 214/2025, art. 434, §§ 1º a 3º, e MP 1.399/2026, art. 8º: na importação, alíquota do art. 3º × fator de ajuste (1,45 para bebidas alcoólicas e açucaradas; 1,17 para veículos, embarcações e aeronaves; 1,00 nos demais casos) quando a base é o valor aduaneiro + Imposto de Importação",
+    "INICIO_COBRANCA": "MP 1.399/2026, art. 19: produz efeitos a partir de 2 de fevereiro de 2027 (LC 214/2025, art. 422: alíquotas do IS em lei ordinária)",
+    "ESPECIFICA_ZERO": "MP 1.399/2026, art. 6º, II: até 31/12/2027, as alíquotas específicas de bebidas alcoólicas e produtos fumígenos ficam reduzidas a zero, exceto cigarros e cigarrilhas do art. 3º, § 1º, II",
+    "PEQUENOS_PRODUTORES": "MP 1.399/2026, art. 6º, IV, e Anexo VI: pequenos produtores (até 250.000 litros de álcool) têm a alíquota ad valorem de bebidas alcoólicas reduzida em 40%, 20% ou 10%",
+    "VALOR_REFERENCIA_FUMIGENOS": "MP 1.399/2026, art. 6º, I: até 31/12/2027, valor de referência dos fumígenos = 15% do preço de venda a varejo tabelado, ou valor líquido de venda na primeira operação entre partes não relacionadas",
+    "NAO_INCIDENCIA_VEICULOS": "MP 1.399/2026, art. 5º: o IS não incide sobre caminhões e sobre veículos, aeronaves e embarcações de uso operacional das Forças Armadas ou da segurança pública; art. 4º: alíquota zero para PcD/TEA/táxi, versão sustentável e embarcações e aeronaves sustentáveis",
+    "APOS_2027": "MP 1.399/2026, art. 15 e art. 19: as alíquotas a partir de 1º/01/2028 serão estabelecidas em lei"
+  },
+  "vigencia": {
+    "inicioAliquotas": "2027-02-02",
+    "fimRegimeTransitorio": "2027-12-31",
+    "fonte": "MP1399",
+    "situacao": "conferida",
+    "aposFim": "As alíquotas a partir de 01/01/2028 dependem da lei prevista no art. 15 da MP 1.399/2026 e não estão cadastradas: essas operações ficam como \"necessita validação fiscal\", sem alíquota."
+  },
+  "categorias": [
+    {
+      "id": "BEBIDAS_ACUCARADAS",
+      "nome": "Bebidas açucaradas",
+      "codigos": [
+        "22021000"
+      ],
+      "descricaoLegal": "Bebidas açucaradas (Anexo XVII da LC 214/2025: código 2202.10.00 da NCM/SH). Na TIPI, 2202.10.00 são águas, incluindo as minerais e as gaseificadas, adicionadas de açúcar ou de outros edulcorantes ou aromatizadas.",
+      "fundamento": "LC 214/2025, art. 409, § 1º, V, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false
+    },
+    {
+      "id": "CERVEJAS",
+      "nome": "Bebidas alcoólicas — cervejas de malte",
+      "codigos": [
+        "2203"
+      ],
+      "descricaoLegal": "Bebidas alcoólicas da posição 22.03 da NCM/SH (cervejas de malte)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "VINHOS_FERMENTADOS",
+      "nome": "Bebidas alcoólicas — vinhos e demais fermentados",
+      "codigos": [
+        "2204",
+        "2206"
+      ],
+      "descricaoLegal": "Bebidas alcoólicas das posições 22.04 (vinhos) e 22.06 (outras bebidas fermentadas) da NCM/SH",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "VERMUTES",
+      "nome": "Bebidas alcoólicas — vermutes",
+      "codigos": [
+        "2205"
+      ],
+      "descricaoLegal": "Bebidas alcoólicas da posição 22.05 da NCM/SH (vermutes e outros vinhos aromatizados)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "DESTILADOS",
+      "nome": "Bebidas alcoólicas — destilados",
+      "codigos": [
+        "2208"
+      ],
+      "descricaoLegal": "Bebidas alcoólicas da posição 22.08 da NCM/SH (aguardentes, licores e outras bebidas espirituosas)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, IV e § 2º, e Anexo XVII",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true
+    },
+    {
+      "id": "FUMIGENOS",
+      "nome": "Produtos fumígenos",
+      "codigos": [
+        "2401",
+        "2402",
+        "2403",
+        "2404"
+      ],
+      "descricaoLegal": "Produtos fumígenos das posições 24.01, 24.02, 24.03 e 24.04 da NCM/SH",
+      "fundamento": "LC 214/2025, art. 409, § 1º, III e § 2º, e Anexo XVII; MP 1.399/2026, art. 6º, I (valor de referência)",
+      "embalagemPrimaria": true,
+      "exigeAliquotaEspecifica": true,
+      "baseValorReferencia": true
+    },
+    {
+      "id": "VEICULOS",
+      "nome": "Veículos",
+      "codigos": [
+        "8703",
+        "870421",
+        "870431",
+        "87044100",
+        "87045100",
+        "87046000",
+        "87049000"
+      ],
+      "descricaoLegal": "Veículos da posição 87.03 e dos códigos 8704.21, 8704.31, 8704.41.00, 8704.51.00, 8704.60.00 e 8704.90.00, exceto os caminhões, ressalvados os de uso operacional das Forças Armadas ou de Segurança Pública",
+      "fundamento": "LC 214/2025, art. 409, § 1º, I, arts. 419 e 420, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false,
+      "excecoesNoAnexo": true
+    },
+    {
+      "id": "AERONAVES_EMBARCACOES",
+      "nome": "Aeronaves e embarcações",
+      "codigos": [
+        "8802",
+        "8903"
+      ],
+      "excluidos": [
+        "88026000"
+      ],
+      "descricaoLegal": "Aeronaves da posição 88.02 (exceto 8802.60.00) e embarcações com motor da posição 89.03, ressalvadas as de uso operacional das Forças Armadas ou de Segurança Pública",
+      "fundamento": "LC 214/2025, art. 409, § 1º, II, art. 421, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false,
+      "excecoesNoAnexo": true
+    },
+    {
+      "id": "BENS_MINERAIS",
+      "nome": "Bens minerais",
+      "codigos": [
+        "2601",
+        "27090010",
+        "27111100",
+        "27112100"
+      ],
+      "descricaoLegal": "Bens minerais: posição 26.01 e códigos 2709.00.10, 2711.11.00 e 2711.21.00 da NCM/SH (e o carvão mineral)",
+      "fundamento": "LC 214/2025, art. 409, § 1º, VI, art. 422, § 2º (máximo de 0,25%), art. 423, e Anexo XVII",
+      "embalagemPrimaria": false,
+      "exigeAliquotaEspecifica": false,
+      "excecoesNoAnexo": true
+    }
+  ],
+  "cfops": {
+    "fundamento": "Tabela de CFOP (Convênio s/nº de 1970, Ajuste SINIEF 07/01): vendas de produção do estabelecimento × vendas de mercadoria adquirida ou recebida de terceiros. Só o fabricante (primeiro fornecimento) e o importador são contribuintes do IS (LC 214/2025, art. 424).",
+    "producaoPropria": [
+      "5101",
+      "5103",
+      "5105",
+      "5401",
+      "5402",
+      "6101",
+      "6103",
+      "6105",
+      "6401",
+      "6402",
+      "7101"
+    ],
+    "revenda": [
+      "5102",
+      "5104",
+      "5106",
+      "5403",
+      "5405",
+      "6102",
+      "6104",
+      "6106",
+      "6403",
+      "6404",
+      "7102"
+    ]
+  },
+  "aliquotas": [
+    {
+      "id": "IS-2027-BEBIDAS-ACUCARADAS",
+      "categoria": "BEBIDAS_ACUCARADAS",
+      "codigos": [
+        "22021000"
+      ],
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.026,
+      "fatorConversao": 1.0,
+      "aliquota": 0.026,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 2,6% (2,6% × fator 1,00)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida",
+      "observacao": "A MP não exclui bebidas sem açúcar: vale para todo o código 2202.10.00."
+    },
+    {
+      "id": "IS-2027-CERVEJAS",
+      "categoria": "CERVEJAS",
+      "codigos": [
+        "2203"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.039,
+      "fatorConversao": 1.07,
+      "aliquota": 0.042,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 4,2% (3,9% × fator 1,07); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-VINHOS-FERMENTADOS",
+      "categoria": "VINHOS_FERMENTADOS",
+      "codigos": [
+        "2204",
+        "2206"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.065,
+      "fatorConversao": 1.23,
+      "aliquota": 0.08,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 8% (6,5% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-VINHOS-MADEIRA-PORTO-XEREZ",
+      "categoria": "VINHOS_FERMENTADOS",
+      "codigos": [
+        "22042100",
+        "22042211",
+        "22042219",
+        "22042910"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.13,
+      "fatorConversao": 1.23,
+      "aliquota": 0.16,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": "vinho da madeira, do porto ou de xerez",
+      "regraCalculo": "Valor do IS = base de cálculo × 16% (13% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-FERMENTADOS-ACIMA-14",
+      "categoria": "VINHOS_FERMENTADOS",
+      "codigos": [
+        "22060090"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.13,
+      "fatorConversao": 1.23,
+      "aliquota": 0.16,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": "teor alcoólico superior a 14%",
+      "regraCalculo": "Valor do IS = base de cálculo × 16% (13% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-VERMUTES",
+      "categoria": "VERMUTES",
+      "codigos": [
+        "2205"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.0975,
+      "fatorConversao": 1.23,
+      "aliquota": 0.12,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 12% (9,75% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-REFRESCANTES",
+      "categoria": "DESTILADOS",
+      "codigos": [
+        "22089000"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.13,
+      "fatorConversao": 1.23,
+      "aliquota": 0.16,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": "bebida refrescante com teor alcoólico inferior a 8%",
+      "regraCalculo": "Valor do IS = base de cálculo × 16% (13% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-AGUARDENTE-CANA",
+      "categoria": "DESTILADOS",
+      "codigos": [
+        "22084000"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.1625,
+      "fatorConversao": 1.23,
+      "aliquota": 0.2,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": "rum ou aguardente da destilação de produtos da cana-de-açúcar, exceto os obtidos do melaço",
+      "regraCalculo": "Valor do IS = base de cálculo × 20% (16,25% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-DESTILADOS",
+      "categoria": "DESTILADOS",
+      "codigos": [
+        "2208"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.195,
+      "fatorConversao": 1.23,
+      "aliquota": 0.24,
+      "especifica": {
+        "valor": 0,
+        "unidade": "litro de álcool",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 24% (19,5% × fator 1,23); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-CIGARROS",
+      "categoria": "FUMIGENOS",
+      "codigos": [
+        "24022000",
+        "24021000"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.667,
+      "fatorConversao": 1.0,
+      "aliquota": 0.667,
+      "especifica": {
+        "valor": 3.5,
+        "unidade": "vintena"
+      },
+      "condicao": "cigarros do 2402.20.00 (exceto Ex 01) ou cigarrilhas do Ex 01 do 2402.10.00",
+      "regraCalculo": "Valor do IS = valor de referência × 66,7% + R$ 3,50 por vintena",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV e art. 3º, § 1º, II",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-FUMIGENOS",
+      "categoria": "FUMIGENOS",
+      "codigos": [
+        "2401",
+        "2402",
+        "2403",
+        "2404"
+      ],
+      "modalidade": "ad_valorem_e_especifica",
+      "aliquotaInicial": 0.3,
+      "fatorConversao": 1.25,
+      "aliquota": 0.375,
+      "especifica": {
+        "valor": 0,
+        "unidade": "unidade",
+        "fundamento": "ESPECIFICA_ZERO"
+      },
+      "condicao": null,
+      "regraCalculo": "Valor do IS = valor de referência × 37,5% (30% × fator 1,25); parcela específica zero até 31/12/2027 (art. 6º, II)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo IV",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-VEICULOS-8703",
+      "categoria": "VEICULOS",
+      "codigos": [
+        "8703"
+      ],
+      "modalidade": "ajustes_por_veiculo",
+      "aliquotaInicial": null,
+      "fatorConversao": 1.21,
+      "aliquota": null,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Alíquota = (6,3% + ajustes do Anexo II) × fator 1,21",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo V e Anexos I e II",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida",
+      "observacao": "Os ajustes dependem de propulsão, eficiência, potência, desempenho estrutural e reciclabilidade do veículo, que não estão no XML."
+    },
+    {
+      "id": "IS-2027-VEICULOS-8704",
+      "categoria": "VEICULOS",
+      "codigos": [
+        "870421",
+        "870431",
+        "87044100",
+        "87045100",
+        "87046000",
+        "87049000"
+      ],
+      "modalidade": "ajustes_por_veiculo",
+      "aliquotaInicial": null,
+      "fatorConversao": 1.21,
+      "aliquota": null,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Alíquota = (3,9% + ajustes do Anexo III) × fator 1,21",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo V e Anexos I e III",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida",
+      "observacao": "Os ajustes dependem de características do veículo que não estão no XML; caminhões não têm IS (art. 5º, I)."
+    },
+    {
+      "id": "IS-2027-AERONAVES",
+      "categoria": "AERONAVES_EMBARCACOES",
+      "codigos": [
+        "8802"
+      ],
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.065,
+      "fatorConversao": 1.04,
+      "aliquota": 0.068,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 6,8% (6,5% × fator 1,04)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo V",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida",
+      "excluidos": [
+        "88026000"
+      ]
+    },
+    {
+      "id": "IS-2027-BARCOS-MOTOR",
+      "categoria": "AERONAVES_EMBARCACOES",
+      "codigos": [
+        "89033"
+      ],
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.1,
+      "fatorConversao": 1.2,
+      "aliquota": 0.12,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 12% (10% × fator 1,20)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo V",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-EMBARCACOES",
+      "categoria": "AERONAVES_EMBARCACOES",
+      "codigos": [
+        "8903"
+      ],
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": 0.065,
+      "fatorConversao": 1.2,
+      "aliquota": 0.078,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Valor do IS = base de cálculo × 7,8% (6,5% × fator 1,20)",
+      "dispositivo": "MP 1.399/2026, art. 3º e Anexo V",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    },
+    {
+      "id": "IS-2027-BENS-MINERAIS",
+      "categoria": "BENS_MINERAIS",
+      "codigos": [
+        "2601",
+        "27090010",
+        "27111100",
+        "27112100"
+      ],
+      "modalidade": "ad_valorem",
+      "aliquotaInicial": null,
+      "fatorConversao": null,
+      "aliquota": 0,
+      "especifica": null,
+      "condicao": null,
+      "regraCalculo": "Alíquota zero até 31/12/2027 (art. 6º, III, a, 3)",
+      "dispositivo": "MP 1.399/2026, art. 6º, III, a, 3",
+      "vigenciaInicio": "2027-02-02",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "MP1399",
+      "situacao": "conferida"
+    }
+  ],
+  "importacao": {
+    "fundamento": "IMPORTACAO",
+    "fatorAjuste": {
+      "BEBIDAS": 1.45,
+      "VEICULOS_AERONAVES_EMBARCACOES": 1.17,
+      "DEMAIS": 1.0
+    }
+  },
+  "servicos": [
+    {
+      "id": "IS-2027-CONCURSOS-PROGNOSTICOS",
+      "descricao": "Concursos de prognósticos (LC 214/2025, art. 244)",
+      "aliquota": 0.005,
+      "dispositivo": "MP 1.399/2026, art. 7º",
+      "observacao": "Serviço: não aparece em NF-e/NFC-e de mercadorias."
+    }
+  ],
+  "pequenosProdutores": {
+    "fundamento": "PEQUENOS_PRODUTORES",
+    "faixas": [
+      {
+        "ateLitrosAlcool": 50000,
+        "reducao": 0.4
+      },
+      {
+        "ateLitrosAlcool": 125000,
+        "reducao": 0.2
+      },
+      {
+        "ateLitrosAlcool": 250000,
+        "reducao": 0.1
+      }
+    ]
+  }
+}

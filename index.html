@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="sem-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conformidade IBS/CBS · Descubra quais produtos saem com imposto errado</title>
+<meta name="description" content="Envie os arquivos XML das suas notas de venda e descubra quais produtos estão com o imposto novo (IBS/CBS) errado, o que corrigir no cadastro de cada um e por quê.">
+<meta name="theme-color" content="#0B140F">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Conformidade IBS/CBS · Sabores Estratégicos">
+<meta property="og:description" content="Um código errado no cadastro do produto se repete em toda venda. Descubra, pelas suas próprias notas, quais produtos precisam de correção.">
+<link rel="icon" type="image/png" href="marca/icone.png">
+<link rel="preload" href="site/fontes/cormorant-garamond-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="site/fontes/cormorant-garamond-latin-600-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="site/css/inicio.css">
+<script type="module" src="site/js/inicio.js"></script>
+</head>
+<body class="pagina-inicio">
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-check-circulo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.3 2.4 2.4 4.8-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-seta" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+<symbol id="i-seta-esq" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></symbol>
+<symbol id="i-chevron-d" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-chevron-e" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+<symbol id="i-chevron-b" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-mais" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+<symbol id="i-xml" viewBox="0 0 24 24"><path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5"/><path d="m9.5 12.5-2 2 2 2M14.5 12.5l2 2-2 2"/></symbol>
+<symbol id="i-arquivo-ok" viewBox="0 0 24 24"><path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5"/><path d="m9 15 2 2 4-4"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M20 15v3.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V15"/><path d="m16.5 8-4.5-4.5L7.5 8"/><path d="M12 3.5V15"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M20 15v3.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V15"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M12 15V3.5"/></symbol>
+<symbol id="i-painel" viewBox="0 0 24 24"><path d="M3.5 3.5v17h17"/><path d="M8 16v-3.5M12.5 16V7.5M17 16v-6"/></symbol>
+<symbol id="i-lista" viewBox="0 0 24 24"><path d="m3.5 7 1.7 1.7L8.5 5.5M3.5 16.5l1.7 1.7 3.3-3.2"/><path d="M12 7h8.5M12 12h8.5M12 17h8.5"/></symbol>
+<symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+<symbol id="i-relatorio" viewBox="0 0 24 24"><path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5"/><path d="M8.5 13h7M8.5 17h7M8.5 9h2"/></symbol>
+<symbol id="i-lupa" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+<symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 21s7.5-3.6 7.5-9.5V5.5L12 3 4.5 5.5v6C4.5 17.4 12 21 12 21z"/><path d="m9 12 2.2 2.2L15.5 10"/></symbol>
+<symbol id="i-raio" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12z"/></symbol>
+<symbol id="i-moedas" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="5.5" ry="2.5"/><path d="M3.5 7v4c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5V7"/><path d="M9.5 16.4c.6.1 1.3.1 2 .1 3 0 5.5-1.1 5.5-2.5"/><path d="M14.5 11.7c1.9.3 3.5 1.2 3.5 2.3v4c0 1.4-2.5 2.5-5.5 2.5S7 19.4 7 18v-2"/></symbol>
+<symbol id="i-camadas" viewBox="0 0 24 24"><path d="m12 3 9 4.8-9 4.8-9-4.8z"/><path d="m3 12.2 9 4.8 9-4.8"/><path d="m3 16.6 9 4.8 9-4.8"/></symbol>
+<symbol id="i-rota" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></symbol>
+<symbol id="i-cadeado" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2.5"/></symbol>
+<symbol id="i-navegador" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="5.7" cy="6.3" r=".5"/><circle cx="7.8" cy="6.3" r=".5"/></symbol>
+<symbol id="i-mao" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M11 10.5V4a1.5 1.5 0 0 1 3 0v6.5"/><path d="M14 10.5V5.5a1.5 1.5 0 0 1 3 0V14"/><path d="M8 13l-1.6-1.6a1.6 1.6 0 0 0-2.3 2.2L8 18.5c1.2 1.6 3 2.5 5 2.5h.5a3.5 3.5 0 0 0 3.5-3.5V14"/></symbol>
+<symbol id="i-usuario" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.2-3.6 4.1-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></symbol>
+<symbol id="i-cartao" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19M6.5 15h3"/></symbol>
+<symbol id="i-pix" viewBox="0 0 24 24"><path d="m12 3 3.2 3.2a3 3 0 0 0 2.1.9h.9L21 10l-2.8 2.9h-.9a3 3 0 0 0-2.1.9L12 17l-3.2-3.2a3 3 0 0 0-2.1-.9h-.9L3 10l2.8-2.9h.9a3 3 0 0 0 2.1-.9z" transform="translate(0 2)"/></symbol>
+<symbol id="i-boleto" viewBox="0 0 24 24"><path d="M3.5 5.5v13M6.5 5.5v13M9 5.5v13M12.5 5.5v13M15 5.5v13M18 5.5v13M20.5 5.5v13"/></symbol>
+<symbol id="i-olho" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-olho-fechado" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 5.6c.5-.1.9-.1 1.4-.1 6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.6 3.4M6.3 6.8A16.6 16.6 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.6 0 3-.4 4.2-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+<symbol id="i-sair" viewBox="0 0 24 24"><path d="M9.5 20.5h-3a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h3"/><path d="m15.5 16.5 4.5-4.5-4.5-4.5"/><path d="M20 12H9.5"/></symbol>
+<symbol id="i-engrenagem" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-casa" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v10.5a1 1 0 0 0 1 1h4v-6h3v6h4a1 1 0 0 0 1-1V9"/></symbol>
+<symbol id="i-coroa" viewBox="0 0 24 24"><path d="M3.5 8l4 3.5L12 5l4.5 6.5 4-3.5-1.8 10.5H5.3z"/><path d="M5.5 21h13"/></symbol>
+<symbol id="i-brilho" viewBox="0 0 24 24"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z"/><path d="M19 15.5c.3 1.9 1 2.6 2.5 3-1.5.3-2.2 1-2.5 2.5-.3-1.5-1-2.2-2.5-2.5 1.5-.4 2.2-1.1 2.5-3z"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/></symbol>
+<symbol id="i-alerta" viewBox="0 0 24 24"><path d="M10.3 4.2 2.8 17.5a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17.2v.1"/></symbol>
+<symbol id="i-email" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></symbol>
+<symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></symbol>
+<symbol id="i-linkedin" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M8.2 10.8v5.7M8.2 7.7v.1M11.8 16.5v-5.7M11.8 13.4c0-1.6 1-2.6 2.4-2.6s2.1 1 2.1 2.6v3.1"/></symbol>
+<symbol id="i-local" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+<symbol id="i-globo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3z"/></symbol>
+<symbol id="i-predio" viewBox="0 0 24 24"><path d="M4.5 21V5a1.5 1.5 0 0 1 1.5-1.5h8A1.5 1.5 0 0 1 15.5 5v16"/><path d="M15.5 9.5H18a1.5 1.5 0 0 1 1.5 1.5v10"/><path d="M3 21h18M8 7.5h1M11 7.5h1M8 11h1M11 11h1M8 14.5h1M11 14.5h1"/></symbol>
+<symbol id="i-talheres" viewBox="0 0 24 24"><path d="M6.5 3v7a2.5 2.5 0 0 0 2.5 2.5V21M11.5 3v7A2.5 2.5 0 0 1 9 12.5M9 3v5"/><path d="M17.5 21V3.5c-2 0-3.5 2.5-3.5 6.5 0 2 1.5 3 3.5 3"/></symbol>
+<symbol id="i-pao" viewBox="0 0 24 24"><path d="M5 11.5c-1.4-.3-2.5-1.5-2.5-3C2.5 6.6 4.4 5 7 5h10c2.6 0 4.5 1.6 4.5 3.5 0 1.5-1.1 2.7-2.5 3V18a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 18z"/><path d="M9 9.5l1.5 1.5M13 9.5l1.5 1.5"/></symbol>
+<symbol id="i-caminhao" viewBox="0 0 24 24"><path d="M2.5 6.5a1 1 0 0 1 1-1h10v11h-11z"/><path d="M13.5 9.5h4l3.5 3.5v3.5h-7.5"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+<symbol id="i-calculadora" viewBox="0 0 24 24"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 6.5h7v3h-7zM8.5 13.5h.1M12 13.5h.1M15.5 13.5h.1M8.5 17h.1M12 17h.1M15.5 17h.1"/></symbol>
+<symbol id="i-expandir" viewBox="0 0 24 24"><path d="M14.5 3.5h6v6M9.5 20.5h-6v-6M20.5 3.5l-7 7M3.5 20.5l7-7"/></symbol>
+<symbol id="i-externo" viewBox="0 0 24 24"><path d="M13.5 3.5h7v7"/><path d="M20.5 3.5 11 13"/><path d="M18 14v4.5a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2H10"/></symbol>
+<symbol id="i-aula" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="13" rx="2.5"/><path d="m10.2 8.8 4.6 2.7-4.6 2.7z"/><path d="M8 21h8"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></symbol>
+<symbol id="i-historico" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 4v4.5H8"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="i-fundamento" viewBox="0 0 24 24"><path d="M12 3.5v17M5 7.5h14"/><path d="M5 7.5 2.5 13.5a3 3 0 0 0 5 0zM19 7.5l-2.5 6a3 3 0 0 0 5 0z"/><path d="M8 20.5h8"/></symbol>
+<symbol id="i-pasta" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4.2l2 2.5H19a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-lixeira" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6 7l1 13.5h10L18 7"/></symbol>
+<symbol id="i-telefone" viewBox="0 0 24 24"><path d="M20.5 16.6v2.6a1.8 1.8 0 0 1-2 1.8A17.6 17.6 0 0 1 3 5.5a1.8 1.8 0 0 1 1.8-2h2.6a1.8 1.8 0 0 1 1.8 1.5c.1.9.4 1.8.7 2.6a1.8 1.8 0 0 1-.4 1.9L8.4 10.6a14.3 14.3 0 0 0 5 5l1.1-1.1a1.8 1.8 0 0 1 1.9-.4c.8.3 1.7.6 2.6.7a1.8 1.8 0 0 1 1.5 1.8z"/></symbol>
+<symbol id="i-calendario" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+<symbol id="i-recibo" viewBox="0 0 24 24"><path d="M5.5 3h13v18l-2.2-1.5L14 21l-2-1.5L10 21l-2.3-1.5L5.5 21z"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+</svg>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<header class="topo" data-topo>
+  <div class="container topo-faixa">
+    <a class="marca clara" href="index.html" aria-label="Conformidade IBS/CBS, Sabores Estratégicos: início">
+      <img class="marca-coruja" src="site/imagens/coruja-negativa-grande.png" alt="" width="34" height="40">
+      <span class="marca-texto"><strong>Conformidade IBS/CBS</strong><small>Sabores Estratégicos</small></span>
+    </a>
+    <nav class="topo-nav" aria-label="Seções da página">
+      <a href="index.html#solucao">Como funciona</a>
+      <a href="index.html#demonstracao">Demonstração</a>
+      <a href="index.html#para-quem">Para quem é</a>
+      <a href="index.html#planos">Planos</a>
+      <a href="index.html#faq">Dúvidas</a>
+    </nav>
+    <div class="topo-acoes">
+      <a class="btn btn-fantasma btn-pequeno topo-entrar" href="entrar.html" data-link-entrar>Entrar</a>
+      <a class="btn btn-ouro btn-pequeno topo-cta" href="index.html#planos">Conferir minhas notas</a>
+      <button class="topo-menu" type="button" aria-expanded="false" aria-controls="menu-movel" aria-label="Abrir menu" data-abrir-menu>
+        <svg class="i" aria-hidden="true"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<!-- Fora do <header>: o desfoque do cabeçalho prenderia um painel fixo dentro dele -->
+<div class="menu-movel" id="menu-movel" hidden>
+    <nav aria-label="Menu">
+      <a href="index.html#solucao"><span>01</span>Como funciona</a>
+      <a href="index.html#demonstracao"><span>02</span>Demonstração</a>
+      <a href="index.html#para-quem"><span>03</span>Para quem é</a>
+      <a href="index.html#planos"><span>04</span>Planos</a>
+      <a href="index.html#faq"><span>05</span>Dúvidas</a>
+    </nav>
+    <div class="menu-movel-acoes">
+      <a class="btn btn-ouro btn-grande btn-bloco" href="index.html#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+      <a class="btn btn-fantasma btn-grande btn-bloco" href="entrar.html" data-link-entrar>Entrar</a>
+    </div>
+</div>
+
+<main id="conteudo">
+
+<!-- ================= 1. HERO: o problema financeiro ================= -->
+<section class="hero no-escuro" id="inicio">
+  <div class="hero-fundo" aria-hidden="true">
+    <div class="hero-brilho um"></div>
+    <div class="hero-brilho dois"></div>
+    <img class="hero-coruja" src="site/imagens/coruja-negativa-grande.png" alt="" width="408" height="480">
+  </div>
+
+  <div class="container hero-conteudo">
+    <div class="hero-texto">
+      <a class="hero-selo" href="#risco" data-revelar>
+        <em>Reforma Tributária</em><span class="sr"> · </span>
+        <span class="hero-selo-texto">IBS e CBS, os impostos novos, já estão nas notas</span>
+        <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-d"/></svg>
+      </a>
+      <h1 data-revelar style="--atraso:.08s">Descubra quais produtos estão saindo <em>com o imposto errado nas suas notas.</em></h1>
+      <p class="hero-sub" data-revelar style="--atraso:.16s">Se um produto está cadastrado com o código errado, o erro se repete em toda venda: o imposto sai maior ou menor do que a lei manda. Envie os arquivos das suas notas de venda e receba a lista do que corrigir em cada produto.</p>
+      <div class="hero-ctas" data-revelar style="--atraso:.24s">
+        <a class="btn btn-ouro btn-grande" href="#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+        <a class="btn btn-fantasma btn-grande" href="#exemplo">Ver um exemplo</a>
+      </div>
+      <ul class="hero-provas" data-revelar style="--atraso:.32s">
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Notas NF-e e NFC-e</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Até 10.000 notas por envio</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Seus arquivos ficam no seu computador</li>
+        <li><svg class="i i-sm" aria-hidden="true"><use href="#i-check"/></svg>Nada para instalar</li>
+      </ul>
+    </div>
+
+    <!-- Painel de demonstração (dados ilustrativos) -->
+    <div class="hero-visual" data-paralaxe data-revelar="zoom" style="--atraso:.2s">
+      <p class="sr">Ilustração com dados de demonstração: painel com itens avaliados, corretos, com recálculo de impostos e para validar, e a lista de produtos conferidos.</p>
+      <div class="vitrine" aria-hidden="true">
+        <div class="janela" data-camada="1">
+          <div class="janela-barra">
+            <span class="janela-pontos"><i></i><i></i><i></i></span>
+            <span class="janela-url"><svg class="i i-sm"><use href="#i-cadeado"/></svg>conformidade · dashboard</span>
+          </div>
+          <div class="janela-topo">
+            <img src="site/imagens/coruja-negativa-grande.png" alt="" width="20" height="24">
+            <div><strong>Conformidade IBS/CBS</strong><small>Demonstração · dados ilustrativos</small></div>
+          </div>
+          <div class="janela-abas"><span>Análise</span><span class="ativa">Dashboard</span><span>Resultados</span><span>Pendências</span><span>Relatório Final</span></div>
+          <div class="janela-corpo">
+            <div class="kpis">
+              <div class="kpi"><small>Itens avaliados</small><b data-contar="3482">3.482</b></div>
+              <div class="kpi ok"><small>Corretos</small><b data-contar="2917">2.917</b></div>
+              <div class="kpi eco"><small>C/ recal impostos</small><b data-contar="318">318</b></div>
+              <div class="kpi pend"><small>Precisam validar</small><b data-contar="247">247</b></div>
+            </div>
+            <div class="janela-graficos">
+              <div class="mini-painel rosca">
+                <small>Conformidade</small>
+                <div class="rosca-grafico">
+                  <svg viewBox="0 0 120 120"><circle class="trilho" cx="60" cy="60" r="46"/><circle class="arco ok" cx="60" cy="60" r="46" pathLength="100" style="--fatia:93;--inicio:0"/><circle class="arco pend" cx="60" cy="60" r="46" pathLength="100" style="--fatia:7;--inicio:93"/></svg>
+                </div>
+              </div>
+              <div class="mini-painel barras">
+                <small>Resultados apurados</small>
+                <div class="barras-grafico">
+                  <span style="--h:92%" class="ok"></span><span style="--h:22%" class="pend"></span><span style="--h:4%" class="neutro"></span>
+                </div>
+                <div class="barras-legenda"><i class="ok"></i>Corretos<i class="pend"></i>Pendentes<i class="neutro"></i>Incorretos</div>
+              </div>
+            </div>
+            <div class="lista-itens">
+              <div class="item"><span class="item-icone ok"><svg class="i i-sm"><use href="#i-check"/></svg></span><div><b>PÃO DE FORMA 500G</b><small>NCM 1905.90.10 · código certo, é só manter</small></div><span class="chip chip-ok">Correto</span></div>
+              <div class="item"><span class="item-icone pend"><svg class="i i-sm"><use href="#i-relogio"/></svg></span><div><b>PASTEL FRANGO 20 UND</b><small>NCM 1902.20.00 · pode ter desconto, falta sua resposta</small></div><span class="chip chip-pend">Precisa validar</span></div>
+              <div class="item"><span class="item-icone eco"><svg class="i i-sm"><use href="#i-moedas"/></svg></span><div><b>PÃO FRANCÊS KG</b><small>NCM 1905.90.90 · a lei dá imposto zero, a nota cobrou cheio</small></div><span class="chip chip-eco">C/ recal impostos</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flutuante f-processando" data-camada="3">
+          <span class="flutuante-icone"><svg class="i"><use href="#i-upload"/></svg></span>
+          <div class="flutuante-texto">
+            <b>Lendo suas notas</b>
+            <div class="progresso"><i></i></div>
+            <small><span data-contar="1250">1.250</span> notas · NF-e e NFC-e · exemplo</small>
+          </div>
+        </div>
+
+        <div class="flutuante f-economia" data-camada="2">
+          <small>Exemplo de análise</small>
+          <b>R$ 486<span>,30</span></b>
+          <svg class="faisca" viewBox="0 0 120 34" preserveAspectRatio="none"><path d="M0 30 L15 26 L30 28 L45 20 L60 22 L75 13 L90 15 L105 6 L120 4"/></svg>
+          <small class="fraco">de imposto calculado a mais</small>
+        </div>
+
+        <div class="flutuante f-regra" data-camada="4">
+          <span class="flutuante-icone ok"><svg class="i"><use href="#i-check"/></svg></span>
+          <div class="flutuante-texto"><b>Regra da lei confirmada</b><small>Pão de forma · LC 214/2025, Anexo VII, item 12</small></div>
+        </div>
+
+        <div class="flutuante f-relatorio" data-camada="2">
+          <svg class="i"><use href="#i-relatorio"/></svg>
+          <b>Lista do que corrigir</b>
+          <span class="formatos"><i>PDF</i><i>Excel</i><i>CSV</i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="letreiro" aria-hidden="true">
+    <div class="letreiro-trilho">
+      <span>Padarias</span><span>Confeitarias</span><span>Restaurantes</span><span>Bares</span><span>Lanchonetes</span><span>Indústrias de alimentos</span><span>Distribuidoras</span>
+      <span>Padarias</span><span>Confeitarias</span><span>Restaurantes</span><span>Bares</span><span>Lanchonetes</span><span>Indústrias de alimentos</span><span>Distribuidoras</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. O RISCO ================= -->
+<section class="secao problema" id="risco">
+  <div class="container">
+    <div class="problema-grade">
+      <div class="cabeca-secao" data-revelar>
+        <h2 class="titulo-secao">Um erro cadastrado uma vez <em>se repete em todas as vendas.</em></h2>
+        <p class="lead">Pense numa receita de pão: se ela pede sal demais, todo pão sai salgado até alguém corrigir a receita. Com o imposto é igual. Cada produto tem no cadastro dois códigos que dizem à nota quanto cobrar de IBS e CBS. Se um deles está errado, <span class="grifo">o erro vai junto em cada venda daquele produto,</span> até alguém corrigir. Um produto vendido 40 vezes por dia leva o mesmo erro para cerca de 1.200 notas por mês.</p>
+      </div>
+      <div class="dores">
+        <article class="dor eco" data-revelar style="--atraso:.05s">
+          <span class="dor-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-moedas"/></svg></span>
+          <div><h3>Desconto da lei que ficou de fora</h3><p>A lei dá imposto zero ou com desconto para o produto, mas ele sai na nota com o imposto cheio. Resultado: o imposto sai maior do que deveria, venda após venda.</p></div>
+        </article>
+        <article class="dor risco" data-revelar style="--atraso:.12s">
+          <span class="dor-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-alerta"/></svg></span>
+          <div><h3>Desconto que não vale para o produto</h3><p>O contrário também acontece: o produto sai com um desconto que a lei não dá para ele. O imposto fica menor do que deveria, e a diferença vira um valor a pagar que cresce a cada venda.</p></div>
+        </article>
+        <article class="dor" data-revelar style="--atraso:.19s">
+          <span class="dor-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-relogio"/></svg></span>
+          <div><h3>Conferir tudo na mão</h3><p>Revisar o cadastro inteiro numa planilha, produto por produto, demora e depende de alguém que saiba a lei de cor.</p></div>
+        </article>
+      </div>
+    </div>
+    <p class="risco-nota" data-revelar><b>Por que corrigir agora?</b> Em 2026 o IBS e a CBS ainda estão em teste, com alíquotas pequenas (CBS 0,9% e IBS 0,1%), então o erro custa pouco. Em 2027 a CBS passa a ser cobrada de verdade, no lugar do PIS e da Cofins, com uma alíquota bem maior (ainda não definida), e o mesmo código errado passa a pesar em cada venda. Corrigir agora é como consertar um vazamento enquanto ele ainda é uma gota.</p>
+    <div class="chamada" data-revelar>
+      <p>Quais dos seus produtos estão assim? <b>Suas notas de venda respondem.</b></p>
+      <a class="btn btn-verde btn-grande" href="#planos">Descobrir nas minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2b. AS PALAVRAS QUE APARECEM NA PÁGINA =================
+     Seção nova. Usa exatamente o mesmo visual da seção "Para quem é".
+     Para remover, apague daqui até o fim desta <section>. -->
+<section class="secao para-quem" id="palavras">
+  <div class="container">
+    <div class="cabeca-secao" data-revelar>
+      <h2 class="titulo-secao">Quatro palavras <em>e você entende tudo.</em></h2>
+      <p class="lead">IBS e CBS são os dois impostos novos da Reforma Tributária. Aos poucos, eles tomam o lugar de PIS, Cofins, ICMS e ISS. Para entender o resto da página, só faltam estas quatro palavras:</p>
+    </div>
+    <div class="publicos">
+      <article class="publico" data-revelar>
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-xml"/></svg></span>
+        <h3>XML</h3>
+        <p><b>É a nota fiscal em forma de arquivo.</b> Toda nota que você emite gera um. O sistema que emite suas notas guarda esses arquivos, e o seu contador costuma recebê-los todo mês. É só pedir a ele.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.06s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lista"/></svg></span>
+        <h3>Cadastro</h3>
+        <p><b>É a receita que toda venda segue.</b> A ficha de cada produto no seu sistema, com nome, preço e códigos. Toda nota copia as informações dessa ficha.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.12s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lupa"/></svg></span>
+        <h3>NCM</h3>
+        <p><b>É o RG do produto.</b> Um código de 8 números que diz o que ele é. É por ele que se encontra a regra da lei para aquele produto.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.18s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-calculadora"/></svg></span>
+        <h3>CST e cClassTrib</h3>
+        <p><b>É a instrução de quanto imposto cobrar.</b> São os dois códigos que dizem à nota se o IBS e a CBS vão cheios, com desconto ou zerados. Quando esta página fala em "os dois códigos", são eles. É isso que a análise confere.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. A SOLUÇÃO: como funciona a análise ================= -->
+<section class="secao como-funciona" id="solucao">
+  <div class="container">
+    <div class="como-cabeca cabeca-secao" data-revelar>
+      <h2 class="titulo-secao">Comece pelo que você vende, <em>não pelo cadastro inteiro.</em></h2>
+      <p class="lead">Sua empresa pode ter 10 mil produtos cadastrados, mas só uma parte deles é vendida de verdade. As suas notas de venda mostram quais são, e a análise confere só esses. Veja como funciona:</p>
+    </div>
+
+    <ol class="passos">
+      <li class="passo" data-revelar style="--atraso:.04s">
+        <span class="passo-num">01</span>
+        <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-upload"/></svg></span>
+        <h3>Você envia as notas</h3>
+        <p>Arraste os arquivos XML das suas notas de venda (NF-e e NFC-e), soltos ou num .zip. Cabem até 10.000 por envio, e dá para enviar mais de uma vez.</p>
+      </li>
+      <li class="passo" data-revelar style="--atraso:.1s">
+        <span class="passo-num">02</span>
+        <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lupa"/></svg></span>
+        <h3>A análise confere cada produto</h3>
+        <p>Ela compara os dois códigos de cada produto vendido com o que a lei manda para aquele produto, na data da venda.</p>
+      </li>
+      <li class="passo" data-revelar style="--atraso:.16s">
+        <span class="passo-num">03</span>
+        <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-check-circulo"/></svg></span>
+        <h3>Cada produto ganha um resultado</h3>
+        <p>Está certo, precisa trocar o código (e você vê quanto imposto saiu a mais ou a menos) ou depende de uma resposta sua.</p>
+      </li>
+      <li class="passo" data-revelar style="--atraso:.22s">
+        <span class="passo-num">04</span>
+        <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-mao"/></svg></span>
+        <h3>Você responde só o que faltar</h3>
+        <p>Quando a lei dá desconto para o NCM do produto, aparece uma pergunta: "O que é este produto?". O desconto só entra na conta depois da sua resposta, e cada opção mostra o resultado antes de você clicar.</p>
+      </li>
+      <li class="passo" data-revelar style="--atraso:.28s">
+        <span class="passo-num">05</span>
+        <span class="passo-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-relatorio"/></svg></span>
+        <h3>Você recebe a lista do que corrigir</h3>
+        <p>Produto por produto: os códigos certos, o que fazer e o trecho da lei que explica. Em CSV, Excel e PDF.</p>
+      </li>
+    </ol>
+
+    <div class="comparativo" data-revelar>
+      <div class="comparativo-lado antes">
+        <p class="comparativo-titulo"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>Do jeito antigo</p>
+        <ul>
+          <li>Revisar o cadastro inteiro, até o que nunca vende</li>
+          <li>Dar desconto só olhando o NCM, sem ver o que o produto é</li>
+          <li>Devoluções e notas canceladas misturadas com as vendas</li>
+          <li>Planilhas soltas e respostas que se perdem</li>
+          <li>"Acho que está certo"</li>
+        </ul>
+      </div>
+      <div class="comparativo-meio" aria-hidden="true"><span><svg class="i"><use href="#i-seta"/></svg></span></div>
+      <div class="comparativo-lado depois">
+        <p class="comparativo-titulo"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Pelas suas vendas</p>
+        <ul>
+          <li>Só os produtos que você vendeu, com um resultado para cada</li>
+          <li>Nenhum desconto no chute: se depende do produto, você confirma</li>
+          <li>Devoluções, canceladas e notas repetidas ficam de fora, com o motivo</li>
+          <li>Tudo num painel, com as suas respostas salvas</li>
+          <li>"Está certo, e aqui está a lei que mostra"</li>
+        </ul>
+      </div>
+    </div>
+    <div class="solucao-fecho" data-revelar>
+      <p>Antes: milhares de linhas para revisar. <b>Depois: só a lista do que precisa de atenção, e o porquê.</b></p>
+      <a class="btn btn-verde btn-grande" href="#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. DEMONSTRAÇÃO ================= -->
+<section class="secao vitrine-produto no-escuro" id="demonstracao">
+  <div class="container">
+    <div class="demo" data-demo>
+      <div class="cabeca-secao demo-cabeca" data-revelar>
+        <h2 class="titulo-secao">Veja uma análise <em>do arquivo ao relatório.</em></h2>
+        <p class="lead">Quatro telas de uma análise de demonstração, com dados de exemplo: o painel com o resumo, a pergunta que tira as dúvidas, a lista do que corrigir e a consulta de um NCM.</p>
+      </div>
+
+      <div class="demo-abas" role="group" aria-label="Telas da demonstração" data-revelar="esquerda">
+        <button type="button" aria-pressed="true" data-demo-aba="visao">
+          <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-painel"/></svg></span>
+          <span><b>Dashboard</b><small>O resumo da empresa: quanto está certo, quanto imposto saiu a mais e o que falta.</small></span>
+          <i class="demo-tempo" aria-hidden="true"></i>
+        </button>
+        <button type="button" aria-pressed="false" data-demo-aba="pendencias">
+          <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-mao"/></svg></span>
+          <span><b>Pendências</b><small>Uma pergunta por produto. Cada resposta mostra o resultado antes do clique.</small></span>
+          <i class="demo-tempo" aria-hidden="true"></i>
+        </button>
+        <button type="button" aria-pressed="false" data-demo-aba="relatorio">
+          <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-relatorio"/></svg></span>
+          <span><b>Relatório final</b><small>Os códigos certos de cada produto e o que mudar no cadastro.</small></span>
+          <i class="demo-tempo" aria-hidden="true"></i>
+        </button>
+        <button type="button" aria-pressed="false" data-demo-aba="ncm">
+          <span class="demo-aba-icone"><svg class="i" aria-hidden="true"><use href="#i-lupa"/></svg></span>
+          <span><b>Consulta por NCM</b><small>Vai cadastrar um produto novo? Descubra os códigos certos antes, sem precisar de nota.</small></span>
+          <i class="demo-tempo" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="demo-palco" data-revelar="direita" aria-hidden="true">
+        <div class="demo-janela">
+          <div class="janela-barra"><span class="janela-pontos"><i></i><i></i><i></i></span><span class="janela-url"><svg class="i i-sm"><use href="#i-info"/></svg>Demonstração · dados ilustrativos</span></div>
+
+          <!-- Visão geral -->
+          <div class="demo-tela ativa" data-demo-tela="visao">
+            <div class="dt-titulo">Dashboard</div>
+            <div class="dt-dupla">
+              <div class="dt-cartao destaque-atencao">
+                <small>Situação da empresa</small>
+                <b>84% <span class="dt-selo">Atenção</span></b>
+                <p>Produtos com os dois códigos certos.</p>
+              </div>
+              <div class="dt-cartao destaque-ouro">
+                <small>Economia potencial</small>
+                <b>R$ 486,30</b>
+                <p>Imposto calculado a mais, menos o calculado a menos.</p>
+              </div>
+            </div>
+            <div class="dt-dupla">
+              <div class="dt-cartao">
+                <small>Resultados apurados</small>
+                <div class="dt-barras-h">
+                  <div><span>Corretos</span><i class="ok" style="--w:93%"></i><b>3.235</b></div>
+                  <div><span>Pendentes</span><i class="pend" style="--w:7%"></i><b>247</b></div>
+                  <div><span>Incorretos</span><i class="risco" style="--w:0%"></i><b>0</b></div>
+                </div>
+              </div>
+              <div class="dt-cartao">
+                <small>Resultados por NCM</small>
+                <div class="dt-tabela">
+                  <div><span>1905.90.10</span><span class="chip chip-ok">Correto</span></div>
+                  <div><span>1905.90.90</span><span class="chip chip-eco">Recal.</span></div>
+                  <div><span>1902.20.00</span><span class="chip chip-pend">Validar</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pendências -->
+          <div class="demo-tela" data-demo-tela="pendencias">
+            <div class="dt-titulo">Pendências da análise atual</div>
+            <div class="dt-produto">
+              <div><b>PASTEL FRANGO 20 UND</b><small>NCM 1902.20.00 · Regra encontrada pelo NCM: Anexo VII, item 9</small></div>
+              <span class="chip chip-pend">Precisa validar</span>
+            </div>
+            <p class="dt-pergunta">O que é este produto?</p>
+            <div class="dt-opcoes">
+              <div class="dt-opcao marcada"><i></i><div><b>É Massas alimentícias (Anexo VII, item 9)</b><small>Redução de 60% · CST 200 · cClassTrib 200034</small></div></div>
+              <div class="dt-opcao"><i></i><div><b>Preparado e servido para consumo no local</b><small>Redução de 40% · CST 200 · cClassTrib 200047</small></div></div>
+              <div class="dt-opcao"><i></i><div><b>Vendido como mercadoria; NCM 1902.20.00 correto</b><small>Tributação integral · CST 000 · cClassTrib 000001</small></div></div>
+              <div class="dt-opcao"><i></i><div><b>O NCM informado está errado</b><small>Ajustar o NCM no cadastro</small></div></div>
+            </div>
+            <p class="dt-rodape">Não sabe? Deixe sem resposta: o produto continua pendente.</p>
+          </div>
+
+          <!-- Relatório final -->
+          <div class="demo-tela" data-demo-tela="relatorio">
+            <div class="dt-titulo">Relatório Final <span class="dt-exportar"><i>CSV</i><i>Excel</i><i>PDF</i></span></div>
+            <div class="dt-relatorio">
+              <div class="dt-rel-cab"><span>Produto</span><span>NCM</span><span>cClassTrib</span><span>CST</span><span>Instrução</span></div>
+              <div class="dt-rel-linha"><span><b>PÃO FRANCÊS KG</b></span><span>1905.90.90</span><span class="destaque">200003</span><span class="destaque">200</span><span>Alterar o cadastro do produto para o CST 200 e cClassTrib 200003</span></div>
+              <div class="dt-rel-linha"><span><b>PASTEL FRANGO 20 UND</b> <span class="chip chip-ok sem-ponto">validado</span></span><span>1902.20.00</span><span class="destaque">200034</span><span class="destaque">200</span><span>Alterar o cadastro do produto para o CST 200 e cClassTrib 200034</span></div>
+              <div class="dt-rel-linha"><span><b>PÃO DE FORMA 500G</b> <span class="chip chip-ok sem-ponto">validado</span></span><span>1905.90.10</span><span>200034</span><span>200</span><span>Cadastro correto: manter</span></div>
+              <div class="dt-rel-linha"><span><b>REFRIGERANTE LATA</b></span><span>2202.10.00</span><span>000001</span><span>000</span><span>Cadastro correto: manter</span></div>
+            </div>
+          </div>
+
+          <!-- Consulta por NCM -->
+          <div class="demo-tela" data-demo-tela="ncm">
+            <div class="dt-titulo">Consulta Tributária por NCM</div>
+            <div class="dt-consulta">
+              <span class="dt-input">1905.90.10</span>
+              <span class="dt-input menor">NFC-e (modelo 65)</span>
+              <span class="dt-input menor">Mercadoria</span>
+              <span class="dt-botao">Consultar NCM</span>
+            </div>
+            <div class="dt-cartao dt-resultado-ncm">
+              <div class="dt-resultado-topo"><b>Regra candidata</b><span class="chip chip-pend">Requer validação humana</span></div>
+              <div class="dt-campos">
+                <div><small>CST</small><b>200</b></div>
+                <div><small>cClassTrib</small><b>200034</b></div>
+                <div><small>Redução</small><b>60%</b></div>
+              </div>
+              <p><svg class="i i-sm"><use href="#i-fundamento"/></svg>LC 214/2025, Anexo VII, item 12 (Pão de forma) · conferida com a fonte oficial</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. O QUE VOCÊ DESCOBRE ================= -->
+<section class="secao beneficios no-escuro" id="descobertas">
+  <div class="beneficios-fundo" aria-hidden="true"></div>
+  <div class="container">
+    <div class="cabeca-secao" data-revelar>
+      <h2 class="titulo-secao">O que você descobre <em>nas suas próprias vendas.</em></h2>
+      <p class="lead">Cada produto que saiu nas suas notas recebe um resultado e uma instrução do que fazer.</p>
+    </div>
+
+    <div class="bento">
+      <article class="bento-card largo economia" data-revelar>
+        <div class="bento-texto">
+          <h3>Onde há imposto a mais ou a menos</h3>
+          <p>Quando a nota usou o código errado, a análise refaz a conta do imposto com o código certo. Se ficou de fora um desconto que a lei dava, a diferença aparece como "Economia". Se foi usado um desconto que a lei não dá para aquele produto, ou se a nota saiu sem os campos do IBS/CBS quando eles já eram obrigatórios, aparece como "Valor a pagar". O painel mostra as duas partes e o saldo.</p>
+        </div>
+        <div class="bento-visual valor-economia" aria-hidden="true"><small>Exemplo · economia potencial</small><b>R$ 486,30</b><span class="chip chip-eco">318 itens com o imposto recalculado</span></div>
+      </article>
+
+      <article class="bento-card" data-revelar style="--atraso:.06s">
+        <h3>O que está certo e o que não está</h3>
+        <p>Cada produto recebe um destes resultados: <b>Correto</b> (é só manter), <b>C/ recal impostos</b> (a regra é conhecida, mas a nota usou outro código: o relatório diz qual usar), <b>Precisa validar</b> (depende de uma resposta sua) ou <b>Ajustar NCM</b> (você indicou que o NCM está errado). Notas que saíram sem os campos do IBS/CBS também aparecem: antes de 03/08/2026 viram <b>Não obrigatório</b> e ficam fora da conta, porque os campos ainda não eram exigidos; depois dessa data, recebem os códigos a cadastrar e o valor a pagar.</p>
+        <div class="estados-visual" aria-hidden="true"><span class="chip chip-ok">Correto</span><span class="chip chip-eco">C/ recal impostos</span><span class="chip chip-pend">Precisa validar</span><span class="chip chip-risco">Ajustar NCM</span><span class="chip chip-neutro">Não obrigatório</span></div>
+      </article>
+
+      <article class="bento-card" data-revelar>
+        <h3>O que mudar no cadastro</h3>
+        <p>Os dois códigos certos de cada produto, com a instrução do que fazer e a lei. O que ainda depende de resposta aparece separado, só como sugestão: responda em Pendências antes de mudar o cadastro.</p>
+        <div class="regra-visual" aria-hidden="true">
+          <span class="regra-linha"><b>CST a utilizar</b>200</span>
+          <span class="regra-linha"><b>cClassTrib a utilizar</b>200003</span>
+        </div>
+      </article>
+
+      <article class="bento-card" data-revelar style="--atraso:.06s">
+        <h3>O que depende da sua resposta</h3>
+        <p>Quando a lei dá desconto para o NCM, o produto vai para Pendências até você confirmar o que ele é. Os produtos que mais vendem, em valor, aparecem primeiro. Enquanto você não responde, o valor dele fica fora da conta.</p>
+        <div class="arte-pendencias" aria-hidden="true">
+          <b>O que é este produto?</b>
+          <span class="opcao marcada">Massa alimentícia · Anexo VII</span>
+          <span class="opcao">Preparado no local</span>
+        </div>
+      </article>
+
+      <article class="bento-card" data-revelar style="--atraso:.12s">
+        <h3>O porquê de cada resultado</h3>
+        <p>O motivo de cada resultado e o trecho da lei da Reforma (LC 214/2025) que o explica, com link para a lei e para a tabela oficial de códigos do governo. Para você conferir com o seu contador.</p>
+        <ol class="trilha-visual" aria-hidden="true"><li>Regra encontrada</li><li>Motivo do resultado</li><li>Norma</li></ol>
+      </article>
+    </div>
+    <div class="chamada" data-revelar>
+      <p>Isso tudo, com os produtos da sua empresa. <b>Comece pelas vendas do último mês.</b></p>
+      <a class="btn btn-ouro btn-grande" href="#planos">Quero a minha análise <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6. POR QUE É DIFERENTE ================= -->
+<section class="secao diferente" id="diferente">
+  <div class="container">
+    <div class="cabeca-secao centro" data-revelar>
+      <h2 class="titulo-secao">Quando falta informação, <em>a análise pergunta em vez de chutar.</em></h2>
+      <p class="lead">Em imposto, uma resposta errada com cara de certa sai mais cara do que uma dúvida. Por isso a análise só decide o que a lei deixa decidir, e mostra de onde veio cada resultado.</p>
+    </div>
+
+    <div class="argumentos">
+      <article class="argumento" data-revelar>
+        <span class="argumento-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-escudo"/></svg></span>
+        <h3>Nenhum desconto no chute</h3>
+        <p>Se a lei dá desconto para o NCM, ele só entra na conta depois que você confirma o que o produto é. Se a alíquota do período ainda não foi publicada, o valor fica em branco, em vez de inventado.</p>
+      </article>
+      <article class="argumento" data-revelar style="--atraso:.06s">
+        <span class="argumento-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-lupa"/></svg></span>
+        <h3>O NCM ajuda, mas não decide sozinho</h3>
+        <p>O pão francês tem imposto zero, mas o NCM dele também é usado por outros produtos. Se um bolo for vendido com esse mesmo NCM, a análise percebe pelo nome do produto na nota, não dá o imposto zero para ele e pergunta a você o que o produto é. Nenhum desconto entra na conta antes da sua resposta.</p>
+        <span class="chip chip-risco sem-ponto argumento-chip" aria-hidden="true">BOLO BANDEJA · imposto zero não aplicado</span>
+      </article>
+      <article class="argumento" data-revelar style="--atraso:.12s">
+        <span class="argumento-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-moedas"/></svg></span>
+        <h3>Os dois lados da conta</h3>
+        <p>A análise não procura só economia. Se a nota usou um desconto que a lei não dá para o produto, você vê o imposto cheio e o valor a pagar. Se a resposta depende do produto, ela pergunta antes de fazer a conta.</p>
+      </article>
+    </div>
+
+    <article class="bento-card largo privacidade no-escuro" data-revelar>
+      <div class="bento-texto">
+        <h3>Seus arquivos não saem do seu computador</h3>
+        <p>A análise acontece dentro do seu navegador e fica salva nele. Os arquivos não são enviados para nenhum servidor, e a página não tem rastreadores nem contadores de visitas.</p>
+        <p class="privacidade-ressalva">Um cuidado: não existe cópia na nuvem. Em outro computador a análise começa vazia, e limpar os dados do navegador apaga a análise. Suas notas e o sistema que emite suas notas continuam como estão.</p>
+      </div>
+      <div class="bento-visual cofre" aria-hidden="true">
+        <div class="cofre-janela"><svg class="i"><use href="#i-navegador"/></svg><span>Seu navegador</span></div>
+        <div class="cofre-arquivos"><i>XML</i><i>XML</i><i>ZIP</i><i>XML</i></div>
+        <div class="cofre-selo"><svg class="i"><use href="#i-cadeado"/></svg>Análise salva</div>
+      </div>
+    </article>
+    <div class="chamada" data-revelar>
+      <p>Sem chute, sem instalar nada <b>e sem seus arquivos saírem do computador.</b></p>
+      <a class="btn btn-verde btn-grande" href="#planos">Começar minha análise <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. PARA QUEM É ================= -->
+<section class="secao para-quem" id="para-quem">
+  <div class="container">
+    <div class="cabeca-secao" data-revelar>
+      <h2 class="titulo-secao">Feito para o setor de alimentação, <em>do balcão à indústria.</em></h2>
+      <p class="lead">Padarias, confeitarias, restaurantes, bares, lanchonetes, indústrias de alimentos e distribuidoras têm muitos produtos, NCMs parecidos e descontos que dependem do que cada item é. É aí que os erros aparecem.</p>
+    </div>
+    <div class="publicos">
+      <article class="publico" data-revelar>
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-pao"/></svg></span>
+        <h3>Padarias e confeitarias</h3>
+        <p>Pão francês, pão de forma e bolo têm NCMs parecidos, às vezes iguais, mas a lei trata cada um de um jeito. Veja onde a regra do NCM vale para o produto e onde não vale.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.06s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-talheres"/></svg></span>
+        <h3>Restaurantes, bares e lanchonetes</h3>
+        <p>Informe na análise que você vende para consumo no local, e cada produto recebe a pergunta: foi preparado e servido aqui ou vendido como mercadoria? O que é preparado e servido no local tem regra própria, com desconto de 40% no imposto.</p>
+      </article>
+      <article class="publico" data-revelar style="--atraso:.12s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-caminhao"/></svg></span>
+        <h3>Indústrias de alimentos e distribuidoras</h3>
+        <p>Muitas notas de uma vez: até 10.000 arquivos por envio, vários envios na mesma análise e uma pergunta por produto, não por nota.</p>
+      </article>
+      <article class="publico secundario" data-revelar style="--atraso:.18s">
+        <span class="publico-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-calculadora"/></svg></span>
+        <h3>Contadores e consultores</h3>
+        <p>Também serve para quem entrega um diagnóstico ao cliente, com o motivo e a lei em cada resultado. Uma empresa por análise.</p>
+      </article>
+    </div>
+    <div class="chamada" data-revelar>
+      <p>Reconheceu a sua empresa aqui? <b>Confira o cadastro antes de 2027.</b></p>
+      <a class="btn btn-verde btn-grande" href="#planos">Ver os planos <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+    <p class="para-quem-nota" data-revelar>Empresa do Simples Nacional? Antes de contratar, <a href="#faq-simples">leia a resposta sobre o Simples nas Dúvidas</a>.</p>
+  </div>
+</section>
+
+<!-- ================= 8. PROVA: exemplo de análise ================= -->
+<section class="secao exemplo" id="exemplo">
+  <div class="container">
+    <div class="cabeca-secao exemplo-cabeca" data-revelar>
+      <h2 class="titulo-secao">Antes de contratar, <em>veja um resultado por inteiro.</em></h2>
+      <p class="lead">Estamos em pré-lançamento, então ainda não temos resultados de clientes para mostrar. Em vez disso, abrimos aqui uma análise de demonstração inteira: o que cada número quer dizer e o que você faz com ele.</p>
+    </div>
+
+    <div class="exemplo-folha" data-revelar>
+      <span class="carimbo">Exemplo de análise<small>Demonstração</small></span>
+      <div class="exemplo-topo">
+        <div class="exemplo-valor">
+          <small>Economia potencial</small>
+          <b>R$ 486,30</b>
+          <p>É o saldo da conta refeita: o imposto que saiu a mais (desconto da lei que ficou de fora) menos o que saiu a menos (desconto usado sem a lei dar, ou nota sem os campos do IBS/CBS quando eles já eram obrigatórios). O valor é pequeno porque 2026 é ano de teste, com alíquotas de 0,9% (CBS) e 0,1% (IBS). O que pesa é o código errado, que continua nas próximas notas. <b>Não é dinheiro devolvido nem crédito:</b> serve para mostrar onde ajustar.</p>
+        </div>
+        <dl class="exemplo-numeros">
+          <div class="neutro"><dt>Itens avaliados</dt><dd><b>3.482</b>Cada produto de cada nota de venda conta como um item.</dd></div>
+          <div class="ok"><dt>Corretos</dt><dd><b>2.917</b>O código bate com a lei. O que fazer: nada, é só manter.</dd></div>
+          <div class="eco"><dt>Corretos c/ recal impostos</dt><dd><b>318</b>A regra certa já é conhecida, mas a nota usou outro código ou saiu sem os campos do IBS/CBS. O que fazer: trocar os dois códigos no cadastro, como o relatório indica.</dd></div>
+          <div class="pend"><dt>Precisam validar</dt><dd><b>247</b>Depende do que o produto é. O que fazer: responder uma pergunta por produto em Pendências.</dd></div>
+        </dl>
+      </div>
+      <div class="exemplo-caso">
+        <p class="exemplo-caso-titulo"><b>Um produto, do começo ao fim</b><span>PÃO FRANCÊS KG · NCM 1905.90.90</span></p>
+        <ol class="exemplo-trilha">
+          <li><small>Como saiu na nota</small><b>CST 000 · cClassTrib 000001</b><span>Imposto cheio</span></li>
+          <li><small>O que a lei diz</small><b>Imposto zero</b><span>Cesta básica (Anexo I, item 16) · confirmado</span></li>
+          <li><small>O que você faz</small><b>CST 200 · cClassTrib 200003</b><span>Troque estes códigos no cadastro do produto. As próximas notas já saem certas.</span></li>
+        </ol>
+        <div class="exemplo-selos"><span class="chip chip-ok">Validado por uma pessoa</span><span class="chip chip-ok">Regra conferida com a fonte oficial</span></div>
+      </div>
+      <p class="exemplo-nota">Números de uma análise de demonstração, não de cliente. Nem todo arquivo enviado entra na conta: notas de entrada, devoluções, notas que o arquivo mostra como não autorizadas, canceladas (quando o XML do cancelamento vai junto), repetidas e arquivos que não são nota ficam de fora, com o motivo.</p>
+    </div>
+    <div class="exemplo-cta" data-revelar>
+      <a class="btn btn-verde btn-grande" href="#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 9. PLANOS ================= -->
+<section class="secao planos no-escuro" id="planos">
+  <div class="planos-fundo" aria-hidden="true"></div>
+  <div class="container">
+    <div class="cabeca-secao centro" data-revelar>
+      <h2 class="titulo-secao">Escolha o plano <em>e confira suas notas.</em></h2>
+      <p class="lead">Todos os planos têm todos os recursos e o relatório em CSV, Excel e PDF. A única diferença é o tamanho: quantas notas de venda por mês você pode analisar.</p>
+      <p class="planos-aviso" data-valores-ilustrativos hidden></p>
+      <div class="segmentado ciclo" role="group" aria-label="Período de cobrança" data-ciclo>
+        <button type="button" data-valor="mensal" aria-pressed="true">Mensal</button>
+        <button type="button" data-valor="anual" aria-pressed="false">Anual <span class="tag" data-vantagem-anual></span></button>
+      </div>
+    </div>
+
+    <div class="planos-grade" data-planos>
+      <noscript><p class="planos-sem-js">Ative o JavaScript do navegador para ver os planos e assinar.</p></noscript>
+    </div>
+    <div class="planos-pontos" data-planos-pontos aria-hidden="true"></div>
+
+    <ul class="planos-condicoes" data-condicoes></ul>
+
+    <div class="comparar">
+      <button type="button" class="comparar-botao" aria-expanded="false" aria-controls="tabela-comparativa" data-comparar>
+        Comparar todos os recursos <svg class="i i-sm" aria-hidden="true"><use href="#i-chevron-b"/></svg>
+      </button>
+      <div class="comparar-corpo" id="tabela-comparativa" data-comparar-corpo>
+        <div class="comparar-interno"><div class="tabela-rolagem" data-tabela-comparativa></div></div>
+      </div>
+    </div>
+
+    <div class="contratar" data-revelar>
+      <h3>Como contratar, em 4 passos</h3>
+      <ol>
+        <li><b>Escolha o plano</b><span>Veja qual combina com o tamanho da sua empresa.</span></li>
+        <li><b>Pague na Kiwify</b><span>Cartão, Pix ou boleto, no ambiente seguro da Kiwify.</span></li>
+        <li><b>Receba o acesso por e-mail</b><span>Com o pagamento aprovado, chega um e-mail para você criar sua senha.</span></li>
+        <li><b>Abra o sistema</b><span>Na área do cliente, clique em "Abrir sistema" e envie suas notas.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10. QUEM ESTÁ POR TRÁS ================= -->
+<section class="secao quem" id="quem-somos">
+  <div class="container">
+    <div class="quem-cartao" data-revelar>
+      <div class="quem-texto">
+        <h2 class="titulo-secao">Por trás da análise, <em>uma pessoa que você pode chamar.</em></h2>
+        <p class="lead">O Conformidade IBS/CBS é um produto da Sabores Estratégicos, consultoria de <span data-responsavel="nome">Nilva Rodrigues</span>.</p>
+        <div class="quem-pessoa">
+          <p data-responsavel="especialidade"></p>
+          <p data-responsavel="experiencia"></p>
+          <p data-responsavel="motivo"></p>
+        </div>
+        <div class="quem-formacao" data-responsavel-formacao hidden>
+          <h3>Formação</h3>
+          <ul></ul>
+        </div>
+        <div class="quem-contatos">
+          <span data-contato="email" data-icone></span>
+          <span data-contato="instagram" data-icone></span>
+          <span data-responsavel-link="linkedin" data-icone></span>
+          <span data-responsavel-link="site" data-icone></span>
+          <span data-responsavel-local data-icone></span>
+          <span data-contato="horario" data-icone data-maiuscula></span>
+        </div>
+        <p class="quem-empresa"><span data-empresa="razaoSocial"></span> · <span data-empresa="cnpj"></span></p>
+      </div>
+      <div class="quem-lado">
+        <div class="quem-foto">
+          <figure class="quem-retrato" data-responsavel-foto>
+            <img src="site/imagens/coruja-positiva-grande.png" alt="" width="408" height="480">
+            <figcaption><span class="a-definir">foto da responsável</span></figcaption>
+          </figure>
+          <p class="quem-destaque" data-responsavel-destaque hidden></p>
+        </div>
+        <blockquote class="quem-citacao" data-responsavel-citacao hidden></blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 11. FAQ ================= -->
+<section class="secao faq" id="faq">
+  <div class="container faq-grade">
+    <div class="faq-lado" data-revelar>
+      <h2 class="titulo-secao">Tudo o que você precisa <em>saber antes.</em></h2>
+      <div class="faq-suporte">
+        <span class="faq-suporte-icone"><svg class="i i-lg" aria-hidden="true"><use href="#i-email"/></svg></span>
+        <div>
+          <b>Ainda com dúvida?</b>
+          <p>Fale com a gente em <span data-contato="horario"></span>:</p>
+          <div class="faq-contatos"><span data-contato="email" data-icone></span><span data-contato="instagram" data-icone></span></div>
+        </div>
+      </div>
+      <a class="btn btn-verde btn-grande btn-bloco faq-cta" href="#planos">Tirou a dúvida? Escolha seu plano <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+    <div class="faq-lista" data-revelar style="--atraso:.08s">
+      <details class="pergunta" open>
+        <summary>Como funciona a análise?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Você envia os arquivos XML das suas notas de venda (NF-e e NFC-e). A análise confere os dois códigos do IBS e da CBS de cada produto e compara com a regra da lei para aquele produto, na data da venda. Você vê o resultado no painel, responde só às perguntas sobre o que o produto é e recebe o relatório do que corrigir no cadastro. Tudo funciona no navegador, sem nada para instalar.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>Preciso conferir todos os meus produtos? E se eu tiver 10 mil cadastrados?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Não, e essa é a ideia. A análise olha só os produtos que aparecem nas notas enviadas, e a pergunta sobre cada um é feita uma vez só, valendo para todas as vendas dele. Se você tem 10 mil produtos cadastrados e mil vendem, são esses mil que aparecem. A análise não lê o cadastro do sistema que emite suas notas, então o produto que não vendeu no período fica de fora. Para incluí-lo, envie notas de um período maior ou use a Consulta por NCM, que funciona sem XML.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>A análise garante que o meu imposto está certo?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Nenhuma ferramenta garante isso sozinha, e a análise não promete. Ela cruza suas notas com as regras da lei, decide só o que a lei deixa claro e separa para você o que depende do produto. Assim você não confere item por item: revisa só o que ficou pendente. Cada resultado mostra o motivo, a regra e se ela já foi conferida com a tabela oficial do governo, para você e o seu contador revisarem. A análise cobre só o IBS e a CBS e não substitui a avaliação de um profissional.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>A economia que aparece é dinheiro que volta para o caixa?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Não. Não é devolução nem crédito. É uma conta refeita: a análise calcula de novo o imposto de cada produto, com as alíquotas do período e o desconto que a lei dá, e mostra quanto saiu a mais (economia) ou a menos (valor a pagar). Em 2026 as alíquotas ainda são de teste (CBS 0,9% e IBS 0,1%), então os valores costumam ser pequenos. A partir de 2027, com a CBS no lugar do PIS e da Cofins, deixam de ser. O que pesa é o código errado, que continua nas próximas notas. Se a alíquota do período ainda não foi publicada, o valor fica em branco.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>Quais notas entram na análise?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Arquivos XML de NF-e (a nota fiscal comum) e de NFC-e (a nota do cupom, no balcão), soltos ou dentro de um .zip, mesmo com pastas dentro. Cabem até 10.000 arquivos por envio (um .zip conta como um arquivo), e você pode fazer vários envios antes de processar. Entram as notas de saída. Ficam de fora, com o motivo na tela: notas de entrada, devoluções, notas que o próprio arquivo mostra como não autorizadas, canceladas (quando o XML do cancelamento vai junto), a mesma nota enviada duas vezes e arquivos que não são nota. Saídas que não são venda, como bonificação e remessa, continuam na análise, com um aviso.</p><p>Notas emitidas antes de 03/08/2026 sem os campos do IBS/CBS aparecem como "Não obrigatório" e não entram na conta, porque esses campos ainda não eram exigidos.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>O que exatamente é conferido?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Os dois códigos do IBS e da CBS de cada produto (o CST e o cClassTrib), pelas regras da lei da Reforma (LC 214/2025): imposto zero, desconto de 60%, desconto de 40% para o que bares e restaurantes preparam e servem no local, e a regra geral, sem desconto. Se a lei não prevê desconto para o NCM do produto, vale a regra geral. Se você informar que a empresa é bar, restaurante ou lanchonete, cada produto recebe antes a pergunta sobre consumo no local.</p><p>Ficam de fora os outros impostos (ICMS, ST, DIFAL, PIS/Cofins, IPI) e os códigos CEST e CSOSN. A análise também não confere o valor de imposto escrito na nota, só os códigos, nem o NCM: se você indicar que ele está errado, o produto vai para a lista de ajuste.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>E se eu não souber responder uma pendência?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Deixe sem resposta. O produto continua pendente e nenhum desconto é aplicado a ele. Cada opção mostra o resultado antes do clique. Quando você responde, a resposta vale para todas as vendas daquele produto com o mesmo NCM, fica salva na análise e pode ser mudada depois. Na dúvida, leve a pergunta ao seu contador.</p></div></div>
+      </details>
+      <details class="pergunta" id="faq-simples">
+        <summary>Funciona para empresa do Simples Nacional?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Fale com a gente antes de contratar. Hoje a análise segue o calendário das empresas fora do Simples, para as quais os campos do IBS/CBS passaram a ser obrigatórios na nota em 03/08/2026, e ela não identifica sozinha que a empresa é do Simples. Para o Simples, essa obrigação só começa em 01/01/2027. Por isso, notas sem esses campos emitidas entre essas duas datas apareceriam como se os campos já fossem obrigatórios, o que não vale para a sua empresa.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>Meus arquivos ficam seguros?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Sim. Os arquivos são lidos dentro do seu próprio navegador e a análise fica salva nele: nada é enviado para um servidor. A página não tem rastreadores nem contadores de visitas, e do site o sistema só baixa as regras da lei e as ferramentas que montam os gráficos, o Excel e o PDF. O outro lado: não existe cópia na nuvem. Limpar os dados do navegador apaga a análise, e outro computador ou navegador começa vazio.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>A análise muda minhas notas ou o cadastro do meu sistema?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Não. A análise só lê os arquivos e diz o que corrigir. Ela não se conecta ao sistema que emite suas notas: as mudanças no cadastro dos produtos são feitas por você ou por quem cuida dele.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>Posso analisar mais de uma empresa?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Sim, uma de cada vez. O navegador guarda uma análise por vez. Termine uma, exporte o relatório e clique em "Nova análise (limpar dados)" para começar a próxima. Atenção: essa opção apaga a análise atual, então exporte antes.</p></div></div>
+      </details>
+      <details class="pergunta">
+        <summary>Como faço para contratar?<span class="pergunta-icone" aria-hidden="true"></span></summary>
+        <div class="resposta"><div><p>Escolha um plano e clique em "Assinar": o pagamento é feito na Kiwify, por cartão, Pix ou boleto. Assim que ele é aprovado, você recebe um e-mail no endereço usado na compra para criar sua senha e já entra na área do cliente. Nas próximas vezes, clique em "Entrar", no topo da página. Na área do cliente, o botão "Abrir sistema" leva direto à análise.</p></div></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 12. CTA FINAL ================= -->
+<section class="cta-final" id="comecar">
+  <div class="container">
+    <div class="cta-cartao no-escuro" data-revelar="zoom">
+      <div class="cta-fundo" aria-hidden="true">
+        <span class="cta-anel um"></span><span class="cta-anel dois"></span><span class="cta-anel tres"></span>
+        <img src="site/imagens/coruja-negativa-grande.png" alt="" width="408" height="480">
+      </div>
+      <div class="cta-conteudo">
+        <h2 class="titulo-secao">Corrija o cadastro uma vez. <em>Acerte todas as próximas vendas.</em></h2>
+        <p class="lead">Em 2027 a CBS entra no lugar do PIS e da Cofins, e o código errado passa a pesar de verdade. Envie hoje suas notas de venda e descubra quais produtos corrigir, com o motivo de cada um.</p>
+        <div class="cta-botoes">
+          <a class="btn btn-ouro btn-grande" href="#planos">Quero conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+          <a class="btn btn-fantasma btn-grande" href="entrar.html" data-link-entrar>Já tenho conta</a>
+        </div>
+        <p class="cta-nota">Prefere conversar antes? Escreva para <span data-contato="email"></span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="rodape no-escuro">
+  <div class="container">
+    <div class="rodape-topo">
+      <div class="rodape-marca">
+        <a class="marca clara" href="index.html" aria-label="Início">
+          <img class="marca-coruja" src="site/imagens/coruja-negativa-grande.png" alt="" width="40" height="47">
+          <span class="marca-texto"><strong>Conformidade IBS/CBS</strong><small>Sabores Estratégicos</small></span>
+        </a>
+        <p>Confere o IBS e a CBS das suas notas de venda e mostra o que corrigir em cada produto, e por quê.</p>
+        <a class="btn btn-ouro btn-pequeno" href="index.html#planos">Conferir minhas notas <svg class="i i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+      </div>
+      <nav class="rodape-colunas" aria-label="Rodapé">
+        <div>
+          <h4>Produto</h4>
+          <a href="index.html#solucao">Como funciona</a>
+          <a href="index.html#descobertas">O que você descobre</a>
+          <a href="index.html#demonstracao">Demonstração</a>
+          <a href="index.html#faq">Perguntas frequentes</a>
+        </div>
+        <div>
+          <h4>Planos</h4>
+          <span class="rodape-planos" data-links-planos></span>
+          <a href="index.html#planos">Comparar planos</a>
+        </div>
+        <div>
+          <h4>Conta</h4>
+          <a href="entrar.html" data-link-entrar>Entrar</a>
+          <a href="cadastro.html">Criar conta</a>
+          <a href="recuperar-senha.html">Recuperar senha</a>
+          <a href="conta.html">Área do cliente</a>
+        </div>
+        <div>
+          <h4>Suporte</h4>
+          <span data-contato="email" data-icone></span>
+          <span data-contato="instagram" data-icone></span>
+          <span data-contato="horario" data-icone data-maiuscula></span>
+        </div>
+      </nav>
+    </div>
+    <div class="rodape-base">
+      <p>© <span data-ano>2026</span> Sabores Estratégicos · <span data-empresa="razaoSocial"></span> · <span data-empresa="cnpj"></span></p>
+      <div class="rodape-legal">
+        <a href="termos.html">Termos de uso</a>
+        <a href="privacidade.html">Política de privacidade</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a class="cta-movel" href="#planos" data-cta-movel>Conferir minhas notas <svg class="i i-sm i-seta" aria-hidden="true"><use href="#i-seta"/></svg></a>
+</body>
+</html>
