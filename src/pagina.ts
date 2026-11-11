@@ -191,16 +191,6 @@ select{appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer
 .estado-validacao.erro{color:#9B2C2C;font-weight:600}
 .selo-validado{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--verde-700);color:#FBF8F1;font-size:12px;vertical-align:middle}
 .titulo-validados{margin-top:28px}
-.campo-is{margin-top:12px;padding:12px 14px;border:1px solid var(--ouro-200);border-radius:10px;background:var(--ouro-50)}
-.campo-is .rotulo{display:block;font-weight:700;letter-spacing:.04em}
-.campo-is .acoes{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
-.quadro-is{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:4px 12px;margin-top:8px;font-size:13px}
-.quadro-is .r{color:#5A665F}
-.selo-is{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:12px;vertical-align:middle;border:1px solid var(--ouro-200)}
-.selo-is.INCIDENCIA{background:#FBEDEC;color:#7A1F1F;border-color:#E9B8B3}
-.selo-is.NAO_INCIDENCIA{background:#EEF4EF;color:var(--verde-700)}
-.selo-is.VALIDACAO{background:var(--ouro-50);color:#584521}
-@media (max-width:640px){.quadro-is{grid-template-columns:1fr}}
 .aviso-info{margin-top:6px;padding:7px 10px;background:var(--info-fundo);border:1px solid var(--info-borda);border-radius:8px;font-size:12px;color:var(--info)}
 .aviso-regra{margin-top:6px;padding:7px 10px;background:var(--risco-fundo);border:1px solid var(--risco-borda);border-radius:8px;font-size:12px;color:#7E271F}
 .selo{display:inline-flex;align-items:center;gap:5px;margin:4px 6px 0 0;padding:2px 10px;border:1px solid transparent;border-radius:999px;font-size:12px;font-weight:600;line-height:1.5}
@@ -500,7 +490,6 @@ details>summary:hover{color:var(--verde-900)}
 <button onclick="abrirTela('dashboard',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Dashboard</button>
 <button onclick="abrirTela('resultados',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>Resultados</button>
 <button onclick="abrirTela('pendentes',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Pendências</button>
-<button onclick="abrirTela('imposto-seletivo',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8l-1 6H9z"/><path d="M9 8v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V8"/></svg>Imposto Seletivo</button>
 <button onclick="abrirTela('relatorio-final',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>Relatório Final</button>
 <button onclick="abrirTela('consulta-ncm',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Consulta Tributária por NCM</button>
 </nav>
@@ -639,6 +628,11 @@ details>summary:hover{color:var(--verde-900)}
 <section id="pendentes" class="tela">
 <div class="card">
 <h2>Pendências da análise atual</h2>
+<div class="barra"><div class="segmentado" role="group" aria-label="Pendências">
+<button class="secondary relatorio-final-selecionado" id="btnPendenciasIbsCbs" onclick="mostrarPendencias('ibscbs')">IBS/CBS</button>
+<button class="secondary" id="btnPendenciasIS" onclick="mostrarPendencias('is')">IMPOSTO SELETIVO</button>
+</div></div>
+<div id="pendenciasIbsCbs">
 <div class="aviso" id="avisoPendencias" hidden></div>
 <div class="filters">
 <input id="buscaPendenteProduto" placeholder="Pesquisar por produto">
@@ -648,24 +642,15 @@ details>summary:hover{color:var(--verde-900)}
 <div class="barra"><button class="secondary" onclick="window.print()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>Imprimir</button><button class="secondary" onclick="exportarPendencias()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar CSV</button><span id="contagemPendencias" class="small"></span></div>
 <div id="listaPendentes"></div>
 </div>
-</section>
-
-<section id="imposto-seletivo" class="tela">
-<div class="card">
-<h2>Imposto Seletivo (IS)</h2>
-<p class="small">Enquadramento do Imposto Seletivo por produto, separado do IBS/CBS: a escolha feita aqui não altera CST, cClassTrib nem créditos de IBS/CBS.</p>
-<div id="baseIS" class="aviso"></div>
-<div class="barra">
-<select id="filtroIS" onchange="renderIS()" aria-label="Produtos exibidos">
-<option value="relevantes">Produtos do Anexo XVII e bebidas</option>
-<option value="pendentes">Pendentes de validação fiscal</option>
-<option value="incidencia">Com incidência de IS</option>
-<option value="todos">Todos os produtos</option>
-</select>
-<input id="buscaIS" placeholder="Produto, cProd ou NCM" oninput="renderIS()">
-<span id="contagemIS" class="small"></span>
+<div id="pendenciasIS" hidden>
+<div class="filters">
+<input id="buscaPendISProduto" placeholder="Pesquisar por produto" oninput="renderPendenciasIS()">
+<input id="buscaPendISCprod" placeholder="Pesquisar por cProd" oninput="renderPendenciasIS()">
+<input id="buscaPendISNcm" placeholder="Pesquisar por NCM" oninput="renderPendenciasIS()">
 </div>
-<div id="listaIS"><p>Carregando...</p></div>
+<div class="barra"><button class="secondary" onclick="exportarPendenciasIS()">Exportar CSV</button><span id="contagemPendenciasIS" class="small"></span></div>
+<div id="listaPendenciasIS"></div>
+</div>
 </div>
 </section>
 
@@ -763,14 +748,12 @@ let resultadosFiltrados=[];
 let regrasUI={};
 let modoRelatorioFinal='com';
 let linhasRelatorioFinal=[];
-const COLUNAS_RELATORIO_BASE=['Código produto','Descrição','NCM','cClassTrib a utilizar','CST a utilizar','Alíquota de registro IBS/CBS','Instrução'];
-/** Coluna do Imposto Seletivo, ao fim de cada relatório de IBS/CBS (tributo separado: não altera as colunas de IBS/CBS). */
-const COLUNA_IS='Imposto Seletivo (IS)';
-const COLUNAS_RELATORIO_FINAL=COLUNAS_RELATORIO_BASE.concat([COLUNA_IS]);
-const COLUNAS_RELATORIO_IS=['Código produto','Descrição','NCM','Descrição fiscal (Anexo XVII da LC 214/2025)','Imposto Seletivo','Alíquota aplicável','Base de cálculo (R$)','Valor do IS (R$)','Fundamentação legal','Situação da validação'];
+const COLUNAS_RELATORIO_FINAL=['Código produto','Descrição','NCM','cClassTrib a utilizar','CST a utilizar','Alíquota de registro IBS/CBS','Instrução'];
 const COLUNAS_RELATORIO_RISCO=['cProd','Descrição','NCM informado','NCM adequado / possível enquadramento','CST atual','CST esperado','cClassTrib atual','cClassTrib esperado','Redução IBS','Redução CBS','Alíquota aplicável','Alíquota atualmente considerada','Diferença (R$)','Motivo do INCORRETO — risco','Fundamento legal','Fonte','Instrução'];
 /** Recálculo e Corretos: as colunas do relatório final mais o resultado e o impacto do recálculo. */
-const COLUNAS_RELATORIO_IMPACTO=COLUNAS_RELATORIO_BASE.concat(['Resultado','Economia (R$)','Valor a pagar (R$)',COLUNA_IS]);
+const COLUNAS_RELATORIO_IMPACTO=COLUNAS_RELATORIO_FINAL.concat(['Resultado','Economia (R$)','Valor a pagar (R$)']);
+/** Imposto Seletivo: mesmo formato do relatório final, só com os produtos validados em Pendências → Imposto Seletivo. */
+const COLUNAS_RELATORIO_IS=['Código produto','Descrição','NCM','Imposto Seletivo','Alíquota de registro IS','Valor do IS (R$)','Instrução'];
 const colunasRelatorio=()=>modoRelatorioFinal==='is'?COLUNAS_RELATORIO_IS:modoRelatorioFinal==='corretos'?COLUNAS_RELATORIO_IMPACTO:COLUNAS_RELATORIO_FINAL;
 /** Norma que define o enquadramento (e a alíquota) a utilizar: regra aplicada, regime do art. 275 ou regra geral. */
 function normaDoEnquadramento(v){
@@ -852,9 +835,8 @@ async function abrirTela(id,botao){
  if(id==='importar') carregarAnalise();
  if(id==='dashboard'){ carregarDashboard(); carregarAlertas(); }
  if(id==='resultados') carregarResultados();
- if(id==='pendentes') carregarPendentes();
+ if(id==='pendentes'){ carregarPendentes(); carregarPendenciasIS(); }
  if(id==='relatorio-final') carregarRelatorioFinal();
- if(id==='imposto-seletivo') carregarIS();
 }
 
 function escaparRelatorio(v){
@@ -938,7 +920,6 @@ async function carregarRelatorioFinal(){
 
  const renderizar=(linhas,vazio)=>{
    if(modo!==modoRelatorioFinal) return;
-   if(modo!=='is') linhas=linhas.map(l=>l.concat([textoISRelatorio(l[2],l[0])]));
    linhasRelatorioFinal=linhas;
    console.info('[relatorio] '+modo+': '+linhas.length+' produto(s) em '+(Date.now()-t0)+' ms');
    corpo.innerHTML=linhas.length
@@ -948,14 +929,11 @@ async function carregarRelatorioFinal(){
  };
 
  try{
-   // Imposto Seletivo: lido a cada relatório (a escolha do usuário vale na hora, sem reprocessar)
-   try{ await carregarDadosIS(); }
-   catch(e){ if(modo==='is') throw e; console.error('[relatorio] Imposto Seletivo indisponível',e); }
-   if(modo!==modoRelatorioFinal) return;
    if(modo==='is'){
-     explicacao.textContent='Imposto Seletivo: produtos do Anexo XVII da LC 214/2025 e demais bebidas, com a incidência (escolha do usuário ou sugestão do sistema), a alíquota, o valor quando há alíquota conferida e dados suficientes, e a situação da validação. Produtos sem enquadramento conclusivo aparecem como pendentes, sem alíquota.';
-     const linhas=isProdutos.filter(p=>produtoISRelevante(p)).map(linhaRelatorioIS);
-     renderizar(linhas,'Nenhum produto do Anexo XVII nem bebida nesta análise.');
+     await carregarDadosIS();
+     if(modo!==modoRelatorioFinal) return;
+     explicacao.textContent='Imposto Seletivo: produtos com o Imposto Seletivo validado em Pendências → Imposto Seletivo. O IS é um tributo separado: não altera o CST, o cClassTrib nem a alíquota de IBS/CBS.';
+     renderizar(isProdutos.filter(validadoIS).map(linhaRelatorioIS),'Nenhum produto com o Imposto Seletivo validado. Valide em Pendências → Imposto Seletivo.');
      return;
    }
    if(modo==='recal'||modo==='corretos'||modo==='com'){
@@ -1074,8 +1052,7 @@ function exportarRelatorioFinal(formato){
    alert('Não há dados no relatório selecionado para exportar.');
    return;
  }
- const impacto=modoRelatorioFinal==='corretos';
- const relIS=modoRelatorioFinal==='is';
+ const impacto=modoRelatorioFinal==='recal'||modoRelatorioFinal==='corretos';
  const titulo='Relatório Final — '+TITULO_RELATORIO[modoRelatorioFinal];
  const nome={com:'relatorio-final-corretos-validados',sem:'relatorio-final-sem-validacao',recal:'relatorio-final-corretos-recal-impostos',corretos:'relatorio-final-corretos',is:'relatorio-final-imposto-seletivo'}[modoRelatorioFinal];
  const colunas=colunasRelatorio();
@@ -1088,7 +1065,7 @@ function exportarRelatorioFinal(formato){
 
  if(formato==='excel'){
    if(typeof gerarXlsx!=='function'){ alert('Não foi possível carregar o gerador de Excel. Recarregue a página.'); return; }
-   baixarArquivo(nome+'.xlsx',gerarXlsx(tabela,{aba:TITULO_RELATORIO[modoRelatorioFinal].slice(0,31),larguras:relIS?[16,40,12,45,24,26,16,14,60,30]:impacto?[16,45,12,16,12,22,70,26,14,16,45]:[16,45,12,16,12,22,70,45]}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+   baixarArquivo(nome+'.xlsx',gerarXlsx(tabela,{aba:TITULO_RELATORIO[modoRelatorioFinal].slice(0,31),larguras:impacto?[16,45,12,16,12,22,70,26,14,16]:[16,45,12,16,12,22,70]}),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
    return;
  }
 
@@ -1111,7 +1088,7 @@ function exportarRelatorioFinal(formato){
      styles:{fontSize:7,cellPadding:3,overflow:'linebreak'},
      headStyles:{fillColor:[44,66,51],textColor:[251,248,241]},
      alternateRowStyles:{fillColor:[250,248,243]},
-     columnStyles:relIS?{1:{cellWidth:110},3:{cellWidth:120},8:{cellWidth:150}}:impacto?{1:{cellWidth:100},6:{cellWidth:150},10:{cellWidth:110}}:{1:{cellWidth:120},6:{cellWidth:190},7:{cellWidth:130}},
+     columnStyles:impacto?{1:{cellWidth:120},6:{cellWidth:170}}:{1:{cellWidth:150},6:{cellWidth:220}},
      ...(impacto?{styles:{fontSize:7,cellPadding:3,overflow:'linebreak'}}:{})
    };
    window.jspdf.autoTable?window.jspdf.autoTable(doc,opcoesTabela):doc.autoTable(opcoesTabela);
@@ -1278,7 +1255,7 @@ async function iniciarNovaAnalise(){
    if(input){ input.value=''; atualizarSelecaoXml(); }
    resultados=[]; resultadosFiltrados=[]; respostas=[]; pendentes=[]; pendentesFiltradas=[];
    validacoes.clear(); marcarResultadosDesatualizados(false);
-   isProdutos=[]; isPorChave=new Map(); isBase=null; estadoIS.clear();
+   isProdutos=[]; isPorChave=new Map(); estadoIS.clear();
    ['busca','filtroClass','filtroCst'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
    const filtro=document.getElementById('filtroResultado'); if(filtro) filtro.value='';
    await recarregarTudo();
@@ -1909,7 +1886,6 @@ async function buscarResultados(){
 async function carregarResultados(){
  try{
    resultados=await buscarResultados();
-   try{ await carregarDadosIS(); }catch(e){ console.error('[resultados] Imposto Seletivo indisponível',e); }
    await carregarRespostas();
    if(!Object.keys(regrasUI).length){ try{ regrasUI=await (await fetch('/api/regras')).json(); }catch(e){ regrasUI={}; } }
    renderResultados();
@@ -2425,7 +2401,6 @@ function cartaoResultado(v,i){
   '<div class="r-par r-enq"><div class="r-esq"><span class="r-seta">↳</span>'+linhaEnquadramento(v)+'</div><div class="r-dir">'+valoresEnquadramento(v)+'</div></div>'+
   (red?'<div class="r-linha r-reducao">'+red+'</div>':'')+
   avisosCompactos(v)+
-  linhaISResultado(v)+
   '<div class="r-motivo small" title="'+esc(textoMotivo(v))+'">'+esc(reformularMotivo(v.motivo))+'</div>'+
   '<details class="nao-imprimir aud-det" data-aud="'+i+'"><summary>Auditoria e fontes</summary><div class="aud-conteudo"></div></details>'+
  '</div>';
@@ -2634,152 +2609,145 @@ function perguntaMultiplaEscolha(p){
  '</div>';
 }
 
-/* ---------------- Imposto Seletivo (IS) ----------------
- * Tributo separado do IBS/CBS. O processamento gera a sugestão por produto (NCM no Anexo XVII, vigência, CFOP de
- * fabricante ou de revenda, exceções); o usuário confirma ou altera no campo "IMPOSTO SELETIVO (IS)". A escolha é
- * gravada na hora (sem reprocessar) e vale para a tela e para o Relatório Final.
+/* ---------------- Pendências do Imposto Seletivo ----------------
+ * Funcionam como as pendências de IBS/CBS: cada produto do Anexo XVII da LC 214/2025 aguarda a validação; a escolha
+ * é marcada na hora e gravada em seguida (sem reprocessar); na falha volta para a escolha gravada e o card mostra o
+ * erro. Os validados ficam em "Validados nesta análise", com a escolha marcada e alterável. O Relatório Final do IS
+ * só traz os produtos validados. O IS não altera nada de IBS/CBS.
  */
-let isProdutos=[], isBase=null, isPorChave=new Map(), isGeracao=0;
-const ROTULO_IS={INCIDENCIA:'Incidência de Imposto Seletivo',NAO_INCIDENCIA:'Não incidência de Imposto Seletivo',VALIDACAO:'Necessita de validação fiscal'};
-const CURTO_IS={INCIDENCIA:'Incide',NAO_INCIDENCIA:'Não incide',VALIDACAO:'Validação fiscal'};
-const ROTULO_VALIDACAO_IS={CONFIRMADA:'Confirmada pelo usuário',SUGESTAO:'Sugestão do sistema (não confirmada)',PENDENTE:'Pendente de validação fiscal'};
+let isProdutos=[], isPorChave=new Map(), isGeracao=0;
 const estadoIS=new Map();
 let seqIS=0;
-const pctIS=x=>x==null?'—':(x*100).toLocaleString('pt-BR',{maximumFractionDigits:4})+'%';
-const reaisIS=x=>x==null?'—':Number(x).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const dataIS=d=>d?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'—';
+const ROTULO_IS={INCIDENCIA:'Incide Imposto Seletivo',NAO_INCIDENCIA:'Não incide Imposto Seletivo',VALIDACAO:'Necessita de validação fiscal'};
+/** Validado: o usuário respondeu incidência ou não incidência (validação fiscal continua pendente). */
+const validadoIS=p=>!!p.escolha&&p.escolha.escolha!=='VALIDACAO';
+function mostrarPendencias(qual){
+ document.getElementById('pendenciasIbsCbs').hidden=qual!=='ibscbs';
+ document.getElementById('pendenciasIS').hidden=qual!=='is';
+ document.getElementById('btnPendenciasIbsCbs').classList.toggle('relatorio-final-selecionado',qual==='ibscbs');
+ document.getElementById('btnPendenciasIS').classList.toggle('relatorio-final-selecionado',qual==='is');
+}
 async function carregarDadosIS(){
  const minha=++isGeracao;
  const r=await fetch('/api/imposto-seletivo');
  const d=await lerRespostaJson(r);
  if(!r.ok) throw new Error(d.detalhe||d.erro||'HTTP '+r.status);
  if(minha!==isGeracao) return;
- isBase=d;
  // Escolha sendo gravada vale sobre a lista recém-chegada (resposta fora de ordem não desmarca o clique)
  isProdutos=(d.produtos||[]).map(p=>{ const e=estadoIS.get(p.chave); if(e&&e.salvando>0) p.escolhaExibida=e.exibida; return p; });
  isPorChave=new Map(isProdutos.map(p=>[p.chave,p]));
 }
-/** Produtos que interessam ao IS: do Anexo XVII, bebidas e fumo (capítulos 22 e 24), e todo o que não for "não incide". */
-function produtoISRelevante(p){ return !!p.categoria||/^(22|24)/.test(p.ncm||'')||/^2009/.test(p.ncm||'')||p.situacaoFinal!=='NAO_INCIDENCIA'||(p.alertas||[]).length>0; }
-function situacaoExibidaIS(p){ return p.escolhaExibida!==undefined?p.escolhaExibida:(p.escolha?p.escolha.escolha:null); }
-function textoISRelatorio(ncm,cProd){
- const p=isPorChave.get((ncm||'')+'|'+cProd);
- if(!isBase) return 'Imposto Seletivo indisponível';
- if(!p) return 'Sem dados de IS para o produto';
- const s=p.situacaoFinal;
- const v=s==='INCIDENCIA'?' — '+(p.aliquota?pctIS(p.aliquota.aliquota):'sem alíquota')+(p.valorFinal!=null?' — '+reaisIS(p.valorFinal):' — valor não calculado'):'';
- return CURTO_IS[s]+v+' ('+ROTULO_VALIDACAO_IS[p.validacao].toLowerCase()+')';
-}
-function linhaRelatorioIS(p){
- const s=p.situacaoFinal;
- const fund=s==='NAO_INCIDENCIA'?(p.motivos[0]?p.motivos[0].motivo+' ':'')+'Fundamento: '+(p.fundamentos||[]).join('; '):
-  s==='VALIDACAO'?(p.motivos.map(m=>m.motivo).join(' | ')||'Sem enquadramento conclusivo.')+' Fundamento: '+(p.fundamentos||[]).join('; '):
-  (p.fundamentos||[]).join('; ')+(p.aliquota?'; '+p.aliquota.dispositivo:'');
- return [p.cProd,p.produto,p.ncm||'',p.categoria?p.categoria.descricaoLegal:'NCM fora do Anexo XVII',ROTULO_IS[s],
-  s==='INCIDENCIA'&&p.aliquota?pctIS(p.aliquota.aliquota)+(p.aliquota.situacao!=='conferida'?' (pendente de conferência)':''):s==='VALIDACAO'?'Não atribuída (pendente)':'Não se aplica',
-  (p.base||0).toFixed(2).replace('.',','),
-  p.valorFinal!=null?p.valorFinal.toFixed(2).replace('.',','):(s==='NAO_INCIDENCIA'?'0,00':p.calculo),
-  fund+(p.projecaoVigencia?' | A partir de '+dataIS(p.projecaoVigencia.data)+' (orientação): '+CURTO_IS[p.projecaoVigencia.situacao]+' — '+p.projecaoVigencia.motivos.join(' | '):''),
-  ROTULO_VALIDACAO_IS[p.validacao]+(p.escolha?' em '+dataIS(p.escolha.data):'')];
-}
-function linhaISResultado(v){
- const p=isPorChave.get((v.ncm||'')+'|'+v.cProd);
- if(!p) return '';
- return '<div class="r-linha small"><strong>Imposto Seletivo:</strong> '+esc(textoISRelatorio(v.ncm,v.cProd))+'</div>';
-}
-async function carregarIS(){
- const lista=document.getElementById('listaIS');
- document.getElementById('contagemIS').textContent='Carregando...';
+/** Pendências do IS: só produtos cujo NCM está no Anexo XVII (os demais não têm IS) ou que o sistema não conseguiu enquadrar. */
+const pendenciaIS=p=>!!p.categoria||p.situacao==='VALIDACAO';
+async function carregarPendenciasIS(){
+ const contagem=document.getElementById('contagemPendenciasIS');
+ contagem.textContent='Carregando pendências...';
+ if(!isProdutos.length) document.getElementById('listaPendenciasIS').innerHTML='<p>Carregando pendências...</p>';
  const t0=Date.now();
  try{
    await carregarDadosIS();
-   console.info('[imposto-seletivo] '+isProdutos.length+' produto(s) em '+(Date.now()-t0)+' ms');
-   renderIS();
+   // O grupo (aguardando × validados) é o da carga, como em IBS/CBS: o card não muda de lugar ao clicar
+   for(const p of isProdutos) p.validadoNaCarga=validadoIS(p);
+   console.info('[pendencias-is] '+isProdutos.filter(pendenciaIS).length+' produto(s) em '+(Date.now()-t0)+' ms');
+   renderPendenciasIS();
  }catch(e){
-   console.error('[imposto-seletivo] falhou',e);
-   document.getElementById('contagemIS').textContent='';
-   lista.innerHTML='<p>Não foi possível carregar o Imposto Seletivo: '+esc(e.message)+'. Abra a aba de novo; se continuar, recarregue a página.</p>';
+   console.error('[pendencias-is] falhou',e);
+   contagem.textContent='';
+   document.getElementById('listaPendenciasIS').innerHTML='<p>Não foi possível carregar as pendências do Imposto Seletivo: '+esc(e.message)+'. Abra a aba de novo; se continuar, recarregue a página.</p>';
  }
 }
-function htmlBaseIS(){
- if(!isBase) return '';
- const b=isBase.base, mp=b.fontes.MP1399||{}, pend=b.aliquotas.filter(a=>a.situacao!=='conferida');
- return '<strong>Base normativa do IS — versão '+esc(b.versao)+'.</strong> Incidência: Anexo XVII da LC 214/2025 (conferido). '+
-  'O IS incide uma única vez, no primeiro fornecimento pelo fabricante ou na importação (arts. 410, 412 e 424): na revenda não há IS. '+
-  'Alíquotas de 2027: de '+dataIS(b.vigencia.inicioAliquotas)+' a '+dataIS(b.vigencia.fimRegimeTransitorio)+'; operações anteriores não recebem alíquota. '+
-  (pend.length?'<br><strong>Atenção:</strong> '+pend.length+' alíquota(s) cadastrada(s) a partir da planilha do cliente estão pendentes de conferência com a '+esc(mp.titulo||'MP 1.399/2026')+' e não são aplicadas ao cálculo até serem conferidas. '+esc(mp.observacao||''):'')+
-  (isBase.baseDesatualizada?'<br><strong>A base do IS mudou depois do último processamento:</strong> clique em "Processar análise" para atualizar as sugestões.':'')+
-  (!isBase.disponivel?'<br><strong>Imposto Seletivo indisponível nesta análise:</strong> '+esc(isBase.motivo||''):'');
+function filtradasIS(){
+ const produto=(document.getElementById('buscaPendISProduto').value||'').toLowerCase().trim();
+ const cProd=(document.getElementById('buscaPendISCprod').value||'').toLowerCase().trim();
+ const ncm=(document.getElementById('buscaPendISNcm').value||'').toLowerCase().trim();
+ return isProdutos.filter(p=>pendenciaIS(p)&&
+   (!produto||(p.produto||'').toLowerCase().includes(produto))&&
+   (!cProd||(p.cProd||'').toLowerCase().includes(cProd))&&
+   (!ncm||(p.ncm||'').toLowerCase().includes(ncm)));
 }
-function cartaoIS(p){
- const s=situacaoExibidaIS(p), e=estadoIS.get(p.chave);
- const linha=(r,v)=>'<span class="r">'+esc(r)+'</span><span>'+esc(v==null||v===''?'—':v)+'</span>';
- const final=s||p.situacao;
- let quadro='';
- if(final==='INCIDENCIA'){
-   const a=p.aliquota;
-   quadro='<div class="quadro-is">'+
-    linha('NCM identificado',p.ncm)+linha('Descrição do produto',p.produto)+
-    linha('Descrição fiscal',p.categoria?p.categoria.descricaoLegal:'NCM fora do Anexo XVII')+
-    linha('Fundamentação legal',(p.fundamentos||[]).join('; '))+
-    linha('Alíquota aplicável',a?pctIS(a.aliquota)+(a.aliquotaInicial!=null?' ('+pctIS(a.aliquotaInicial)+' × fator '+String(a.fatorConversao).replace('.',',')+')':'')+(a.situacao!=='conferida'?' — pendente de conferência com '+a.dispositivo:''):'Sem alíquota cadastrada para o período')+
-    linha('Base de cálculo',reaisIS(p.baseNaVigencia)+' (valor de venda dos itens na vigência; total vendido: '+reaisIS(p.base)+')')+
-    linha('Regra de cálculo',a?a.regraCalculo:'—')+
-    linha('Início da vigência',a?dataIS(a.vigenciaInicio):dataIS(isBase&&isBase.base.vigencia.inicioAliquotas))+
-    linha('Dispositivo legal e anexo',(p.categoria?p.categoria.fundamento:'')+(a?'; '+a.dispositivo:''))+
-    linha('Valor do IS',p.valorFinal!=null?reaisIS(p.valorFinal):p.calculo)+
-   '</div>';
- }else{
-   quadro='<div class="quadro-is">'+
-    linha(final==='NAO_INCIDENCIA'?'Motivo da não incidência':'Motivo da validação',p.motivos.map(m=>m.motivo+(p.motivos.length>1?' ('+m.itens+' item(ns))':'')).join(' | '))+
-    linha('Fundamento',(p.fundamentos||[]).join('; '))+
-    (final==='VALIDACAO'?linha('Alíquota','Nenhuma alíquota é atribuída enquanto o enquadramento não for validado'):'')+
-    (p.projecaoVigencia?linha('A partir de '+dataIS(p.projecaoVigencia.data)+' (orientação)',CURTO_IS[p.projecaoVigencia.situacao]+': '+p.projecaoVigencia.motivos.join(' | ')):'')+
-   '</div>';
- }
+function renderPendenciasIS(){
+ const lista=filtradasIS();
+ const aguardando=lista.filter(p=>!p.validadoNaCarga), validados=lista.filter(p=>p.validadoNaCarga);
+ document.getElementById('contagemPendenciasIS').textContent=aguardando.length+' pendência(s)'+(validados.length?' · '+validados.length+' validado(s) nesta análise':'');
+ document.getElementById('listaPendenciasIS').innerHTML=
+  (aguardando.length?aguardando.map(cartaoPendenteIS).join(''):'<p>Nenhuma pendência de Imposto Seletivo na análise atual.</p>')+
+  (validados.length?'<h3 class="titulo-validados">Validados nesta análise ('+validados.length+')</h3><p class="small">A escolha de cada produto continua marcada e pode ser alterada: clique em outra opção.</p>'+validados.map(cartaoPendenteIS).join(''):'');
+}
+/** Alíquota do IS no formato do relatório final (como a alíquota de IBS/CBS). */
+const aliquotaIS=p=>p.aliquota&&p.aliquota.aliquota!=null?pct(p.aliquota.aliquota):'Não determinada';
+/** Alíquotas que dependem de condição do produto (MP 1.399/2026, Anexo IV), ex.: "16% se vinho do porto". */
+const alternativasIS=p=>(p.alternativas||[]).map(x=>(x.aliquota!=null?pct(x.aliquota):'—')+' se '+x.condicao).join('; ');
+function opcoesIS(p){
+ const motivo=p.motivos&&p.motivos[0]?p.motivos[0].motivo:'';
+ return [
+  {tipo:'INCIDENCIA',resultado:'Incide IS'+(p.aliquota&&p.aliquota.aliquota!=null?' — alíquota '+aliquotaIS(p):'')+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':''),
+   explicacao:(p.categoria?p.categoria.nome+': ':'')+'o estabelecimento é o fabricante ou o importador do produto (primeiro fornecimento).'},
+  {tipo:'NAO_INCIDENCIA',resultado:'Não incide IS',explicacao:p.situacao==='NAO_INCIDENCIA'&&motivo?motivo:'Revenda de mercadoria de terceiros: o IS já foi cobrado do fabricante ou do importador.'},
+  {tipo:'VALIDACAO',resultado:'Continua pendente',explicacao:'Necessita de validação fiscal: nenhuma alíquota é atribuída.'},
+ ];
+}
+function cartaoPendenteIS(p){
+ const marcada=p.escolhaExibida!==undefined?p.escolhaExibida:(p.escolha?p.escolha.escolha:null);
+ const e=estadoIS.get(p.chave);
  const msg=e&&e.mensagem?'<div class="estado-validacao'+(e.erro?' erro':e.salvando>0?' salvando':'')+'" role="'+(e.erro?'alert':'status')+'">'+esc(e.mensagem)+'</div>':'';
- return '<div class="pendente is-produto" data-is-produto="'+esc(p.chave)+'">'+
-  '<div class="pend-topo"><div><span class="rotulo">Produto</span><strong>'+esc(p.produto)+'</strong>'+
-   '<span class="selo-is '+esc(p.situacaoFinal)+'">'+esc(CURTO_IS[p.situacaoFinal])+'</span>'+
-   '<div class="small">cProd '+esc(p.cProd)+' · '+p.itens+' item(ns) · vendido '+reaisIS(p.base)+' · CFOP '+esc((p.cfops||[]).join(', ')||'—')+' · '+dataIS(p.periodo.de)+(p.periodo.ate&&p.periodo.ate!==p.periodo.de?' a '+dataIS(p.periodo.ate):'')+'</div>'+
-   '<div class="small">'+(p.categoria?'Anexo XVII: '+esc(p.categoria.nome):'NCM fora do Anexo XVII')+'</div></div>'+
-   '<div class="pend-ncm"><span class="rotulo">NCM</span><span class="valor">'+esc(p.ncm||'—')+'</span></div></div>'+
-  '<div class="campo-is"><span class="rotulo">IMPOSTO SELETIVO (IS)</span>'+
-   '<div class="small">Sugestão do sistema: <strong>'+esc(ROTULO_IS[p.sugestao])+'</strong>. '+esc(ROTULO_VALIDACAO_IS[p.validacao])+(p.escolha?' em '+dataIS(p.escolha.data):'')+'.</div>'+
-   '<div class="acoes">'+['INCIDENCIA','NAO_INCIDENCIA','VALIDACAO'].map(op=>'<button class="secondary'+(s===op?' validacao-selecionada':'')+'" data-is="'+op+'" data-chave="'+esc(p.chave)+'">'+esc(ROTULO_IS[op])+'</button>').join('')+'</div>'+
-   quadro+
-   ((p.alertas||[]).length?'<div class="aviso-regra">'+p.alertas.map(esc).join('<br>')+'</div>':'')+
-   msg+
+ return '<div class="pendente" data-is-produto="'+esc(p.chave)+'">'+
+  '<div class="pend-topo">'+
+   '<div><span class="rotulo">Validação do Imposto Seletivo</span>'+
+    '<span class="rotulo">Produto</span><strong>'+esc(p.produto)+'</strong>'+(validadoIS(p)?'<span class="selo-validado">Validado nesta análise</span>':'')+
+    '<div class="small">cProd '+esc(p.cProd)+' · '+p.itens+' item(ns) · base '+formatarNumero(p.base)+'</div></div>'+
+   '<div class="pend-ncm"><span class="rotulo">NCM</span><span class="valor">'+esc(p.ncm||'—')+'</span></div>'+
   '</div>'+
+  '<div class="bloco"><span class="rotulo">Enquadramento no Imposto Seletivo</span>'+
+   '<div class="descricao-legal">'+esc(p.categoria?p.categoria.descricaoLegal:'NCM fora do Anexo XVII da LC 214/2025')+'</div>'+
+   '<div class="small">Sugestão do sistema: '+esc(ROTULO_IS[p.sugestao])+'.</div></div>'+
+  '<div class="pergunta-multipla">'+
+   '<div class="pergunta-validacao"><span class="rotulo">Pergunta</span>Este produto tem incidência de Imposto Seletivo nas vendas desta análise? O resultado de cada opção aparece ao lado.</div>'+
+   '<ol class="mc-opcoes">'+opcoesIS(p).map(o=>
+    '<li class="mc-opcao">'+
+     '<button class="secondary'+(marcada===o.tipo?' validacao-selecionada':'')+'" data-is="'+o.tipo+'" data-chave="'+esc(p.chave)+'">'+esc(ROTULO_IS[o.tipo])+'</button>'+
+     '<div class="mc-resultado">→ '+esc(o.resultado)+'</div>'+
+     '<div class="small">'+esc(o.explicacao)+'</div>'+
+    '</li>').join('')+'</ol>'+
+   '<div class="small">Não sabe? Deixe sem resposta: o produto continua pendente.</div>'+
+  '</div>'+
+  msg+
+  '<details class="nao-imprimir"><summary>Detalhes</summary>'+
+   (p.motivos||[]).map(m=>'<p class="small">'+esc(m.motivo)+'</p>').join('')+
+   '<p class="small"><strong>Fundamento:</strong> '+esc((p.fundamentos||[]).join('; '))+'</p>'+
+   (p.aliquota?'<p class="small"><strong>Alíquota de registro IS:</strong> '+esc(aliquotaIS(p))+' — '+esc(p.aliquota.regraCalculo)+' Vigência: a partir de '+esc(p.aliquota.vigenciaInicio.split('-').reverse().join('/'))+'.'+' Norma: '+esc(p.aliquota.dispositivo)+'.'+(alternativasIS(p)?' Outras alíquotas do código: '+esc(alternativasIS(p))+'.':'')+(p.baseNaVigencia===0?' As vendas desta análise são anteriores a essa vigência: a alíquota não é aplicada a elas.':'')+'</p>':'')+
+  '</details>'+
  '</div>';
 }
-function renderIS(){
- document.getElementById('baseIS').innerHTML=htmlBaseIS();
- const filtro=document.getElementById('filtroIS').value, busca=(document.getElementById('buscaIS').value||'').toLowerCase().trim();
- const lista=isProdutos.filter(p=>
-   (filtro==='todos'||(filtro==='pendentes'?p.situacaoFinal==='VALIDACAO':filtro==='incidencia'?p.situacaoFinal==='INCIDENCIA':produtoISRelevante(p)))&&
-   (!busca||[p.produto,p.cProd,p.ncm].join(' ').toLowerCase().includes(busca)));
- const n=k=>isProdutos.filter(p=>p.situacaoFinal===k).length;
- document.getElementById('contagemIS').textContent=lista.length+' produto(s) exibido(s) · '+n('INCIDENCIA')+' com incidência · '+n('NAO_INCIDENCIA')+' sem incidência · '+n('VALIDACAO')+' pendente(s) de validação';
- document.getElementById('listaIS').innerHTML=lista.length?lista.map(cartaoIS).join(''):(isProdutos.length?'<p>Nenhum produto neste filtro.</p>':'<p>Processe a análise para ver o Imposto Seletivo dos produtos.</p>');
+/** Linha do relatório final do IS (7 colunas, no formato das demais). */
+function linhaRelatorioIS(p){
+ const s=p.situacaoFinal;
+ const norma=p.categoria?p.categoria.fundamento:'LC 214/2025, art. 409, § 1º, e Anexo XVII';
+ if(s==='NAO_INCIDENCIA'){
+   const motivo=p.motivos&&p.motivos[0]?p.motivos[0].motivo:'';
+   return [p.cProd,p.produto,p.ncm||'','Não incide','0% (não incide)','0,00','Não destacar o Imposto Seletivo no documento fiscal. '+motivo+'\\nNorma: '+norma];
+ }
+ const valor=p.valorFinal!=null?p.valorFinal.toFixed(2).replace('.',','):'Não calculado';
+ const obs=p.valorFinal!=null?'':' '+p.calculo;
+ return [p.cProd,p.produto,p.ncm||'','Incide',aliquotaIS(p),valor,'Destacar o Imposto Seletivo no documento fiscal (grupo IS da NF-e/NFC-e)'+(p.aliquota?' com alíquota de '+aliquotaIS(p):'')+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':'')+'.'+obs+'\\nNorma: '+norma+(p.aliquota?'; '+p.aliquota.dispositivo:'')];
 }
 function atualizarCartaoIS(chave){
  const p=isPorChave.get(chave);
  if(!p) return;
- document.querySelectorAll('#listaIS .is-produto').forEach(el=>{ if(el.dataset.isProduto===chave) el.outerHTML=cartaoIS(p); });
+ document.querySelectorAll('#listaPendenciasIS .pendente').forEach(el=>{ if(el.dataset.isProduto===chave) el.outerHTML=cartaoPendenteIS(p); });
 }
-/** Clique no campo IS: marca na hora, grava em seguida; na falha volta para a escolha gravada e mostra o erro. */
+/** Clique numa opção do IS: marca na hora, grava em seguida; na falha volta para a escolha gravada e mostra o erro. */
 function escolherIS(chave,escolha){
  const p=isPorChave.get(chave);
  if(!p) return;
  let e=estadoIS.get(chave);
  if(!e){ e={seq:0,salvando:0,erro:false,mensagem:'',exibida:undefined,fila:Promise.resolve()}; estadoIS.set(chave,e); }
- const atual=situacaoExibidaIS(p);
+ const atual=p.escolhaExibida!==undefined?p.escolhaExibida:(p.escolha?p.escolha.escolha:null);
+ // Clique repetido na opção já gravada: nada a fazer (sem pedido duplicado)
  if(!e.erro&&e.salvando===0&&atual===escolha&&p.escolha&&p.escolha.escolha===escolha) return;
  const seq=++seqIS, t0=Date.now();
  e.seq=seq; e.salvando++; e.erro=false; e.mensagem='Gravando a escolha...'; e.exibida=escolha; p.escolhaExibida=escolha;
  atualizarCartaoIS(chave);
- const [ncm,cProd]=[chave.slice(0,chave.indexOf('|')),chave.slice(chave.indexOf('|')+1)];
+ const i=chave.indexOf('|'), ncm=chave.slice(0,i), cProd=chave.slice(i+1);
  e.fila=e.fila.then(async()=>{
    let r;
    try{ r=await fetch('/api/imposto-seletivo/validar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ncm:ncm||null,cProd,escolha,autor:'Sistema'})}); }
@@ -2789,13 +2757,14 @@ function escolherIS(chave,escolha){
    if(!r.ok||!d.produto) throw new Error((d.detalhe||d.erro||'erro HTTP '+r.status)+'.');
    return d.produto;
  }).then(novo=>{
-   console.info('[imposto-seletivo] escolha gravada '+chave+' '+escolha+' em '+(Date.now()-t0)+' ms');
+   console.info('[pendencias-is] escolha gravada '+chave+' '+escolha+' em '+(Date.now()-t0)+' ms');
    if(e.seq===seq){
-     Object.keys(p).forEach(k=>delete p[k]); Object.assign(p,novo);
+     const naCarga=p.validadoNaCarga;
+     Object.keys(p).forEach(k=>delete p[k]); Object.assign(p,novo,{validadoNaCarga:naCarga});
      e.mensagem='Escolha gravada.';
    }else{ p.escolha=novo.escolha; }
  },x=>{
-   console.error('[imposto-seletivo] falhou '+chave+' '+escolha,x);
+   console.error('[pendencias-is] falhou '+chave+' '+escolha,x);
    if(e.seq===seq){
      delete p.escolhaExibida; e.exibida=undefined; e.erro=true;
      e.mensagem='A escolha NÃO foi gravada: '+x.message+' A marcação voltou para a última escolha gravada. Clique de novo para tentar.';
@@ -2807,6 +2776,10 @@ document.addEventListener('click',ev=>{
  if(!b||b.disabled) return;
  escolherIS(b.dataset.chave,b.dataset.is);
 });
+function exportarPendenciasIS(){
+ baixar('pendencias-imposto-seletivo.csv',csv([['Produto','cProd','NCM','Base','Itens (vendas)','Enquadramento (Anexo XVII)','Sugestão do sistema','Motivo','Alíquota de registro IS','Resposta nesta análise']].concat(
+  filtradasIS().map(p=>[p.produto,p.cProd,p.ncm,p.base,p.itens,p.categoria?p.categoria.nome:'',ROTULO_IS[p.sugestao],(p.motivos||[]).map(m=>m.motivo).join(' | '),aliquotaIS(p),p.escolha?ROTULO_IS[p.escolha.escolha]:'']))));
+}
 
 /* ---------------- Validação: escolha imediata, gravação confiável ----------------
  * Cada clique marca a opção na hora e é gravado em seguida (um pedido por vez para cada produto, na ordem dos

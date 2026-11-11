@@ -26,10 +26,15 @@ export interface CategoriaIS {
   embalagemPrimaria: boolean; exigeAliquotaEspecifica: boolean; baseValorReferencia?: boolean; excecoesNoAnexo?: boolean;
 }
 export interface AliquotaIS {
-  id: string; categoria: string; modalidade: "ad_valorem" | "especifica" | "ad_valorem_e_especifica";
+  id: string; categoria: string;
+  modalidade: "ad_valorem" | "especifica" | "ad_valorem_e_especifica" | "ajustes_por_veiculo";
+  /** Códigos da NCM (posição, subposição ou código completo) e exclusões. */
+  codigos: string[]; excluidos?: string[];
+  /** Condição do produto para esta alíquota (ex.: teor alcoólico); sem condição, é a regra geral do código. */
+  condicao?: string | null;
   aliquotaInicial: number | null; fatorConversao: number | null; aliquota: number | null;
-  /** Alíquota específica (R$ por unidade de medida) e a unidade, quando houver. */
-  especifica?: { valor: number; unidade: string } | null;
+  /** Alíquota específica (R$ por unidade de medida); valor 0 quando reduzida a zero pela norma. */
+  especifica?: { valor: number; unidade: string; fundamento?: string } | null;
   regraCalculo: string; observacao?: string; vigenciaInicio: string; vigenciaFim: string | null;
   fonte: string; dispositivo: string; situacao: "conferida" | "pendente_conferencia";
 }
@@ -58,9 +63,18 @@ export function categoriaDoNcm(base: BaseIS, ncm: string | null): CategoriaIS | 
   return null;
 }
 
-/** Alíquota cadastrada para a categoria na data (qualquer situação de conferência). */
-export function aliquotaNaData(base: BaseIS, categoria: string, data: string): AliquotaIS | null {
-  return base.aliquotas.find((a) => a.categoria === categoria && a.vigenciaInicio <= data && (a.vigenciaFim === null || data <= a.vigenciaFim)) ?? null;
+/**
+ * Alíquotas do NCM na data: a regra geral (sem condição, código mais específico) e as alternativas que dependem de
+ * uma condição do produto (ex.: vinho do porto, teor alcoólico). Só considera alíquotas vigentes na data.
+ */
+export function aliquotasDoNcm(base: BaseIS, ncm: string | null, data: string): { principal: AliquotaIS | null; alternativas: AliquotaIS[] } {
+  if (!ncm) return { principal: null, alternativas: [] };
+  const casa = (a: AliquotaIS) => a.vigenciaInicio <= data && (a.vigenciaFim === null || data <= a.vigenciaFim)
+    && !a.excluidos?.some((x) => ncm.startsWith(x)) && a.codigos.some((c) => ncm.startsWith(c));
+  const tamanho = (a: AliquotaIS) => Math.max(...a.codigos.filter((c) => ncm.startsWith(c)).map((c) => c.length));
+  const vigentes = base.aliquotas.filter(casa);
+  const gerais = vigentes.filter((a) => !a.condicao).sort((x, y) => tamanho(y) - tamanho(x));
+  return { principal: gerais[0] ?? null, alternativas: vigentes.filter((a) => !!a.condicao) };
 }
 
 export interface AvaliacaoItemIS {
@@ -113,8 +127,9 @@ export function avaliarItemIS(base: BaseIS, item: ItemDocumento, data: string | 
   }
 
   // Fabricante (produção própria, CFOP ${cfop})
-  const aliq = aliquotaNaData(base, cat.id, data);
+  const { principal: aliq, alternativas } = aliquotasDoNcm(base, item.ncm, data);
   const comAliq = { ...comCat, aliquota: aliq };
+  const textoAlt = alternativas.map((x) => `${x.aliquota != null ? pct(x.aliquota) : "—"} se ${x.condicao}`).join("; ");
   if (item.cst === "200") {
     return r("VALIDACAO", `${cat.nome}: o item tem IBS/CBS com alíquota reduzida (CST 200). Verifique a não incidência do IS do art. 413, III, da LC 214/2025.`, [cat.fundamento, f.NAO_INCIDENCIA_REDUCAO!], comAliq);
   }
@@ -125,10 +140,14 @@ export function avaliarItemIS(base: BaseIS, item: ItemDocumento, data: string | 
     return r("VALIDACAO", `${cat.nome}: o Anexo XVII traz exceções para esta categoria; confirme o enquadramento do bem.`, [cat.fundamento], comAliq);
   }
   if (cat.embalagemPrimaria) {
-    return r("VALIDACAO", `${cat.nome}: venda de produção própria (CFOP ${cfop}). Confirme se o produto sai em embalagem primária destinada ao consumidor final (condição do art. 409, § 2º).`, [cat.fundamento, f.EMBALAGEM_PRIMARIA!, f.CONTRIBUINTE!], comAliq);
+    return r("VALIDACAO", `${cat.nome}: venda de produção própria (CFOP ${cfop}). Confirme se o produto sai em embalagem primária destinada ao consumidor final (art. 409, § 2º, da LC 214/2025)${cat.id === "FUMIGENOS" ? "" : " e se o estabelecimento é pequeno produtor (redução do Anexo VI da MP 1.399/2026)"}${textoAlt ? `; alíquota ${aliq?.aliquota != null ? pct(aliq.aliquota) : "—"}, ou ${textoAlt}` : ""}.`,
+      [cat.fundamento, f.EMBALAGEM_PRIMARIA!, f.CONTRIBUINTE!, ...(cat.id === "FUMIGENOS" ? [] : [f.PEQUENOS_PRODUTORES!]), f.ALIQUOTAS!].filter(Boolean), comAliq);
   }
   if (!aliq) {
     return r("VALIDACAO", `${cat.nome}: não há alíquota do IS cadastrada para ${dataBr(data)}.`, [cat.fundamento, f.ALIQUOTAS!], comCat);
+  }
+  if (alternativas.length) {
+    return r("VALIDACAO", `${cat.nome}: a alíquota depende do produto — ${pct(aliq.aliquota ?? 0)} na regra geral, ou ${textoAlt}.`, [cat.fundamento, f.ALIQUOTAS!, aliq.dispositivo], comAliq);
   }
   if (aliq.situacao !== "conferida") {
     return r("VALIDACAO", `${cat.nome}: alíquota de ${aliq.aliquota != null ? pct(aliq.aliquota) : "(não informada)"} cadastrada a partir de ${base.fontes[aliq.fonte]?.titulo ?? aliq.fonte}, ainda não conferida com ${aliq.dispositivo}. O valor não é calculado até a conferência.`,
@@ -146,6 +165,7 @@ export function avaliarItemIS(base: BaseIS, item: ItemDocumento, data: string | 
  */
 export function calcularIS(aliq: AliquotaIS, cat: CategoriaIS, base: number, quantidade: number | null): { valor: number | null; pendencia: string } {
   let valor = 0;
+  if (aliq.modalidade === "ajustes_por_veiculo") return { valor: null, pendencia: "a alíquota depende dos ajustes dos Anexos I a III da MP 1.399/2026 (propulsão, eficiência, potência, desempenho e reciclabilidade do veículo)." };
   if (aliq.modalidade === "ad_valorem" || aliq.modalidade === "ad_valorem_e_especifica") {
     if (aliq.aliquota == null) return { valor: null, pendencia: "alíquota ad valorem não informada." };
     valor += base * aliq.aliquota;
@@ -153,7 +173,9 @@ export function calcularIS(aliq: AliquotaIS, cat: CategoriaIS, base: number, qua
   const precisaEspecifica = aliq.modalidade !== "ad_valorem" || cat.exigeAliquotaEspecifica;
   if (precisaEspecifica) {
     if (!aliq.especifica) return { valor: null, pendencia: "a parcela específica exigida pela lei (art. 422, § 1º, da LC 214/2025) não está cadastrada." };
-    if (quantidade == null) return { valor: null, pendencia: "o XML não traz a quantidade para a alíquota específica." };
+    // Parcela específica reduzida a zero (MP 1.399/2026, art. 6º, II): não depende da quantidade
+    if (aliq.especifica.valor === 0) return { valor: arred(valor), pendencia: "" };
+    if (quantidade == null) return { valor: null, pendencia: `a parcela específica (R$ ${aliq.especifica.valor.toFixed(2).replace(".", ",")} por ${aliq.especifica.unidade}) depende da quantidade nessa unidade, que o XML não traz.` };
     valor += quantidade * aliq.especifica.valor;
   }
   return { valor: arred(valor), pendencia: "" };
@@ -173,7 +195,13 @@ export interface ProdutoIS {
   porSituacao: Record<SituacaoIS, number>;
   motivos: { motivo: string; itens: number }[];
   fundamentos: string[];
+  /**
+   * Alíquota do NCM (regra geral) na vigência das operações; para operações anteriores à vigência, a do início dela,
+   * só como referência (não é aplicada a essas operações).
+   */
   aliquota: AliquotaIS | null;
+  /** Alíquotas que dependem de condição do produto (ex.: teor alcoólico), além da regra geral. */
+  alternativas: { aliquota: number | null; condicao: string }[];
   /** Soma do IS calculado (só quando todos os itens têm incidência calculada). */
   valor: number | null;
   /** Base dos itens dentro da vigência da alíquota, para calcular quando o usuário confirmar a incidência. */
@@ -207,7 +235,7 @@ export function avaliarDocumentosIS(base: BaseIS, documentos: Documento[]): Prod
           chave, ncm: item.ncm, cProd: item.cProd, produto: item.xProd,
           categoria: cat ? { id: cat.id, nome: cat.nome, descricaoLegal: cat.descricaoLegal, fundamento: cat.fundamento } : null,
           itens: 0, base: 0, situacao: "NAO_INCIDENCIA", porSituacao: { INCIDENCIA: 0, NAO_INCIDENCIA: 0, VALIDACAO: 0 },
-          motivos: [], fundamentos: [], aliquota: null, valor: null, baseNaVigencia: 0, cfops: [], periodo: { de: null, ate: null }, informadoNoXml: 0, alertas: [],
+          motivos: [], fundamentos: [], aliquota: null, alternativas: [], valor: null, baseNaVigencia: 0, cfops: [], periodo: { de: null, ate: null }, informadoNoXml: 0, alertas: [],
           projecaoVigencia: null,
           _aliqs: new Set(), _motivos: new Map(), _fund: new Set(), _alertas: new Set(), _cfops: new Set(), _valores: [], _proj: new Map(),
         };
@@ -226,8 +254,14 @@ export function avaliarDocumentosIS(base: BaseIS, documentos: Documento[]): Prod
         if (!p.periodo.de || data < p.periodo.de) p.periodo.de = data;
         if (!p.periodo.ate || data > p.periodo.ate) p.periodo.ate = data;
       }
-      const aliqDaData = a.categoria && data ? aliquotaNaData(base, a.categoria, data) : null;
-      if (aliqDaData) { p._aliqs.add(aliqDaData.id); p.baseNaVigencia = arred(p.baseNaVigencia + a.base); p.aliquota = aliqDaData; }
+      if (a.categoria && data) {
+        const naData = aliquotasDoNcm(base, item.ncm, data);
+        // Antes da vigência: a alíquota do início dela, só como referência (a base dessas operações não entra no cálculo)
+        const ref = naData.principal || naData.alternativas.length ? naData : data < inicio ? aliquotasDoNcm(base, item.ncm, inicio) : naData;
+        if (ref.principal) { p._aliqs.add(ref.principal.id); p.aliquota = ref.principal; }
+        for (const x of ref.alternativas) if (!p.alternativas.some((y) => y.condicao === x.condicao)) p.alternativas.push({ aliquota: x.aliquota, condicao: x.condicao! });
+        if (naData.principal) p.baseNaVigencia = arred(p.baseNaVigencia + a.base);
+      }
       p._valores.push(a.situacao === "INCIDENCIA" ? a.valor : null);
       // Produto do Anexo XVII vendido antes da vigência: como seria tratado a partir dela (só orientação)
       if (a.categoria && data && data < inicio) {
@@ -287,16 +321,17 @@ export function aplicarEscolhaIS(p: ProdutoIS, escolha: RespostaIS | null, base:
     valorFinal = p.valor;
     calculo = p.aliquota?.regraCalculo ?? "";
   } else if (!p.aliquota) {
-    calculo = p.baseNaVigencia === 0
-      ? "Valor não calculado: as operações estão fora da vigência das alíquotas cadastradas."
-      : "Valor não calculado: não há alíquota cadastrada para o período.";
+    calculo = "Valor não calculado: não há alíquota cadastrada para o NCM.";
+  } else if (p.baseNaVigencia === 0) {
+    calculo = `Valor não calculado: as operações são anteriores à vigência das alíquotas do IS (a partir de ${dataBr(p.aliquota.vigenciaInicio)}).`;
   } else if (p.aliquota.situacao !== "conferida") {
     calculo = `Valor não calculado: alíquota de ${p.aliquota.aliquota != null ? pct(p.aliquota.aliquota) : "(não informada)"} pendente de conferência com ${p.aliquota.dispositivo}.`;
   } else {
     const cat = base.categorias.find((c) => c.id === p.aliquota!.categoria);
     const c = cat ? calcularIS(p.aliquota, cat, p.baseNaVigencia, null) : { valor: null, pendencia: "categoria não encontrada." };
     valorFinal = c.valor;
-    calculo = c.valor === null ? `Valor não calculado: ${c.pendencia}` : `${p.aliquota.regraCalculo} (base na vigência: R$ ${p.baseNaVigencia.toFixed(2)}).`;
+    const alt = p.alternativas.length ? ` Atenção: ${p.alternativas.map((x) => `${x.aliquota != null ? pct(x.aliquota) : "—"} se ${x.condicao}`).join("; ")}.` : "";
+    calculo = c.valor === null ? `Valor não calculado: ${c.pendencia}` : `${p.aliquota.regraCalculo} (base na vigência: R$ ${p.baseNaVigencia.toFixed(2)}).${alt}`;
   }
   return { ...p, sugestao: p.situacao, escolha, situacaoFinal, validacao, valorFinal, calculo };
 }
