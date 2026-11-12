@@ -639,7 +639,8 @@ details>summary:hover{color:var(--verde-900)}
 <input id="buscaPendenteCprod" placeholder="Pesquisar por cProd">
 <input id="buscaPendenteNcm" placeholder="Pesquisar por NCM">
 </div>
-<div class="barra"><button class="secondary" onclick="window.print()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>Imprimir</button><button class="secondary" onclick="exportarPendencias()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar CSV</button><span id="contagemPendencias" class="small"></span></div>
+<div class="barra"><button class="secondary" onclick="window.print()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>Imprimir</button><button class="secondary" onclick="exportarPendencias()"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>Exportar CSV</button><span id="contagemPendencias" class="small"></span><button class="secondary" id="btnValidadosIbsCbs" onclick="alternarValidados('ibscbs')" hidden></button></div>
+<div id="avisoValidadoIbsCbs" class="estado-validacao" role="status"></div>
 <div id="listaPendentes"></div>
 </div>
 <div id="pendenciasIS" hidden>
@@ -648,7 +649,8 @@ details>summary:hover{color:var(--verde-900)}
 <input id="buscaPendISCprod" placeholder="Pesquisar por cProd" oninput="renderPendenciasIS()">
 <input id="buscaPendISNcm" placeholder="Pesquisar por NCM" oninput="renderPendenciasIS()">
 </div>
-<div class="barra"><button class="secondary" onclick="exportarPendenciasIS()">Exportar CSV</button><span id="contagemPendenciasIS" class="small"></span></div>
+<div class="barra"><button class="secondary" onclick="exportarPendenciasIS()">Exportar CSV</button><span id="contagemPendenciasIS" class="small"></span><button class="secondary" id="btnValidadosIS" onclick="alternarValidados('is')" hidden></button></div>
+<div id="avisoValidadoIS" class="estado-validacao" role="status"></div>
 <div id="listaPendenciasIS"></div>
 </div>
 </div>
@@ -931,9 +933,12 @@ async function carregarRelatorioFinal(){
  try{
    if(modo==='is'){
      await carregarDadosIS();
+     // Veredito de IBS/CBS de cada produto: alíquota do enquadramento para os produtos sem IS
+     const vereditosIS=new Map();
+     for(const v of await buscarResultados()){ const k=(v.ncm||'')+'|'+v.cProd; if(!vereditosIS.has(k)) vereditosIS.set(k,v); }
      if(modo!==modoRelatorioFinal) return;
      explicacao.textContent='Imposto Seletivo: produtos com o Imposto Seletivo validado em Pendências → Imposto Seletivo. O IS é um tributo separado: não altera o CST, o cClassTrib nem a alíquota de IBS/CBS.';
-     renderizar(isProdutos.filter(validadoIS).map(linhaRelatorioIS),'Nenhum produto com o Imposto Seletivo validado. Valide em Pendências → Imposto Seletivo.');
+     renderizar(isProdutos.filter(validadoIS).map(p=>linhaRelatorioIS(p,vereditosIS.get(p.chave))),'Nenhum produto com o Imposto Seletivo validado. Valide em Pendências → Imposto Seletivo.');
      return;
    }
    if(modo==='recal'||modo==='corretos'||modo==='com'){
@@ -2615,7 +2620,7 @@ function perguntaMultiplaEscolha(p){
  * erro. Os validados ficam em "Validados nesta análise", com a escolha marcada e alterável. O Relatório Final do IS
  * só traz os produtos validados. O IS não altera nada de IBS/CBS.
  */
-let isProdutos=[], isPorChave=new Map(), isGeracao=0;
+let isProdutos=[], isPorChave=new Map(), isGeracao=0, isCfops={revenda:[],producaoPropria:[]};
 const estadoIS=new Map();
 let seqIS=0;
 const ROTULO_IS={INCIDENCIA:'Incide Imposto Seletivo',NAO_INCIDENCIA:'Não incide Imposto Seletivo',VALIDACAO:'Necessita de validação fiscal'};
@@ -2633,6 +2638,7 @@ async function carregarDadosIS(){
  const d=await lerRespostaJson(r);
  if(!r.ok) throw new Error(d.detalhe||d.erro||'HTTP '+r.status);
  if(minha!==isGeracao) return;
+ isCfops=(d.base&&d.base.cfops)||isCfops;
  // Escolha sendo gravada vale sobre a lista recém-chegada (resposta fora de ordem não desmarca o clique)
  isProdutos=(d.produtos||[]).map(p=>{ const e=estadoIS.get(p.chave); if(e&&e.salvando>0) p.escolhaExibida=e.exibida; return p; });
  isPorChave=new Map(isProdutos.map(p=>[p.chave,p]));
@@ -2646,8 +2652,6 @@ async function carregarPendenciasIS(){
  const t0=Date.now();
  try{
    await carregarDadosIS();
-   // O grupo (aguardando × validados) é o da carga, como em IBS/CBS: o card não muda de lugar ao clicar
-   for(const p of isProdutos) p.validadoNaCarga=validadoIS(p);
    console.info('[pendencias-is] '+isProdutos.filter(pendenciaIS).length+' produto(s) em '+(Date.now()-t0)+' ms');
    renderPendenciasIS();
  }catch(e){
@@ -2665,14 +2669,28 @@ function filtradasIS(){
    (!cProd||(p.cProd||'').toLowerCase().includes(cProd))&&
    (!ncm||(p.ncm||'').toLowerCase().includes(ncm)));
 }
+/** Validação do IS concluída (incide ou não incide, gravada): sai da lista. "Necessita de validação fiscal" continua pendente. */
+function estaValidadoIS(p){
+ const e=estadoIS.get(p.chave);
+ if(e&&(e.salvando>0||e.erro)) return false;
+ return validadoIS(p);
+}
+function contagemPendenciasIS(){
+ const lista=filtradasIS(), aguardando=lista.filter(p=>!estaValidadoIS(p)).length, validados=lista.length-aguardando;
+ document.getElementById('contagemPendenciasIS').textContent=aguardando+' pendência(s)'+(validados?' · '+validados+' validado(s) nesta análise':'');
+ const b=document.getElementById('btnValidadosIS');
+ b.hidden=!validados; b.textContent=mostrarValidados.is?'Ocultar validados':'Mostrar validados ('+validados+')';
+}
 function renderPendenciasIS(){
  const lista=filtradasIS();
- const aguardando=lista.filter(p=>!p.validadoNaCarga), validados=lista.filter(p=>p.validadoNaCarga);
- document.getElementById('contagemPendenciasIS').textContent=aguardando.length+' pendência(s)'+(validados.length?' · '+validados.length+' validado(s) nesta análise':'');
+ const aguardando=lista.filter(p=>!estaValidadoIS(p)), validados=lista.filter(p=>estaValidadoIS(p));
+ contagemPendenciasIS();
  document.getElementById('listaPendenciasIS').innerHTML=
   (aguardando.length?aguardando.map(cartaoPendenteIS).join(''):'<p>Nenhuma pendência de Imposto Seletivo na análise atual.</p>')+
-  (validados.length?'<h3 class="titulo-validados">Validados nesta análise ('+validados.length+')</h3><p class="small">A escolha de cada produto continua marcada e pode ser alterada: clique em outra opção.</p>'+validados.map(cartaoPendenteIS).join(''):'');
+  (validados.length&&mostrarValidados.is?'<h3 class="titulo-validados">Validados nesta análise ('+validados.length+')</h3><p class="small">A escolha de cada produto continua marcada e pode ser alterada: clique em outra opção.</p>'+validados.map(cartaoPendenteIS).join(''):'');
 }
+/** Revenda: todos os CFOPs do produto são de mercadoria de terceiros (o IS já foi recolhido pelo fabricante ou importador). */
+const revendaIS=p=>(p.cfops||[]).length>0&&p.cfops.every(c=>(isCfops.revenda||[]).includes(c));
 /** Alíquota do IS no formato do relatório final (como a alíquota de IBS/CBS). */
 const aliquotaIS=p=>p.aliquota&&p.aliquota.aliquota!=null?pct(p.aliquota.aliquota):'Não determinada';
 /** Alíquotas que dependem de condição do produto (MP 1.399/2026, Anexo IV), ex.: "16% se vinho do porto". */
@@ -2680,9 +2698,12 @@ const alternativasIS=p=>(p.alternativas||[]).map(x=>(x.aliquota!=null?pct(x.aliq
 function opcoesIS(p){
  const motivo=p.motivos&&p.motivos[0]?p.motivos[0].motivo:'';
  return [
-  {tipo:'INCIDENCIA',resultado:'Incide IS'+(p.aliquota&&p.aliquota.aliquota!=null?' — alíquota '+aliquotaIS(p):'')+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':''),
-   explicacao:(p.categoria?p.categoria.nome+': ':'')+'o estabelecimento é o fabricante ou o importador do produto (primeiro fornecimento).'},
-  {tipo:'NAO_INCIDENCIA',resultado:'Não incide IS',explicacao:p.situacao==='NAO_INCIDENCIA'&&motivo?motivo:'Revenda de mercadoria de terceiros: o IS já foi cobrado do fabricante ou do importador.'},
+  revendaIS(p)
+   ?{tipo:'INCIDENCIA',resultado:'Incide IS na etapa anterior — alíquota de registro 0% (sem nova cobrança na revenda)',
+     explicacao:(p.categoria?p.categoria.nome+': ':'')+'produto sujeito ao Imposto Seletivo. O IS é recolhido uma única vez pelo fabricante ou importador'+(p.aliquota&&p.aliquota.aliquota!=null?' (alíquota '+aliquotaIS(p)+(alternativasIS(p)?', ou '+alternativasIS(p):'')+')':'')+' e integra o custo de aquisição.'}
+   :{tipo:'INCIDENCIA',resultado:'Incide IS'+(p.aliquota&&p.aliquota.aliquota!=null?' — alíquota '+aliquotaIS(p):'')+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':''),
+     explicacao:(p.categoria?p.categoria.nome+': ':'')+'o estabelecimento é o fabricante ou o importador do produto (primeiro fornecimento).'},
+  {tipo:'NAO_INCIDENCIA',resultado:'Não incide IS — vale a alíquota de IBS/CBS do enquadramento do produto',explicacao:'Produto não sujeito ao Imposto Seletivo.'+(p.situacao==='NAO_INCIDENCIA'&&motivo&&!p.categoria?' '+motivo:'')},
   {tipo:'VALIDACAO',resultado:'Continua pendente',explicacao:'Necessita de validação fiscal: nenhuma alíquota é atribuída.'},
  ];
 }
@@ -2699,7 +2720,7 @@ function cartaoPendenteIS(p){
   '</div>'+
   '<div class="bloco"><span class="rotulo">Enquadramento no Imposto Seletivo</span>'+
    '<div class="descricao-legal">'+esc(p.categoria?p.categoria.descricaoLegal:'NCM fora do Anexo XVII da LC 214/2025')+'</div>'+
-   '<div class="small">Sugestão do sistema: '+esc(ROTULO_IS[p.sugestao])+'.</div></div>'+
+   '<div class="small">Sugestão do sistema: '+esc(p.categoria&&revendaIS(p)?'Incide IS na etapa anterior (alíquota de registro 0% na revenda)':ROTULO_IS[p.sugestao])+'.</div></div>'+
   '<div class="pergunta-multipla">'+
    '<div class="pergunta-validacao"><span class="rotulo">Pergunta</span>Este produto tem incidência de Imposto Seletivo nas vendas desta análise? O resultado de cada opção aparece ao lado.</div>'+
    '<ol class="mc-opcoes">'+opcoesIS(p).map(o=>
@@ -2718,13 +2739,35 @@ function cartaoPendenteIS(p){
   '</details>'+
  '</div>';
 }
-/** Linha do relatório final do IS (7 colunas, no formato das demais). */
-function linhaRelatorioIS(p){
+/**
+ * Alíquota de IBS/CBS do produto conforme o enquadramento (a mesma do motor: alíquotas vigentes e redução), para a
+ * coluna "Alíquota de registro IS" dos produtos sem Imposto Seletivo.
+ */
+function aliquotaIbsCbsRegistro(v){
+ if(!v) return 'IBS/CBS: não determinada';
+ let red=null;
+ if(v.esperado&&v.esperado.cClassTrib==='000001') red=0;
+ else{
+   const r=v.reducaoExibicao;
+   if(r&&r.situacao==='regime_especifico'&&r.regimeEspecifico) red=r.regimeEspecifico.valor;
+   else if(r){ const vals=[...new Set((r.opcoes||[]).filter(o=>o&&o.valor!=null&&o.evidencia!=='nao_determinada').map(o=>o.valor))]; if(vals.length===1) red=vals[0]; }
+ }
+ const txt=aliquotaComReducao(v,red);
+ if(txt==='-') return 'IBS/CBS: '+reducaoRelatorioFinal(v);
+ return 'IBS/CBS '+txt+(red===0?' — tributação integral':'');
+}
+/** Linha do relatório final do IS (7 colunas, no formato das demais). v: veredito de IBS/CBS do produto. */
+function linhaRelatorioIS(p,v){
  const s=p.situacaoFinal;
  const norma=p.categoria?p.categoria.fundamento:'LC 214/2025, art. 409, § 1º, e Anexo XVII';
  if(s==='NAO_INCIDENCIA'){
-   const motivo=p.motivos&&p.motivos[0]?p.motivos[0].motivo:'';
-   return [p.cProd,p.produto,p.ncm||'','Não incide','0% (não incide)','0,00','Não destacar o Imposto Seletivo no documento fiscal. '+motivo+'\\nNorma: '+norma];
+   const enq=v&&v.esperado?' (CST '+v.esperado.cst+' e cClassTrib '+v.esperado.cClassTrib+')':'';
+   return [p.cProd,p.produto,p.ncm||'','Não incide',aliquotaIbsCbsRegistro(v),'0,00','Produto sem Imposto Seletivo: não destacar IS no documento fiscal. Vale a tributação de IBS/CBS do enquadramento do produto'+enq+'.\\nNorma: '+norma];
+ }
+ if(revendaIS(p)){
+   const aliqFab=p.aliquota&&p.aliquota.aliquota!=null?' Alíquota do IS na etapa do fabricante: '+aliquotaIS(p)+(alternativasIS(p)?' (ou '+alternativasIS(p)+')':'')+'.':'';
+   return [p.cProd,p.produto,p.ncm||'','Incide (recolhido na etapa anterior)','0%','0,00',
+    'Revenda: não destacar o Imposto Seletivo na saída — alíquota de registro 0%. O IS incide uma única vez, no fornecimento pelo fabricante ou na importação (LC 214/2025, arts. 410 e 424); o valor pago na etapa anterior integra o custo de aquisição do produto, sem nova cobrança na revenda.'+aliqFab+'\\nNorma: '+norma+(p.aliquota?'; '+p.aliquota.dispositivo:'')];
  }
  const valor=p.valorFinal!=null?p.valorFinal.toFixed(2).replace('.',','):'Não calculado';
  const obs=p.valorFinal!=null?'':' '+p.calculo;
@@ -2733,7 +2776,15 @@ function linhaRelatorioIS(p){
 function atualizarCartaoIS(chave){
  const p=isPorChave.get(chave);
  if(!p) return;
- document.querySelectorAll('#listaPendenciasIS .pendente').forEach(el=>{ if(el.dataset.isProduto===chave) el.outerHTML=cartaoPendenteIS(p); });
+ const sai=!mostrarValidados.is&&estaValidadoIS(p);
+ document.querySelectorAll('#listaPendenciasIS .pendente').forEach(el=>{
+   if(el.dataset.isProduto!==chave) return;
+   if(sai){
+     el.remove();
+     document.getElementById('avisoValidadoIS').textContent='“'+p.produto+'” validado e retirado das pendências.';
+   }else el.outerHTML=cartaoPendenteIS(p);
+ });
+ contagemPendenciasIS();
 }
 /** Clique numa opção do IS: marca na hora, grava em seguida; na falha volta para a escolha gravada e mostra o erro. */
 function escolherIS(chave,escolha){
@@ -2759,8 +2810,7 @@ function escolherIS(chave,escolha){
  }).then(novo=>{
    console.info('[pendencias-is] escolha gravada '+chave+' '+escolha+' em '+(Date.now()-t0)+' ms');
    if(e.seq===seq){
-     const naCarga=p.validadoNaCarga;
-     Object.keys(p).forEach(k=>delete p[k]); Object.assign(p,novo,{validadoNaCarga:naCarga});
+     Object.keys(p).forEach(k=>delete p[k]); Object.assign(p,novo);
      e.mensagem='Escolha gravada.';
    }else{ p.escolha=novo.escolha; }
  },x=>{
@@ -2825,7 +2875,16 @@ function estadoValidacaoHtml(p){
 function atualizarCartaoValidacao(ncm,cProd){
  const p=pendentes.find(x=>x.ncm===ncm&&x.cProd===cProd);
  const chave=chaveValidacao(ncm,cProd);
- if(p) document.querySelectorAll('#listaPendentes .pendente').forEach(el=>{ if(el.dataset.produto===chave) el.outerHTML=cartaoPendente(p); });
+ // Validação concluída: o produto sai da lista de pendências na hora (fica registrado; "Mostrar validados" o exibe)
+ const sai=p&&!mostrarValidados.ibscbs&&estaValidadoIbsCbs(p);
+ if(p) document.querySelectorAll('#listaPendentes .pendente').forEach(el=>{
+   if(el.dataset.produto!==chave) return;
+   if(sai){
+     el.remove();
+     document.getElementById('avisoValidadoIbsCbs').textContent='“'+p.produto+'” validado e retirado das pendências.';
+   }else el.outerHTML=cartaoPendente(p);
+ });
+ if(p&&document.getElementById('pendentes').classList.contains('active')) contagemPendenciasIbsCbs();
  if(document.getElementById('resultados').classList.contains('active')) renderResultados();
 }
 async function lerRespostaJson(r){
@@ -2970,6 +3029,31 @@ function cartaoPendente(p){
      '</details>'+
     '</div>';
 }
+/** Mostrar os produtos já validados nas Pendências (escondidos por padrão: a lista mostra só o que falta validar). */
+const mostrarValidados={ibscbs:false,is:false};
+function alternarValidados(qual){
+ mostrarValidados[qual]=!mostrarValidados[qual];
+ if(qual==='is') renderPendenciasIS(); else renderPendentes();
+}
+/** Validação concluída pelas respostas gravadas: SIM numa regra, uma escolha da pergunta, ou resposta para todas as regras. */
+function respostasValidam(p,rs){
+ if(!rs||!rs.length) return false;
+ if(rs.some(x=>x.resposta==='SIM'||x.escolha)) return true;
+ const ids=new Set(rs.map(x=>x.regraId));
+ return (p.regras||[]).length>0&&(p.regras||[]).every(id=>ids.has(id));
+}
+/** Produto validado (gravação confirmada): sai da lista de pendências. Escolha ainda gravando ou com erro continua na lista. */
+function estaValidadoIbsCbs(p){
+ const e=validacoes.get(chaveValidacao(p.ncm,p.cProd));
+ if(e&&(e.salvando>0||e.erro)) return false;
+ return !!p.respondida||respostasValidam(p,e?e.confirmadas:p.respostasDestaAnalise);
+}
+function contagemPendenciasIbsCbs(){
+ const aguardando=pendentesFiltradas.filter(p=>!estaValidadoIbsCbs(p)).length, validados=pendentesFiltradas.length-aguardando;
+ document.getElementById('contagemPendencias').textContent=aguardando+' pendência(s)'+(validados?' · '+validados+' validado(s) nesta análise':'');
+ const b=document.getElementById('btnValidadosIbsCbs');
+ b.hidden=!validados; b.textContent=mostrarValidados.ibscbs?'Ocultar validados':'Mostrar validados ('+validados+')';
+}
 function renderPendentes(){
  const produto=(document.getElementById('buscaPendenteProduto').value||'').toLowerCase().trim();
  const cProd=(document.getElementById('buscaPendenteCprod').value||'').toLowerCase().trim();
@@ -2979,11 +3063,11 @@ function renderPendentes(){
    (!cProd||(p.cProd||'').toLowerCase().includes(cProd)) &&
    (!ncm||(p.ncm||'').toLowerCase().includes(ncm))
  );
- const aguardando=pendentesFiltradas.filter(p=>!p.respondida), validados=pendentesFiltradas.filter(p=>p.respondida);
- document.getElementById('contagemPendencias').textContent=aguardando.length+' pendência(s)'+(validados.length?' · '+validados.length+' validado(s) nesta análise':'');
+ const aguardando=pendentesFiltradas.filter(p=>!estaValidadoIbsCbs(p)), validados=pendentesFiltradas.filter(p=>estaValidadoIbsCbs(p));
+ contagemPendenciasIbsCbs();
  document.getElementById('listaPendentes').innerHTML=
   (aguardando.length?aguardando.map(cartaoPendente).join(''):'<p>Nenhuma pendência na análise atual.</p>')+
-  (validados.length?'<h3 class="titulo-validados">Validados nesta análise ('+validados.length+')</h3><p class="small">A escolha de cada produto continua marcada e pode ser alterada: clique em outra opção.</p>'+validados.map(cartaoPendente).join(''):'');
+  (validados.length&&mostrarValidados.ibscbs?'<h3 class="titulo-validados">Validados nesta análise ('+validados.length+')</h3><p class="small">A escolha de cada produto continua marcada e pode ser alterada: clique em outra opção.</p>'+validados.map(cartaoPendente).join(''):'');
 }
 
 ['buscaPendenteProduto','buscaPendenteCprod','buscaPendenteNcm'].forEach(id=>{

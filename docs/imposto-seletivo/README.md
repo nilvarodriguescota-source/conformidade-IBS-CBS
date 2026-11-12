@@ -92,13 +92,26 @@ A partir de 01/01/2028 as alíquotas dependem da lei prevista no art. 15 da MP. 
 
 - **Pendências → IMPOSTO SELETIVO:** lista separada da de IBS/CBS, com o mesmo funcionamento.
   - Cada produto do Anexo XVII aguarda validação, com a sugestão do sistema e a pergunta "Este produto tem incidência de Imposto Seletivo nas vendas desta análise?".
-  - As opções são: incide, não incide, ou necessita de validação fiscal ("não sabe", que deixa o produto pendente).
-  - A escolha é marcada na hora e gravada em seguida. Se a gravação falhar, a marcação volta à escolha anterior e o card mostra o erro.
-  - Ao recarregar a página, os produtos respondidos aparecem em "Validados nesta análise", com a escolha marcada e alterável.
-  - Produtos fora do Anexo XVII, como energéticos, isotônicos, sucos e águas, não viram pendência, porque não têm IS.
-- **Relatório Final:** os quatro relatórios de IBS/CBS ficam no layout anterior. A modalidade **IMPOSTO SELETIVO** usa o mesmo formato, com 7 colunas: código, descrição, NCM, Imposto Seletivo, alíquota de registro IS, valor do IS e instrução com a norma. Ela traz **só os produtos validados** e exporta em CSV, Excel e PDF.
-- **Formato das alíquotas:** igual ao do relatório de IBS/CBS, por exemplo "2,6%", "8%" ou "0% (não incide)".
-- **Valor do IS:** calculado item a item e arredondado ao centavo (como o grupo IS de cada item da nota; o regulamento ainda vai dispor sobre o arredondamento, MP art. 12, § 8º). Ele só é calculado para operações a partir de 02/02/2027. Para vendas anteriores, a alíquota da MP aparece como referência e o valor sai como "Não calculado", com o motivo na instrução.
+  - As opções são:
+    - **incide:** na revenda, o IS é recolhido na etapa anterior e a alíquota de registro é 0%; na venda do próprio fabricante, vale a alíquota da MP;
+    - **não incide:** vale a alíquota de IBS/CBS do enquadramento do produto;
+    - **necessita de validação fiscal:** o produto continua pendente.
+  - A escolha é marcada na hora e gravada em seguida. **Quando a gravação é confirmada, o produto sai da lista** e a contagem é atualizada. Se a gravação falhar, o produto continua na lista com o erro e a marcação volta à escolha anterior.
+  - Os validados continuam registrados. O botão **"Mostrar validados"** os exibe com a escolha marcada, para revisar ou alterar.
+  - Produtos fora do Anexo XVII (energéticos, isotônicos, sucos, águas) não viram pendência.
+- **Pendências de IBS/CBS:** seguem a mesma regra. O produto validado sai da lista assim que a gravação é confirmada e pode ser revisto em "Mostrar validados". A página de Resultados não mudou.
+- **Relatório Final:** os quatro relatórios de IBS/CBS ficam no layout anterior. A modalidade **IMPOSTO SELETIVO** tem 7 colunas (código, descrição, NCM, Imposto Seletivo, alíquota de registro IS, valor do IS e instrução com a norma) e traz **só os produtos validados**. Exporta em CSV, Excel e PDF.
+- **Coluna "Alíquota de registro IS":** o conteúdo depende do enquadramento de cada produto.
+
+| Situação do produto | Imposto Seletivo | Alíquota de registro IS | Valor do IS |
+|---|---|---|---|
+| Sujeito ao IS, vendido em revenda (CFOP de mercadoria de terceiros) | Incide (recolhido na etapa anterior) | **0%** | 0,00 |
+| Sujeito ao IS, vendido pelo próprio fabricante (CFOP de produção própria) | Incide | alíquota da MP (ex.: 2,6%) | calculado a partir de 02/02/2027 |
+| Sem IS | Não incide | **alíquota de IBS/CBS do enquadramento** (ex.: "IBS/CBS 1% (CBS 0,9% + IBS 0,1%) — tributação integral") | 0,00 |
+
+Na revenda, o IS incide uma única vez, no fornecimento pelo fabricante ou na importação (LC 214/2025, arts. 410 e 424). O valor pago na etapa anterior integra o custo de aquisição e não há nova cobrança na saída. A instrução também informa a alíquota do IS na etapa do fabricante.
+
+- **Valor do IS:** calculado item a item e arredondado ao centavo, como o grupo IS de cada item da nota (o regulamento ainda vai dispor sobre o arredondamento, MP art. 12, § 8º). Só é calculado para operações a partir de 02/02/2027.
 
 ## Análise dos produtos da padaria
 

@@ -750,7 +750,7 @@ app.get("/api/imposto-seletivo", (_req, res) => {
       motivo: gerado ? gerado.motivo ?? null : "análise ainda não processada",
       baseDesatualizada: !!gerado?.versaoBase && gerado.versaoBase !== base.versao,
       base: {
-        versao: base.versao, historico: base.historico, fontes: base.fontes, vigencia: base.vigencia, aliquotas: base.aliquotas,
+        versao: base.versao, historico: base.historico, fontes: base.fontes, vigencia: base.vigencia, aliquotas: base.aliquotas, cfops: base.cfops,
         categorias: base.categorias.map((c) => ({ id: c.id, nome: c.nome, codigos: c.codigos, fundamento: c.fundamento })),
       },
       produtos,

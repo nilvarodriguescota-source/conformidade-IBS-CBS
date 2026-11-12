@@ -112,16 +112,26 @@ async function abrirPendencias() {
 const cartao = (chave) => pagina.locator(`#listaPendentes .pendente[data-produto="${chave}"]`);
 const botao = (chave, o) => cartao(chave).locator(o.tipo === "REGRA" ? `button[data-escolha="REGRA"][data-regra="${o.regraId}"]` : `button[data-escolha="${o.tipo}"]`);
 /** Opção marcada no card (tipo e regra) e mensagem de estado. */
-const marcadaNoCartao = (chave) => cartao(chave).evaluate((el) => {
-  const b = [...el.querySelectorAll("button[data-escolha].validacao-selecionada")];
-  return { marcadas: b.map((x) => x.dataset.escolha + (x.dataset.escolha === "REGRA" ? ":" + x.dataset.regra : "")), mensagem: el.querySelector(".estado-validacao")?.textContent ?? "" };
-});
+const marcadaNoCartao = (chave) => pagina.evaluate((c) => {
+  const el = [...document.querySelectorAll("#listaPendentes .pendente")].find((x) => x.dataset.produto === c);
+  const e = validacoes.get(c);
+  if (el) {
+    const b = [...el.querySelectorAll("button[data-escolha].validacao-selecionada")];
+    return { naLista: true, marcadas: b.map((x) => x.dataset.escolha + (x.dataset.escolha === "REGRA" ? ":" + x.dataset.regra : "")), mensagem: el.querySelector(".estado-validacao")?.textContent ?? "" };
+  }
+  // Retirado da lista (validado): a escolha registrada na página
+  const p = pendentes.find((x) => x.ncm + "|" + x.cProd === c);
+  const rs = (p && p.respostasDestaAnalise) || [];
+  const ult = rs[rs.length - 1];
+  return { naLista: false, marcadas: ult ? [ult.resposta === "SIM" ? "REGRA:" + ult.regraId : ult.escolha] : [], mensagem: e ? e.mensagem : "" };
+}, chave);
 const rotuloOpcao = (o) => o.tipo + (o.tipo === "REGRA" ? ":" + o.regraId : "");
 async function esperarGravada(chave, oQue) {
   const t = Date.now();
   for (;;) {
     const m = await marcadaNoCartao(chave);
-    if (/Escolha gravada/.test(m.mensagem)) return Date.now() - t;
+    const salvando = await pagina.evaluate((c) => (validacoes.get(c) || {}).salvando || 0, chave);
+    if (/Escolha gravada/.test(m.mensagem) && salvando === 0) return Date.now() - t;
     if (/NÃO foi gravada/.test(m.mensagem)) throw new Error(`${oQue}: ${m.mensagem}`);
     if (Date.now() - t > 60000) throw new Error(`${oQue}: sem confirmação em 60 s (${m.mensagem})`);
     await esperar(50);
@@ -217,6 +227,22 @@ async function rodar(total) {
   ok(maxMarca < 200, `seleção na tela sem demora: no máximo ${maxMarca} ms entre o clique e a opção marcada (medido na página)`);
   ok(maxGrava < 5000, `gravação confirmada em no máximo ${maxGrava} ms por escolha (média ${Math.round(tempos.reduce((a, x) => a + x.tGrava, 0) / tempos.length)} ms)`);
   ok(gravacoes === alvo.length, `${gravacoes} gravações para ${alvo.length} escolhas`);
+  {
+    const naTela = await pagina.evaluate(() => [...document.querySelectorAll("#listaPendentes .pendente")].map((x) => x.dataset.produto));
+    const validadas = alvo.map((p) => `${p.ncm}|${p.cProd}`);
+    ok(validadas.every((c) => !naTela.includes(c)), `os ${validadas.length} produtos validados saíram da lista de Pendências assim que a gravação foi confirmada`);
+    ok(naTela.length === comOpcoes.length - validadas.length && comOpcoes.slice(8).every((p) => naTela.includes(`${p.ncm}|${p.cProd}`)), `os ${naTela.length} produtos ainda não validados continuam na lista`);
+    const cont = await pagina.locator("#contagemPendencias").innerText();
+    ok(cont === `${comOpcoes.length - 8} pendência(s) · 8 validado(s) nesta análise`, `contagem atualizada na hora: "${cont}"`);
+    ok(/validado e retirado das pendências/.test(await pagina.locator("#avisoValidadoIbsCbs").innerText()), "aviso de produto validado e retirado das pendências");
+    const est = await pagina.evaluate((cs) => cs.map((c) => (pendentes.find((p) => p.ncm + "|" + p.cProd === c).respostasDestaAnalise || []).length), validadas);
+    ok(est.every((n) => n > 0), "cada produto retirado continua registrado com a sua resposta");
+    // Para as próximas verificações (troca, cliques repetidos, falhas), mostra os validados com a escolha marcada
+    await pagina.locator("#btnValidadosIbsCbs").click();
+    const exibidos = [];
+    for (const c of validadas) exibidos.push(await marcadaNoCartao(c));
+    ok(exibidos.every((m, i) => m.naLista && m.marcadas.join() === escolhas.get(validadas[i])), "\"Mostrar validados\" exibe os produtos validados com a escolha marcada");
+  }
 
   // 2. Troca de uma escolha já feita
   {
@@ -297,6 +323,11 @@ async function rodar(total) {
   ok(true, `resultados atualizados com as escolhas ao abrir o Dashboard (${seg(tAtualiza)})`);
   async function conferirMarcas(onde) {
     await abrirPendencias();
+    const naLista = await pagina.evaluate(() => [...document.querySelectorAll("#listaPendentes .pendente")].map((x) => x.dataset.produto));
+    if (!(await pagina.locator("#btnValidadosIbsCbs").innerText()).startsWith("Ocultar")) {
+      ok([...escolhas.keys()].every((c) => !naLista.includes(c)), `${onde}: nenhum produto validado aparece na lista de pendências`);
+      await pagina.locator("#btnValidadosIbsCbs").click();
+    }
     const lista2 = await pagina.evaluate(() => pendentes.map((p) => ({ chave: p.ncm + "|" + p.cProd, respondida: !!p.respondida })));
     for (const [chave, esperado] of escolhas) {
       const m = await marcadaNoCartao(chave);
