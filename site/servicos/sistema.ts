@@ -6,12 +6,15 @@
  * com a sessão do Supabase. A contagem de XMLs fica no banco (função registrar_uso_xmls): é lá
  * que o limite é decidido, não no navegador.
  */
+import { acessoLivreParaTestes } from "../config/ambiente.js";
 import { carregarConta, pagamento } from "./conta.js";
 import { rotas } from "./rotas.js";
 import type { ResultadoUsoXmls } from "./tipos.js";
 
 /** Para onde mandar quem não pode abrir o sistema (null = pode abrir). */
 export async function destinoSemAcesso(): Promise<string | null> {
+  // Ambiente de testes (prévia do Netlify): abre direto, sem login (config/ambiente.ts)
+  if (acessoLivreParaTestes()) return null;
   const conta = await carregarConta();
   if (!conta.sessao) return rotas.entrar(rotas.sistema);
   if (!conta.acesso.liberado) return rotas.contaSecao("assinatura");
@@ -42,6 +45,8 @@ export function mensagemDeLimite(r: ResultadoUsoXmls): string {
  */
 export async function conferirLimiteDeXmls(notas: string[]): Promise<string | null> {
   if (!notas.length) return null;
+  // Ambiente de testes: sem conta para contar as notas, a análise segue sem limite
+  if (acessoLivreParaTestes()) return null;
   const r = await pagamento.registrarUsoDeXmls(notas);
   return r.permitido ? null : mensagemDeLimite(r);
 }
