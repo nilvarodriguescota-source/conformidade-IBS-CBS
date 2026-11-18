@@ -1,0 +1,17 @@
+{
+  "cnpj": "00000000000000",
+  "nome": "Empresa de teste",
+  "regime": "normal",
+  "barOuRestaurante": false,
+"validacoes": [
+    {
+      "ncm": "19022000",
+      "cProd": "(CORDEIRO) PASTEL FRANGO 20 UND",
+      "regraId": "19022000-200034-VII-9",
+      "resposta": "SIM",
+      "autor": "Nilva",
+      "data": "2026-09-20",
+      "justificativa": "Teste de validação do enquadramento."
+    }
+  ]
+}

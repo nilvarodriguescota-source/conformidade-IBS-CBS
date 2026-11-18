@@ -1,0 +1,34 @@
+{
+  "descricao": "LC 214/2025, Capítulo VII, Seção I — Dos Bares e Restaurantes (arts. 273 a 276), texto literal do snapshot registrado.",
+  "fonte": {
+    "id": "F1",
+    "nome": "Lei Complementar nº 214/2025",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm",
+    "versao": "Texto do Planalto na data da consulta, com as marcações de alteração da LC 227/2026",
+    "dataConsulta": "2026-09-23T21:01:53-03:00",
+    "arquivo": "data/fontes/lc214/lcp214.htm",
+    "sha256": "5702cb10bfbf21d59cc52db2db2a6e3e719243dbedca97f6f82c652bc289e9e4"
+  },
+  "artigos": [
+    {
+      "dispositivo": "Art. 273",
+      "ancora": "art273",
+      "texto": "Art. 273. As operações de fornecimento de alimentação por bares e restaurantes, inclusive lanchonetes, ficam sujeitas a regime específico de incidência do IBS e da CBS, de acordo com o disposto nesta Seção. § 1º O regime específico de que trata esta Seção aplica-se também ao fornecimento de bebidas não alcoólicas preparadas no estabelecimento. § 2º Não está sujeito ao regime específico de que trata esta Seção o fornecimento de: I - alimentação para pessoa jurídica, sob contrato, classificada nas posições 1.0301.31.00, 1.0301.32.00 e 1.0301.39.00 da NBS ou por empresa classificada na posição 5620-1/01 da Classificação Nacional de Atividades Econômicas (CNAE); II - produtos alimentícios e bebidas não alcoólicas adquiridos de terceiros, não submetidos a preparo no estabelecimento; e III - bebidas alcoólicas, ainda que preparadas no estabelecimento."
+    },
+    {
+      "dispositivo": "Art. 274",
+      "ancora": "art274",
+      "texto": "Art. 274. A base de cálculo do IBS e da CBS é o valor da operação de fornecimento de alimentação e das bebidas de que trata o § 1º do art. 273 desta Lei Complementar. Parágrafo único. Ficam excluídos da base de cálculo: I - a gorjeta incidente no fornecimento de alimentação, desde que: a) seja repassada integralmente ao empregado, sem prejuízo dos valores da gorjeta que forem retidos pelo empregador em virtude de determinação legal; e b) seu valor não exceda a 15% (quinze por cento) do valor total do fornecimento de alimento e bebidas; II - os valores não repassados aos bares e restaurantes pelo serviço de entrega e intermediação de pedidos de alimentação e bebidas por plataforma digital."
+    },
+    {
+      "dispositivo": "Art. 275",
+      "ancora": "art275",
+      "texto": "Art. 275. As alíquotas do IBS e da CBS relativas às operações de que trata este Capítulo ficam reduzidas em 40% (quarenta por cento)."
+    },
+    {
+      "dispositivo": "Art. 276",
+      "ancora": "art276",
+      "texto": "Art. 276. Fica vedada a apropriação de créditos do IBS e da CBS pelos adquirentes de alimentação e bebidas fornecidas pelos bares e restaurantes, inclusive lanchonetes."
+    }
+  ]
+}
