@@ -5,6 +5,7 @@
  * origem; nada nele é alterado. Os atalhos só clicam no botão da aba correspondente,
  * como o usuário faria.
  */
+import { acessoLivreParaTestes } from "../config/ambiente.js";
 import { catalogoRecursos, configuracaoPlanos, equivalenteMensal, valorDoCiclo, type Plano, type RecursoId } from "../config/planos.js";
 import { situacaoDeAcesso } from "../servicos/acesso.js";
 import { autenticacao, carregarConta, pagamento, type EstadoConta } from "../servicos/conta.js";
@@ -26,6 +27,9 @@ import {
 } from "../ui/comum.js";
 import { aplicarMascaras, cnpjValido, erroNoCampo, limparErros, medidorDeSenha, mostrarAlerta } from "../ui/formularios.js";
 import { abrirAula, iniciarTreinamento } from "../ui/treinamento.js";
+
+// Deploy Preview do Netlify (testes): sem login, "Entrar" e "Área do cliente" levam direto ao sistema
+if (acessoLivreParaTestes()) location.replace(rotas.sistema);
 
 const SECOES = {
   inicio: "Início",
