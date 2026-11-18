@@ -8,9 +8,6 @@ import { emailValido, erroNoCampo, limparErros, mostrarAlerta } from "../ui/form
 iniciarPagina();
 alternarSenhas();
 
-// Deploy Preview do Netlify (testes): sem login, "Entrar" e "Área do cliente" levam direto ao sistema
-if (acessoLivreParaTestes()) location.replace(rotas.sistema);
-
 const destino = destinoSeguro(parametro("voltar"));
 
 autenticacao
@@ -32,6 +29,16 @@ const erroNoLink = new URLSearchParams(location.hash.slice(1)).get("error_code")
 if (erroNoLink) {
   mostrarAlerta(erro, erroNoLink === "otp_expired" ? "Este link de acesso venceu ou já foi usado. Peça um novo abaixo." : "Não foi possível entrar pelo link. Peça um novo abaixo.", "aviso");
   history.replaceState(null, "", location.pathname + location.search);
+}
+
+// Ambiente de testes do Netlify (config/ambiente.ts): "Entrar" leva ao sistema sem e-mail e senha
+if (acessoLivreParaTestes()) {
+  mostrarAlerta(erro, "Ambiente de testes: clique em Entrar, sem preencher e-mail e senha, para abrir o sistema.", "aviso");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    location.href = rotas.sistema;
+  });
 }
 
 form.addEventListener("submit", async (e) => {

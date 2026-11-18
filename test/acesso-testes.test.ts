@@ -4,6 +4,8 @@ import { acessoLivreParaTestes } from "../site/config/ambiente.js";
 
 test("acesso sem login só em Deploy Preview do Netlify", () => {
   assert.equal(acessoLivreParaTestes("deploy-preview-23--conformidadeibscbs.netlify.app", "1"), true);
+  // Site de testes do Netlify: livre em qualquer build
+  assert.equal(acessoLivreParaTestes("conformidadeibscbsatualizado.netlify.app", ""), true);
   // Produção do Netlify, Hostinger, branch deploy e build que não é de prévia: login obrigatório
   assert.equal(acessoLivreParaTestes("conformidadeibscbs.netlify.app", "1"), false);
   assert.equal(acessoLivreParaTestes("saboresestrategicos.com.br", "1"), false);
