@@ -4,8 +4,10 @@
 # de Arquivos. Passo a passo: docs/kiwify-supabase/PASSO-A-PASSO.md (etapa 5).
 name: Site para a Hostinger
 
+# SUSPENSO durante os testes no Netlify: não roda sozinho a cada merge. Só roda se alguém clicar
+# em "Run workflow" (GitHub → Actions → Site para a Hostinger). Para reativar, volte a linha
+# "push:" abaixo de "on:".
 on:
-  push:
   workflow_dispatch:
 
 permissions:
