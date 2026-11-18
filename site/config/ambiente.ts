@@ -15,7 +15,7 @@
  */
 
 /** Sites de teste do Netlify (endereço exato). Para voltar a exigir login neles, tire daqui. */
-const ENDERECOS_DE_TESTE = ["conformidadeibscbsatualizado.netlify.app"];
+const ENDERECOS_DE_TESTE = ["conformidadeibscbsatualizado.netlify.app", "conformidade-ibs-cbs.netlify.app"];
 
 /** Endereço de um Deploy Preview do Netlify. */
 const ENDERECO_DEPLOY_PREVIEW = /^deploy-preview-\d+--[a-z0-9-]+\.netlify\.app$/i;
