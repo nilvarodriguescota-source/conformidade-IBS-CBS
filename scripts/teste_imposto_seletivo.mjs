@@ -130,11 +130,14 @@ const naTela = () => pagina.evaluate(() => {
   return [...el.querySelectorAll(".pendente")].map((c) => ({ chave: c.dataset.isProduto, validado: !!titulo && !!(titulo.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING) }));
 });
 const cartaoIS = (chave) => pagina.locator(`#listaPendenciasIS .pendente[data-is-produto="${chave}"]`);
-const marcadoIS = (chave) => cartaoIS(chave).evaluate((el) => ({
-  marcado: [...el.querySelectorAll("button[data-is].validacao-selecionada")].map((b) => b.dataset.is),
-  mensagem: el.querySelector(".estado-validacao")?.textContent ?? "",
-  texto: el.innerText,
-}));
+const marcadoIS = (chave) => pagina.evaluate((c) => {
+  const el = [...document.querySelectorAll("#listaPendenciasIS .pendente")].find((x) => x.dataset.isProduto === c);
+  const e = estadoIS.get(c);
+  if (el) return { naLista: true, marcado: [...el.querySelectorAll("button[data-is].validacao-selecionada")].map((b) => b.dataset.is), mensagem: el.querySelector(".estado-validacao")?.textContent ?? "", texto: el.innerText };
+  const p = isPorChave.get(c);
+  const m = p ? (p.escolhaExibida !== undefined ? p.escolhaExibida : p.escolha && p.escolha.escolha) : null;
+  return { naLista: false, marcado: m ? [m] : [], mensagem: e ? e.mensagem : "", texto: "" };
+}, chave);
 async function escolherIS(chave, escolha) {
   const t = Date.now();
   await cartaoIS(chave).locator(`button[data-is="${escolha}"]`).click();
@@ -142,7 +145,8 @@ async function escolherIS(chave, escolha) {
   ok(m.marcado.join() === escolha, `${chave}: "${escolha}" marcada na hora`);
   for (;;) {
     const x = await marcadoIS(chave);
-    if (/Escolha gravada/.test(x.mensagem)) break;
+    const salvando = await pagina.evaluate((c) => (estadoIS.get(c) || {}).salvando || 0, chave);
+    if (/Escolha gravada/.test(x.mensagem) && salvando === 0) break;
     if (/NÃO foi gravada/.test(x.mensagem)) throw new Error(x.mensagem);
     if (Date.now() - t > 30000) throw new Error("sem confirmação");
     await esperar(50);
@@ -205,7 +209,12 @@ try {
   const tempos = [await escolherIS(coca.chave, "NAO_INCIDENCIA"), await escolherIS(cerveja.chave, "VALIDACAO"), await escolherIS(vinho.chave, "INCIDENCIA")];
   ok(Math.max(...tempos) < 3000, `escolhas gravadas em até ${Math.max(...tempos)} ms`);
   tela = await naTela();
-  ok(tela.length === 37 && tela.every((c) => !c.validado), "os cards não mudam de lugar ao clicar (como em IBS/CBS)");
+  ok(tela.length === 35 && !tela.some((c) => c.chave === coca.chave || c.chave === vinho.chave) && tela.some((c) => c.chave === cerveja.chave),
+    "Coca-Cola (não incide) e vinho (incide) saíram da lista ao confirmar; a cerveja (validação fiscal) continua pendente");
+  ok(await pagina.locator("#contagemPendenciasIS").innerText() === "35 pendência(s) · 2 validado(s) nesta análise", "contagem atualizada na hora: 35 pendência(s) · 2 validado(s)");
+  ok(/validado e retirado das pendências/.test(await pagina.locator("#avisoValidadoIS").innerText()), "aviso de produto validado e retirado das pendências");
+  await pagina.locator("#btnValidadosIS").click();
+  ok((await marcadoIS(vinho.chave)).naLista && (await marcadoIS(coca.chave)).naLista, "\"Mostrar validados\" exibe os validados com a escolha marcada (para revisar ou alterar)");
   await escolherIS(vinho.chave, "NAO_INCIDENCIA");
   await escolherIS(vinho.chave, "INCIDENCIA");
   ok(await respostaGravada(vinho.chave) === "INCIDENCIA", "escolha trocada e gravada");
@@ -228,8 +237,11 @@ try {
   await pagina.waitForFunction(() => /concluído|resultado/.test(document.getElementById("resumoAnalise")?.textContent ?? ""), null, { timeout: 120000 });
   await abrirPendenciasIS();
   tela = await naTela();
+  ok(tela.length === 35 && !tela.some((c) => c.chave === coca.chave || c.chave === vinho.chave) && tela.some((c) => c.chave === cerveja.chave), "depois de recarregar: os validados não voltam para a lista; a cerveja continua pendente");
+  await pagina.locator("#btnValidadosIS").click();
+  tela = await naTela();
   const pos = (c) => tela.find((x) => x.chave === c);
-  ok(pos(coca.chave).validado && pos(vinho.chave).validado && !pos(cerveja.chave).validado, "depois de recarregar: Coca-Cola e vinho em \"Validados nesta análise\"; a cerveja (validação fiscal) continua pendente");
+  ok(pos(coca.chave).validado && pos(vinho.chave).validado && !pos(cerveja.chave).validado, "\"Mostrar validados\": Coca-Cola e vinho em \"Validados nesta análise\"");
   ok((await marcadoIS(coca.chave)).marcado.join() === "NAO_INCIDENCIA" && (await marcadoIS(vinho.chave)).marcado.join() === "INCIDENCIA" && (await marcadoIS(cerveja.chave)).marcado.join() === "VALIDACAO", "as 3 escolhas continuam marcadas");
   ok(await pagina.locator("#contagemPendenciasIS").innerText() === "35 pendência(s) · 2 validado(s) nesta análise", "contagem: 35 pendência(s) · 2 validado(s)");
   ok(await vereditosIbsCbs() === ibsAntes, "IBS/CBS: resultados idênticos antes e depois das escolhas do IS");
@@ -239,8 +251,10 @@ try {
   const relIS = await relatorio("is");
   const lin = (cp) => relIS.linhas.find((l) => l[0] === cp);
   ok(relIS.linhas.length === 2 && relIS.linhas.every((l) => l.length === 7), "relatório IMPOSTO SELETIVO: só os 2 produtos validados, em 7 colunas (formato do relatório final)");
-  ok(lin(coca.cProd)[3] === "Não incide" && lin(coca.cProd)[4] === "0% (não incide)" && /Norma:/.test(lin(coca.cProd)[6]), `não incidência: "${lin(coca.cProd).slice(3, 6).join(" | ")}"`);
-  ok(lin(vinho.cProd)[3] === "Incide" && lin(vinho.cProd)[4] === "8%" && lin(vinho.cProd)[5] === "Não calculado" && /anteriores à vigência/.test(lin(vinho.cProd)[6]), `incidência em operação de 2026: alíquota da MP mostrada (8%), valor não calculado (antes de 02/02/2027): "${lin(vinho.cProd).slice(3, 6).join(" | ")}"`);
+  ok(lin(coca.cProd)[3] === "Não incide" && lin(coca.cProd)[4] === "IBS/CBS 1% (CBS 0,9% + IBS 0,1%) — tributação integral" && /tributação de IBS\/CBS do enquadramento/.test(lin(coca.cProd)[6]),
+    `sem IS: a coluna mostra a alíquota de IBS/CBS do enquadramento: "${lin(coca.cProd).slice(3, 6).join(" | ")}"`);
+  ok(lin(vinho.cProd)[3] === "Incide (recolhido na etapa anterior)" && lin(vinho.cProd)[4] === "0%" && lin(vinho.cProd)[5] === "0,00" && /sem nova cobrança na revenda/.test(lin(vinho.cProd)[6]) && /custo de aquisição/.test(lin(vinho.cProd)[6]),
+    `com IS na revenda: alíquota de registro 0%, sem nova cobrança (IS integra o custo de aquisição): "${lin(vinho.cProd).slice(3, 6).join(" | ")}"`);
   ok(!lin(cerveja.cProd), "produto com validação fiscal pendente não aparece no relatório");
   for (const f of ["csv", "excel", "pdf"]) { const d = await exportar(f); if (d.bytes < 500) ok(false, `exportação ${f} vazia`); }
   ok(true, "relatório IMPOSTO SELETIVO: CSV, Excel e PDF exportados");
@@ -275,7 +289,7 @@ try {
   const relB = await relatorio("is");
   const lb = relB.linhas.find((l) => l[0] === acucar.cProd);
   const lc = relB.linhas.find((l) => l[0] === cerv.cProd);
-  ok(relB.linhas.length === 2 && lb[3] === "Incide" && lb[4] === "2,6%" && lb[5] === acucar.valorFinal.toFixed(2).replace(".", ","), `relatório: "${lb.slice(3, 6).join(" | ")}"`);
+  ok(relB.linhas.length === 2 && lb[3] === "Incide" && lb[4] === "2,6%" && lb[5] === acucar.valorFinal.toFixed(2).replace(".", ","), `fabricante (CFOP 5101): a alíquota da MP é registrada e o IS calculado — a regra de 0% vale só para a revenda: "${lb.slice(3, 6).join(" | ")}"`);
   ok(lc[3] === "Incide" && lc[4] === "4,2%" && lc[5] !== "Não calculado", `relatório: "${lc.slice(3, 6).join(" | ")}"`);
   tabela.push({ cenario: "B. fabricante 2027", processar: seg(tProc), "pendências IS": seg(tAba), "relatório IS": seg(relB.ms), produtos: ps.length, "Anexo XVII": doAnexo.length });
 
