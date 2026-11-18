@@ -20,7 +20,7 @@ function montarHtml(arquivo, partes) {
  */
 export function definicoesPublicas() {
   const v = (nome) => JSON.stringify((process.env[nome] ?? "").trim().replace(/\/+$/, ""));
-  return { __SUPABASE_URL__: v("SUPABASE_URL"), __SUPABASE_ANON_KEY__: v("SUPABASE_ANON_KEY"), __SITE_URL__: v("SITE_URL") };
+  return { __SUPABASE_URL__: v("SUPABASE_URL"), __SUPABASE_ANON_KEY__: v("SUPABASE_ANON_KEY"), __SITE_URL__: v("SITE_URL"), __ACESSO_LIVRE__: v("ACESSO_LIVRE") };
 }
 
 export async function construirSite({ raiz, pub }) {

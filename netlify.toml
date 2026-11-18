@@ -22,7 +22,17 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# Site comercial na raiz; o sistema de XML fica em /sistema.html (área do cliente em /conta.html).
+# Ambiente de testes (prévia do Netlify): a raiz abre direto o sistema de XML, sem login
+# (site/config/ambiente.ts). O site comercial continua em /index.html. Este arquivo não vale para
+# a Hostinger (produção), que usa site/hospedagem/.htaccess e mantém o login obrigatório.
+# Para voltar a exigir login na prévia: apague este bloco e defina ACESSO_LIVRE=0 no Netlify.
+[[redirects]]
+  from = "/"
+  to = "/sistema.html"
+  status = 200
+  force = true
+
+# Site comercial em /index.html; o sistema de XML fica em /sistema.html (área do cliente em /conta.html).
 # Endereços sem ".html", para links e divulgação.
 [[redirects]]
   from = "/entrar"
