@@ -28,7 +28,7 @@ import {
 import { aplicarMascaras, cnpjValido, erroNoCampo, limparErros, medidorDeSenha, mostrarAlerta } from "../ui/formularios.js";
 import { abrirAula, iniciarTreinamento } from "../ui/treinamento.js";
 
-// Deploy Preview do Netlify (testes): sem login, "Entrar" e "Área do cliente" levam direto ao sistema
+// Ambiente de testes do Netlify (config/ambiente.ts): sem login, a área do cliente leva direto ao sistema
 if (acessoLivreParaTestes()) location.replace(rotas.sistema);
 
 const SECOES = {
