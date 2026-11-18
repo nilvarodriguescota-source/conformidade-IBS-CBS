@@ -20,7 +20,15 @@ function montarHtml(arquivo, partes) {
  */
 export function definicoesPublicas() {
   const v = (nome) => JSON.stringify((process.env[nome] ?? "").trim().replace(/\/+$/, ""));
-  return { __SUPABASE_URL__: v("SUPABASE_URL"), __SUPABASE_ANON_KEY__: v("SUPABASE_ANON_KEY"), __SITE_URL__: v("SITE_URL"), __ACESSO_LIVRE__: v("ACESSO_LIVRE") };
+  // Acesso de teste sem login só em Deploy Preview do Netlify (site/config/ambiente.ts). CONTEXT é
+  // definido pelo próprio Netlify; no GitHub Actions (Hostinger) e na produção do Netlify fica "".
+  const previa = process.env.CONTEXT === "deploy-preview" && (process.env.ACESSO_LIVRE ?? "").trim() !== "0";
+  return {
+    __SUPABASE_URL__: v("SUPABASE_URL"),
+    __SUPABASE_ANON_KEY__: v("SUPABASE_ANON_KEY"),
+    __SITE_URL__: v("SITE_URL"),
+    __ACESSO_LIVRE__: JSON.stringify(previa ? "1" : ""),
+  };
 }
 
 export async function construirSite({ raiz, pub }) {

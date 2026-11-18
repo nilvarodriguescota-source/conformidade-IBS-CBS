@@ -22,8 +22,8 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# Ambiente de testes: no Netlify o sistema (/sistema) abre sem login (site/config/ambiente.ts).
-# A página principal e a área do cliente continuam como estão. Na Hostinger o login segue obrigatório.
+# Acesso de teste: só nos Deploy Previews do Netlify o sistema (/sistema) abre sem login
+# (site/config/ambiente.ts). Produção do Netlify e Hostinger continuam com login obrigatório.
 # Site comercial na raiz; o sistema de XML fica em /sistema.html (área do cliente em /conta.html).
 # Endereços sem ".html", para links e divulgação.
 [[redirects]]
